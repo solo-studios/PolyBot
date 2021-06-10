@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 10-06-2021 02:24 p.m.
+ * Last modified on 10-06-2021 04:18 p.m.
  *
  * MIT License
  *
@@ -58,18 +58,10 @@ class PolyBot(token: String) {
     //    private val commandClient: CommandClient = CommandClientBuilder()
     //        .setActivity(Activity.streaming("Terra", "https://github.com/PolyhedralDev/Terra"))
     //        .setStatus(OnlineStatus.ONLINE)
-    //        .setPrefix("$")
-    //        .setAlternativePrefix("poly ")
-    //        .setOwnerId("195735703726981120")
-    //        .setCoOwnerIds("378350362236682240")
-    //        .useHelpBuilder(true)
-    //        .setHelpConsumer(HelpConsumer()) // todo
-    //        .setHelpWord("help")
-    //        .setEmojis(null, ":warning:", ":no_entry_sign:")
-    //        .addAnnotatedModules(TestCommand(), UtilCommands())
-    //        .setGuildSettingsManager(null)
-    //        .build()
+    // prefixes: "$" and "poly "
+    // owner ids: 195735703726981120, 378350362236682240
     
+    @Suppress("MemberVisibilityCanBePrivate")
     val jda: JDA = jda(token) {
         disableCache(CacheFlag.VOICE_STATE,
                      CacheFlag.ACTIVITY,

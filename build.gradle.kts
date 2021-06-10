@@ -1,8 +1,80 @@
+/*
+ * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ *
+ * The file build.gradle.kts is part of PolyhedralBot
+ * Last modified on 10-06-2021 04:49 p.m.
+ *
+ * MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+@Suppress("PropertyName")
+val JDA_VERSION: String by project
+
+@Suppress("PropertyName")
+val JDA_UTILITIES_VERSION: String by project
+
+@Suppress("PropertyName")
+val CLOUD_VERSION: String by project
+
+@Suppress("PropertyName")
+val KOTLINX_SERIALIZATION_VERSION: String by project
+
+@Suppress("PropertyName")
+val KOTLINX_COROUTINES_VERSION: String by project
+
+@Suppress("PropertyName")
+val KOTLIN_VERSION: String by project
+
+@Suppress("PropertyName")
+val JACKSON_VERSION: String by project
+
+@Suppress("PropertyName")
+val FUEL_VERSION: String by project
+
+@Suppress("PropertyName")
+val EXPOSED_VERSION: String by project
+
+@Suppress("PropertyName")
+val SQLITE_VERSION: String by project
+
+@Suppress("PropertyName")
+val GUAVA_VERSION: String by project
+
+@Suppress("PropertyName")
+val REFLECTIONS_VERSION: String by project
+
+@Suppress("PropertyName")
+val LOGBACK_VERSION: String by project
+
+@Suppress("PropertyName")
+val SLF4J_VERSION: String by project
 
 plugins {
     java
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm")
+    kotlin("plugin.serialization")
+    
 }
 
 group = "com.solostudios.polyhedralbot"
@@ -15,63 +87,69 @@ repositories {
 
 dependencies {
     // Kotlin
-    implementation(kotlin("stdlib"))
+    api(kotlin("stdlib"))
     
     // JDA
-    implementation("net.dv8tion:JDA:4.2.+")
+    api("net.dv8tion:JDA:$JDA_VERSION")
     
     // JDA utilities
-    
-    implementation("com.jagrosh:jda-utilities-commons:3.0.5")
-    implementation("com.jagrosh:jda-utilities-command:3.0.5")
-    implementation("com.jagrosh:jda-utilities-doc:3.0.5") // figure out what this is
-    implementation("com.jagrosh:jda-utilities-menu:3.0.5")
+    api("com.jagrosh:jda-utilities-commons:$JDA_UTILITIES_VERSION")
+    api("com.jagrosh:jda-utilities-menu:$JDA_UTILITIES_VERSION")
     
     // Cloud
-    implementation("cloud.commandframework:cloud-core:1.4.0")
-    implementation("cloud.commandframework:cloud-annotations:1.4.0")
-    implementation("cloud.commandframework:cloud-jda:1.4.0")
-    implementation("cloud.commandframework:cloud-kotlin-extensions:1.4.0")
+    api("cloud.commandframework:cloud-core:$CLOUD_VERSION")
+    api("cloud.commandframework:cloud-annotations:$CLOUD_VERSION")
+    api("cloud.commandframework:cloud-jda:$CLOUD_VERSION")
+    api("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_VERSION")
+    
+    api("org.jetbrains.kotlinx:kotlinx-serialization-core:$KOTLINX_SERIALIZATION_VERSION")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_VERSION")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-hocon:$KOTLINX_SERIALIZATION_VERSION")
+    
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$KOTLINX_COROUTINES_VERSION")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
+    //    api("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.5.0")
     
     // Reflections
-    implementation("org.reflections:reflections:0.9.12")
+    api("org.reflections:reflections:$REFLECTIONS_VERSION")
     
     // Logging
-    implementation("org.slf4j:slf4j-api:1.7.30")
-    implementation("ch.qos.logback:logback-classic:1.2.3")
+    api("org.slf4j:slf4j-api:$SLF4J_VERSION")
+    api("ch.qos.logback:logback-classic:$LOGBACK_VERSION")
     
     // other stuff (remove me)
-    //    implementation("com.jagrosh:EasySQL:0.3")
-    //    implementation("club.minnced:discord-webhooks:0.1.8")
-    //    implementation("com.typesafe:config:1.3.2")
+    //    api("com.jagrosh:EasySQL:0.3")
+    //    api("club.minnced:discord-webhooks:0.1.8")
+    //    api("com.typesafe:config:1.3.2")
     
     // Kotlin HTTP api
-    implementation("com.github.kittinunf.fuel:fuel:2.3.1")
-    implementation("com.github.kittinunf.fuel:fuel-coroutines:2.3.1")
-    implementation("com.github.kittinunf.fuel:fuel-jackson:2.3.1")
-    //    implementation("com.github.kittinunf.fuel:fuel-reactor:2.3.1") // Use Reactor??
+    api("com.github.kittinunf.fuel:fuel:$FUEL_VERSION")
+    api("com.github.kittinunf.fuel:fuel-coroutines:$FUEL_VERSION")
+    api("com.github.kittinunf.fuel:fuel-jackson:$FUEL_VERSION")
+    //    api("com.github.kittinunf.fuel:fuel-reactor:$FUEL_VERSION") // Use Reactor??
     
     // Jackson
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.12.3")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.12.3")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.3")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:$JACKSON_VERSION")
+    api("com.fasterxml.jackson.core:jackson-core:$JACKSON_VERSION")
+    api("com.fasterxml.jackson.core:jackson-annotations:$JACKSON_VERSION")
+    api("com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION")
+    api("org.honton.chas.hocon:jackson-dataformat-hocon:1.1.1")
     
     // Guava
-    implementation("com.google.guava:guava:30.1.1-jre")
+    api("com.google.guava:guava:$GUAVA_VERSION")
     
     // SQLite
-    implementation("org.xerial:sqlite-jdbc:3.32.3.2")
+    api("org.xerial:sqlite-jdbc:$SQLITE_VERSION")
     
     // Make using SQL actually bearable to use
-    implementation("org.jetbrains.exposed:exposed-core:+")
-    implementation("org.jetbrains.exposed:exposed-dao:+")
-    implementation("org.jetbrains.exposed:exposed-jdbc:+")
-    implementation("org.jetbrains.exposed:exposed-java-time:+")
+    api("org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION")
+    api("org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION")
+    api("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
+    api("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
     
     // Testing (switch to JUnit 5)
-    //    testImplementation("junit:junit:4.13.1")
-    //    testImplementation("org.hamcrest:hamcrest-core:1.3")
+    //    testapi("junit:junit:4.13.1")
+    //    testapi("org.hamcrest:hamcrest-core:1.3")
     
     // Testing (JUnit 5)
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
@@ -79,7 +157,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:5.7.0")
     
     // idk
-    //    implementation(kotlin("script-runtime"))
+    //    api(kotlin("script-runtime"))
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -91,13 +169,3 @@ tasks.withType<KotlinCompile>().configureEach {
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
 }
-
-/*
-if anything, I want to just go back to being friends with
-- kohi
-- jesse (juno)/aurora
-- leohra
-for my other friends, yes I liked them, but I think I'd be able to live without them (no offense to them).. I just *REALLY* want to
- */
-
-
