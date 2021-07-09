@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 07-07-2021 02:03 a.m.
+ * Last modified on 09-07-2021 04:20 p.m.
  *
  * MIT License
  *
@@ -88,17 +88,17 @@ version = "1.0.0"
 repositories {
     mavenCentral()
     jcenter()
-    maven {
-        name = "jitpack"
-        url = uri("https://jitpack.io/")
-    }
-    maven {
-        name = "incendo-snapshots"
-        url = uri("https://repo.incendo.org/content/repositories/snapshots")
-    }
+    // maven {
+    //     name = "incendo-snapshots"
+    //     url = uri("https://repo.incendo.org/content/repositories/snapshots")
+    // }
     maven {
         name = "dv8tion-repo"
         url = uri("https://m2.dv8tion.net/releases")
+    }
+    maven {
+        name = "jitpack"
+        url = uri("https://jitpack.io/")
     }
 }
 
@@ -108,40 +108,45 @@ application {
 
 dependencies {
     // Kotlin
-    api(kotlin("stdlib"))
+    //    implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
+    implementation(kotlin("script-runtime"))
+    implementation(kotlin("script-util"))
+    implementation(kotlin("compiler-embeddable"))
+    implementation(kotlin("scripting-compiler-embeddable"))
     
     // JDA
-    api("net.dv8tion:JDA:$JDA_VERSION") {
+    implementation("net.dv8tion:JDA:$JDA_VERSION") {
         exclude(module = "opus-java")
     }
     
     implementation("org.jetbrains:annotations:21.0.1")
     
     // JDA utilities
-    api("com.jagrosh:jda-utilities-commons:$JDA_UTILITIES_VERSION")
-    api("com.jagrosh:jda-utilities-menu:$JDA_UTILITIES_VERSION")
+    implementation("com.jagrosh:jda-utilities-commons:$JDA_UTILITIES_VERSION")
+    implementation("com.jagrosh:jda-utilities-menu:$JDA_UTILITIES_VERSION")
     
     // Cloud
-    api("cloud.commandframework:cloud-core:$CLOUD_VERSION")
-    api("cloud.commandframework:cloud-annotations:$CLOUD_VERSION")
-    api("cloud.commandframework:cloud-jda:$CLOUD_VERSION")
-    api("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_VERSION")
+    implementation("cloud.commandframework:cloud-core:$CLOUD_VERSION")
+    implementation("cloud.commandframework:cloud-annotations:$CLOUD_VERSION")
+    implementation("cloud.commandframework:cloud-jda:$CLOUD_VERSION")
+    implementation("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_VERSION")
     
-    api("org.jetbrains.kotlinx:kotlinx-serialization-core:$KOTLINX_SERIALIZATION_VERSION")
-    api("org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_VERSION")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$KOTLINX_SERIALIZATION_VERSION")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_VERSION")
     
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$KOTLINX_COROUTINES_VERSION")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$KOTLINX_COROUTINES_VERSION")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
     //    api("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$KOTLINX_COROUTINES_VERSION")
     
-    api("com.esotericsoftware:kryo:5.1.1")
+    implementation("com.esotericsoftware:kryo:5.1.1")
     
     // Reflections
-    api("org.reflections:reflections:$REFLECTIONS_VERSION")
+    implementation("org.reflections:reflections:$REFLECTIONS_VERSION")
     
     // Logging
-    api("org.slf4j:slf4j-api:$SLF4J_VERSION")
-    api("ch.qos.logback:logback-classic:$LOGBACK_VERSION")
+    implementation("org.slf4j:slf4j-api:$SLF4J_VERSION")
+    implementation("ch.qos.logback:logback-classic:$LOGBACK_VERSION")
     
     // other stuff (remove me)
     //    api("com.jagrosh:EasySQL:0.3")
@@ -149,35 +154,35 @@ dependencies {
     //    api("com.typesafe:config:1.3.2")
     
     // Kotlin HTTP api
-    api("com.github.kittinunf.fuel:fuel:$FUEL_VERSION")
-    api("com.github.kittinunf.fuel:fuel-coroutines:$FUEL_VERSION")
-    api("com.github.kittinunf.fuel:fuel-jackson:$FUEL_VERSION")
+    implementation("com.github.kittinunf.fuel:fuel:$FUEL_VERSION")
+    implementation("com.github.kittinunf.fuel:fuel-coroutines:$FUEL_VERSION")
+    implementation("com.github.kittinunf.fuel:fuel-jackson:$FUEL_VERSION")
     //    api("com.github.kittinunf.fuel:fuel-reactor:$FUEL_VERSION") // Use Reactor??
     
     // Jackson
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:$JACKSON_VERSION")
-    api("com.fasterxml.jackson.core:jackson-core:$JACKSON_VERSION")
-    api("com.fasterxml.jackson.core:jackson-annotations:$JACKSON_VERSION")
-    api("com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION")
-    api("org.honton.chas.hocon:jackson-dataformat-hocon:1.1.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$JACKSON_VERSION")
+    implementation("com.fasterxml.jackson.core:jackson-core:$JACKSON_VERSION")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:$JACKSON_VERSION")
+    implementation("com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION")
+    implementation("org.honton.chas.hocon:jackson-dataformat-hocon:1.1.1")
     
-    api("io.github.reactivecircus.cache4k:cache4k:0.2.0")
+    implementation("io.github.reactivecircus.cache4k:cache4k:0.2.0")
     
-    api("org.ehcache:ehcache:3.8.1")
+    implementation("org.ehcache:ehcache:3.8.1")
     
     // Guava
-    api("com.google.guava:guava:$GUAVA_VERSION")
+    implementation("com.google.guava:guava:$GUAVA_VERSION")
     
     // SQLite
-    api("org.xerial:sqlite-jdbc:$SQLITE_VERSION")
+    implementation("org.xerial:sqlite-jdbc:$SQLITE_VERSION")
     
     // Make using SQL actually bearable to use
-    api("org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION")
-    api("org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION")
-    api("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
-    api("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
+    implementation("org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION")
+    implementation("org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
+    implementation("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
     
-    api("com.github.minndevelopment:jda-ktx:${JDA_KTX_VERSION}")
+    implementation("com.github.minndevelopment:jda-ktx:${JDA_KTX_VERSION}")
     
     // Testing (switch to JUnit 5)
     //    testapi("junit:junit:4.13.1")
@@ -199,8 +204,15 @@ noArg {
 
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_11.toString()
+        apiVersion = "1.5"
+        languageVersion = "1.5"
     }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.getByName<Test>("test") {
