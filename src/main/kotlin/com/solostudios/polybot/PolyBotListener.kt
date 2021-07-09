@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 14-06-2021 06:22 p.m.
+ * The file PolyBotListener.kt is part of PolyhedralBot
+ * Last modified on 09-07-2021 03:32 p.m.
  *
  * MIT License
  *
@@ -26,18 +26,41 @@
  * SOFTWARE.
  */
 
-rootProject.name = "PolyhedralBot"
+package com.solostudios.polybot
 
-pluginManagement {
-    plugins {
-        @Suppress("PropertyName", "LocalVariableName")
-        val KOTLIN_VERSION: String by settings
-        kotlin("jvm") version KOTLIN_VERSION
-        kotlin("plugin.serialization").version(KOTLIN_VERSION)
-        id("ca.cutterslade.analyze") version "1.6.0"
+import net.dv8tion.jda.api.events.DisconnectEvent
+import net.dv8tion.jda.api.events.GatewayPingEvent
+import net.dv8tion.jda.api.events.ReadyEvent
+import net.dv8tion.jda.api.events.ReconnectedEvent
+import net.dv8tion.jda.api.events.ResumedEvent
+import net.dv8tion.jda.api.events.StatusChangeEvent
+import net.dv8tion.jda.api.hooks.ListenerAdapter
+import org.slf4j.kotlin.getLogger
+
+class PolyBotListener : ListenerAdapter() {
+    private val logger by getLogger()
+    
+    override fun onGatewayPing(event: GatewayPingEvent) {
+    
     }
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
+    
+    override fun onReady(event: ReadyEvent) {
+    
+    }
+    
+    override fun onResumed(event: ResumedEvent) {
+    
+    }
+    
+    override fun onReconnected(event: ReconnectedEvent) {
+    
+    }
+    
+    override fun onDisconnect(event: DisconnectEvent) {
+    
+    }
+    
+    override fun onStatusChange(event: StatusChangeEvent) {
+    
     }
 }

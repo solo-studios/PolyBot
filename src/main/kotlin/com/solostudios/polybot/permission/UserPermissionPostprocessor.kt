@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 14-06-2021 06:22 p.m.
+ * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
+ * Last modified on 09-07-2021 03:32 p.m.
  *
  * MIT License
  *
@@ -26,18 +26,19 @@
  * SOFTWARE.
  */
 
-rootProject.name = "PolyhedralBot"
+package com.solostudios.polybot.permission
 
-pluginManagement {
-    plugins {
-        @Suppress("PropertyName", "LocalVariableName")
-        val KOTLIN_VERSION: String by settings
-        kotlin("jvm") version KOTLIN_VERSION
-        kotlin("plugin.serialization").version(KOTLIN_VERSION)
-        id("ca.cutterslade.analyze") version "1.6.0"
-    }
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
+import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
+import cloud.commandframework.execution.preprocessor.CommandPreprocessor
+
+class UserPermissionPostprocessor<T> : CommandPreprocessor<T> {
+    /**
+     * Accept the context. Call [.interrupt] to interrupt the entire pipeline and immediately
+     * return [State.ACCEPTED] to the sink
+     *
+     * @param context Context to consume
+     */
+    override fun accept(context: CommandPreprocessingContext<T>) {
+    
     }
 }

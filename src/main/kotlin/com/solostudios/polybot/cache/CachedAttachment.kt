@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 14-06-2021 06:22 p.m.
+ * The file CachedAttachment.kt is part of PolyhedralBot
+ * Last modified on 01-07-2021 03:20 p.m.
  *
  * MIT License
  *
@@ -26,18 +26,43 @@
  * SOFTWARE.
  */
 
-rootProject.name = "PolyhedralBot"
+package com.solostudios.polybot.cache
 
-pluginManagement {
-    plugins {
-        @Suppress("PropertyName", "LocalVariableName")
-        val KOTLIN_VERSION: String by settings
-        kotlin("jvm") version KOTLIN_VERSION
-        kotlin("plugin.serialization").version(KOTLIN_VERSION)
-        id("ca.cutterslade.analyze") version "1.6.0"
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class CachedAttachment(
+        val id: Long,
+        val fileName: String,
+        val attachmentUrl: String,
+        val byteArray: ByteArray
+                           ) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other)
+            return true
+        if (javaClass != other?.javaClass)
+            return false
+        
+        other as CachedAttachment
+        
+        if (id != other.id)
+            return false
+        if (fileName != other.fileName)
+            return false
+        if (!byteArray.contentEquals(other.byteArray))
+            return false
+        
+        return true
     }
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
+    
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + fileName.hashCode()
+        result = 31 * result + byteArray.contentHashCode()
+        return result
+    }
+    
+    override fun toString(): String {
+        return "CachedAttachment(id=$id, fileName='$fileName', byteArray=binary data...)"
     }
 }

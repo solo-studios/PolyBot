@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyExceptionHandler.kt is part of PolyhedralBot
- * Last modified on 10-06-2021 11:13 a.m.
+ * Last modified on 30-06-2021 11:43 p.m.
  *
  * MIT License
  *
@@ -40,7 +40,7 @@ import cloud.commandframework.exceptions.NoSuchCommandException
 import com.solostudios.polybot.event.MessageEvent
 import java.util.function.BiConsumer
 import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.info
+import org.slf4j.kotlin.warn
 import kotlin.reflect.KClass
 
 class PolyExceptionHandler(val manager: CommandManager<MessageEvent>) {
@@ -85,10 +85,9 @@ class PolyExceptionHandler(val manager: CommandManager<MessageEvent>) {
     
     private fun handleCommandExecution(event: MessageEvent, exception: CommandExecutionException) {
         // TODO: 2021-06-08 Add flag to show stack trace
-        logger.info { "test" }
-        logger.info(exception.commandContext?.asMap()) { "Here is the context map: {}" }
         event.event.message.replyFormat("An internal error occurred while attempting to perform this command.%n%s",
                                         if (exception.cause != null) exception.cause!!.message else exception.message).queue()
+        logger.warn(exception) { "Error occurred while attempting to execute command." }
     }
     
     private fun handleNoSuchCommand(event: MessageEvent, exception: NoSuchCommandException) {

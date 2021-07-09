@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file TestCommand.kt is part of PolyhedralBot
- * Last modified on 09-06-2021 07:54 p.m.
+ * The file ListeningActivity.kt is part of PolyhedralBot
+ * Last modified on 14-06-2021 06:11 p.m.
  *
  * MIT License
  *
@@ -26,31 +26,16 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.commands
+package com.solostudios.polybot.config.impl
 
-import com.jagrosh.jdautilities.command.Command
-import com.jagrosh.jdautilities.command.CommandEvent
-import com.jagrosh.jdautilities.command.annotation.JDACommand
-import net.dv8tion.jda.api.Permission
-import org.slf4j.kotlin.getLogger
+import com.solostudios.polybot.config.BotActivity
+import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.internal.entities.EntityBuilder
 
-@JDACommand.Module("testcmd")
-class TestCommand {
-    private val logger by getLogger()
+class ListeningActivity(name: String, url: String?) : BotActivity(name, url) {
+    override fun getActivity(): Activity = EntityBuilder.createActivity(name, url, Activity.ActivityType.LISTENING)
     
-    @JDACommand(
-            name = ["test"],
-            help = "test 123",
-            guildOnly = false,
-            ownerCommand = true,
-            cooldown = JDACommand.Cooldown(0, scope = Command.CooldownScope.CHANNEL),
-            botPermissions = [Permission.MESSAGE_WRITE],
-            userPermissions = [Permission.MESSAGE_WRITE],
-            useTopicTags = true,
-            category = JDACommand.Category(name = "system", location = Categories::class),
-               )
-    fun testcmd(commandEvent: CommandEvent) {
-        commandEvent.reply("Test 123!")
-        //        commandEvent.err
+    override fun toString(): String {
+        return "ListeningActivity(name=$name, url=$url)"
     }
 }

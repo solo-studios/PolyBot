@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 10-06-2021 04:07 p.m.
+ * Last modified on 09-07-2021 03:32 p.m.
  *
  * MIT License
  *
@@ -29,12 +29,16 @@
 package com.solostudios.polybot.commands
 
 import cloud.commandframework.annotations.CommandMethod
-import com.jagrosh.jdautilities.command.CommandEvent
+import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.event.GuildMessageEvent
+import dev.minn.jda.ktx.Embed
 import java.time.temporal.ChronoUnit
 import net.dv8tion.jda.api.entities.Message
+import org.slf4j.kotlin.getLogger
 
-@Suppress("unused")
-class UtilCommands {
+class UtilCommands(val bot: PolyBot) {
+    private val logger by getLogger()
+    
     @CommandMethod("ping|pong")
     fun ping(message: Message) {
         message.textChannel.sendTyping().queue()
@@ -46,7 +50,48 @@ class UtilCommands {
         }
     }
     
-    fun about(event: CommandEvent) {
+    @CommandMethod("info|polybot|bot|botinfo")
+    fun info(message: Message) {
     
+    }
+    
+    @CommandMethod("serverinfo|server")
+    fun serverInfo(event: GuildMessageEvent) {
+        val embed = Embed {
+            title = "$polydevEmoji Polyhedral Development Discord Server"
+            color = 0x8fd032
+            description = loremIpsum
+            thumbnail = githubImage
+            
+            field {
+                name = "Lorem ipsum"
+                value = loremIpsum
+                inline = false
+            }
+            field {
+                name = "Lorem ipsum"
+                value = loremIpsum
+                inline = false
+            }
+            
+            footer {
+                name = "Requested by ${event.member.effectiveName} (${event.user.name}#${event.user.discriminator})"
+                iconUrl = event.user.avatarUrl
+            }
+        }
+        
+        event.event.message.reply(embed)
+                .mentionRepliedUser(false)
+                .queue()
+    }
+    
+    companion object {
+        const val loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
+                "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." +
+                " Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        const val polydevEmoji = "<:polydev:853123841038352384>"
+        const val githubImage = "https://github.com/PolyhedralDev.png"
     }
 }

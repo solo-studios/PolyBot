@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Extensions.kt is part of PolyhedralBot
- * Last modified on 14-04-2021 04:16 p.m.
+ * Last modified on 02-07-2021 01:33 a.m.
  *
  * MIT License
  *
@@ -103,7 +103,7 @@ inline fun Logger.trace(arg1: Any?, arg2: Any?, crossinline message: () -> Strin
 @JvmSynthetic
 inline fun Logger.trace(vararg arguments: Any?, crossinline message: () -> String) {
     if (isTraceEnabled)
-        trace(message(), arguments)
+        trace(message(), *arguments)
 }
 
 /**
@@ -263,7 +263,7 @@ inline fun Logger.debug(arg1: Any?, arg2: Any?, crossinline message: () -> Strin
 @JvmSynthetic
 inline fun Logger.debug(vararg arguments: Any?, crossinline message: () -> String) {
     if (isDebugEnabled)
-        debug(message(), arguments)
+        debug(message(), *arguments)
 }
 
 /**
@@ -417,7 +417,7 @@ inline fun Logger.info(arg1: Any?, arg2: Any?, crossinline message: () -> String
 @JvmSynthetic
 inline fun Logger.info(vararg arguments: Any?, crossinline message: () -> String) {
     if (isInfoEnabled)
-        info(message(), arguments)
+        info(message(), *arguments)
 }
 
 /**
@@ -552,7 +552,7 @@ inline fun Logger.warn(arg: Any?, crossinline message: () -> String) {
 @JvmSynthetic
 inline fun Logger.warn(vararg arguments: Any?, crossinline message: () -> String) {
     if (isWarnEnabled)
-        warn(message(), arguments)
+        warn(message(), *arguments)
 }
 
 /**
@@ -725,7 +725,7 @@ inline fun Logger.error(arg1: Any?, arg2: Any?, crossinline message: () -> Strin
 @JvmSynthetic
 inline fun Logger.error(vararg arguments: Any?, crossinline message: () -> String) {
     if (isErrorEnabled)
-        error(message(), arguments)
+        error(message(), *arguments)
 }
 
 /**

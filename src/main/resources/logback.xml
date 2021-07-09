@@ -3,7 +3,7 @@
   ~ Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
   ~
   ~ The file logback.xml is part of PolyhedralBot
-  ~ Last modified on 09-04-2021 03:30 p.m.
+  ~ Last modified on 09-07-2021 03:32 p.m.
   ~
   ~ MIT License
   ~
@@ -35,7 +35,7 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <withJansi>true</withJansi>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>DEBUG</level>
+            <level>INFO</level>
         </filter>
         <encoder>
             <!--            <pattern>%d %highlight(%-5level) [%thread] %class - %highlight(%msg %n) %xEx</pattern>-->
@@ -51,7 +51,7 @@
     </appender>
     <property name="LOG_DIR" value="logs/"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/region-generator.log</file>
+        <file>${LOG_DIR}/polybot.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- hourly rollover -->
             <fileNamePattern>${LOG_DIR}/polybot.%d{yyyy-MM-dd_HH}.%i.log.gz</fileNamePattern>
@@ -64,11 +64,11 @@
             <pattern>%d %-20([%.-25(%thread)]) %-5level %-60logger{60} - %msg{}%n{}%ex{full, DISPLAY_EX_EVAL}</pattern>
         </encoder>
     </appender>
-    <root level="TRACE">
+    <root level="DEBUG">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>
-    <!--    <logger level="warn">-->
+    <!--    <logger level="INFO">-->
     <!--        <appender-ref ref="STDOUT"/>-->
     <!--    </logger>-->
 </configuration>

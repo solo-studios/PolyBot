@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 14-06-2021 06:22 p.m.
+ * The file MessageCacheListener.kt is part of PolyhedralBot
+ * Last modified on 09-07-2021 03:32 p.m.
  *
  * MIT License
  *
@@ -26,18 +26,23 @@
  * SOFTWARE.
  */
 
-rootProject.name = "PolyhedralBot"
+package com.solostudios.polybot.cache
 
-pluginManagement {
-    plugins {
-        @Suppress("PropertyName", "LocalVariableName")
-        val KOTLIN_VERSION: String by settings
-        kotlin("jvm") version KOTLIN_VERSION
-        kotlin("plugin.serialization").version(KOTLIN_VERSION)
-        id("ca.cutterslade.analyze") version "1.6.0"
+import com.solostudios.polybot.PolyBot
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent
+import net.dv8tion.jda.api.hooks.ListenerAdapter
+import org.slf4j.kotlin.getLogger
+
+class MessageCacheListener(val bot: PolyBot) : ListenerAdapter() {
+    val logger by getLogger()
+    val messageCache: MessageCache = bot.cacheManager.messageCache
+    
+    override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
+        messageCache.addMessage(event.message)
     }
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
+    
+    override fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
+    
     }
 }

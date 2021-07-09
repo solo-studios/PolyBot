@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file Categories.kt is part of PolyhedralBot
- * Last modified on 21-04-2021 03:05 p.m.
+ * The file MaliciousDomains.kt is part of PolyhedralBot
+ * Last modified on 09-07-2021 03:32 p.m.
  *
  * MIT License
  *
@@ -26,26 +26,12 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.commands
+package com.solostudios.polybot.config.automod
 
-import com.jagrosh.jdautilities.command.Command
-
-object Categories {
-    @JvmField
-    val help = Command.Category("help")
-    
-    @JvmField
-    val system = Command.Category("system")
-    
-    @JvmField
-    val administration = Command.Category("administration")
-    
-    @JvmField
-    val utility = Command.Category("utility")
-    
-    @JvmField
-    val search = Command.Category("search")
-    
-    @JvmField
-    val code = Command.Category("code")
-}
+data class MaliciousDomains(
+        val ipLoggers: List<String>,
+        val adReferrals: List<String>,
+        val referrals: List<String>,
+        val cryptoMiners: List<String>,
+        val scamSites: List<String>,
+                           )

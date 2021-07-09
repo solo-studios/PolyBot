@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 14-06-2021 06:22 p.m.
+ * The file builder.kt is part of PolyhedralBot
+ * Last modified on 12-06-2021 11:25 p.m.
  *
  * MIT License
  *
@@ -26,18 +26,18 @@
  * SOFTWARE.
  */
 
-rootProject.name = "PolyhedralBot"
+@file:Suppress("FunctionName")
 
-pluginManagement {
-    plugins {
-        @Suppress("PropertyName", "LocalVariableName")
-        val KOTLIN_VERSION: String by settings
-        kotlin("jvm") version KOTLIN_VERSION
-        kotlin("plugin.serialization").version(KOTLIN_VERSION)
-        id("ca.cutterslade.analyze") version "1.6.0"
-    }
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+package org.ehcache
+
+//inline fun <T : CacheManager> CacheManager(
+//    builder: InlineCacheManager<T>.() -> Unit = {}
+//                                          ): T {
+//
+//}
+//
+//class InlineCacheManager<T : CacheManager>(val builder: CacheManagerBuilder<T>) {
+//    fun build() = builder.build()
+//
+//    fun build(init: Boolean) = builder.build(init)
+//}

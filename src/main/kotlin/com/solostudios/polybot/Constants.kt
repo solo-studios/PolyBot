@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Constants.kt is part of PolyhedralBot
- * Last modified on 09-06-2021 07:35 p.m.
+ * Last modified on 14-06-2021 01:36 p.m.
  *
  * MIT License
  *
@@ -37,26 +37,26 @@ object Constants {
     
     @Language("RegExp") // why are there so many discord domains.... bruh.
     private const val discordDomainRegex =
-        """(?:(?:https|http):\/\/)?(?:(?:ptb|canary|staging)\.)?(?:discord\.(?:com?|gg)|discordapp\.com|watchanimeattheoffice\.com|dis\.gd)"""
+        """(?:https?:\/\/)?(?:\w+\.)?(?:discord\.(?:com?|gg)|discordapp\.com|watchanimeattheoffice\.com|dis\.gd)"""
     
     @Language("RegExp")
     private const val messageLinkRegexString =
-        """${discordDomainRegex}\/channels\/(?<guild>\d{15,21})\/(?<channel>\d{15,21})\/(?<message>\d{15,21})\/?"""
+        """${discordDomainRegex}\/channels\/(?<guild>\d+)\/(?<channel>\d+)\/(?<message>\d+)\/?(?:\?\S*|#\S*)?"""
     
     @Language("RegExp")
-    private const val inviteRegexString = """${discordDomainRegex}(?:\/invite)?\/(?<invite>[a-zA-Z\d-]+)"""
+    private const val inviteRegexString = """${discordDomainRegex}(?:\/invite)?\/(?<invite>[a-z0-9-]+)(?:\?\S*)?(?:#\S*)?"""
     
     @Language("RegExp")
     private const val discordVanityDomainRegex =
-        """(?:${discordDomainRegex}|(?:https:\/\/|http:\/\/)?(?:dsc\.gg|invite\.gg|discordvanity\.com|discord\.(?:plus|link|io|me|li|st)))"""
+        """(?:${discordDomainRegex}|(?:https?:\/\/)?(?:dsc\.gg|invite\.gg|discordvanity\.com|discord\.(?:plus|link|io|me|li|st)))"""
     
     @Language("RegExp")
     const val allInviteRegexString =
-        """(?:${inviteRegexString}|${discordVanityDomainRegex}\/[\w\.\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\%\=\-]+)"""
+        """(?:${inviteRegexString}|${discordVanityDomainRegex}\/[a-zA-Z\d\.\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\%\=\-]+)"""
     
     
     @JvmField
-    val messageLinkRegex = Regex(messageLinkRegexString)
+    val messageLinkRegex = Regex(messageLinkRegexString, RegexOption.IGNORE_CASE)
     
     @JvmField
     val inviteRegex = Regex(inviteRegexString)

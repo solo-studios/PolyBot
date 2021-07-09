@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 10-06-2021 04:49 p.m.
+ * Last modified on 07-07-2021 02:03 a.m.
  *
  * MIT License
  *
@@ -70,11 +70,16 @@ val LOGBACK_VERSION: String by project
 @Suppress("PropertyName")
 val SLF4J_VERSION: String by project
 
+@Suppress("PropertyName")
+val JDA_KTX_VERSION: String by project
+
 plugins {
     java
+    application
     kotlin("jvm")
     kotlin("plugin.serialization")
-    
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.5.20"
+    //    id("ca.cutterslade.analyze")
 }
 
 group = "com.solostudios.polyhedralbot"
@@ -83,6 +88,22 @@ version = "1.0.0"
 repositories {
     mavenCentral()
     jcenter()
+    maven {
+        name = "jitpack"
+        url = uri("https://jitpack.io/")
+    }
+    maven {
+        name = "incendo-snapshots"
+        url = uri("https://repo.incendo.org/content/repositories/snapshots")
+    }
+    maven {
+        name = "dv8tion-repo"
+        url = uri("https://m2.dv8tion.net/releases")
+    }
+}
+
+application {
+    mainClass.set("com.solostudios.polybot.LauncherKt")
 }
 
 dependencies {
@@ -90,7 +111,11 @@ dependencies {
     api(kotlin("stdlib"))
     
     // JDA
-    api("net.dv8tion:JDA:$JDA_VERSION")
+    api("net.dv8tion:JDA:$JDA_VERSION") {
+        exclude(module = "opus-java")
+    }
+    
+    implementation("org.jetbrains:annotations:21.0.1")
     
     // JDA utilities
     api("com.jagrosh:jda-utilities-commons:$JDA_UTILITIES_VERSION")
@@ -104,11 +129,12 @@ dependencies {
     
     api("org.jetbrains.kotlinx:kotlinx-serialization-core:$KOTLINX_SERIALIZATION_VERSION")
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_VERSION")
-    api("org.jetbrains.kotlinx:kotlinx-serialization-hocon:$KOTLINX_SERIALIZATION_VERSION")
     
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$KOTLINX_COROUTINES_VERSION")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
-    //    api("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.5.0")
+    //    api("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$KOTLINX_COROUTINES_VERSION")
+    
+    api("com.esotericsoftware:kryo:5.1.1")
     
     // Reflections
     api("org.reflections:reflections:$REFLECTIONS_VERSION")
@@ -135,6 +161,10 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION")
     api("org.honton.chas.hocon:jackson-dataformat-hocon:1.1.1")
     
+    api("io.github.reactivecircus.cache4k:cache4k:0.2.0")
+    
+    api("org.ehcache:ehcache:3.8.1")
+    
     // Guava
     api("com.google.guava:guava:$GUAVA_VERSION")
     
@@ -147,6 +177,8 @@ dependencies {
     api("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
     api("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
     
+    api("com.github.minndevelopment:jda-ktx:${JDA_KTX_VERSION}")
+    
     // Testing (switch to JUnit 5)
     //    testapi("junit:junit:4.13.1")
     //    testapi("org.hamcrest:hamcrest-core:1.3")
@@ -158,6 +190,11 @@ dependencies {
     
     // idk
     //    api(kotlin("script-runtime"))
+}
+
+noArg {
+    invokeInitializers = true
+    annotation("kotlinx.serialization.Serializable")
 }
 
 tasks.withType<KotlinCompile>().configureEach {
