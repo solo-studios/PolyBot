@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 08-07-2021 02:15 a.m.
+ * Last modified on 09-07-2021 05:17 p.m.
  *
  * MIT License
  *
@@ -51,6 +51,8 @@ import com.solostudios.polybot.util.or
 import com.solostudios.polybot.util.parse
 import com.solostudios.polybot.util.registerInjector
 import com.solostudios.polybot.util.registerParserSupplier
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 import net.dv8tion.jda.DefaultJDA
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
@@ -72,6 +74,10 @@ class PolyBot(val config: PolyConfig) {
     val botConfig: BotConfig = config.botConfig
     
     val cacheManager = CacheManager(this@PolyBot)
+    
+    val threadPool: ScheduledExecutorService = Executors.newScheduledThreadPool(12).apply {
+    
+    }
     
     val jda = DefaultJDA(botConfig.token) {
         disableCache = listOf(CacheFlag.ACTIVITY,
