@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-07-2021 05:00 p.m.
+ * Last modified on 09-07-2021 06:03 p.m.
  *
  * MIT License
  *
@@ -26,6 +26,8 @@
  * SOFTWARE.
  */
 
+@file:Suppress("SuspiciousCollectionReassignment")
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("PropertyName")
@@ -42,9 +44,6 @@ val KOTLINX_SERIALIZATION_VERSION: String by project
 
 @Suppress("PropertyName")
 val KOTLINX_COROUTINES_VERSION: String by project
-
-@Suppress("PropertyName")
-val KOTLINX_DATE_TIME: String by project
 
 @Suppress("PropertyName")
 val KOTLIN_VERSION: String by project
@@ -142,8 +141,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
     //    api("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$KOTLINX_COROUTINES_VERSION")
     
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$KOTLINX_DATE_TIME")
-    
     implementation("com.esotericsoftware:kryo:5.1.1")
     
     // Reflections
@@ -212,6 +209,7 @@ tasks.withType<KotlinCompile>().configureEach {
         jvmTarget = JavaVersion.VERSION_11.toString()
         apiVersion = "1.5"
         languageVersion = "1.5"
+        freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
     }
 }
 

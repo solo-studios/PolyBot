@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 05:17 p.m.
+ * Last modified on 09-07-2021 05:55 p.m.
  *
  * MIT License
  *
@@ -46,6 +46,7 @@ import com.solostudios.polybot.event.PrivateMessageEvent
 import com.solostudios.polybot.logging.LoggingListener
 import com.solostudios.polybot.parser.MemberParser
 import com.solostudios.polybot.util.AnnotationParser
+import com.solostudios.polybot.util.fixedRate
 import com.solostudios.polybot.util.onlineStatus
 import com.solostudios.polybot.util.or
 import com.solostudios.polybot.util.parse
@@ -55,7 +56,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import net.dv8tion.jda.DefaultJDA
 import net.dv8tion.jda.api.OnlineStatus
-import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.ChunkingFilter
@@ -63,10 +63,14 @@ import net.dv8tion.jda.api.utils.Compression
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.info
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator as CommandCoordinator
 import cloud.commandframework.jda.JDA4CommandManager as CommandManager
 import com.solostudios.polybot.JDAMessageCommandPreprocessor as MessagePreprocessor
 
+@ExperimentalTime
 @Suppress("UNUSED_ANONYMOUS_PARAMETER", "MemberVisibilityCanBePrivate", "unused")
 class PolyBot(val config: PolyConfig) {
     private val logger by getLogger()
@@ -74,10 +78,6 @@ class PolyBot(val config: PolyConfig) {
     val botConfig: BotConfig = config.botConfig
     
     val cacheManager = CacheManager(this@PolyBot)
-    
-    val threadPool: ScheduledExecutorService = Executors.newScheduledThreadPool(12).apply {
-    
-    }
     
     val jda = DefaultJDA(botConfig.token) {
         disableCache = listOf(CacheFlag.ACTIVITY,
@@ -113,10 +113,16 @@ class PolyBot(val config: PolyConfig) {
         
         eventListeners += LoggingListener(this@PolyBot)
         eventListeners += MessageCacheListener(this@PolyBot)
-    }.apply {
-        presence.apply {
-            onlineStatus = OnlineStatus.ONLINE
-            activity = Activity.streaming("Terra", "https://github.com/PolyhedralDev/Terra")
+    }
+    
+    val threadPool: ScheduledExecutorService = Executors.newScheduledThreadPool(12).apply {
+        fixedRate(Duration.milliseconds(0), Duration.minutes(5)) {
+            jda.presence.apply {
+                val botActivity = botConfig.activities.random()
+                logger.info(botActivity) { "Applying {} as the status." }
+                onlineStatus = OnlineStatus.ONLINE
+                activity = botActivity.getActivity()
+            }
         }
     }
     

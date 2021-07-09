@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotActivity.kt is part of PolyhedralBot
- * Last modified on 14-06-2021 02:51 p.m.
+ * Last modified on 09-07-2021 05:39 p.m.
  *
  * MIT License
  *
@@ -44,7 +44,7 @@ import net.dv8tion.jda.api.entities.Activity
         property = "type"
              )
 @JsonSubTypes(
-        JsonSubTypes.Type(value = DefaultActivity::class, name = "default"),
+        JsonSubTypes.Type(value = DefaultActivity::class, names = ["default", "playing"]),
         JsonSubTypes.Type(value = WatchingActivity::class, name = "watching"),
         JsonSubTypes.Type(value = ListeningActivity::class, name = "listening"),
         JsonSubTypes.Type(value = StreamingActivity::class, name = "streaming"),
