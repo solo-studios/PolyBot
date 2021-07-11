@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 04-07-2021 11:00 p.m.
+ * Last modified on 11-07-2021 01:55 a.m.
  *
  * MIT License
  *
@@ -37,6 +37,7 @@ import com.solostudios.polybot.PolyBot
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.User
+import org.slf4j.kotlin.debug
 import org.slf4j.kotlin.getLogger
 import org.slf4j.kotlin.info
 
@@ -49,9 +50,25 @@ class ModerationCommands(val bot: PolyBot) {
                 member: Member,
                 @Argument("reason")
                 @Greedy
-                reason: String?) {
-        logger.info(message.member?.effectiveName, member.effectiveName, reason) { "User {} ran command to ban {} for '{}'" }
-        message.replyFormat("User %s ran command to ban %s for '%s'", message.member?.effectiveName, member.effectiveName, reason).queue()
+                reason: String?,
+                @Flag("days", aliases = ["d"], description = "The amount of days to delete")
+                days: Int?) {
+        val realReason = if (reason != null) "for \"$reason\"." else "no reason provided."
+        
+        member.ban(days ?: 3)
+                .reason(realReason)
+                .queue()
+        
+        message.reply("User ${member.user.name}#${member.user.discriminator} has been banned from the server, and ${days ?: 3} days of messages have been deleted, $realReason")
+                .queue()
+        
+        // log to console
+        logger.debug(member.user.name,
+                     member.user.discriminator,
+                     member.guild.name,
+                     days ?: 3,
+                     realReason) { "User {}#{} has been banned from the server {}, and {} days of messages have been deleted. {}" }
+        // TODO: 2021-07-11 dispatch ban event
     }
     
     @CommandPermission
@@ -61,8 +78,20 @@ class ModerationCommands(val bot: PolyBot) {
                    member: Member,
                    @Argument("reason")
                    reason: String?) {
-        logger.info(message.member?.effectiveName, member.effectiveName, reason) { "User {} ran command to kick {} for '{}'" }
-        message.replyFormat("User %s ran command to kick %s for '%s'", message.member?.effectiveName, member.effectiveName, reason).queue()
+        val realReason = if (reason != null) "for \"$reason\"." else "no reason provided."
+    
+        member.kick(realReason)
+                .queue()
+    
+        message.reply("User ${member.user.name}#${member.user.discriminator} has been kicked from the server, $realReason")
+                .queue()
+    
+        // log to console
+        logger.debug(member.user.name,
+                     member.user.discriminator,
+                     member.guild.name,
+                     realReason) { "User {}#{} has been kick from the server {}, {}" }
+        // TODO: 2021-07-11 dispatch kick event
     }
     
     @CommandMethod("purge|clear|clean <amount>")
