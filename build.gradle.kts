@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-07-2021 06:03 p.m.
+ * Last modified on 10-07-2021 02:39 p.m.
  *
  * MIT License
  *
@@ -52,6 +52,9 @@ val KOTLIN_VERSION: String by project
 val JACKSON_VERSION: String by project
 
 @Suppress("PropertyName")
+val JACKSON_HOCON_VERSION: String by project
+
+@Suppress("PropertyName")
 val FUEL_VERSION: String by project
 
 @Suppress("PropertyName")
@@ -74,6 +77,18 @@ val SLF4J_VERSION: String by project
 
 @Suppress("PropertyName")
 val JDA_KTX_VERSION: String by project
+
+@Suppress("PropertyName")
+val JETBRAINS_ANNOTATIONS_VERSION: String by project
+
+@Suppress("PropertyName")
+val KRYO_VERSION: String by project
+
+@Suppress("PropertyName")
+val EHCACHE_VERSION: String by project
+
+@Suppress("PropertyName")
+val CACHE_4K_VERSION: String by project
 
 plugins {
     java
@@ -122,7 +137,7 @@ dependencies {
         exclude(module = "opus-java")
     }
     
-    implementation("org.jetbrains:annotations:21.0.1")
+    implementation("org.jetbrains:annotations:$JETBRAINS_ANNOTATIONS_VERSION")
     
     // JDA utilities
     implementation("com.jagrosh:jda-utilities-commons:$JDA_UTILITIES_VERSION")
@@ -141,9 +156,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
     //    api("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$KOTLINX_COROUTINES_VERSION")
     
-    implementation("com.esotericsoftware:kryo:5.1.1")
+    implementation("com.esotericsoftware:kryo:$KRYO_VERSION")
     
-    // Reflections
+    // Reflections //11.15.1.2318
     implementation("org.reflections:reflections:$REFLECTIONS_VERSION")
     
     // Logging
@@ -166,11 +181,11 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core:$JACKSON_VERSION")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$JACKSON_VERSION")
     implementation("com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION")
-    implementation("org.honton.chas.hocon:jackson-dataformat-hocon:1.1.1")
+    implementation("org.honton.chas.hocon:jackson-dataformat-hocon:$JACKSON_HOCON_VERSION")
     
-    implementation("io.github.reactivecircus.cache4k:cache4k:0.2.0")
+    implementation("io.github.reactivecircus.cache4k:cache4k:$CACHE_4K_VERSION")
     
-    implementation("org.ehcache:ehcache:3.8.1")
+    implementation("org.ehcache:ehcache:$EHCACHE_VERSION")
     
     // Guava
     implementation("com.google.guava:guava:$GUAVA_VERSION")

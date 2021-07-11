@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 14-06-2021 07:27 p.m.
+ * Last modified on 10-07-2021 02:44 p.m.
  *
  * MIT License
  *
@@ -42,7 +42,7 @@ import kotlin.system.exitProcess
 
 private val logger by getLogger()
 
-fun main(args: Array<String>) {
+fun main() {
     
     val config = readConfig("polybot.conf")
     

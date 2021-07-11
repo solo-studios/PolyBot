@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ConcurrencyUtil.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 05:32 p.m.
+ * Last modified on 11-07-2021 12:44 a.m.
  *
  * MIT License
  *
@@ -32,7 +32,6 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
-import kotlinx.datetime.Clock
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -60,7 +59,6 @@ fun ScheduledExecutorService.scheduleAtFixedRate(initialDelay: Long,
 
 @ExperimentalTime
 fun ScheduledExecutorService.scheduleAtFixedRate(initialDelay: Duration, period: Duration, command: () -> Unit): ScheduledFuture<*> {
-    val now = Clock.System.now()
     return scheduleAtFixedRate(initialDelay.inWholeMilliseconds, period.inWholeMilliseconds, TimeUnit.MILLISECONDS, command)
 }
 

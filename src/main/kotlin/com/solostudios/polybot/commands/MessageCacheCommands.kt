@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 01-07-2021 02:30 a.m.
+ * Last modified on 10-07-2021 02:46 p.m.
  *
  * MIT License
  *
@@ -86,7 +86,7 @@ class MessageCacheCommands(val bot: PolyBot) {
             //                }
             //            }
             
-            message.reply(embed)
+            message.replyEmbeds(embed)
                     .also { msg ->
                         for (attachment in cachedMessage.attachments) {
                             val attachment = bot.cacheManager.messageCache.attachmentCache[attachment]

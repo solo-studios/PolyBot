@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 05:55 p.m.
+ * Last modified on 10-07-2021 02:44 p.m.
  *
  * MIT License
  *
@@ -148,7 +148,7 @@ class PolyBot(val config: PolyConfig) {
               MessageCacheCommands(this@PolyBot))
     }
     
-    private fun botPrefix(event: MessageEvent): String = botConfig.prefix
+    private fun botPrefix(event: MessageEvent) = botConfig.prefix
 }
 
 private fun permissionCheck(event: MessageEvent, permission: String): Boolean = true
