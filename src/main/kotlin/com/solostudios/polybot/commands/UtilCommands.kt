@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 11-07-2021 01:19 a.m.
  *
  * MIT License
  *
@@ -34,6 +34,7 @@ import com.solostudios.polybot.event.GuildMessageEvent
 import dev.minn.jda.ktx.Embed
 import java.time.temporal.ChronoUnit
 import net.dv8tion.jda.api.entities.Message
+import org.intellij.lang.annotations.Language
 import org.slf4j.kotlin.getLogger
 
 class UtilCommands(val bot: PolyBot) {
@@ -60,38 +61,79 @@ class UtilCommands(val bot: PolyBot) {
         val embed = Embed {
             title = "$polydevEmoji Polyhedral Development Discord Server"
             color = 0x8fd032
-            description = loremIpsum
+            description = serverDescription
             thumbnail = githubImage
-            
+    
             field {
-                name = "Lorem ipsum"
-                value = loremIpsum
+                name = "Who We Are"
+                value = whoWeAreDescription
                 inline = false
             }
+    
             field {
-                name = "Lorem ipsum"
-                value = loremIpsum
+                name = "Rules"
+                value = rulesDescription
                 inline = false
             }
-            
+    
+            field {
+                name = "Useful Links"
+                value = usefulLinks
+                inline = false
+            }
+    
+            field {
+                name = "Getting Support"
+                value = supportDescription
+                inline = false
+            }
+    
             footer {
                 name = "Requested by ${event.member.effectiveName} (${event.user.name}#${event.user.discriminator})"
                 iconUrl = event.user.avatarUrl
             }
         }
-        
-        event.event.message.reply(embed)
+    
+        event.event.message.replyEmbeds(embed)
                 .mentionRepliedUser(false)
                 .queue()
     }
     
     companion object {
-        const val loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
-                "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." +
-                " Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
-                "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         const val polydevEmoji = "<:polydev:853123841038352384>"
         const val githubImage = "https://github.com/PolyhedralDev.png"
+        const val serverDescription = "Welcome to the **Polyhedral Development** Discord server!"
+        const val whoWeAreDescription = "Polyhedral Development is an open source initiative aimed at creating awesome projects " +
+                "to benefit everyone. We focus entirely on developing things for the community, rather than building software to profit.\n" +
+                "Currently our main focus is on the Terra World Generator, and minor projects surrounding it."
+    
+        @Language("Markdown")
+        val usefulLinks = """
+            [Discord Invite Link](https://discord.gg/PXUEbbF)
+            [Polyhedral Development GitHub Organization](https://github.com/PolyhedralDev/)
+            [Terra Generator Main Repository](https://github.com/PolyhedralDev/Terra)
+            [dfsek's Patreon](https://www.patreon.com/dfsek)
+        """.trimIndent()
+    
+        @Language("Markdown")
+        val supportDescription = """
+            **Asking for help**
+            When asking for help, do not expect someone to always answer you instantly. You must wait for people to be available to answer.
+            Do not ping admins, developers, or other users without valid reason. We will see your message without a ping.
+            **Before asking**
+            Before asking for help, make sure you have the following:
+            - Game logs
+            - Steps to cause the issue
+            - A list of any mods/plugins you have installed
+            **What channel to use**
+            - For Fabric use <#814334748222160907>
+            - For Bukkit/Spigot/Paper use <#765260067812540416>
+            - For Forge use <#838226038751232010>
+        """.trimIndent()
+    
+        @Language("Markdown")
+        val rulesDescription = """
+            You will find a list of rules in <#715684015989981304> (shocking, I know)
+        """.trimIndent()
     }
 }
