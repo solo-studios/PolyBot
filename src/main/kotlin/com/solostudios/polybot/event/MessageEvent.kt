@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageEvent.kt is part of PolyhedralBot
- * Last modified on 10-06-2021 04:07 p.m.
+ * Last modified on 13-07-2021 11:47 p.m.
  *
  * MIT License
  *
@@ -28,12 +28,14 @@
 
 package com.solostudios.polybot.event
 
+import cloud.commandframework.jda.JDACommandSender
 import net.dv8tion.jda.api.entities.MessageChannel
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 open class MessageEvent(
-    val event: MessageReceivedEvent,
-    val user: User,
-    val channel: MessageChannel,
+        open val sender: JDACommandSender,
+        open val event: MessageReceivedEvent,
+        open val user: User,
+        open val channel: MessageChannel,
                        )

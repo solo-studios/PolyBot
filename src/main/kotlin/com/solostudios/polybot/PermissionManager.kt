@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ModerationManager.kt is part of PolyhedralBot
- * Last modified on 13-07-2021 11:49 p.m.
+ * The file PermissionManager.kt is part of PolyhedralBot
+ * Last modified on 12-07-2021 04:05 p.m.
  *
  * MIT License
  *
@@ -28,4 +28,10 @@
 
 package com.solostudios.polybot
 
-class ModerationManager
+import com.solostudios.polybot.event.MessageEvent
+
+class PermissionManager(bot: PolyBot) {
+    fun permissionCheck(event: MessageEvent, permission: String): Boolean {
+        return true
+    }
+}

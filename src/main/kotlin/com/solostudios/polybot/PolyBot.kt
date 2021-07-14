@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 10-07-2021 02:44 p.m.
+ * Last modified on 13-07-2021 11:48 p.m.
  *
  * MIT License
  *
@@ -29,20 +29,15 @@
 package com.solostudios.polybot
 
 import cloud.commandframework.annotations.AnnotationParser
-import cloud.commandframework.jda.JDACommandSender
-import cloud.commandframework.jda.JDAGuildSender
-import cloud.commandframework.jda.JDAPrivateSender
 import cloud.commandframework.meta.SimpleCommandMeta
 import com.solostudios.polybot.cache.CacheManager
 import com.solostudios.polybot.cache.MessageCacheListener
 import com.solostudios.polybot.commands.MessageCacheCommands
 import com.solostudios.polybot.commands.ModerationCommands
 import com.solostudios.polybot.commands.UtilCommands
-import com.solostudios.polybot.config.BotConfig
 import com.solostudios.polybot.config.PolyConfig
-import com.solostudios.polybot.event.GuildMessageEvent
+import com.solostudios.polybot.event.EventMapper
 import com.solostudios.polybot.event.MessageEvent
-import com.solostudios.polybot.event.PrivateMessageEvent
 import com.solostudios.polybot.logging.LoggingListener
 import com.solostudios.polybot.parser.MemberParser
 import com.solostudios.polybot.util.AnnotationParser
@@ -75,7 +70,7 @@ import com.solostudios.polybot.JDAMessageCommandPreprocessor as MessagePreproces
 class PolyBot(val config: PolyConfig) {
     private val logger by getLogger()
     
-    val botConfig: BotConfig = config.botConfig
+    val botConfig = config.botConfig
     
     val cacheManager = CacheManager(this@PolyBot)
     
@@ -115,7 +110,7 @@ class PolyBot(val config: PolyConfig) {
         eventListeners += MessageCacheListener(this@PolyBot)
     }
     
-    val threadPool: ScheduledExecutorService = Executors.newScheduledThreadPool(12).apply {
+    val scheduledThreadPool: ScheduledExecutorService = Executors.newScheduledThreadPool(12).apply {
         fixedRate(Duration.milliseconds(0), Duration.minutes(5)) {
             jda.presence.apply {
                 val botActivity = botConfig.activities.random()
@@ -126,11 +121,16 @@ class PolyBot(val config: PolyConfig) {
         }
     }
     
-    private val cmdCoordinator = CommandCoordinator.newBuilder<MessageEvent>()
-            .withAsynchronousParsing()
-            .build()
+    val permissionManager = PermissionManager(this@PolyBot)
     
-    val commandManager = CommandManager(jda, ::botPrefix, ::permissionCheck, cmdCoordinator, ::senderMapper, ::reverseSenderMapper).apply {
+    val commandManager = CommandManager(jda,
+                                        this::botPrefix,
+                                        permissionManager::permissionCheck,
+                                        CommandCoordinator.newBuilder<MessageEvent>()
+                                                .withAsynchronousParsing()
+                                                .build(),
+                                        EventMapper::senderToMessageEvent,
+                                        EventMapper::messageEventToSender).apply {
         parserRegistry.registerParserSupplier { MemberParser() }
         
         registerCommandPreProcessor(MessagePreprocessor(this))
@@ -150,17 +150,3 @@ class PolyBot(val config: PolyConfig) {
     
     private fun botPrefix(event: MessageEvent) = botConfig.prefix
 }
-
-private fun permissionCheck(event: MessageEvent, permission: String): Boolean = true
-
-private fun senderMapper(sender: JDACommandSender): MessageEvent {
-    val event = sender.event.get()
-    return when (sender::class) {
-        JDAGuildSender::class   -> GuildMessageEvent(event, (sender as JDAGuildSender).member, sender.textChannel)
-        JDAPrivateSender::class -> PrivateMessageEvent(event, (sender as JDAPrivateSender).user, sender.privateChannel)
-        JDACommandSender::class -> MessageEvent(event, sender.user, sender.channel)
-        else                    -> throw UnsupportedOperationException("what.")
-    }
-}
-
-private fun reverseSenderMapper(event: MessageEvent): JDACommandSender = JDACommandSender.of(event.event)

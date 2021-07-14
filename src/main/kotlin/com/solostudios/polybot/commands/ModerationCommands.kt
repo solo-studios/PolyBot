@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 11-07-2021 01:55 a.m.
+ * Last modified on 13-07-2021 11:49 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,6 @@ package com.solostudios.polybot.commands
 
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandMethod
-import cloud.commandframework.annotations.CommandPermission
 import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
@@ -71,7 +70,6 @@ class ModerationCommands(val bot: PolyBot) {
         // TODO: 2021-07-11 dispatch ban event
     }
     
-    @CommandPermission
     @CommandMethod("kick|yeet <member> [reason]")
     fun kickMember(message: Message,
                    @Argument("member")

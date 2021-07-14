@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 13-07-2021 11:49 p.m.
  *
  * MIT License
  *
@@ -28,17 +28,11 @@
 
 package com.solostudios.polybot.permission
 
-import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
-import cloud.commandframework.execution.preprocessor.CommandPreprocessor
+import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext
+import cloud.commandframework.execution.postprocessor.CommandPostprocessor
 
-class UserPermissionPostprocessor<T> : CommandPreprocessor<T> {
-    /**
-     * Accept the context. Call [.interrupt] to interrupt the entire pipeline and immediately
-     * return [State.ACCEPTED] to the sink
-     *
-     * @param context Context to consume
-     */
-    override fun accept(context: CommandPreprocessingContext<T>) {
+class UserPermissionPostprocessor<T> : CommandPostprocessor<T> {
+    override fun accept(context: CommandPostprocessingContext<T>) {
     
     }
 }

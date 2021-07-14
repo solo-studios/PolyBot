@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ModerationManager.kt is part of PolyhedralBot
- * Last modified on 13-07-2021 11:49 p.m.
+ * The file EventMapper.kt is part of PolyhedralBot
+ * Last modified on 13-07-2021 06:44 p.m.
  *
  * MIT License
  *
@@ -26,6 +26,22 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot
+package com.solostudios.polybot.event
 
-class ModerationManager
+import cloud.commandframework.jda.JDACommandSender
+import cloud.commandframework.jda.JDAGuildSender
+import cloud.commandframework.jda.JDAPrivateSender
+
+object EventMapper {
+    fun senderToMessageEvent(sender: JDACommandSender): MessageEvent {
+        val event = sender.event.get()
+        return when (sender::class) {
+            JDAGuildSender::class   -> GuildMessageEvent(sender, event, (sender as JDAGuildSender).member, sender.textChannel)
+            JDAPrivateSender::class -> PrivateMessageEvent(sender, event, (sender as JDAPrivateSender).user, sender.privateChannel)
+            JDACommandSender::class -> MessageEvent(sender, event, sender.user, sender.channel)
+            else                    -> throw UnsupportedOperationException("what.")
+        }
+    }
+    
+    fun messageEventToSender(event: MessageEvent): JDACommandSender = event.sender
+}

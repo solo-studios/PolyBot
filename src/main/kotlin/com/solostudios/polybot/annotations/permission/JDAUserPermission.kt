@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file JDAUserPermission.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 12-07-2021 04:00 p.m.
  *
  * MIT License
  *
@@ -28,4 +28,13 @@
 
 package com.solostudios.polybot.annotations.permission
 
-annotation class JDAUserPermission
+import net.dv8tion.jda.api.Permission
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+@MustBeDocumented
+annotation class JDAUserPermission(
+        vararg val permission: Permission,
+        val ownerOnly: Boolean = false,
+        val coOwnerOnline: Boolean = false,
+                                  )
