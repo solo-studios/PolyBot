@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 13-07-2021 11:48 p.m.
+ * Last modified on 14-07-2021 08:59 p.m.
  *
  * MIT License
  *
@@ -51,6 +51,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import net.dv8tion.jda.DefaultJDA
 import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.ChunkingFilter
@@ -58,7 +60,6 @@ import net.dv8tion.jda.api.utils.Compression
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.info
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator as CommandCoordinator
@@ -102,6 +103,10 @@ class PolyBot(val config: PolyConfig) {
         compression = Compression.ZLIB
         largeThreshold = 250
         
+        status = OnlineStatus.IDLE
+        activity = Activity.watching("Starting up...")
+        
+        
         rawEvents = false
         enableShutdownHook = true
         bulkDeleteSplitting = false
@@ -114,7 +119,6 @@ class PolyBot(val config: PolyConfig) {
         fixedRate(Duration.milliseconds(0), Duration.minutes(5)) {
             jda.presence.apply {
                 val botActivity = botConfig.activities.random()
-                logger.info(botActivity) { "Applying {} as the status." }
                 onlineStatus = OnlineStatus.ONLINE
                 activity = botActivity.getActivity()
             }
@@ -131,7 +135,7 @@ class PolyBot(val config: PolyConfig) {
                                                 .build(),
                                         EventMapper::senderToMessageEvent,
                                         EventMapper::messageEventToSender).apply {
-        parserRegistry.registerParserSupplier { MemberParser() }
+        parserRegistry.registerParserSupplier<Member, MessageEvent> { MemberParser() }
         
         registerCommandPreProcessor(MessagePreprocessor(this))
         
