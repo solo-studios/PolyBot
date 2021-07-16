@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 15-07-2021 10:06 p.m.
+ * Last modified on 16-07-2021 02:19 a.m.
  *
  * MIT License
  *
@@ -30,6 +30,8 @@ package com.solostudios.polybot
 
 import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.meta.SimpleCommandMeta
+import com.solostudios.polybot.annotations.permission.JDABotPermission
+import com.solostudios.polybot.annotations.permission.JDAUserPermission
 import com.solostudios.polybot.cache.CacheManager
 import com.solostudios.polybot.cache.MessageCacheListener
 import com.solostudios.polybot.commands.MessageCacheCommands
@@ -40,6 +42,9 @@ import com.solostudios.polybot.event.EventMapper
 import com.solostudios.polybot.event.MessageEvent
 import com.solostudios.polybot.logging.LoggingListener
 import com.solostudios.polybot.parser.MemberParser
+import com.solostudios.polybot.permission.BotPermissionPostprocessor
+import com.solostudios.polybot.permission.PermissionMetaModifier
+import com.solostudios.polybot.permission.UserPermissionPostprocessor
 import com.solostudios.polybot.util.AnnotationParser
 import com.solostudios.polybot.util.fixedRate
 import com.solostudios.polybot.util.onlineStatus
@@ -96,9 +101,11 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
                                         EventMapper::senderToMessageEvent,
                                         EventMapper::messageEventToSender).apply {
         parserRegistry.registerParserSupplier<Member, MessageEvent> { MemberParser() }
-        
+    
         registerCommandPreProcessor(MessagePreprocessor(this))
-        
+        registerCommandPostProcessor(UserPermissionPostprocessor(this@PolyBot))
+        registerCommandPostProcessor(BotPermissionPostprocessor())
+    
         PolyExceptionHandler(this)
     }
     
@@ -106,6 +113,9 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
         parameterInjectorRegistry.registerInjector { context, _ ->
             context.get<Message>("Message")
         }
+    
+        registerBuilderModifier(JDABotPermission::class.java, PermissionMetaModifier::botPermissionModifier)
+        registerBuilderModifier(JDAUserPermission::class.java, PermissionMetaModifier::userPermissionModifier)
     
         parse(UtilCommands(this@PolyBot),
               ModerationCommands(this@PolyBot),

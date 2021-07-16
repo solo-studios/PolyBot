@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 13-07-2021 11:49 p.m.
+ * Last modified on 16-07-2021 02:12 a.m.
  *
  * MIT License
  *
@@ -30,9 +30,37 @@ package com.solostudios.polybot.permission
 
 import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext
 import cloud.commandframework.execution.postprocessor.CommandPostprocessor
+import cloud.commandframework.services.types.ConsumerService
+import com.solostudios.polybot.PolyBot
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-class UserPermissionPostprocessor<T> : CommandPostprocessor<T> {
-    override fun accept(context: CommandPostprocessingContext<T>) {
-    
+class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T> {
+    override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
+        val context = postprocessingContext.commandContext
+        val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")
+        
+        if (context[CO_OWNER_ONLY]) {
+            if (event.author.idLong !in bot.botConfig.ownerIds && event.author.idLong !in bot.botConfig.coOwnerIds)
+                ConsumerService.interrupt()
+        } else if (context[OWNER_ONLY]) {
+            if (event.author.idLong !in bot.botConfig.ownerIds)
+                ConsumerService.interrupt()
+        }
+        
+        if (event.author.idLong in bot.botConfig.ownerIds)
+            return
+        
+        if (context.contains("Guild")) {
+            val user = event.member ?: return
+            
+            val permissions =
+                    if (context.contains("TextChannel"))
+                        context.get<TextChannel>("TextChannel").getPermissionOverride(user)?.allowed ?: user.permissions
+                    else
+                        user.permissions
+            if (permissions.containsAll(context[USER_PERMISSIONS]))
+                ConsumerService.interrupt()
+        }
     }
 }

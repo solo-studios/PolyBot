@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file JDABotPermission.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 01:00 a.m.
+ * The file BotPermissionPostprocessor.kt is part of PolyhedralBot
+ * Last modified on 16-07-2021 01:58 a.m.
  *
  * MIT License
  *
@@ -26,8 +26,29 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.annotations.permission
+package com.solostudios.polybot.permission
 
-import net.dv8tion.jda.api.Permission
+import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext
+import cloud.commandframework.execution.postprocessor.CommandPostprocessor
+import cloud.commandframework.services.types.ConsumerService
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.TextChannel
 
-annotation class JDABotPermission(vararg val permissions: Permission)
+class BotPermissionPostprocessor<T> : CommandPostprocessor<T> {
+    override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
+        val context = postprocessingContext.commandContext
+        
+        if (context.contains("Guild")) {
+            val guild = context.get<Guild>("Guild")
+            val bot = guild.selfMember
+            
+            val permissions =
+                    if (context.contains("TextChannel"))
+                        context.get<TextChannel>("TextChannel").getPermissionOverride(bot)?.allowed ?: bot.permissions
+                    else
+                        bot.permissions
+            if (permissions.containsAll(context[BOT_PERMISSIONS]))
+                ConsumerService.interrupt()
+        }
+    }
+}

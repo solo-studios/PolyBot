@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file JDAMessageCommandPreprocessor.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 16-07-2021 12:33 a.m.
  *
  * MIT License
  *
@@ -59,8 +59,6 @@ class JDAMessageCommandPreprocessor<C>(private val mgr: JDA4CommandManager<C>) :
         val event: MessageReceivedEvent = try {
             mgr.backwardsCommandSenderMapper.apply(context.commandContext.sender)
         } catch (e: IllegalStateException) {
-            // The event could not be resolved from the backwards command sender mapper
-            logger.warn("Could not register thing")
             return
         }
         context.commandContext.store("Message", event.message)

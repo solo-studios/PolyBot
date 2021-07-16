@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file JDABotPermission.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 01:00 a.m.
+ * The file permissions.kt is part of PolyhedralBot
+ * Last modified on 16-07-2021 02:06 a.m.
  *
  * MIT License
  *
@@ -26,8 +26,14 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.annotations.permission
+package com.solostudios.polybot.permission
 
+import cloud.commandframework.meta.CommandMeta
+import io.leangen.geantyref.TypeToken
 import net.dv8tion.jda.api.Permission
 
-annotation class JDABotPermission(vararg val permissions: Permission)
+val BOT_PERMISSIONS = CommandMeta.Key.of(object : TypeToken<List<Permission>>() {}, "bot-permissions") { listOf() }
+
+val USER_PERMISSIONS = CommandMeta.Key.of(object : TypeToken<List<Permission>>() {}, "user-permissions") { listOf() }
+val OWNER_ONLY = CommandMeta.Key.of(Boolean::class.java, "owner-only") { true }
+val CO_OWNER_ONLY = CommandMeta.Key.of(Boolean::class.java, "co-owner-only") { true }

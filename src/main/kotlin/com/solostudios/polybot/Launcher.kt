@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 14-07-2021 09:55 p.m.
+ * Last modified on 15-07-2021 11:36 p.m.
  *
  * MIT License
  *
@@ -39,6 +39,7 @@ import com.solostudios.polybot.config.PolyConfig
 import com.solostudios.polybot.util.onJvmShutdown
 import com.solostudios.polybot.util.or
 import java.io.File
+import java.sql.Connection
 import net.dv8tion.jda.DefaultJDABuilder
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
@@ -47,12 +48,15 @@ import net.dv8tion.jda.api.utils.ChunkingFilter
 import net.dv8tion.jda.api.utils.Compression
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.slf4j.kotlin.getLogger
 import kotlin.system.exitProcess
 
 private val logger by getLogger()
 
 fun main() {
+    
+    TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     
     val config = readConfig("polybot.conf")
     
