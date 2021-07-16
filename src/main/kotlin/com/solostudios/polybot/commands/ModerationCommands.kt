@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 13-07-2021 11:49 p.m.
+ * Last modified on 16-07-2021 02:37 a.m.
  *
  * MIT License
  *
@@ -33,6 +33,9 @@ import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.annotations.permission.JDABotPermission
+import com.solostudios.polybot.annotations.permission.JDAUserPermission
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.User
@@ -44,6 +47,8 @@ class ModerationCommands(val bot: PolyBot) {
     private val logger by getLogger()
     
     @CommandMethod("ban|banish|begone <member> [reason]")
+    @JDABotPermission(Permission.BAN_MEMBERS)
+    @JDAUserPermission(Permission.BAN_MEMBERS)
     fun banUser(message: Message,
                 @Argument("member")
                 member: Member,
@@ -71,19 +76,21 @@ class ModerationCommands(val bot: PolyBot) {
     }
     
     @CommandMethod("kick|yeet <member> [reason]")
+    @JDABotPermission(Permission.KICK_MEMBERS)
+    @JDAUserPermission(Permission.KICK_MEMBERS)
     fun kickMember(message: Message,
                    @Argument("member")
                    member: Member,
                    @Argument("reason")
                    reason: String?) {
         val realReason = if (reason != null) "for \"$reason\"." else "no reason provided."
-    
+        
         member.kick(realReason)
                 .queue()
-    
+        
         message.reply("User ${member.user.name}#${member.user.discriminator} has been kicked from the server, $realReason")
                 .queue()
-    
+        
         // log to console
         logger.debug(member.user.name,
                      member.user.discriminator,
@@ -93,6 +100,8 @@ class ModerationCommands(val bot: PolyBot) {
     }
     
     @CommandMethod("purge|clear|clean <amount>")
+    @JDABotPermission(Permission.MESSAGE_MANAGE)
+    @JDAUserPermission(Permission.MESSAGE_MANAGE)
     fun purgeMessages(message: Message,
                       @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
                       amount: Int,
@@ -116,6 +125,7 @@ class ModerationCommands(val bot: PolyBot) {
     }
     
     @CommandMethod("warn|warning <member> <reason>")
+    @JDAUserPermission(Permission.MESSAGE_MANAGE)
     fun warnMember(message: Message,
                    @Argument("member")
                    member: Member,

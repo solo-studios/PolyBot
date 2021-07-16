@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 10-07-2021 02:46 p.m.
+ * Last modified on 16-07-2021 02:28 a.m.
  *
  * MIT License
  *
@@ -32,6 +32,7 @@ import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.annotations.permission.JDAUserPermission
 import com.solostudios.polybot.util.footerDate
 import dev.minn.jda.ktx.Embed
 import net.dv8tion.jda.api.entities.Message
@@ -43,6 +44,7 @@ class MessageCacheCommands(val bot: PolyBot) {
     
     @CommandDescription("Get message from cache")
     @CommandMethod("cache|msg-cache <id>")
+    @JDAUserPermission(ownerOnly = true)
     fun messageFromCache(message: Message,
                          @Argument("id")
                          id: Long) {
