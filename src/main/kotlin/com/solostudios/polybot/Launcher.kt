@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 10-07-2021 02:44 p.m.
+ * Last modified on 14-07-2021 09:55 p.m.
  *
  * MIT License
  *
@@ -36,7 +36,17 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.jasonclawson.jackson.dataformat.hocon.HoconFactory
 import com.solostudios.polybot.config.PolyConfig
+import com.solostudios.polybot.util.onJvmShutdown
+import com.solostudios.polybot.util.or
 import java.io.File
+import net.dv8tion.jda.DefaultJDABuilder
+import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.utils.ChunkingFilter
+import net.dv8tion.jda.api.utils.Compression
+import net.dv8tion.jda.api.utils.MemberCachePolicy
+import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.kotlin.getLogger
 import kotlin.system.exitProcess
 
@@ -46,7 +56,48 @@ fun main() {
     
     val config = readConfig("polybot.conf")
     
-    PolyBot(config)
+    val jda = DefaultJDABuilder(config.botConfig.token) {
+        disableCache = listOf(CacheFlag.ACTIVITY,
+                              CacheFlag.VOICE_STATE,
+                              CacheFlag.EMOTE,
+                              CacheFlag.CLIENT_STATUS,
+                              CacheFlag.MEMBER_OVERRIDES,
+                              CacheFlag.ROLE_TAGS)
+        
+        disableIntents = listOf(GatewayIntent.DIRECT_MESSAGE_TYPING,
+                                GatewayIntent.GUILD_MESSAGE_TYPING,
+                                GatewayIntent.GUILD_VOICE_STATES,
+                                GatewayIntent.GUILD_PRESENCES)
+        
+        enableIntents = listOf(GatewayIntent.GUILD_MEMBERS,
+                               GatewayIntent.GUILD_BANS,
+                               GatewayIntent.GUILD_EMOJIS,
+                               GatewayIntent.GUILD_WEBHOOKS,
+                               GatewayIntent.GUILD_INVITES,
+                               GatewayIntent.GUILD_MESSAGES,
+                               GatewayIntent.GUILD_MESSAGE_REACTIONS,
+                               GatewayIntent.DIRECT_MESSAGES,
+                               GatewayIntent.DIRECT_MESSAGE_REACTIONS)
+        
+        memberCachePolicy = MemberCachePolicy.ONLINE or MemberCachePolicy.VOICE or MemberCachePolicy.OWNER
+        chunkingFilter = ChunkingFilter.NONE
+        compression = Compression.ZLIB
+        largeThreshold = 250
+        
+        status = OnlineStatus.IDLE
+        activity = Activity.watching("Starting up...")
+        
+        
+        rawEvents = false
+        enableShutdownHook = true
+        bulkDeleteSplitting = false
+    }
+    
+    val polybot = PolyBot(config, jda)
+    
+    onJvmShutdown("Bot-Shutdown") {
+        polybot.shutdown()
+    }
 }
 
 private fun readConfig(fileName: String) = readConfig(File(fileName))

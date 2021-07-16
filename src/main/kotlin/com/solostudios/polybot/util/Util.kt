@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Util.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 14-07-2021 09:47 p.m.
  *
  * MIT License
  *
@@ -42,7 +42,7 @@ import java.util.EnumSet
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.managers.Presence
 import net.dv8tion.jda.api.utils.MemberCachePolicy
-import org.checkerframework.checker.units.qual.C
+import kotlin.concurrent.thread
 import kotlin.text.padStart as ktPadStart
 
 inline fun <T> stringIfNotNull(fromObject: T?, transform: (T) -> String): String = if (fromObject != null) transform(fromObject) else ""
@@ -79,3 +79,7 @@ inline fun <reified T, C> ParameterInjectorRegistry<C>.registerInjector(noinline
 
 inline fun <reified C> AnnotationParser(commandManager: CommandManager<C>, noinline metaMapper: (ParserParameters) -> CommandMeta) =
     AnnotationParser(commandManager, C::class.java, metaMapper)
+
+fun onJvmShutdown(name: String, block: () -> Unit) {
+    Runtime.getRuntime().addShutdownHook(thread(start = false, isDaemon = true, name = name, block = block))
+}

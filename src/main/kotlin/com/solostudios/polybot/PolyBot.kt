@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 14-07-2021 08:59 p.m.
+ * Last modified on 15-07-2021 10:06 p.m.
  *
  * MIT License
  *
@@ -43,22 +43,15 @@ import com.solostudios.polybot.parser.MemberParser
 import com.solostudios.polybot.util.AnnotationParser
 import com.solostudios.polybot.util.fixedRate
 import com.solostudios.polybot.util.onlineStatus
-import com.solostudios.polybot.util.or
 import com.solostudios.polybot.util.parse
 import com.solostudios.polybot.util.registerInjector
 import com.solostudios.polybot.util.registerParserSupplier
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import net.dv8tion.jda.DefaultJDA
+import net.dv8tion.jda.InlineJDABuilder
 import net.dv8tion.jda.api.OnlineStatus
-import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.requests.GatewayIntent
-import net.dv8tion.jda.api.utils.ChunkingFilter
-import net.dv8tion.jda.api.utils.Compression
-import net.dv8tion.jda.api.utils.MemberCachePolicy
-import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.kotlin.getLogger
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
@@ -68,54 +61,21 @@ import com.solostudios.polybot.JDAMessageCommandPreprocessor as MessagePreproces
 
 @ExperimentalTime
 @Suppress("UNUSED_ANONYMOUS_PARAMETER", "MemberVisibilityCanBePrivate", "unused")
-class PolyBot(val config: PolyConfig) {
+class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     private val logger by getLogger()
     
     val botConfig = config.botConfig
     
     val cacheManager = CacheManager(this@PolyBot)
     
-    val jda = DefaultJDA(botConfig.token) {
-        disableCache = listOf(CacheFlag.ACTIVITY,
-                              CacheFlag.VOICE_STATE,
-                              CacheFlag.EMOTE,
-                              CacheFlag.CLIENT_STATUS,
-                              CacheFlag.MEMBER_OVERRIDES,
-                              CacheFlag.ROLE_TAGS)
-        
-        disableIntents = listOf(GatewayIntent.DIRECT_MESSAGE_TYPING,
-                                GatewayIntent.GUILD_MESSAGE_TYPING,
-                                GatewayIntent.GUILD_VOICE_STATES,
-                                GatewayIntent.GUILD_PRESENCES)
-        
-        enableIntents = listOf(GatewayIntent.GUILD_MEMBERS,
-                               GatewayIntent.GUILD_BANS,
-                               GatewayIntent.GUILD_EMOJIS,
-                               GatewayIntent.GUILD_WEBHOOKS,
-                               GatewayIntent.GUILD_INVITES,
-                               GatewayIntent.GUILD_MESSAGES,
-                               GatewayIntent.GUILD_MESSAGE_REACTIONS,
-                               GatewayIntent.DIRECT_MESSAGES,
-                               GatewayIntent.DIRECT_MESSAGE_REACTIONS)
-        
-        memberCachePolicy = MemberCachePolicy.ONLINE or MemberCachePolicy.VOICE or MemberCachePolicy.OWNER
-        chunkingFilter = ChunkingFilter.NONE
-        compression = Compression.ZLIB
-        largeThreshold = 250
-        
-        status = OnlineStatus.IDLE
-        activity = Activity.watching("Starting up...")
-        
-        
-        rawEvents = false
-        enableShutdownHook = true
-        bulkDeleteSplitting = false
-        
+    val jda = builder.run {
         eventListeners += LoggingListener(this@PolyBot)
         eventListeners += MessageCacheListener(this@PolyBot)
+        
+        return@run this.build()
     }
     
-    val scheduledThreadPool: ScheduledExecutorService = Executors.newScheduledThreadPool(12).apply {
+    val scheduledThreadPool: ScheduledExecutorService = Executors.newScheduledThreadPool(12).apply { // magic number go brrr
         fixedRate(Duration.milliseconds(0), Duration.minutes(5)) {
             jda.presence.apply {
                 val botActivity = botConfig.activities.random()
@@ -146,11 +106,15 @@ class PolyBot(val config: PolyConfig) {
         parameterInjectorRegistry.registerInjector { context, _ ->
             context.get<Message>("Message")
         }
-        
+    
         parse(UtilCommands(this@PolyBot),
               ModerationCommands(this@PolyBot),
               MessageCacheCommands(this@PolyBot))
     }
     
     private fun botPrefix(event: MessageEvent) = botConfig.prefix
+    
+    fun shutdown() {
+    
+    }
 }
