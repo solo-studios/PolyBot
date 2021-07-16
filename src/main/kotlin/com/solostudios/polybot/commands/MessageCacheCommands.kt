@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 02:28 a.m.
+ * Last modified on 16-07-2021 02:05 p.m.
  *
  * MIT License
  *
@@ -52,7 +52,7 @@ class MessageCacheCommands(val bot: PolyBot) {
         
         if (cachedMessage != null) {
             logger.info(cachedMessage) { "here is the message {}" }
-            //            message.replyFormat("here is the message ```%n%s%n```", cachedMessage).queue()
+            // message.replyFormat("here is the message ```%n%s%n```", cachedMessage).queue()
             
             val embed = Embed {
                 author {
@@ -81,22 +81,7 @@ class MessageCacheCommands(val bot: PolyBot) {
                 }
             }
             
-            //            val embedMessage = Message {
-            //                this.embed = embed
-            //                for (attachment in cachedMessage.attachments) {
-            //
-            //                }
-            //            }
-            
             message.replyEmbeds(embed)
-                    .also { msg ->
-                        for (attachment in cachedMessage.attachments) {
-                            val attachment = bot.cacheManager.messageCache.attachmentCache[attachment]
-                            
-                            logger.info(attachment) { "here is attachment {}" }
-                            msg.addFile(attachment.byteArray, attachment.fileName)
-                        }
-                    }
                     .mentionRepliedUser(false)
                     .queue()
         }

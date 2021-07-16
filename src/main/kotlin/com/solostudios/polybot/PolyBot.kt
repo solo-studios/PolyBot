@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 02:19 a.m.
+ * Last modified on 16-07-2021 02:05 p.m.
  *
  * MIT License
  *
@@ -81,7 +81,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     }
     
     val scheduledThreadPool: ScheduledExecutorService = Executors.newScheduledThreadPool(12).apply { // magic number go brrr
-        fixedRate(Duration.milliseconds(0), Duration.minutes(5)) {
+        fixedRate(Duration.milliseconds(100), Duration.minutes(5)) {
             jda.presence.apply {
                 val botActivity = botConfig.activities.random()
                 onlineStatus = OnlineStatus.ONLINE

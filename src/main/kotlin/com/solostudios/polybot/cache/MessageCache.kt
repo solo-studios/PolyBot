@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCache.kt is part of PolyhedralBot
- * Last modified on 08-07-2021 02:27 p.m.
+ * Last modified on 16-07-2021 02:04 p.m.
  *
  * MIT License
  *
@@ -30,16 +30,13 @@ package com.solostudios.polybot.cache
 
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy
-import java.io.ByteArrayOutputStream
 import net.dv8tion.jda.api.entities.Message
 import org.ehcache.Cache
 import org.objenesis.strategy.StdInstantiatorStrategy
 import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.info
 
 class MessageCache(val cacheManager: CacheManager,
-                   val messageCache: Cache<Long, CachedMessage>,
-                   val attachmentCache: Cache<Long, CachedAttachment>) {
+                   val messageCache: Cache<Long, CachedMessage>) {
     private val logger by getLogger()
     
     val kryo = Kryo().apply {
@@ -60,31 +57,10 @@ class MessageCache(val cacheManager: CacheManager,
                                  message.jumpUrl,
                                  message.contentRaw,
                                  message.isEdited,
-                                 message.attachments.map { file ->
-                                     addAttachment(file)
-                                     return@map file.idLong
-                                 }.toTypedArray()))
+                                 message.attachments.isNotEmpty()))
     }
     
     fun addMessage(message: CachedMessage) {
         messageCache[message.id] = message
-    }
-    
-    fun addAttachment(attachment: Message.Attachment) {
-        val outputStream = ByteArrayOutputStream()
-        
-        attachment.retrieveInputStream().get().use { input ->
-            outputStream.use { output ->
-                input.copyTo(output)
-            }
-        }
-        
-        addAttachment(CachedAttachment(attachment.idLong, attachment.fileName, attachment.url,/*outputStream.toByteArray()*/ ByteArray(0)))
-    }
-    
-    fun addAttachment(attachment: CachedAttachment) {
-        logger.info(attachment) { "here is attachment {}" }
-        
-        attachmentCache[attachment.id] = attachment
     }
 }

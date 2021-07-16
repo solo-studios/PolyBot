@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CachedMessage.kt is part of PolyhedralBot
- * Last modified on 01-07-2021 12:43 a.m.
+ * Last modified on 16-07-2021 02:05 p.m.
  *
  * MIT License
  *
@@ -44,7 +44,7 @@ data class CachedMessage(
         val url: String,
         val content: String,
         val edited: Boolean,
-        val attachments: Array<Long>,
+        val hasAttachments: Boolean,
         /*
         val attachments: Array<Long>,
         val author: Long,
@@ -66,36 +66,38 @@ data class CachedMessage(
         if (javaClass != other?.javaClass) return false
         
         other as CachedMessage
-        
-        if (author != other.author) return false
-        if (channel != other.channel) return false
-        if (content != other.content) return false
-        if (edited != other.edited) return false
-        if (guild != other.guild) return false
+    
         if (id != other.id) return false
+        if (channel != other.channel) return false
+        if (category != other.category) return false
+        if (guild != other.guild) return false
+        if (timeCreated != other.timeCreated) return false
         if (timeEdited != other.timeEdited) return false
-        if (!attachments.contentEquals(other.attachments)) return false
+        if (author != other.author) return false
         if (username != other.username) return false
         if (discriminator != other.discriminator) return false
-        if (category != other.category) return false
         if (url != other.url) return false
-        
+        if (content != other.content) return false
+        if (edited != other.edited) return false
+        if (hasAttachments != other.hasAttachments) return false
+    
         return true
     }
     
     override fun hashCode(): Int {
-        var result = author.hashCode()
+        var result = id.hashCode()
         result = 31 * result + channel.hashCode()
-        result = 31 * result + content.hashCode()
-        result = 31 * result + edited.hashCode()
-        result = 31 * result + guild.hashCode()
-        result = 31 * result + id.hashCode()
+        result = 31 * result + (category?.hashCode() ?: 0)
+        result = 31 * result + (guild?.hashCode() ?: 0)
+        result = 31 * result + timeCreated.hashCode()
         result = 31 * result + (timeEdited?.hashCode() ?: 0)
-        result = 31 * result + attachments.contentHashCode()
+        result = 31 * result + author.hashCode()
         result = 31 * result + username.hashCode()
         result = 31 * result + discriminator.hashCode()
-        result = 31 * result + (category?.hashCode() ?: 0)
         result = 31 * result + url.hashCode()
+        result = 31 * result + content.hashCode()
+        result = 31 * result + edited.hashCode()
+        result = 31 * result + hasAttachments.hashCode()
         return result
     }
 }

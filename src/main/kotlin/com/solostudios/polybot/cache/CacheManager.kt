@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CacheManager.kt is part of PolyhedralBot
- * Last modified on 08-07-2021 02:27 p.m.
+ * Last modified on 16-07-2021 02:04 p.m.
  *
  * MIT License
  *
@@ -47,10 +47,7 @@ class CacheManager(val bot: PolyBot) {
                                                                                    .disk(1L, MemoryUnit.GB))
                     .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofDays(56L)))
                     .withKotlinValueSerializer())
-            .withCache("attachments", cacheConfigBuilder<Long, CachedAttachment>(ResourcePoolsBuilder.newResourcePoolsBuilder()
-                                                                                         .disk(10L, MemoryUnit.GB))
-                    .withKotlinValueSerializer())
             .build(true)
     
-    val messageCache = MessageCache(this, cacheManager.getCache("messages"), cacheManager.getCache("attachments"))
+    val messageCache = MessageCache(this, cacheManager.getCache("messages"))
 }
