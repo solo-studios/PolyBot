@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 01:58 a.m.
+ * Last modified on 19-07-2021 01:20 a.m.
  *
  * MIT License
  *
@@ -33,10 +33,21 @@ import cloud.commandframework.execution.postprocessor.CommandPostprocessor
 import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.info
 
 class BotPermissionPostprocessor<T> : CommandPostprocessor<T> {
+    private val logger by getLogger()
+    
+    @Suppress("DuplicatedCode")
     override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
         val context = postprocessingContext.commandContext
+        val commandMeta = postprocessingContext.command.commandMeta
+        val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")
+        
+        logger.info { "context: ${context.asMap()}" }
+        logger.info { "meta: ${commandMeta.allValues}" }
         
         if (context.contains("Guild")) {
             val guild = context.get<Guild>("Guild")
@@ -47,8 +58,15 @@ class BotPermissionPostprocessor<T> : CommandPostprocessor<T> {
                         context.get<TextChannel>("TextChannel").getPermissionOverride(bot)?.allowed ?: bot.permissions
                     else
                         bot.permissions
-            if (permissions.containsAll(context[BOT_PERMISSIONS]))
+            
+            val neededPermissions = commandMeta.getOrDefault(BOT_PERMISSIONS, emptyList())
+            if (!permissions.containsAll(neededPermissions)) {
+                event.message.replyFormat("Cannot execute command due to insufficient permission. The bot requires the following permission(s) to execute this command: %s.",
+                                          neededPermissions.subtract(permissions).joinToString(separator = ", ") { it.getName() })
+                        .mentionRepliedUser(false)
+                        .queue()
                 ConsumerService.interrupt()
+            }
         }
     }
 }

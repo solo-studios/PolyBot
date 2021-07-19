@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file permissions.kt is part of PolyhedralBot
- * Last modified on 19-07-2021 12:51 a.m.
+ * The file NotBoolean.kt is part of PolyhedralBot
+ * Last modified on 19-07-2021 01:37 a.m.
  *
  * MIT License
  *
@@ -28,12 +28,4 @@
 
 package com.solostudios.polybot.permission
 
-import cloud.commandframework.meta.CommandMeta
-import io.leangen.geantyref.TypeToken
-import net.dv8tion.jda.api.Permission
-
-val BOT_PERMISSIONS = CommandMeta.Key.of(object : TypeToken<List<Permission>>() {}, "bot-permissions") { listOf() }
-
-val USER_PERMISSIONS = CommandMeta.Key.of(object : TypeToken<List<Permission>>() {}, "user-permissions") { listOf() }
-val OWNER_ONLY = CommandMeta.Key.of(NotBoolean::class.java, "owner-only")
-val CO_OWNER_ONLY = CommandMeta.Key.of(NotBoolean::class.java, "co-owner-only")
+data class NotBoolean(val value: Boolean)

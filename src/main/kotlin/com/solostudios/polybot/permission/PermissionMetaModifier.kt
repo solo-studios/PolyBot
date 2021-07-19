@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PermissionMetaModifier.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 01:41 a.m.
+ * Last modified on 19-07-2021 12:51 a.m.
  *
  * MIT License
  *
@@ -39,8 +39,8 @@ object PermissionMetaModifier {
     
     fun <T> userPermissionModifier(userPermission: JDAUserPermission, builder: Command.Builder<T>): Command.Builder<T> {
         return builder.meta(USER_PERMISSIONS, userPermission.permissions.asList())
-                .meta(OWNER_ONLY, userPermission.ownerOnly)
-                .meta(CO_OWNER_ONLY, userPermission.coOwnerOnly)
+                .meta(OWNER_ONLY, NotBoolean(userPermission.ownerOnly))
+                .meta(CO_OWNER_ONLY, NotBoolean(userPermission.coOwnerOnly))
     }
 }
 

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 02:37 a.m.
+ * Last modified on 19-07-2021 01:46 a.m.
  *
  * MIT License
  *
@@ -51,25 +51,25 @@ class ModerationCommands(val bot: PolyBot) {
     @JDAUserPermission(Permission.BAN_MEMBERS)
     fun banUser(message: Message,
                 @Argument("member")
-                member: Member,
+                user: User,
                 @Argument("reason")
                 @Greedy
                 reason: String?,
                 @Flag("days", aliases = ["d"], description = "The amount of days to delete")
                 days: Int?) {
         val realReason = if (reason != null) "for \"$reason\"." else "no reason provided."
-        
-        member.ban(days ?: 3)
+    
+        message.guild.ban(user, days ?: 3)
                 .reason(realReason)
                 .queue()
-        
-        message.reply("User ${member.user.name}#${member.user.discriminator} has been banned from the server, and ${days ?: 3} days of messages have been deleted, $realReason")
+    
+        message.reply("User ${user.name}#${user.discriminator} has been banned from the server, and ${days ?: 3} days of messages have been deleted, $realReason")
                 .queue()
-        
+    
         // log to console
-        logger.debug(member.user.name,
-                     member.user.discriminator,
-                     member.guild.name,
+        logger.debug(user.name,
+                     user.discriminator,
+                     message.guild,
                      days ?: 3,
                      realReason) { "User {}#{} has been banned from the server {}, and {} days of messages have been deleted. {}" }
         // TODO: 2021-07-11 dispatch ban event
@@ -95,7 +95,7 @@ class ModerationCommands(val bot: PolyBot) {
         logger.debug(member.user.name,
                      member.user.discriminator,
                      member.guild.name,
-                     realReason) { "User {}#{} has been kick from the server {}, {}" }
+                     realReason) { "User {}#{} has been kicked from the server {}, {}" }
         // TODO: 2021-07-11 dispatch kick event
     }
     

@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MemberParser.kt is part of PolyhedralBot
- * Last modified on 18-07-2021 08:33 p.m.
+ * The file UserParser.kt is part of PolyhedralBot
+ * Last modified on 18-07-2021 10:47 p.m.
  *
  * MIT License
  *
@@ -33,18 +33,18 @@ import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.context.CommandContext
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException
 import java.util.Queue
-import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import org.slf4j.kotlin.getLogger
 import org.slf4j.kotlin.info
 
-class MemberParser<C> : ArgumentParser<C, Member> {
+class UserParser<C> : ArgumentParser<C, User> {
     private val logger by getLogger()
     
     @Suppress("DuplicatedCode")
-    override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<Member> {
+    override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<User> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
@@ -64,29 +64,28 @@ class MemberParser<C> : ArgumentParser<C, Member> {
             
             logger.info { "here's the id: $id" }
             
-            val member = event.guild.retrieveMemberById(id).complete()
-            logger.info { "member is ${member == null}" }
-            if (member != null) {
+            val user = event.jda.retrieveUserById(id).complete()
+            if (user != null) {
                 inputQueue.remove()
-                return ArgumentParseResult.success(member)
+                return ArgumentParseResult.success(user)
             }
         } catch (e: NumberFormatException) {
         } catch (e: ErrorResponseException) {
             when (e.errorResponse) {
-                ErrorResponse.UNKNOWN_MEMBER -> return ArgumentParseResult.failure(MemberNotFoundParseException(input))
-                ErrorResponse.UNKNOWN_USER   -> return ArgumentParseResult.failure(MemberNotFoundParseException(input))
+                ErrorResponse.UNKNOWN_MEMBER -> return ArgumentParseResult.failure(UserNotFoundParseException(input))
+                ErrorResponse.UNKNOWN_USER   -> return ArgumentParseResult.failure(UserNotFoundParseException(input))
                 
                 else                         -> {
                 }
             }
         } // $ban @solo#7313 yess
         
-        val members = event.guild.getMembersByEffectiveName(input, true)
+        val users = event.guild.getMembersByEffectiveName(input, true).map { it.user }
         
         return when {
-            members.size == 1 -> inputQueue.remove().run { ArgumentParseResult.success(members[0]) }
-            members.isEmpty() -> ArgumentParseResult.failure(MemberNotFoundParseException(input))
-            else              -> ArgumentParseResult.failure(TooManyMembersFoundParseException(input))
+            users.size == 1 -> inputQueue.remove().run { ArgumentParseResult.success(users[0]) }
+            users.isEmpty() -> ArgumentParseResult.failure(UserNotFoundParseException(input))
+            else            -> ArgumentParseResult.failure(TooManyUsersFoundParseException(input))
         }
     }
     
@@ -94,14 +93,14 @@ class MemberParser<C> : ArgumentParser<C, Member> {
         return true
     }
     
-    open class MemberParseException(val input: String) : IllegalArgumentException()
+    open class UserParseException(val input: String) : IllegalArgumentException()
     
-    class TooManyMembersFoundParseException(input: String) : MemberParseException(input) {
+    class TooManyUsersFoundParseException(input: String) : UserParseException(input) {
         override val message: String
             get() = "Too many members found for '$input'."
     }
     
-    class MemberNotFoundParseException(input: String) : MemberParseException(input) {
+    class UserNotFoundParseException(input: String) : UserParseException(input) {
         override val message: String
             get() = "Member not found for '$input'."
     }

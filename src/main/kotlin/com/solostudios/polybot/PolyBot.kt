@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 02:05 p.m.
+ * Last modified on 19-07-2021 01:46 a.m.
  *
  * MIT License
  *
@@ -42,6 +42,7 @@ import com.solostudios.polybot.event.EventMapper
 import com.solostudios.polybot.event.MessageEvent
 import com.solostudios.polybot.logging.LoggingListener
 import com.solostudios.polybot.parser.MemberParser
+import com.solostudios.polybot.parser.UserParser
 import com.solostudios.polybot.permission.BotPermissionPostprocessor
 import com.solostudios.polybot.permission.PermissionMetaModifier
 import com.solostudios.polybot.permission.UserPermissionPostprocessor
@@ -55,7 +56,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import net.dv8tion.jda.InlineJDABuilder
 import net.dv8tion.jda.api.OnlineStatus
-import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
 import org.slf4j.kotlin.getLogger
 import kotlin.time.Duration
@@ -100,7 +100,8 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
                                                 .build(),
                                         EventMapper::senderToMessageEvent,
                                         EventMapper::messageEventToSender).apply {
-        parserRegistry.registerParserSupplier<Member, MessageEvent> { MemberParser() }
+        parserRegistry.registerParserSupplier(MemberParser())
+        parserRegistry.registerParserSupplier(UserParser())
     
         registerCommandPreProcessor(MessagePreprocessor(this))
         registerCommandPostProcessor(UserPermissionPostprocessor(this@PolyBot))

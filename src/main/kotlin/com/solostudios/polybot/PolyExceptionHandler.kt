@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyExceptionHandler.kt is part of PolyhedralBot
- * Last modified on 30-06-2021 11:43 p.m.
+ * Last modified on 19-07-2021 01:46 a.m.
  *
  * MIT License
  *
@@ -71,11 +71,14 @@ class PolyExceptionHandler(val manager: CommandManager<MessageEvent>) {
     }
     
     private fun handleArgumentParse(event: MessageEvent, exception: ArgumentParseException) {
+        // when (exception::class) {
+        //
+        // }
         event.event.message.replyFormat("Invalid command argument.%n%s", exception.cause.message).queue()
     }
     
     private fun handleCommandParse(event: MessageEvent, exception: CommandParseException) {
-        event.event.message.replyFormat("Invalid command argument.%n%s", exception.message).queue()
+        event.event.message.replyFormat("Invalid command.%n%s", exception.message).queue()
     }
     
     private fun handleNoCommandInLeaf(event: MessageEvent, exception: NoCommandInLeafException) {

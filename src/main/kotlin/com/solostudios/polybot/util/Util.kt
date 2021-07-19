@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Util.kt is part of PolyhedralBot
- * Last modified on 14-07-2021 09:47 p.m.
+ * Last modified on 18-07-2021 11:12 p.m.
  *
  * MIT License
  *
@@ -68,9 +68,12 @@ var Presence.onlineStatus: OnlineStatus
     set(value) = setStatus(value)
     get() = status
 
-@Suppress("UNCHECKED_CAST")
 inline fun <reified T, C> ParserRegistry<C>.registerParserSupplier(noinline supplier: (ParserParameters) -> ArgumentParser<C, T>) {
-    registerParserSupplier(TypeToken.get(T::class.java), supplier as (ParserParameters) -> ArgumentParser<C, *>)
+    registerParserSupplier(TypeToken.get(T::class.java), supplier)
+}
+
+inline fun <reified T, C> ParserRegistry<C>.registerParserSupplier(supplier: ArgumentParser<C, T>) {
+    registerParserSupplier(TypeToken.get(T::class.java)) { supplier }
 }
 
 inline fun <reified T, C> ParameterInjectorRegistry<C>.registerInjector(noinline function: (context: CommandContext<C>, annotationAccessor: AnnotationAccessor) -> T) {
@@ -78,7 +81,7 @@ inline fun <reified T, C> ParameterInjectorRegistry<C>.registerInjector(noinline
 }
 
 inline fun <reified C> AnnotationParser(commandManager: CommandManager<C>, noinline metaMapper: (ParserParameters) -> CommandMeta) =
-    AnnotationParser(commandManager, C::class.java, metaMapper)
+        AnnotationParser(commandManager, C::class.java, metaMapper)
 
 fun onJvmShutdown(name: String, block: () -> Unit) {
     Runtime.getRuntime().addShutdownHook(thread(start = false, isDaemon = true, name = name, block = block))
