@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageEvent.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 02:38 p.m.
+ * Last modified on 24-07-2021 08:24 p.m.
  *
  * MIT License
  *

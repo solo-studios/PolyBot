@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EventManager.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 08:22 p.m.
+ * Last modified on 24-07-2021 08:33 p.m.
  *
  * MIT License
  *
@@ -31,6 +31,12 @@ package com.solostudios.polybot.event
 import com.solostudios.polybot.PolyBot
 import kotlin.reflect.KClass
 
+open class Event
+
+interface EventListener<T : Event> {
+    operator fun invoke(event: T)
+}
+
 /**
  * Event manager
  *
@@ -40,18 +46,18 @@ import kotlin.reflect.KClass
  * @constructor Create empty Event manager
  */
 class EventManager(val bot: PolyBot) {
-    val listeners: MutableSet<InternalEventListener<out Event>> = sortedSetOf(compareBy { it.priority })
+    val listeners: MutableList<InternalEventListener<out Event>> = mutableListOf()
     
-    inline fun <reified T : Event> register(listener: EventListener<T>, priority: Int = 0) {
-        listeners.add(InternalEventListener(listener, T::class, priority))
+    inline fun <reified T : Event> register(listener: EventListener<T>) {
+        listeners.add(InternalEventListener(listener, T::class))
     }
     
-    inline fun <reified T : Event> register(crossinline listener: (T) -> Unit, priority: Int = 0) {
+    inline fun <reified T : Event> register(crossinline listener: (T) -> Unit) {
         listeners.add(InternalEventListener(object : EventListener<T> {
             override fun invoke(event: T) {
                 listener(event)
             }
-        }, T::class, priority))
+        }, T::class))
     }
     
     fun <T : Event> dispatch(event: T) {
@@ -64,13 +70,5 @@ class EventManager(val bot: PolyBot) {
         }
     }
     
-    data class InternalEventListener<T : Event>(val listener: EventListener<T>,
-                                                val clazz: KClass<T>,
-                                                val priority: Int)
-}
-
-open class Event
-
-interface EventListener<T : Event> {
-    operator fun invoke(event: T)
+    data class InternalEventListener<T : Event>(val listener: EventListener<T>, val clazz: KClass<T>)
 }
