@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 24-07-2021 08:20 p.m.
+ * Last modified on 24-07-2021 11:41 p.m.
  *
  * MIT License
  *
@@ -89,6 +89,9 @@ val EHCACHE_VERSION: String by project
 
 @Suppress("PropertyName")
 val CACHE_4K_VERSION: String by project
+
+@Suppress("PropertyName")
+val LUCENE_VERSION: String by project
 
 plugins {
     java
@@ -200,6 +203,9 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
     
     implementation("com.github.minndevelopment:jda-ktx:${JDA_KTX_VERSION}")
+    
+    implementation("org.apache.lucene:lucene-core:$LUCENE_VERSION")
+    implementation("org.apache.lucene:lucene-queryparser:$LUCENE_VERSION")
     
     // Testing (switch to JUnit 5)
     //    testapi("junit:junit:4.13.1")
