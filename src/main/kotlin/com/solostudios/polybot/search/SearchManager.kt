@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MaliciousDomains.kt is part of PolyhedralBot
+ * The file SearchManager.kt is part of PolyhedralBot
  * Last modified on 25-07-2021 12:34 p.m.
  *
  * MIT License
@@ -26,19 +26,38 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.config.automod
+package com.solostudios.polybot.search
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.config.search.GithubWikiSearchLocation
+import org.slf4j.kotlin.error
+import org.slf4j.kotlin.getLogger
 
-data class MaliciousDomains(
-        @JsonProperty("ipLoggers")
-        val ipLoggers: List<String>,
-        @JsonProperty("adReferrals")
-        val adReferrals: List<String>,
-        @JsonProperty("referrals")
-        val referrals: List<String>,
-        @JsonProperty("cryptoMiners")
-        val cryptoMiners: List<String>,
-        @JsonProperty("scamSites")
-        val scamSites: List<String>,
-                           )
+class SearchManager(val bot: PolyBot) {
+    private val logger by getLogger()
+    
+    var searchIndex: Map<String, Index> = mapOf()
+        private set
+    
+    var defaultIndex: Index
+        private set
+    
+    init {
+        val searchConfig = bot.config.searchConfig
+        
+        val searchIndex = mutableMapOf<String, Index>()
+        
+        for (location in searchConfig.searchLocations) {
+            when (location) {
+                is GithubWikiSearchLocation -> {
+                    searchIndex[location.name] = GithubWikiIndex(location)
+                }
+                
+                else                        -> {
+                    logger.error { "Search location ${location.name} not a known subtype" }
+                }
+            }
+        }
+        defaultIndex = searchIndex[searchConfig.default]!!
+    }
+}

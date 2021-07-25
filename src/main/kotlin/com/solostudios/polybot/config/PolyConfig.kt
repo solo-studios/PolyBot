@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyConfig.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 25-07-2021 12:34 p.m.
  *
  * MIT License
  *
@@ -35,4 +35,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class PolyConfig(
         @JsonProperty("bot")
         val botConfig: BotConfig,
+        @JsonProperty("search")
+        val searchConfig: SearchConfig,
                      )

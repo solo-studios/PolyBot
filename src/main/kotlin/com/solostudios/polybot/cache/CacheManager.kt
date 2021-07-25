@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CacheManager.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 02:04 p.m.
+ * Last modified on 25-07-2021 12:34 p.m.
  *
  * MIT License
  *
@@ -40,7 +40,7 @@ import org.ehcache.config.units.MemoryUnit
 @Suppress("MemberVisibilityCanBePrivate")
 class CacheManager(val bot: PolyBot) {
     val cacheManager: PersistentCacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-            .with(CacheManagerBuilder.persistence("polybot-cache"))
+            .with(CacheManagerBuilder.persistence(".cache"))
             .withCache("messages", cacheConfigBuilder<Long, CachedMessage>(ResourcePoolsBuilder.newResourcePoolsBuilder()
                                                                                    .heap(10_000L, EntryUnit.ENTRIES)
                                                                                    .offheap(500L, MemoryUnit.MB)

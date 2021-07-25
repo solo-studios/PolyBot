@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotActivity.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 05:39 p.m.
+ * Last modified on 25-07-2021 12:34 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 package com.solostudios.polybot.config
 
-import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.solostudios.polybot.config.impl.CompetingActivity
@@ -50,6 +50,12 @@ import net.dv8tion.jda.api.entities.Activity
         JsonSubTypes.Type(value = StreamingActivity::class, name = "streaming"),
         JsonSubTypes.Type(value = CompetingActivity::class, name = "competing"),
              )
-abstract class BotActivity @JsonCreator constructor(val name: String, val url: String? = null) {
+abstract class BotActivity(
+        @JsonProperty("name")
+        val name: String,
+        @JsonProperty("url")
+        val url: String? = null,
+                          ) {
+    
     abstract fun getActivity(): Activity
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SafeDomains.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 25-07-2021 12:34 p.m.
  *
  * MIT License
  *
@@ -28,15 +28,27 @@
 
 package com.solostudios.polybot.config.automod
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class SafeDomains(
+        @JsonProperty("discord")
         val discord: List<String>,
+        @JsonProperty("video")
         val video: List<String>,
+        @JsonProperty("audio")
         val audio: List<String>,
+        @JsonProperty("image")
         val image: List<String>,
+        @JsonProperty("development")
         val development: List<String>,
+        @JsonProperty("socialMedia")
         val socialMedia: List<String>,
+        @JsonProperty("wiki")
         val wiki: List<String>,
+        @JsonProperty("shopping")
         val shopping: List<String>,
+        @JsonProperty("game")
         val game: List<String>,
+        @JsonProperty("misc")
         val misc: List<String>,
                       )

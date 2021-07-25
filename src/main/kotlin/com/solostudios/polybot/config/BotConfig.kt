@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotConfig.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 25-07-2021 12:34 p.m.
  *
  * MIT License
  *
@@ -33,13 +33,18 @@ import com.solostudios.polybot.config.automod.AutomodConfig
 
 @Suppress("MemberVisibilityCanBePrivate")
 data class BotConfig(
+        @JsonProperty("token")
         val token: String,
+        @JsonProperty("prefix")
         val prefix: String,
+        @JsonProperty("prefixes")
         val prefixes: List<String>,
+        @JsonProperty("ownerIds")
         val ownerIds: List<Long>,
+        @JsonProperty("coOwnerIds")
         val coOwnerIds: List<Long>,
+        @JsonProperty("activities")
         val activities: List<BotActivity>,
         @JsonProperty("automod")
         val automodConfig: AutomodConfig,
-        
-        )
+                    )

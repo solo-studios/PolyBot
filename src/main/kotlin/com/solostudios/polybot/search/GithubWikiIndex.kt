@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MaliciousDomains.kt is part of PolyhedralBot
- * Last modified on 25-07-2021 12:34 p.m.
+ * The file GithubWikiIndex.kt is part of PolyhedralBot
+ * Last modified on 25-07-2021 12:36 p.m.
  *
  * MIT License
  *
@@ -26,19 +26,8 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.config.automod
+package com.solostudios.polybot.search
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.solostudios.polybot.config.search.GithubWikiSearchLocation
 
-data class MaliciousDomains(
-        @JsonProperty("ipLoggers")
-        val ipLoggers: List<String>,
-        @JsonProperty("adReferrals")
-        val adReferrals: List<String>,
-        @JsonProperty("referrals")
-        val referrals: List<String>,
-        @JsonProperty("cryptoMiners")
-        val cryptoMiners: List<String>,
-        @JsonProperty("scamSites")
-        val scamSites: List<String>,
-                           )
+class GithubWikiIndex(override val searchLocation: GithubWikiSearchLocation) : Index()
