@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Util.kt is part of PolyhedralBot
- * Last modified on 18-07-2021 11:12 p.m.
+ * Last modified on 24-07-2021 08:24 p.m.
  *
  * MIT License
  *
@@ -49,7 +49,7 @@ inline fun <T> stringIfNotNull(fromObject: T?, transform: (T) -> String): String
 
 fun Any.padStart(length: Int, padChar: Char): String = this.toString().ktPadStart(length, padChar)
 
-inline fun <reified T : Enum<T>> enumSetOf(vararg elems: T) = EnumSet.noneOf(T::class.java).apply { addAll(elems) }
+inline fun <reified T : Enum<T>> enumSetOf(vararg elems: T): EnumSet<T> = EnumSet.noneOf(T::class.java).apply { addAll(elems) }
 
 infix fun MemberCachePolicy.or(policy: MemberCachePolicy): MemberCachePolicy {
     return policy.or(policy)

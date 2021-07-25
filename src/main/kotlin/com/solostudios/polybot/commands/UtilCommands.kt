@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 11-07-2021 01:19 a.m.
+ * Last modified on 24-07-2021 02:38 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package com.solostudios.polybot.commands
 
 import cloud.commandframework.annotations.CommandMethod
 import com.solostudios.polybot.PolyBot
-import com.solostudios.polybot.event.GuildMessageEvent
+import com.solostudios.polybot.event.cloud.GuildMessageEvent
 import dev.minn.jda.ktx.Embed
 import java.time.temporal.ChronoUnit
 import net.dv8tion.jda.api.entities.Message

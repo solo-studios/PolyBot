@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyExceptionHandler.kt is part of PolyhedralBot
- * Last modified on 19-07-2021 01:46 a.m.
+ * Last modified on 24-07-2021 02:38 p.m.
  *
  * MIT License
  *
@@ -37,7 +37,7 @@ import cloud.commandframework.exceptions.InvalidSyntaxException
 import cloud.commandframework.exceptions.NoCommandInLeafException
 import cloud.commandframework.exceptions.NoPermissionException
 import cloud.commandframework.exceptions.NoSuchCommandException
-import com.solostudios.polybot.event.MessageEvent
+import com.solostudios.polybot.event.cloud.MessageEvent
 import java.util.function.BiConsumer
 import org.slf4j.kotlin.getLogger
 import org.slf4j.kotlin.warn

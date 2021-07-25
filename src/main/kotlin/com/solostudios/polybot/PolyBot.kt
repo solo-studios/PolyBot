@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 19-07-2021 01:46 a.m.
+ * Last modified on 24-07-2021 08:21 p.m.
  *
  * MIT License
  *
@@ -38,8 +38,9 @@ import com.solostudios.polybot.commands.MessageCacheCommands
 import com.solostudios.polybot.commands.ModerationCommands
 import com.solostudios.polybot.commands.UtilCommands
 import com.solostudios.polybot.config.PolyConfig
-import com.solostudios.polybot.event.EventMapper
-import com.solostudios.polybot.event.MessageEvent
+import com.solostudios.polybot.event.EventManager
+import com.solostudios.polybot.event.cloud.EventMapper
+import com.solostudios.polybot.event.cloud.MessageEvent
 import com.solostudios.polybot.logging.LoggingListener
 import com.solostudios.polybot.parser.MemberParser
 import com.solostudios.polybot.parser.UserParser
@@ -73,9 +74,14 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     
     val cacheManager = CacheManager(this@PolyBot)
     
+    val eventManager = EventManager(this@PolyBot)
+    
+    val moderationManager = ModerationManager(this@PolyBot)
+    
     val jda = builder.run {
         eventListeners += LoggingListener(this@PolyBot)
         eventListeners += MessageCacheListener(this@PolyBot)
+        eventListeners += PolyBotListener(this@PolyBot)
         
         return@run this.build()
     }

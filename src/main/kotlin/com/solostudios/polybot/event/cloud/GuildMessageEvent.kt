@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PermissionManager.kt is part of PolyhedralBot
+ * The file GuildMessageEvent.kt is part of PolyhedralBot
  * Last modified on 24-07-2021 02:38 p.m.
  *
  * MIT License
@@ -26,12 +26,16 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot
+package com.solostudios.polybot.event.cloud
 
-import com.solostudios.polybot.event.cloud.MessageEvent
+import cloud.commandframework.jda.JDACommandSender
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.MessageChannel
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-class PermissionManager(bot: PolyBot) {
-    fun permissionCheck(event: MessageEvent, permission: String): Boolean {
-        return true
-    }
-}
+data class GuildMessageEvent(
+        override val sender: JDACommandSender,
+        override val event: MessageReceivedEvent,
+        val member: Member,
+        override val channel: MessageChannel,
+                            ) : MessageEvent(sender, event, member.user, channel)

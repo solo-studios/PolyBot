@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 24-07-2021 04:50 p.m.
  *
  * MIT License
  *
@@ -117,17 +117,12 @@ import net.dv8tion.jda.api.events.role.update.RoleUpdateMentionableEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdateNameEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePositionEvent
-import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.slf4j.kotlin.getLogger
 
 @Suppress("RedundantOverride")
 class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     private val logger by getLogger()
-    
-    override fun onUserUpdateName(event: UserUpdateNameEvent) {
-        
-    }
     
     override fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
         

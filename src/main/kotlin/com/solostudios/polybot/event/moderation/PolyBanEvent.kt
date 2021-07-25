@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PermissionManager.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 02:38 p.m.
+ * The file PolyBanEvent.kt is part of PolyhedralBot
+ * Last modified on 24-07-2021 08:21 p.m.
  *
  * MIT License
  *
@@ -26,12 +26,12 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot
+package com.solostudios.polybot.event.moderation
 
-import com.solostudios.polybot.event.cloud.MessageEvent
+import net.dv8tion.jda.api.entities.Member
 
-class PermissionManager(bot: PolyBot) {
-    fun permissionCheck(event: MessageEvent, permission: String): Boolean {
-        return true
-    }
-}
+class PolyBanEvent(
+        punishedMember: Member,
+        reason: String,
+        moderator: Member,
+                  ) : PolyModerationEvent(punishedMember, reason, moderator)

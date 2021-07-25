@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PrivateMessageEvent.kt is part of PolyhedralBot
- * Last modified on 13-07-2021 11:47 p.m.
+ * The file MessageEvent.kt is part of PolyhedralBot
+ * Last modified on 24-07-2021 02:38 p.m.
  *
  * MIT License
  *
@@ -26,17 +26,16 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.event
+package com.solostudios.polybot.event.cloud
 
 import cloud.commandframework.jda.JDACommandSender
-import net.dv8tion.jda.api.entities.PrivateChannel
+import net.dv8tion.jda.api.entities.MessageChannel
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-data class PrivateMessageEvent(
-        override val sender: JDACommandSender,
-        override val event: MessageReceivedEvent,
-        override val user: User,
-        @Suppress("MemberVisibilityCanBePrivate")
-        val privateChannel: PrivateChannel,
-                              ) : MessageEvent(sender, event, user, privateChannel)
+open class MessageEvent(
+        open val sender: JDACommandSender,
+        open val event: MessageReceivedEvent,
+        open val user: User,
+        open val channel: MessageChannel,
+                       )

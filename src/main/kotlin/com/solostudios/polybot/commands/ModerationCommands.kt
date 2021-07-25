@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 19-07-2021 01:46 a.m.
+ * Last modified on 24-07-2021 08:21 p.m.
  *
  * MIT License
  *
@@ -35,44 +35,36 @@ import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.annotations.permission.JDABotPermission
 import com.solostudios.polybot.annotations.permission.JDAUserPermission
+import com.solostudios.polybot.event.moderation.PolyClearEvent
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.MessageHistory
 import net.dv8tion.jda.api.entities.User
-import org.slf4j.kotlin.debug
 import org.slf4j.kotlin.getLogger
 import org.slf4j.kotlin.info
 
 class ModerationCommands(val bot: PolyBot) {
     private val logger by getLogger()
     
+    private val moderationManager = bot.moderationManager
+    
     @CommandMethod("ban|banish|begone <member> [reason]")
     @JDABotPermission(Permission.BAN_MEMBERS)
     @JDAUserPermission(Permission.BAN_MEMBERS)
     fun banUser(message: Message,
                 @Argument("member")
-                user: User,
+                member: Member,
                 @Argument("reason")
                 @Greedy
                 reason: String?,
-                @Flag("days", aliases = ["d"], description = "The amount of days to delete")
+                @Flag("days", aliases = ["d"], description = "The amount of days to delete when banning the user. Defaults to 3.")
                 days: Int?) {
-        val realReason = if (reason != null) "for \"$reason\"." else "no reason provided."
-    
-        message.guild.ban(user, days ?: 3)
-                .reason(realReason)
-                .queue()
-    
-        message.reply("User ${user.name}#${user.discriminator} has been banned from the server, and ${days ?: 3} days of messages have been deleted, $realReason")
-                .queue()
-    
-        // log to console
-        logger.debug(user.name,
-                     user.discriminator,
-                     message.guild,
-                     days ?: 3,
-                     realReason) { "User {}#{} has been banned from the server {}, and {} days of messages have been deleted. {}" }
-        // TODO: 2021-07-11 dispatch ban event
+        val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
+        
+        moderationManager.banMember(message.guild, member, message.member!!, realReason, days ?: 3) {
+            message.reply(it).queue()
+        }
     }
     
     @CommandMethod("kick|yeet <member> [reason]")
@@ -81,22 +73,13 @@ class ModerationCommands(val bot: PolyBot) {
     fun kickMember(message: Message,
                    @Argument("member")
                    member: Member,
-                   @Argument("reason")
+                   @Argument("reason", description = "The reason the member was kicked.")
                    reason: String?) {
-        val realReason = if (reason != null) "for \"$reason\"." else "no reason provided."
-        
-        member.kick(realReason)
-                .queue()
-        
-        message.reply("User ${member.user.name}#${member.user.discriminator} has been kicked from the server, $realReason")
-                .queue()
-        
-        // log to console
-        logger.debug(member.user.name,
-                     member.user.discriminator,
-                     member.guild.name,
-                     realReason) { "User {}#{} has been kicked from the server {}, {}" }
-        // TODO: 2021-07-11 dispatch kick event
+        val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
+    
+        moderationManager.kickMember(message.guild, member, message.member!!, realReason) {
+            message.reply(it).queue()
+        }
     }
     
     @CommandMethod("purge|clear|clean <amount>")
@@ -117,7 +100,30 @@ class ModerationCommands(val bot: PolyBot) {
                       botOnly: Boolean = false,
                       @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
                       caseInsensitive: Boolean = false) {
+        val event = PolyClearEvent(message.textChannel, message.author)
+        bot.eventManager.dispatch(event)
+    
         logger.info(message.member?.effectiveName, amount) { "User {} ran command to clear {} messages" }
+        val regex =
+                if (caseInsensitive)
+                    messageRegex?.toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
+                else
+                    messageRegex?.toRegex(RegexOption.MULTILINE)
+    
+    
+        val messages = PastMessageSequence(message.channel.history).filter {
+            if (user != null) it.author == user else true
+        }.filter {
+            if (regex != null) it.contentStripped.matches(regex) else true
+        }.filter {
+            if (startsWith != null) it.contentStripped.startsWith(startsWith, caseInsensitive) else true
+        }.filter {
+            if (endsWith != null) it.contentStripped.endsWith(endsWith, caseInsensitive) else true
+        }.filter {
+            if (botOnly) it.author.isBot else true
+        }.take(amount).toList()
+    
+    
         message.replyFormat("User %s ran command to clear %d messages", message.member?.effectiveName, amount).queue()
         logger.info(amount, user, messageRegex, startsWith, endsWith, botOnly, caseInsensitive) {
             "amount = [{}], user = [{}], messageRegex = [{}], startsWith = [{}], endsWith = [{}], botOnly = [{}], caseInsensitive = [{}]"
@@ -133,5 +139,25 @@ class ModerationCommands(val bot: PolyBot) {
                    reason: String?) {
         logger.info(message.member?.effectiveName, member.effectiveName, reason) { "User {} ran command to warn {} for '{}'" }
         message.replyFormat("User %s ran command to warn %s for '%s'", message.member?.effectiveName, member.effectiveName, reason).queue()
+    }
+    
+    private class PastMessageSequence(private val history: MessageHistory, private val bulkQuery: Int = 24) : Sequence<Message> {
+        override fun iterator(): Iterator<Message> = object : Iterator<Message> {
+            var stack: List<Message> = emptyList()
+            
+            override fun next(): Message {
+                if (hasNext())
+                    return stack.first()
+                else
+                    throw NoSuchElementException()
+            }
+            
+            override fun hasNext(): Boolean {
+                if (stack.isEmpty())
+                    stack = history.retrievePast(bulkQuery).complete()
+                
+                return stack.isEmpty()
+            }
+        }
     }
 }
