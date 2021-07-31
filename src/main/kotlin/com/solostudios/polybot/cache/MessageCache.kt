@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCache.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 02:04 p.m.
+ * Last modified on 31-07-2021 02:22 a.m.
  *
  * MIT License
  *
@@ -28,21 +28,13 @@
 
 package com.solostudios.polybot.cache
 
-import com.esotericsoftware.kryo.Kryo
-import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy
 import net.dv8tion.jda.api.entities.Message
 import org.ehcache.Cache
-import org.objenesis.strategy.StdInstantiatorStrategy
 import org.slf4j.kotlin.getLogger
 
 class MessageCache(val cacheManager: CacheManager,
                    val messageCache: Cache<Long, CachedMessage>) {
     private val logger by getLogger()
-    
-    val kryo = Kryo().apply {
-        instantiatorStrategy = DefaultInstantiatorStrategy(StdInstantiatorStrategy())
-    }
-    
     
     fun addMessage(message: Message) {
         addMessage(CachedMessage(message.idLong,

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CachedMessage.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 02:05 p.m.
+ * Last modified on 31-07-2021 02:24 a.m.
  *
  * MIT License
  *
@@ -61,12 +61,14 @@ data class CachedMessage(
         val username: String,
          */
                         ) {
+    
+    @Suppress("DuplicatedCode")
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
         
         other as CachedMessage
-    
+        
         if (id != other.id) return false
         if (channel != other.channel) return false
         if (category != other.category) return false
@@ -80,7 +82,7 @@ data class CachedMessage(
         if (content != other.content) return false
         if (edited != other.edited) return false
         if (hasAttachments != other.hasAttachments) return false
-    
+        
         return true
     }
     

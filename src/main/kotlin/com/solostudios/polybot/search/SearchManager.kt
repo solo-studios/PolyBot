@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 30-07-2021 09:20 p.m.
+ * Last modified on 31-07-2021 02:24 a.m.
  *
  * MIT License
  *
@@ -30,6 +30,7 @@ package com.solostudios.polybot.search
 
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.config.search.GithubWikiSearchLocation
+import com.solostudios.polybot.service.ShutdownService
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.store.NRTCachingDirectory
 import org.slf4j.kotlin.error
@@ -38,10 +39,10 @@ import kotlin.io.path.Path
 
 
 @Suppress("MemberVisibilityCanBePrivate")
-class SearchManager(val bot: PolyBot) {
+class SearchManager(val bot: PolyBot) : ShutdownService() {
     private val logger by getLogger()
     
-    val searchIndex: Map<String, Index>
+    val searchIndexes: Map<String, Index>
     
     val defaultIndex: Index
     
@@ -62,14 +63,21 @@ class SearchManager(val bot: PolyBot) {
                     if (location.name == searchConfig.default)
                         default = index
                 }
-                
+    
                 else                        -> {
                     logger.error { "Search location ${location.name} not a known subtype" }
                 }
             }
         }
         
-        searchIndex = indexes
+        searchIndexes = indexes
         defaultIndex = default ?: throw NullPointerException("Could not find default index value.")
+    }
+    
+    override fun shutdown() {
+        searchIndexes.forEach { (_, index) ->
+            index.shutdown()
+        }
+        super.shutdown()
     }
 }

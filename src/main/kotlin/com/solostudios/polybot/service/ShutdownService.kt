@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file EventMapper.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 02:38 p.m.
+ * The file ShutdownService.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 02:18 a.m.
  *
  * MIT License
  *
@@ -26,22 +26,16 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.event.cloud
+package com.solostudios.polybot.service
 
-import cloud.commandframework.jda.JDACommandSender
-import cloud.commandframework.jda.JDAGuildSender
-import cloud.commandframework.jda.JDAPrivateSender
-
-object EventMapper {
-    fun senderToMessageEvent(sender: JDACommandSender): MessageEvent {
-        val event = sender.event.get()
-        return when (sender::class) {
-            JDAGuildSender::class   -> GuildMessageEvent(sender, event, (sender as JDAGuildSender).member, sender.textChannel)
-            JDAPrivateSender::class -> PrivateMessageEvent(sender, event, (sender as JDAPrivateSender).user, sender.privateChannel)
-            JDACommandSender::class -> MessageEvent(sender, event, sender.user, sender.channel)
-            else                    -> throw UnsupportedOperationException("what.")
-        }
-    }
+abstract class ShutdownService {
+    open var shutdown = false
+        protected set
     
-    fun messageEventToSender(event: MessageEvent): JDACommandSender = event.sender
+    open val running
+        get() = !shutdown
+    
+    open fun shutdown() {
+        shutdown = true
+    }
 }

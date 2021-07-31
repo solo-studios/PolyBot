@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubWikiIndex.kt is part of PolyhedralBot
- * Last modified on 30-07-2021 10:09 p.m.
+ * Last modified on 31-07-2021 02:24 a.m.
  *
  * MIT License
  *
@@ -37,6 +37,9 @@ class GithubWikiIndex(
         override val searchLocation: GithubWikiSearchLocation,
         cacheDirectory: Directory,
                      ) : Index(StandardAnalyzer(), cacheDirectory) {
+    
+    val githubWikiTarball = "https://github.com/${searchLocation.repoOwner}/${searchLocation.repoName}/archive/master.tar.xz"
+    
     override fun updateIndex(writer: IndexWriter) {
     
     }

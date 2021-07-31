@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubWikiSearchLocation.kt is part of PolyhedralBot
- * Last modified on 25-07-2021 12:36 p.m.
+ * Last modified on 30-07-2021 11:09 p.m.
  *
  * MIT License
  *
@@ -31,8 +31,10 @@ package com.solostudios.polybot.config.search
 import com.fasterxml.jackson.annotation.JsonProperty
 
 class GithubWikiSearchLocation(
-        @JsonProperty("url")
-        val url: String,
+        @JsonProperty("repo")
+        val repoName: String,
+        @JsonProperty("owner")
+        val repoOwner: String,
         @JsonProperty("name")
         name: String,
                               ) : SearchLocation(name)

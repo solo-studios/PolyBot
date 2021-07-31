@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file JDAMessageCommandPreprocessor.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 12:33 a.m.
+ * The file JDAMessagePreprocessor.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 02:17 a.m.
  *
  * MIT License
  *
@@ -26,13 +26,12 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot
+package com.solostudios.polybot.cloud.preprocessor
 
 import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
 import cloud.commandframework.execution.preprocessor.CommandPreprocessor
 import cloud.commandframework.jda.JDA4CommandManager
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.checkerframework.checker.units.qual.C
 import org.slf4j.kotlin.getLogger
 
 /**
@@ -40,7 +39,7 @@ import org.slf4j.kotlin.getLogger
  *
  * @param mgr The JDACommandManager
  */
-class JDAMessageCommandPreprocessor<C>(private val mgr: JDA4CommandManager<C>) : CommandPreprocessor<C> {
+class JDAMessagePreprocessor<C>(private val mgr: JDA4CommandManager<C>) : CommandPreprocessor<C> {
     private val logger by getLogger()
     
     /**
@@ -63,4 +62,4 @@ class JDAMessageCommandPreprocessor<C>(private val mgr: JDA4CommandManager<C>) :
         }
         context.commandContext.store("Message", event.message)
     }
-} //private val logger by getLogger()
+}

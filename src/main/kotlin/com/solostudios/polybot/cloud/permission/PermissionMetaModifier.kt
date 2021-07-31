@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file NotBoolean.kt is part of PolyhedralBot
- * Last modified on 19-07-2021 01:37 a.m.
+ * The file PermissionMetaModifier.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 01:23 a.m.
  *
  * MIT License
  *
@@ -26,6 +26,22 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.permission
+package com.solostudios.polybot.cloud.permission
 
-data class NotBoolean(val value: Boolean)
+import cloud.commandframework.Command
+import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
+import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+
+object PermissionMetaModifier {
+    fun <T> botPermissionModifier(botPermission: JDABotPermission, builder: Command.Builder<T>): Command.Builder<T> {
+        return builder.meta(BOT_PERMISSIONS, botPermission.permissions.asList())
+    }
+    
+    fun <T> userPermissionModifier(userPermission: JDAUserPermission, builder: Command.Builder<T>): Command.Builder<T> {
+        return builder.meta(USER_PERMISSIONS, userPermission.permissions.asList())
+                .meta(OWNER_ONLY, NotBoolean(userPermission.ownerOnly))
+                .meta(CO_OWNER_ONLY, NotBoolean(userPermission.coOwnerOnly))
+    }
+}
+
+// object : TypeToken<List<String>>(){}

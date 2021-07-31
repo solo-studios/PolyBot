@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:08 a.m.
+ * Last modified on 31-07-2021 02:24 a.m.
  *
  * MIT License
  *
@@ -30,24 +30,25 @@ package com.solostudios.polybot
 
 import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.meta.SimpleCommandMeta
-import com.solostudios.polybot.annotations.permission.JDABotPermission
-import com.solostudios.polybot.annotations.permission.JDAUserPermission
 import com.solostudios.polybot.cache.CacheManager
 import com.solostudios.polybot.cache.MessageCacheListener
+import com.solostudios.polybot.cloud.event.EventMapper
+import com.solostudios.polybot.cloud.event.MessageEvent
+import com.solostudios.polybot.cloud.parser.MemberParser
+import com.solostudios.polybot.cloud.parser.UserParser
+import com.solostudios.polybot.cloud.permission.BotPermissionPostprocessor
+import com.solostudios.polybot.cloud.permission.PermissionMetaModifier
+import com.solostudios.polybot.cloud.permission.UserPermissionPostprocessor
+import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
+import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 import com.solostudios.polybot.commands.MessageCacheCommands
 import com.solostudios.polybot.commands.ModerationCommands
 import com.solostudios.polybot.commands.UtilCommands
 import com.solostudios.polybot.config.PolyConfig
 import com.solostudios.polybot.event.EventManager
-import com.solostudios.polybot.event.cloud.EventMapper
-import com.solostudios.polybot.event.cloud.MessageEvent
 import com.solostudios.polybot.logging.LoggingListener
-import com.solostudios.polybot.parser.MemberParser
-import com.solostudios.polybot.parser.UserParser
-import com.solostudios.polybot.permission.BotPermissionPostprocessor
-import com.solostudios.polybot.permission.PermissionMetaModifier
-import com.solostudios.polybot.permission.UserPermissionPostprocessor
 import com.solostudios.polybot.search.SearchManager
+import com.solostudios.polybot.service.ShutdownService
 import com.solostudios.polybot.util.AnnotationParser
 import com.solostudios.polybot.util.ScheduledThreadPool
 import com.solostudios.polybot.util.currentThread
@@ -64,17 +65,18 @@ import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import net.dv8tion.jda.InlineJDABuilder
 import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Message
 import org.slf4j.kotlin.getLogger
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator as CommandCoordinator
 import cloud.commandframework.jda.JDA4CommandManager as CommandManager
-import com.solostudios.polybot.JDAMessageCommandPreprocessor as MessagePreprocessor
+import com.solostudios.polybot.cloud.preprocessor.JDAMessagePreprocessor as MessagePreprocessor
 
 @ExperimentalTime
 @Suppress("UNUSED_ANONYMOUS_PARAMETER", "MemberVisibilityCanBePrivate", "unused")
-class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
+class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownService() {
     private val logger by getLogger()
     
     val botConfig = config.botConfig
@@ -138,15 +140,27 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
                 activity = botActivity.getActivity()
             }
         }
-        
+    
         annotationParser.parse(UtilCommands(this@PolyBot), ModerationCommands(this@PolyBot), MessageCacheCommands(this@PolyBot))
     }
     
     private fun botPrefix(event: MessageEvent) = botConfig.prefix
     
-    fun shutdown() {
+    override fun shutdown() {
+        jda.presence.apply {
+            onlineStatus = OnlineStatus.DO_NOT_DISTURB
+            activity = Activity.watching("Shutting down PolyBot...")
+        }
+        
+        jda.shutdown()
+        
+        cacheManager.shutdown()
+        searchManager.shutdown()
+        
         scheduledThreadPool.shutdown()
         coroutineDispatcher.close()
+        
+        super.shutdown()
     }
 }
 

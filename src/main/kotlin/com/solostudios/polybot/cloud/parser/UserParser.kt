@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserParser.kt is part of PolyhedralBot
- * Last modified on 18-07-2021 10:47 p.m.
+ * Last modified on 31-07-2021 01:23 a.m.
  *
  * MIT License
  *
@@ -26,7 +26,7 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.parser
+package com.solostudios.polybot.cloud.parser
 
 import cloud.commandframework.arguments.parser.ArgumentParseResult
 import cloud.commandframework.arguments.parser.ArgumentParser

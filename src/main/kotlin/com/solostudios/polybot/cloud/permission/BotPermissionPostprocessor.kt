@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 19-07-2021 01:20 a.m.
+ * The file BotPermissionPostprocessor.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 01:23 a.m.
  *
  * MIT License
  *
@@ -26,18 +26,18 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.permission
+package com.solostudios.polybot.cloud.permission
 
 import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext
 import cloud.commandframework.execution.postprocessor.CommandPostprocessor
 import cloud.commandframework.services.types.ConsumerService
-import com.solostudios.polybot.PolyBot
+import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.slf4j.kotlin.getLogger
 import org.slf4j.kotlin.info
 
-class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T> {
+class BotPermissionPostprocessor<T> : CommandPostprocessor<T> {
     private val logger by getLogger()
     
     @Suppress("DuplicatedCode")
@@ -49,37 +49,19 @@ class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T>
         logger.info { "context: ${context.asMap()}" }
         logger.info { "meta: ${commandMeta.allValues}" }
         
-        if (commandMeta.getOrDefault(CO_OWNER_ONLY, NotBoolean(true)).value) {
-            if (event.author.idLong !in bot.botConfig.ownerIds && event.author.idLong !in bot.botConfig.coOwnerIds) {
-                event.message.replyFormat("This command can only be performed by co-owners and owners of the bot.")
-                        .mentionRepliedUser(false)
-                        .queue()
-                ConsumerService.interrupt()
-            }
-        } else if (commandMeta.getOrDefault(OWNER_ONLY, NotBoolean(true)).value) {
-            if (event.author.idLong !in bot.botConfig.ownerIds) {
-                event.message.replyFormat("This command can only be performed by owners of the bot.")
-                        .mentionRepliedUser(false)
-                        .queue()
-                ConsumerService.interrupt()
-            }
-        }
-        
-        if (event.author.idLong in bot.botConfig.ownerIds)
-            return
-        
         if (context.contains("Guild")) {
-            val user = event.member ?: return
+            val guild = context.get<Guild>("Guild")
+            val bot = guild.selfMember
             
             val permissions =
                     if (context.contains("TextChannel"))
-                        context.get<TextChannel>("TextChannel").getPermissionOverride(user)?.allowed ?: user.permissions
+                        context.get<TextChannel>("TextChannel").getPermissionOverride(bot)?.allowed ?: bot.permissions
                     else
-                        user.permissions
+                        bot.permissions
             
-            val neededPermissions = commandMeta.getOrDefault(USER_PERMISSIONS, emptyList())
+            val neededPermissions = commandMeta.getOrDefault(BOT_PERMISSIONS, emptyList())
             if (!permissions.containsAll(neededPermissions)) {
-                event.message.replyFormat("Cannot execute command due to insufficient permission. You require the following permission(s) to do execute this command: %s.",
+                event.message.replyFormat("Cannot execute command due to insufficient permission. The bot requires the following permission(s) to execute this command: %s.",
                                           neededPermissions.subtract(permissions).joinToString(separator = ", ") { it.getName() })
                         .mentionRepliedUser(false)
                         .queue()

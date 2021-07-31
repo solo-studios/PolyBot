@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 30-07-2021 11:02 p.m.
+ * Last modified on 31-07-2021 02:24 a.m.
  *
  * MIT License
  *
@@ -29,8 +29,8 @@
 package com.solostudios.polybot.search
 
 import com.solostudios.polybot.config.search.SearchLocation
+import com.solostudios.polybot.service.ShutdownService
 import com.solostudios.polybot.util.shortFormat
-import java.io.Closeable
 import java.time.ZoneId
 import java.util.Locale
 import java.util.TimeZone
@@ -49,7 +49,7 @@ import kotlin.time.Duration
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
-abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable {
+abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : ShutdownService() {
     private val logger by getLogger()
     
     private val indexWriterConfig = IndexWriterConfig(analyzer).setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND)
@@ -111,10 +111,12 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable 
     
     abstract fun updateIndex(writer: IndexWriter)
     
-    override fun close() {
+    override fun shutdown() {
         indexReader.close()
         indexWriter.commit()
         indexWriter.close()
+        
+        super.shutdown()
     }
     
     private fun String.query(): Query = queryParserHelper.parse(this, "body")

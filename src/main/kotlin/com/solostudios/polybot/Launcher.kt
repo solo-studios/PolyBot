@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:14 a.m.
+ * Last modified on 31-07-2021 02:24 a.m.
  *
  * MIT License
  *
@@ -39,26 +39,29 @@ import com.solostudios.polybot.config.PolyConfig
 import com.solostudios.polybot.util.onJvmShutdown
 import com.solostudios.polybot.util.or
 import java.io.File
+import java.nio.file.Path
 import java.sql.Connection
 import net.dv8tion.jda.DefaultJDABuilder
+import net.dv8tion.jda.api.GatewayEncoding
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.ChunkingFilter
-import net.dv8tion.jda.api.utils.Compression
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.slf4j.kotlin.error
 import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.info
+import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
 private val logger by getLogger()
 
 fun main() {
-    
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     
-    val config = readConfig("polybot.conf")
+    val config = readConfig(Constants.configFile)
     
     val jda = DefaultJDABuilder(config.botConfig.token) {
         disableCache = listOf(CacheFlag.ACTIVITY,
@@ -82,17 +85,15 @@ fun main() {
                                GatewayIntent.GUILD_MESSAGE_REACTIONS,
                                GatewayIntent.DIRECT_MESSAGES,
                                GatewayIntent.DIRECT_MESSAGE_REACTIONS)
-        
+    
         memberCachePolicy = MemberCachePolicy.ONLINE or MemberCachePolicy.VOICE or MemberCachePolicy.OWNER
         chunkingFilter = ChunkingFilter.NONE
-        compression = Compression.ZLIB
-        largeThreshold = 250
-        
-        status = OnlineStatus.IDLE
-        activity = Activity.watching("Starting up...")
-        
-        
-        rawEvents = false
+        gatewayEncoding = GatewayEncoding.ETF
+    
+        status = OnlineStatus.DO_NOT_DISTURB
+        activity = Activity.watching("Starting up PolyBot...")
+    
+    
         enableShutdownHook = true
         bulkDeleteSplitting = false
     }
@@ -104,12 +105,15 @@ fun main() {
     }
 }
 
-private fun readConfig(fileName: String) = readConfig(File(fileName))
+private fun readConfig(fileName: String): PolyConfig = readConfig(Path(fileName))
 
-private fun readConfig(file: File): PolyConfig {
+private fun readConfig(path: Path): PolyConfig {
+    val file = path.toFile()
+    
     if (!file.exists()) {
         createConfigFileAndExit(file)
     }
+    
     val mapper = ObjectMapper(HoconFactory())
             .registerKotlinModule()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -120,19 +124,23 @@ private fun readConfig(file: File): PolyConfig {
 }
 
 private fun createConfigFileAndExit(file: File) {
-    logger.error("File '${file.name}' not present. Writing default config to '${file.name}'.\n" +
-                         "Please edit this file to include the bot token + all other fields.")
+    logger.error {
+        """
+        File '${file.name}' not present. Writing default config to '${file.name}'.
+        Please edit this file to include the bot token + all other fields.
+        """.trimIndent()
+    }
     
-    val stream = PolyBot::class.java.getResourceAsStream("/default.conf")
+    val stream = PolyBot::class.java.getResourceAsStream(Constants.defaultConfig)
     
-    if (stream != null)
+    if (stream != null) {
         stream.transferTo(file.outputStream())
-    else {
-        logger.error("Could not write default config as it was not found.")
+    } else {
+        logger.error { "Cannot write default config. Could not find the default config file at resource location: '${Constants.defaultConfig}'." }
         exitProcess(-2)
     }
     
-    logger.info("Wrote default config to '${file.name}'. Please edit the file before running again.")
+    logger.info { "Wrote default config to '${file.name}'. Please modify this file with your token and other settings before running." }
     
     exitProcess(1)
 }

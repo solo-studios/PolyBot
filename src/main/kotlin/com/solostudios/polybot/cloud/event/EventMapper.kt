@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PermissionMetaModifier.kt is part of PolyhedralBot
- * Last modified on 19-07-2021 12:51 a.m.
+ * The file EventMapper.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 02:18 a.m.
  *
  * MIT License
  *
@@ -26,22 +26,22 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.permission
+package com.solostudios.polybot.cloud.event
 
-import cloud.commandframework.Command
-import com.solostudios.polybot.annotations.permission.JDABotPermission
-import com.solostudios.polybot.annotations.permission.JDAUserPermission
+import cloud.commandframework.jda.JDACommandSender
+import cloud.commandframework.jda.JDAGuildSender
+import cloud.commandframework.jda.JDAPrivateSender
 
-object PermissionMetaModifier {
-    fun <T> botPermissionModifier(botPermission: JDABotPermission, builder: Command.Builder<T>): Command.Builder<T> {
-        return builder.meta(BOT_PERMISSIONS, botPermission.permissions.asList())
+object EventMapper {
+    fun senderToMessageEvent(sender: JDACommandSender): MessageEvent {
+        val event = sender.event.get()
+        return when (sender::class) {
+            JDAGuildSender::class   -> GuildMessageEvent(sender, event, (sender as JDAGuildSender).member, sender.textChannel)
+            JDAPrivateSender::class -> PrivateMessageEvent(sender, event, (sender as JDAPrivateSender).user, sender.privateChannel)
+            JDACommandSender::class -> MessageEvent(sender, event, sender.user, sender.channel)
+            else                    -> throw UnsupportedOperationException("what.")
+        }
     }
     
-    fun <T> userPermissionModifier(userPermission: JDAUserPermission, builder: Command.Builder<T>): Command.Builder<T> {
-        return builder.meta(USER_PERMISSIONS, userPermission.permissions.asList())
-                .meta(OWNER_ONLY, NotBoolean(userPermission.ownerOnly))
-                .meta(CO_OWNER_ONLY, NotBoolean(userPermission.coOwnerOnly))
-    }
+    fun messageEventToSender(event: MessageEvent): JDACommandSender = event.sender
 }
-
-// object : TypeToken<List<String>>(){}

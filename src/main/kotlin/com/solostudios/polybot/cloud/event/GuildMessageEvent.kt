@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file JDABotPermission.kt is part of PolyhedralBot
- * Last modified on 16-07-2021 01:00 a.m.
+ * The file GuildMessageEvent.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 02:18 a.m.
  *
  * MIT License
  *
@@ -26,8 +26,16 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.annotations.permission
+package com.solostudios.polybot.cloud.event
 
-import net.dv8tion.jda.api.Permission
+import cloud.commandframework.jda.JDACommandSender
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.MessageChannel
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-annotation class JDABotPermission(vararg val permissions: Permission)
+data class GuildMessageEvent(
+        override val sender: JDACommandSender,
+        override val event: MessageReceivedEvent,
+        val member: Member,
+        override val channel: MessageChannel,
+                            ) : MessageEvent(sender, event, member.user, channel)

@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MessageEvent.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 08:24 p.m.
+ * The file NotBoolean.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 01:23 a.m.
  *
  * MIT License
  *
@@ -26,16 +26,15 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.event.cloud
+package com.solostudios.polybot.cloud.permission
 
-import cloud.commandframework.jda.JDACommandSender
-import net.dv8tion.jda.api.entities.MessageChannel
-import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-
-open class MessageEvent(
-        open val sender: JDACommandSender,
-        open val event: MessageReceivedEvent,
-        open val user: User,
-        open val channel: MessageChannel,
-                       )
+/**
+ * This class is a bruh moment.
+ *
+ * It only exists because of some jvm buffoonery that I can't work around.
+ * (Where the type Boolean is compared to the primitive boolean, so they're ""not compatible"")
+ *
+ * @property value
+ * @constructor Create empty Not boolean
+ */
+data class NotBoolean(val value: Boolean)

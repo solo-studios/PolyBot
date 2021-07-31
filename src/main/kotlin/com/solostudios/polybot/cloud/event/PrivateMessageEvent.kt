@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MessageCacheListener.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:24 a.m.
+ * The file PrivateMessageEvent.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 02:18 a.m.
  *
  * MIT License
  *
@@ -26,23 +26,17 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cache
+package com.solostudios.polybot.cloud.event
 
-import com.solostudios.polybot.PolyBot
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent
-import net.dv8tion.jda.api.hooks.ListenerAdapter
-import org.slf4j.kotlin.getLogger
+import cloud.commandframework.jda.JDACommandSender
+import net.dv8tion.jda.api.entities.PrivateChannel
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-class MessageCacheListener(val bot: PolyBot) : ListenerAdapter() {
-    private val logger by getLogger()
-    private val messageCache: MessageCache = bot.cacheManager.messageCache
-    
-    override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
-        messageCache.addMessage(event.message)
-    }
-    
-    override fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
-    
-    }
-}
+data class PrivateMessageEvent(
+        override val sender: JDACommandSender,
+        override val event: MessageReceivedEvent,
+        override val user: User,
+        @Suppress("MemberVisibilityCanBePrivate")
+        val privateChannel: PrivateChannel,
+                              ) : MessageEvent(sender, event, user, privateChannel)
