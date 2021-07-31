@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 30-07-2021 10:09 p.m.
+ * Last modified on 30-07-2021 11:02 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package com.solostudios.polybot.search
 
 import com.solostudios.polybot.config.search.SearchLocation
+import com.solostudios.polybot.util.shortFormat
 import java.io.Closeable
 import java.time.ZoneId
 import java.util.Locale
@@ -42,18 +43,17 @@ import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser
 import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.Query
 import org.apache.lucene.store.Directory
+import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.info
+import kotlin.time.Duration
+import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable {
-    val queryParserHelper = StandardQueryParser(analyzer).also {
-        it.allowLeadingWildcard = true
-        it.locale = Locale.US
-        it.timeZone = TimeZone.getTimeZone(ZoneId.of("America/New_York"))
-    }
+    private val logger by getLogger()
     
     private val indexWriterConfig = IndexWriterConfig(analyzer).setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND)
-    
     private val indexWriter = IndexWriter(cacheDirectory, indexWriterConfig)
-    
     private var indexReader: DirectoryReader = DirectoryReader.open(indexWriter)
         get() {
             val reader: DirectoryReader? = DirectoryReader.openIfChanged(field, indexWriter)
@@ -64,7 +64,6 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable 
             
             return field
         }
-    
     private var indexSearcher = IndexSearcher(indexReader)
         get() {
             return if (indexReader == field.indexReader)
@@ -74,18 +73,41 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable 
                 field
             }
         }
-    
-    protected abstract val searchLocation: SearchLocation
+    private val queryParserHelper = StandardQueryParser(analyzer).also {
+        it.allowLeadingWildcard = true
+        it.locale = Locale.US
+        it.timeZone = TimeZone.getTimeZone(ZoneId.of("America/New_York"))
+    }
     
     fun search(searchQuery: String, maxResults: Int): List<Document> {
-        return indexSearcher.search(searchQuery.query(), maxResults).scoreDocs.map { indexSearcher.doc(it.doc) }
+        val (results: List<Document>, duration: Duration) = measureTimedValue {
+            return@measureTimedValue indexSearcher.search(searchQuery.query(), maxResults).scoreDocs.map { indexSearcher.doc(it.doc) }
+        }
+        
+        logger.info { "Search query $searchQuery took ${duration.shortFormat()} to execute, returning ${results.size} results." }
+        
+        return results
     }
     
-    fun count(searchQuery: String): Int = indexSearcher.count(searchQuery.query())
+    fun count(searchQuery: String): Int {
+        val (results: Int, duration: Duration) = measureTimedValue {
+            return@measureTimedValue indexSearcher.count(searchQuery.query())
+        }
+        
+        logger.info { "Count query $searchQuery took ${duration.shortFormat()} to execute, returning a count of $results results." }
+        
+        return results
+    }
     
     fun updateIndex() {
-        updateIndex(indexWriter)
+        val duration = measureTime {
+            updateIndex(indexWriter)
+        }
+        
+        logger.info { "Took ${duration.shortFormat()} to update the ${searchLocation.name} index." }
     }
+    
+    protected abstract val searchLocation: SearchLocation
     
     abstract fun updateIndex(writer: IndexWriter)
     
