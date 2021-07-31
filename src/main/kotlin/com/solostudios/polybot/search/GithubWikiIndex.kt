@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubWikiIndex.kt is part of PolyhedralBot
- * Last modified on 30-07-2021 09:32 p.m.
+ * Last modified on 30-07-2021 10:09 p.m.
  *
  * MIT License
  *
@@ -31,17 +31,12 @@ package com.solostudios.polybot.search
 import com.solostudios.polybot.config.search.GithubWikiSearchLocation
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.IndexWriter
-import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.store.Directory
 
 class GithubWikiIndex(
         override val searchLocation: GithubWikiSearchLocation,
         cacheDirectory: Directory,
                      ) : Index(StandardAnalyzer(), cacheDirectory) {
-    override fun search(query: String, searcher: IndexSearcher) {
-    
-    }
-    
     override fun updateIndex(writer: IndexWriter) {
     
     }

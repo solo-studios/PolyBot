@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 30-07-2021 09:26 p.m.
+ * Last modified on 30-07-2021 10:09 p.m.
  *
  * MIT License
  *
@@ -30,14 +30,26 @@ package com.solostudios.polybot.search
 
 import com.solostudios.polybot.config.search.SearchLocation
 import java.io.Closeable
+import java.time.ZoneId
+import java.util.Locale
+import java.util.TimeZone
 import org.apache.lucene.analysis.Analyzer
+import org.apache.lucene.document.Document
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.index.IndexWriterConfig
+import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser
 import org.apache.lucene.search.IndexSearcher
+import org.apache.lucene.search.Query
 import org.apache.lucene.store.Directory
 
 abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable {
+    val queryParserHelper = StandardQueryParser(analyzer).also {
+        it.allowLeadingWildcard = true
+        it.locale = Locale.US
+        it.timeZone = TimeZone.getTimeZone(ZoneId.of("America/New_York"))
+    }
+    
     private val indexWriterConfig = IndexWriterConfig(analyzer).setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND)
     
     private val indexWriter = IndexWriter(cacheDirectory, indexWriterConfig)
@@ -65,11 +77,11 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable 
     
     protected abstract val searchLocation: SearchLocation
     
-    fun search(query: String) {
-        this.search(query, indexSearcher)
+    fun search(searchQuery: String, maxResults: Int): List<Document> {
+        return indexSearcher.search(searchQuery.query(), maxResults).scoreDocs.map { indexSearcher.doc(it.doc) }
     }
     
-    protected abstract fun search(query: String, searcher: IndexSearcher)
+    fun count(searchQuery: String): Int = indexSearcher.count(searchQuery.query())
     
     fun updateIndex() {
         updateIndex(indexWriter)
@@ -82,4 +94,6 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable 
         indexWriter.commit()
         indexWriter.close()
     }
+    
+    private fun String.query(): Query = queryParserHelper.parse(this, "body")
 }
