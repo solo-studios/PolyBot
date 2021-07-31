@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 25-07-2021 12:36 p.m.
+ * Last modified on 31-07-2021 01:08 a.m.
  *
  * MIT License
  *
@@ -49,13 +49,19 @@ import com.solostudios.polybot.permission.PermissionMetaModifier
 import com.solostudios.polybot.permission.UserPermissionPostprocessor
 import com.solostudios.polybot.search.SearchManager
 import com.solostudios.polybot.util.AnnotationParser
+import com.solostudios.polybot.util.ScheduledThreadPool
+import com.solostudios.polybot.util.currentThread
 import com.solostudios.polybot.util.fixedRate
 import com.solostudios.polybot.util.onlineStatus
 import com.solostudios.polybot.util.parse
+import com.solostudios.polybot.util.processors
 import com.solostudios.polybot.util.registerInjector
 import com.solostudios.polybot.util.registerParserSupplier
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
+import com.solostudios.polybot.util.runtime
+import java.util.concurrent.ThreadFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.asCoroutineDispatcher
 import net.dv8tion.jda.InlineJDABuilder
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Message
@@ -81,41 +87,36 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     
     val searchManager = SearchManager(this@PolyBot)
     
-    val jda = builder.run {
+    val jda = builder.apply {
         eventListeners += LoggingListener(this@PolyBot)
         eventListeners += MessageCacheListener(this@PolyBot)
         eventListeners += PolyBotListener(this@PolyBot)
-        
-        return@run this.build()
-    }
+    }.build()
     
-    val scheduledThreadPool: ScheduledExecutorService = Executors.newScheduledThreadPool(12).apply { // magic number go brrr
-        fixedRate(Duration.milliseconds(100), Duration.minutes(5)) {
-            jda.presence.apply {
-                val botActivity = botConfig.activities.random()
-                onlineStatus = OnlineStatus.ONLINE
-                activity = botActivity.getActivity()
-            }
-        }
-    }
+    @Suppress("HasPlatformType")
+    val scheduledThreadPool = ScheduledThreadPool((runtime.processors - 1).takeIf { it > 0 } ?: 1, PolyThreadFactory())
+    
+    val coroutineDispatcher: ExecutorCoroutineDispatcher = scheduledThreadPool.asCoroutineDispatcher()
+    
+    val globalBotCoroutineScope = CoroutineScope(coroutineDispatcher)
     
     val permissionManager = PermissionManager(this@PolyBot)
     
-    val commandManager = CommandManager(jda,
-                                        this::botPrefix,
-                                        permissionManager::permissionCheck,
-                                        CommandCoordinator.newBuilder<MessageEvent>()
-                                                .withAsynchronousParsing()
-                                                .build(),
-                                        EventMapper::senderToMessageEvent,
-                                        EventMapper::messageEventToSender).apply {
+    val commandManager: CommandManager<MessageEvent> = CommandManager(jda,
+                                                                      this::botPrefix,
+                                                                      permissionManager::permissionCheck,
+                                                                      CommandCoordinator.newBuilder<MessageEvent>()
+                                                                              .withAsynchronousParsing()
+                                                                              .build(),
+                                                                      EventMapper::senderToMessageEvent,
+                                                                      EventMapper::messageEventToSender).apply {
         parserRegistry.registerParserSupplier(MemberParser())
         parserRegistry.registerParserSupplier(UserParser())
-    
+        
         registerCommandPreProcessor(MessagePreprocessor(this))
         registerCommandPostProcessor(UserPermissionPostprocessor(this@PolyBot))
         registerCommandPostProcessor(BotPermissionPostprocessor())
-    
+        
         PolyExceptionHandler(this)
     }
     
@@ -123,18 +124,35 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
         parameterInjectorRegistry.registerInjector { context, _ ->
             context.get<Message>("Message")
         }
-    
+        
         registerBuilderModifier(JDABotPermission::class.java, PermissionMetaModifier::botPermissionModifier)
         registerBuilderModifier(JDAUserPermission::class.java, PermissionMetaModifier::userPermissionModifier)
+    }
     
-        parse(UtilCommands(this@PolyBot),
-              ModerationCommands(this@PolyBot),
-              MessageCacheCommands(this@PolyBot))
+    init {
+        globalBotCoroutineScope
+        scheduledThreadPool.fixedRate(Duration.milliseconds(100), Duration.minutes(5)) {
+            jda.presence.apply {
+                val botActivity = botConfig.activities.random()
+                onlineStatus = OnlineStatus.ONLINE
+                activity = botActivity.getActivity()
+            }
+        }
+        
+        annotationParser.parse(UtilCommands(this@PolyBot), ModerationCommands(this@PolyBot), MessageCacheCommands(this@PolyBot))
     }
     
     private fun botPrefix(event: MessageEvent) = botConfig.prefix
     
     fun shutdown() {
-    
+        scheduledThreadPool.shutdown()
+        coroutineDispatcher.close()
     }
+}
+
+class PolyThreadFactory : ThreadFactory {
+    private val threadGroup: ThreadGroup = currentThread.threadGroup
+    private var threadCount: Int = 0
+    
+    override fun newThread(runnable: Runnable): Thread = Thread(threadGroup, runnable, "PolyBot-Worker-${threadCount++}", 0)
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyExceptionHandler.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 02:38 p.m.
+ * Last modified on 31-07-2021 01:08 a.m.
  *
  * MIT License
  *
@@ -41,20 +41,19 @@ import com.solostudios.polybot.event.cloud.MessageEvent
 import java.util.function.BiConsumer
 import org.slf4j.kotlin.getLogger
 import org.slf4j.kotlin.warn
-import kotlin.reflect.KClass
 
 class PolyExceptionHandler(val manager: CommandManager<MessageEvent>) {
     private val logger by getLogger()
     
     init {
-        manager.registerExceptionHandler(InvalidCommandSenderException::class, this::handleInvalidCommandSender)
-        manager.registerExceptionHandler(InvalidSyntaxException::class, this::handleInvalidSyntax)
-        manager.registerExceptionHandler(NoPermissionException::class, this::handleNoPermission)
-        manager.registerExceptionHandler(ArgumentParseException::class, this::handleArgumentParse)
-        manager.registerExceptionHandler(CommandExecutionException::class, this::handleCommandExecution)
-        manager.registerExceptionHandler(NoCommandInLeafException::class, this::handleNoCommandInLeaf)
-        manager.registerExceptionHandler(CommandParseException::class, this::handleCommandParse)
-        manager.registerExceptionHandler(NoSuchCommandException::class, this::handleNoSuchCommand)
+        registerExceptionHandler(this::handleInvalidCommandSender)
+        registerExceptionHandler(this::handleInvalidSyntax)
+        registerExceptionHandler(this::handleNoPermission)
+        registerExceptionHandler(this::handleArgumentParse)
+        registerExceptionHandler(this::handleCommandExecution)
+        registerExceptionHandler(this::handleNoCommandInLeaf)
+        registerExceptionHandler(this::handleCommandParse)
+        registerExceptionHandler(this::handleNoSuchCommand)
     }
     
     private fun handleInvalidCommandSender(event: MessageEvent, exception: InvalidCommandSenderException) {
@@ -71,9 +70,6 @@ class PolyExceptionHandler(val manager: CommandManager<MessageEvent>) {
     }
     
     private fun handleArgumentParse(event: MessageEvent, exception: ArgumentParseException) {
-        // when (exception::class) {
-        //
-        // }
         event.event.message.replyFormat("Invalid command argument.%n%s", exception.cause.message).queue()
     }
     
@@ -96,8 +92,13 @@ class PolyExceptionHandler(val manager: CommandManager<MessageEvent>) {
     private fun handleNoSuchCommand(event: MessageEvent, exception: NoSuchCommandException) {
         event.event.message.replyFormat("No such command \"%s\" found.", exception.suppliedCommand).queue()
     }
-}
-
-fun <C, E : Exception> CommandManager<C>.registerExceptionHandler(clazz: KClass<E>, handler: BiConsumer<C, E>) {
-    registerExceptionHandler(clazz.java, handler)
+    
+    private inline fun <reified E : Exception> registerExceptionHandler(handler: BiConsumer<MessageEvent, E>) {
+        manager.registerExceptionHandler(E::class.java, handler)
+    }
+    
+    // inline fun <C, reified E : Exception> CommandManager<C>.registerExceptionHandler(handler: BiConsumer<C, E>) {
+    //     registerExceptionHandler(E::class.java, handler)
+    // }
+    
 }

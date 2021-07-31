@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Util.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 08:24 p.m.
+ * Last modified on 31-07-2021 12:54 a.m.
  *
  * MIT License
  *
@@ -44,6 +44,7 @@ import net.dv8tion.jda.api.managers.Presence
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import kotlin.concurrent.thread
 import kotlin.text.padStart as ktPadStart
+
 
 inline fun <T> stringIfNotNull(fromObject: T?, transform: (T) -> String): String = if (fromObject != null) transform(fromObject) else ""
 
@@ -86,3 +87,27 @@ inline fun <reified C> AnnotationParser(commandManager: CommandManager<C>, noinl
 fun onJvmShutdown(name: String, block: () -> Unit) {
     Runtime.getRuntime().addShutdownHook(thread(start = false, isDaemon = true, name = name, block = block))
 }
+
+val runtime: Runtime
+    get() = Runtime.getRuntime()
+
+val Runtime.processors: Int
+    get() = availableProcessors()
+
+val Runtime.availableProcessors: Int
+    get() = availableProcessors()
+
+inline val currentThread: Thread
+    get() = Thread.currentThread()
+
+// val mainThread: Thread
+//     get() {
+//         ClassLoader.getSystemClassLoader()
+//         var rootGroup = Thread.currentThread().threadGroup
+//         var parentGroup: ThreadGroup
+//         while (rootGroup.parent.also { parentGroup = it } != null) {
+//             rootGroup = parentGroup
+//         }
+//
+//         rootGroup
+//     }
