@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 30-07-2021 09:18 p.m.
+ * Last modified on 30-07-2021 09:26 p.m.
  *
  * MIT License
  *
@@ -71,7 +71,11 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable 
     
     protected abstract fun search(query: String, searcher: IndexSearcher)
     
-    abstract fun updateIndex()
+    fun updateIndex() {
+        updateIndex(indexWriter)
+    }
+    
+    abstract fun updateIndex(writer: IndexWriter)
     
     override fun close() {
         indexReader.close()
