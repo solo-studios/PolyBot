@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file Util.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:15 a.m.
+ * The file jda.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 01:10 a.m.
  *
  * MIT License
  *
@@ -28,10 +28,18 @@
 
 package com.solostudios.polybot.util
 
-import java.util.EnumSet
+import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.managers.Presence
+import net.dv8tion.jda.api.utils.MemberCachePolicy
 
+infix fun MemberCachePolicy.or(policy: MemberCachePolicy): MemberCachePolicy {
+    return policy.or(policy)
+}
 
-inline fun <T> stringIfNotNull(fromObject: T?, transform: (T) -> String): String = if (fromObject != null) transform(fromObject) else ""
+infix fun MemberCachePolicy.and(policy: MemberCachePolicy): MemberCachePolicy {
+    return policy.and(policy)
+}
 
-inline fun <reified T : Enum<T>> enumSetOf(vararg elems: T): EnumSet<T> = EnumSet.noneOf(T::class.java).apply { addAll(elems) }
-
+var Presence.onlineStatus: OnlineStatus
+    set(value) = setStatus(value)
+    get() = status

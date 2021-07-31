@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file Embeds.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * The file any.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 01:15 a.m.
  *
  * MIT License
  *
@@ -26,17 +26,10 @@
  * SOFTWARE.
  */
 
+
 package com.solostudios.polybot.util
 
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
+import kotlin.text.padStart as ktPadStart
 
-val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+fun Any.padStart(length: Int, padChar: Char): String = this.toString().ktPadStart(length, padChar)
 
-fun footerDate(millis: Long, separator: String = "•") = footerDate(Instant.ofEpochMilli(millis), separator)
-
-fun footerDate(instant: Instant, separator: String = "•") = footerDate(instant.atOffset(ZoneOffset.UTC), separator)
-
-fun footerDate(time: OffsetDateTime, separator: String = "•") = " $separator ${time.format(dateFormatter)}"

@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file time.kt is part of PolyhedralBot
- * Last modified on 30-07-2021 10:37 p.m.
+ * The file jvm.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 01:14 a.m.
  *
  * MIT License
  *
@@ -28,16 +28,20 @@
 
 package com.solostudios.polybot.util
 
-import kotlin.time.Duration
+import kotlin.concurrent.thread
 
-fun Duration.shortFormat(): String {
-    return when {
-        inWholeDays > 0         -> "${inWholeDays}d${inWholeHours}h${inWholeMinutes}m${inWholeSeconds}s"
-        inWholeHours > 0        -> "${inWholeHours}h${inWholeMinutes}m${inWholeSeconds}s${inWholeMilliseconds}ms"
-        inWholeMinutes > 0      -> "${inWholeMinutes}m${inWholeSeconds}s${inWholeMilliseconds}ms${inWholeMicroseconds}μs"
-        inWholeSeconds > 0      -> "${inWholeSeconds}s${inWholeMilliseconds}ms${inWholeMicroseconds}μs${inWholeNanoseconds}ns"
-        inWholeMilliseconds > 0 -> "${inWholeMilliseconds}ms${inWholeMicroseconds}μs${inWholeNanoseconds}ns"
-        inWholeMicroseconds > 0 -> "${inWholeMicroseconds}μs${inWholeNanoseconds}ns"
-        else                    -> "${inWholeNanoseconds}ns"
-    }
+fun onJvmShutdown(block: () -> Unit) = onJvmShutdown("JVM-Shutdown-Thread", block)
+
+
+fun onJvmShutdown(name: String, block: () -> Unit) {
+    Runtime.getRuntime().addShutdownHook(thread(start = false, isDaemon = false, name = name, block = block))
 }
+
+val runtime: Runtime
+    get() = Runtime.getRuntime()
+
+val Runtime.processors: Int
+    get() = availableProcessors()
+
+val Runtime.availableProcessors: Int
+    get() = availableProcessors()

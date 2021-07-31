@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ConcurrencyUtil.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 12:44 a.m.
+ * The file concurrency.kt is part of PolyhedralBot
+ * Last modified on 31-07-2021 01:14 a.m.
  *
  * MIT License
  *
@@ -106,3 +106,18 @@ fun ScheduledExecutorService.fixedDelay(initialDelay: Duration, delay: Duration,
 }
 
 operator fun Runnable.invoke() = run()
+
+inline val currentThread: Thread
+    get() = Thread.currentThread()
+
+// val mainThread: Thread
+//     get() {
+//         ClassLoader.getSystemClassLoader()
+//         var rootGroup = Thread.currentThread().threadGroup
+//         var parentGroup: ThreadGroup
+//         while (rootGroup.parent.also { parentGroup = it } != null) {
+//             rootGroup = parentGroup
+//         }
+//
+//         rootGroup
+//     }

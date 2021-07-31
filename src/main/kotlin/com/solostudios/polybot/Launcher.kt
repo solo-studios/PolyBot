@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 15-07-2021 11:36 p.m.
+ * Last modified on 31-07-2021 01:14 a.m.
  *
  * MIT License
  *
@@ -99,7 +99,7 @@ fun main() {
     
     val polybot = PolyBot(config, jda)
     
-    onJvmShutdown("Bot-Shutdown") {
+    onJvmShutdown("PolyBot-Shutdown") {
         polybot.shutdown()
     }
 }
