@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchConfig.kt is part of PolyhedralBot
- * Last modified on 25-07-2021 12:34 p.m.
+ * Last modified on 30-07-2021 09:18 p.m.
  *
  * MIT License
  *
@@ -36,4 +36,6 @@ data class SearchConfig(
         val default: String,
         @JsonProperty("locations")
         val searchLocations: List<SearchLocation>,
+        @JsonProperty("cache")
+        val searchCache: String,
                        )

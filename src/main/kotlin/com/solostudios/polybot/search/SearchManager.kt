@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 25-07-2021 12:34 p.m.
+ * Last modified on 30-07-2021 09:20 p.m.
  *
  * MIT License
  *
@@ -30,27 +30,37 @@ package com.solostudios.polybot.search
 
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.config.search.GithubWikiSearchLocation
+import org.apache.lucene.store.FSDirectory
+import org.apache.lucene.store.NRTCachingDirectory
 import org.slf4j.kotlin.error
 import org.slf4j.kotlin.getLogger
+import kotlin.io.path.Path
 
+
+@Suppress("MemberVisibilityCanBePrivate")
 class SearchManager(val bot: PolyBot) {
     private val logger by getLogger()
     
-    var searchIndex: Map<String, Index> = mapOf()
-        private set
+    val searchIndex: Map<String, Index>
     
-    var defaultIndex: Index
-        private set
+    val defaultIndex: Index
     
     init {
         val searchConfig = bot.config.searchConfig
-        
-        val searchIndex = mutableMapOf<String, Index>()
+        val indexes = mutableMapOf<String, Index>()
+        var default: Index? = null
         
         for (location in searchConfig.searchLocations) {
             when (location) {
                 is GithubWikiSearchLocation -> {
-                    searchIndex[location.name] = GithubWikiIndex(location)
+                    val diskCache = FSDirectory.open(Path(searchConfig.searchCache, location.name))
+                    val diskRamCache = NRTCachingDirectory(diskCache, 5.0, 60.0)
+                    
+                    val index = GithubWikiIndex(location, diskRamCache)
+                    indexes[location.name] = index
+                    
+                    if (location.name == searchConfig.default)
+                        default = index
                 }
                 
                 else                        -> {
@@ -58,6 +68,8 @@ class SearchManager(val bot: PolyBot) {
                 }
             }
         }
-        defaultIndex = searchIndex[searchConfig.default]!!
+        
+        searchIndex = indexes
+        defaultIndex = default ?: throw NullPointerException("Could not find default index value.")
     }
 }

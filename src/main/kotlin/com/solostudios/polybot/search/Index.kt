@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 25-07-2021 12:34 p.m.
+ * Last modified on 30-07-2021 09:18 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,53 @@
 package com.solostudios.polybot.search
 
 import com.solostudios.polybot.config.search.SearchLocation
+import java.io.Closeable
+import org.apache.lucene.analysis.Analyzer
+import org.apache.lucene.index.DirectoryReader
+import org.apache.lucene.index.IndexWriter
+import org.apache.lucene.index.IndexWriterConfig
+import org.apache.lucene.search.IndexSearcher
+import org.apache.lucene.store.Directory
 
-abstract class Index {
-    abstract val searchLocation: SearchLocation
+abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : Closeable {
+    private val indexWriterConfig = IndexWriterConfig(analyzer).setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND)
+    
+    private val indexWriter = IndexWriter(cacheDirectory, indexWriterConfig)
+    
+    private var indexReader: DirectoryReader = DirectoryReader.open(indexWriter)
+        get() {
+            val reader: DirectoryReader? = DirectoryReader.openIfChanged(field, indexWriter)
+            if (reader != null) {
+                field.close()
+                field = reader
+            }
+            
+            return field
+        }
+    
+    private var indexSearcher = IndexSearcher(indexReader)
+        get() {
+            return if (indexReader == field.indexReader)
+                field
+            else {
+                field = IndexSearcher(indexReader)
+                field
+            }
+        }
+    
+    protected abstract val searchLocation: SearchLocation
+    
+    fun search(query: String) {
+        this.search(query, indexSearcher)
+    }
+    
+    protected abstract fun search(query: String, searcher: IndexSearcher)
+    
+    abstract fun updateIndex()
+    
+    override fun close() {
+        indexReader.close()
+        indexWriter.commit()
+        indexWriter.close()
+    }
 }
