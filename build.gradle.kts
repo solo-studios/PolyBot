@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 03-08-2021 03:34 p.m.
+ * Last modified on 03-08-2021 03:50 p.m.
  *
  * MIT License
  *
@@ -110,18 +110,28 @@ version = "0.1.0"
 
 repositories {
     mavenCentral()
-    jcenter()
+    
     // maven {
     //     name = "incendo-snapshots"
     //     url = uri("https://repo.incendo.org/content/repositories/snapshots")
     // }
+    
     maven {
         name = "dv8tion-repo"
         url = uri("https://m2.dv8tion.net/releases")
     }
+    
     maven {
         name = "jitpack"
         url = uri("https://jitpack.io/")
+    }
+    
+    @Suppress("DEPRECATION")
+    jcenter {
+        content {
+            // includeModuleByRegex("com\\.jagrosh", "jda-*")
+            includeGroup("com.jagrosh")
+        }
     }
 }
 
