@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CacheManager.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:20 a.m.
+ * Last modified on 03-08-2021 01:53 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,9 @@ package com.solostudios.polybot.cache
 
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.service.ShutdownService
+import com.solostudios.polybot.util.cacheConfigBuilder
+import com.solostudios.polybot.util.getCache
+import com.solostudios.polybot.util.withKotlinValueSerializer
 import java.time.Duration
 import org.ehcache.PersistentCacheManager
 import org.ehcache.config.builders.CacheManagerBuilder

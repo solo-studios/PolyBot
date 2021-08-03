@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ehcache.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:33 p.m.
+ * Last modified on 03-08-2021 01:53 p.m.
  *
  * MIT License
  *
@@ -26,7 +26,7 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cache
+package com.solostudios.polybot.util
 
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.ByteBufferInput

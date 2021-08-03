@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:23 a.m.
+ * Last modified on 31-07-2021 01:16 p.m.
  *
  * MIT License
  *
@@ -35,7 +35,6 @@ import com.solostudios.polybot.PolyBot
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.info
 
 class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T> {
     private val logger by getLogger()
@@ -45,9 +44,6 @@ class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T>
         val context = postprocessingContext.commandContext
         val commandMeta = postprocessingContext.command.commandMeta
         val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")
-        
-        logger.info { "context: ${context.asMap()}" }
-        logger.info { "meta: ${commandMeta.allValues}" }
         
         if (commandMeta.getOrDefault(CO_OWNER_ONLY, NotBoolean(true)).value) {
             if (event.author.idLong !in bot.botConfig.ownerIds && event.author.idLong !in bot.botConfig.coOwnerIds) {
