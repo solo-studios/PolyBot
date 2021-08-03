@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 30-07-2021 11:02 p.m.
+ * Last modified on 03-08-2021 03:34 p.m.
  *
  * MIT License
  *
@@ -101,7 +101,7 @@ plugins {
     application
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.5.20"
+    kotlin("plugin.noarg")
     //    id("ca.cutterslade.analyze")
 }
 
@@ -205,7 +205,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
     
-    implementation("com.github.minndevelopment:jda-ktx:${JDA_KTX_VERSION}")
+    implementation("com.github.solonovamax:jda-ktx:${JDA_KTX_VERSION}")
     
     implementation("org.apache.lucene:lucene-core:$LUCENE_VERSION")
     implementation("org.apache.lucene:lucene-memory:$LUCENE_VERSION")

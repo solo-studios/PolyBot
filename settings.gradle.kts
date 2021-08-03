@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 14-06-2021 06:22 p.m.
+ * Last modified on 03-08-2021 03:33 p.m.
  *
  * MIT License
  *
@@ -32,8 +32,9 @@ pluginManagement {
     plugins {
         @Suppress("PropertyName", "LocalVariableName")
         val KOTLIN_VERSION: String by settings
-        kotlin("jvm") version KOTLIN_VERSION
+        kotlin("jvm").version(KOTLIN_VERSION)
         kotlin("plugin.serialization").version(KOTLIN_VERSION)
+        kotlin("plugin.noarg").version(KOTLIN_VERSION)
         id("ca.cutterslade.analyze") version "1.6.0"
     }
     repositories {

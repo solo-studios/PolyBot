@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:24 a.m.
+ * Last modified on 03-08-2021 03:33 p.m.
  *
  * MIT License
  *
@@ -59,11 +59,11 @@ import com.solostudios.polybot.util.processors
 import com.solostudios.polybot.util.registerInjector
 import com.solostudios.polybot.util.registerParserSupplier
 import com.solostudios.polybot.util.runtime
+import dev.minn.jda.ktx.InlineJDABuilder
 import java.util.concurrent.ThreadFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
-import net.dv8tion.jda.InlineJDABuilder
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Message

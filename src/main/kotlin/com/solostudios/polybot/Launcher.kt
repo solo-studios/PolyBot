@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:24 a.m.
+ * Last modified on 03-08-2021 03:33 p.m.
  *
  * MIT License
  *
@@ -38,10 +38,10 @@ import com.jasonclawson.jackson.dataformat.hocon.HoconFactory
 import com.solostudios.polybot.config.PolyConfig
 import com.solostudios.polybot.util.onJvmShutdown
 import com.solostudios.polybot.util.or
+import dev.minn.jda.ktx.DefaultJDABuilder
 import java.io.File
 import java.nio.file.Path
 import java.sql.Connection
-import net.dv8tion.jda.DefaultJDABuilder
 import net.dv8tion.jda.api.GatewayEncoding
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
