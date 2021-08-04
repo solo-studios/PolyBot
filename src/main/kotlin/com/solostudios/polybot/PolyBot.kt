@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 03-08-2021 03:33 p.m.
+ * Last modified on 03-08-2021 10:33 p.m.
  *
  * MIT License
  *
@@ -96,7 +96,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     }.build()
     
     @Suppress("HasPlatformType")
-    val scheduledThreadPool = ScheduledThreadPool((runtime.processors - 1).takeIf { it > 0 } ?: 1, PolyThreadFactory())
+    val scheduledThreadPool = ScheduledThreadPool((runtime.processors - 1).takeIf { it > 0 } ?: 1, PolyThreadFactory)
     
     val coroutineDispatcher: ExecutorCoroutineDispatcher = scheduledThreadPool.asCoroutineDispatcher()
     
@@ -151,22 +151,23 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
             onlineStatus = OnlineStatus.DO_NOT_DISTURB
             activity = Activity.watching("Shutting down PolyBot...")
         }
-        
+    
         jda.shutdown()
-        
+    
         cacheManager.shutdown()
         searchManager.shutdown()
-        
+    
         scheduledThreadPool.shutdown()
         coroutineDispatcher.close()
-        
+    
         super.shutdown()
     }
-}
-
-class PolyThreadFactory : ThreadFactory {
-    private val threadGroup: ThreadGroup = currentThread.threadGroup
-    private var threadCount: Int = 0
     
-    override fun newThread(runnable: Runnable): Thread = Thread(threadGroup, runnable, "PolyBot-Worker-${threadCount++}", 0)
+    object PolyThreadFactory : ThreadFactory {
+        private val threadGroup: ThreadGroup = currentThread.threadGroup
+        private var threadCount: Int = 0
+        
+        override fun newThread(runnable: Runnable): Thread = Thread(threadGroup, runnable, "PolyBot-Worker-${threadCount++}", 0)
+    }
+    
 }
