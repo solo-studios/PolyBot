@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 03-08-2021 10:33 p.m.
+ * Last modified on 03-08-2021 10:34 p.m.
  *
  * MIT License
  *
@@ -144,6 +144,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         annotationParser.parse(UtilCommands(this@PolyBot), ModerationCommands(this@PolyBot), MessageCacheCommands(this@PolyBot))
     }
     
+    @Suppress("UNUSED_PARAMETER")
     private fun botPrefix(event: MessageEvent) = botConfig.prefix
     
     override fun shutdown() {
