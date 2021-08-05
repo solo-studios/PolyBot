@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCache.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:22 a.m.
+ * Last modified on 03-08-2021 11:26 p.m.
  *
  * MIT License
  *
@@ -28,19 +28,22 @@
 
 package com.solostudios.polybot.cache
 
+import com.solostudios.polybot.util.set
 import net.dv8tion.jda.api.entities.Message
 import org.ehcache.Cache
 import org.slf4j.kotlin.getLogger
 
-class MessageCache(val cacheManager: CacheManager,
-                   val messageCache: Cache<Long, CachedMessage>) {
+class MessageCache(private val cacheManager: CacheManager,
+                   private val messageCache: Cache<Long, CachedMessage>) {
     private val logger by getLogger()
     
-    fun addMessage(message: Message) {
-        addMessage(CachedMessage(message.idLong,
+    fun putMessage(message: Message) {
+        if (!message.isFromGuild) // only save guild messages.
+            return
+        putMessage(CachedMessage(message.idLong,
                                  message.channel.idLong,
                                  message.category?.idLong,
-                                 message.runCatching { guild.idLong }.getOrNull(),
+                                 message.guild.idLong,
                                  message.timeCreated.toInstant().toEpochMilli(),
                                  message.timeEdited?.toInstant()?.toEpochMilli(),
                                  message.author.idLong,
@@ -52,7 +55,11 @@ class MessageCache(val cacheManager: CacheManager,
                                  message.attachments.isNotEmpty()))
     }
     
-    fun addMessage(message: CachedMessage) {
+    private fun putMessage(message: CachedMessage) {
         messageCache[message.id] = message
+    }
+    
+    fun getMessage(messageId: Long): CachedMessage? {
+        return if (messageCache.containsKey(messageId)) messageCache[messageId] else null
     }
 }

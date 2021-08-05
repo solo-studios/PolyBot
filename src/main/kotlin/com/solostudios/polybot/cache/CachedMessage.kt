@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CachedMessage.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:24 a.m.
+ * Last modified on 05-08-2021 12:49 a.m.
  *
  * MIT License
  *
@@ -35,7 +35,7 @@ data class CachedMessage(
         val id: Long,
         val channel: Long,
         val category: Long?,
-        val guild: Long?,
+        val guild: Long,
         val timeCreated: Long,
         val timeEdited: Long? = null,
         val author: Long,
@@ -90,7 +90,7 @@ data class CachedMessage(
         var result = id.hashCode()
         result = 31 * result + channel.hashCode()
         result = 31 * result + (category?.hashCode() ?: 0)
-        result = 31 * result + (guild?.hashCode() ?: 0)
+        result = 31 * result + guild.hashCode()
         result = 31 * result + timeCreated.hashCode()
         result = 31 * result + (timeEdited?.hashCode() ?: 0)
         result = 31 * result + author.hashCode()

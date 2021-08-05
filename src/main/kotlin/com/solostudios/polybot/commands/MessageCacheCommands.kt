@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:23 a.m.
+ * Last modified on 05-08-2021 12:49 a.m.
  *
  * MIT License
  *
@@ -31,9 +31,10 @@ package com.solostudios.polybot.commands
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
+import com.solostudios.polybot.Constants
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
-import com.solostudios.polybot.util.footerDate
+import com.solostudios.polybot.util.idFooter
 import dev.minn.jda.ktx.Embed
 import net.dv8tion.jda.api.entities.Message
 import org.slf4j.kotlin.getLogger
@@ -48,37 +49,25 @@ class MessageCacheCommands(val bot: PolyBot) {
     fun messageFromCache(message: Message,
                          @Argument("id")
                          id: Long) {
-        val cachedMessage = bot.cacheManager.messageCache.messageCache[id]
+        val cachedMessage = bot.cacheManager.messageCache.getMessage(id)
         
         if (cachedMessage != null) {
             logger.info(cachedMessage) { "here is the message {}" }
-            // message.replyFormat("here is the message ```%n%s%n```", cachedMessage).queue()
             
             val embed = Embed {
                 author {
                     name = "${cachedMessage.username}#${cachedMessage.discriminator}"
                     url = cachedMessage.url
                     iconUrl = bot.jda.retrieveUserById(cachedMessage.author)
-                            .submit()
-                            .runCatching {
-                                get()
-                            }
-                            .getOrNull()?.effectiveAvatarUrl
+                            .map { it.effectiveAvatarUrl }
+                            .onErrorMap { null }
+                            .complete() ?: Constants.defaultAvatarUrl
                 }
                 color = 0x2ECC70
                 
                 description = "**<@${cachedMessage.author}> sent a message in <#${cachedMessage.channel}>.**\n${cachedMessage.content}"
-                
-                // field("") {
-                //    value = cachedMessage.content
-                //    inline = false
-                // }
-                
-                footer {
-                    name = "Author ID: ${cachedMessage.author} | Message ID: ${cachedMessage.id} | Channel ID: ${cachedMessage.channel}" +
-                            (if (cachedMessage.guild != null) " | Guild ID: ${cachedMessage.guild}" else "") +
-                            footerDate(cachedMessage.timeCreated)
-                }
+    
+                idFooter(message.timeCreated, message.guild, message.channel, message.author, message)
             }
             
             message.replyEmbeds(embed)

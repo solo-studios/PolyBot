@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file date-time.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:14 a.m.
+ * Last modified on 04-08-2021 11:21 p.m.
  *
  * MIT License
  *
@@ -36,11 +36,22 @@ import kotlin.time.Duration
 
 val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-fun footerDate(millis: Long, separator: String = "•") = footerDate(Instant.ofEpochMilli(millis), separator)
+val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME
 
-fun footerDate(instant: Instant, separator: String = "•") = footerDate(instant.atOffset(ZoneOffset.UTC), separator)
+fun footerDate(millis: Long, separator: String = " • ") = footerDate(Instant.ofEpochMilli(millis), separator)
 
-fun footerDate(time: OffsetDateTime, separator: String = "•") = " $separator ${time.format(dateFormatter)}"
+fun footerDate(instant: Instant, separator: String = " • ") = footerDate(instant.atOffset(ZoneOffset.UTC), separator)
+
+fun footerDate(time: OffsetDateTime, separator: String = " • ") = " $separator ${time.format(dateFormatter)}"
+
+fun StringBuilder.footerDate(millis: Long, separator: String = " • "): StringBuilder = footerDate(Instant.ofEpochMilli(millis), separator)
+
+fun StringBuilder.footerDate(instant: Instant, separator: String = " • "): StringBuilder =
+        footerDate(instant.atOffset(ZoneOffset.UTC), separator)
+
+fun StringBuilder.footerDate(time: OffsetDateTime, separator: String = " • "): StringBuilder =
+        append(separator).append(time.format(dateFormatter))
+
 
 fun Duration.shortFormat(): String {
     return when {

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotListener.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 03:19 p.m.
+ * Last modified on 04-08-2021 08:51 p.m.
  *
  * MIT License
  *
@@ -36,7 +36,14 @@ import net.dv8tion.jda.api.events.ReconnectedEvent
 import net.dv8tion.jda.api.events.ResumedEvent
 import net.dv8tion.jda.api.events.ShutdownEvent
 import net.dv8tion.jda.api.events.StatusChangeEvent
+import net.dv8tion.jda.api.events.guild.GuildAvailableEvent
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
+import net.dv8tion.jda.api.events.guild.GuildUnavailableEvent
+import net.dv8tion.jda.api.events.guild.UnavailableGuildJoinedEvent
+import net.dv8tion.jda.api.events.guild.UnavailableGuildLeaveEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import org.slf4j.kotlin.debug
 import org.slf4j.kotlin.error
 import org.slf4j.kotlin.getLogger
 import org.slf4j.kotlin.info
@@ -50,23 +57,23 @@ class PolyBotListener(val bot: PolyBot) : ListenerAdapter() {
     }
     
     override fun onResumed(event: ResumedEvent) {
-        logger.info { "PolyBot resumed connection with Discord websocket." }
+        logger.debug { "PolyBot resumed connection with Discord websocket." }
     }
     
     override fun onReconnected(event: ReconnectedEvent) {
-        logger.info { "PolyBot reconnected to Discord websocket." }
+        logger.debug { "PolyBot reconnected to Discord websocket." }
     }
     
     override fun onDisconnect(event: DisconnectEvent) {
-        logger.warn { "PolyBot disconnected from Discord websocket at ${event.timeDisconnected.format(DateTimeFormatter.ISO_DATE_TIME)} with code ${event.closeCode}" }
+        logger.debug { "PolyBot disconnected from Discord websocket at ${event.timeDisconnected.format(DateTimeFormatter.ISO_DATE_TIME)} with code ${event.closeCode}" }
     }
     
     override fun onShutdown(event: ShutdownEvent) {
-        logger.warn { "PolyBot has finished shutting down." }
+        logger.debug { "PolyBot has finished shutting down." }
     }
     
     override fun onStatusChange(event: StatusChangeEvent) {
-        logger.info { "Status changed from ${event.oldStatus} -> ${event.newStatus}" }
+        logger.debug { "Status changed from ${event.oldStatus} -> ${event.newStatus}" }
         
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (event.newStatus) {
@@ -74,5 +81,35 @@ class PolyBotListener(val bot: PolyBot) : ListenerAdapter() {
             JDA.Status.FAILED_TO_LOGIN -> logger.error { "Failed to login" }
             JDA.Status.CONNECTED       -> logger.info { "PolyBot connected successfully" }
         }
+    }
+    
+    override fun onGuildJoin(event: GuildJoinEvent) {
+        val guild = event.guild
+        logger.debug { "Joined guild ${guild.name}, id: ${guild.id}" }
+    }
+    
+    override fun onGuildLeave(event: GuildLeaveEvent) {
+        val guild = event.guild
+        logger.debug { "Left guild ${guild.name}, id: ${guild.id}" }
+    }
+    
+    override fun onGuildAvailable(event: GuildAvailableEvent) {
+        val guild = event.guild
+        logger.debug { "Guild ${guild.name}, id: ${guild.id}, changed status from unavailable to available." }
+    }
+    
+    override fun onGuildUnavailable(event: GuildUnavailableEvent) {
+        val guild = event.guild
+        logger.debug { "Guild ${guild.name}, id: ${guild.id}, changed from status unavailable to available." }
+    }
+    
+    override fun onUnavailableGuildJoined(event: UnavailableGuildJoinedEvent) {
+        val guildId = event.guildId
+        logger.debug { "Joined unavailable guild with id $guildId" }
+    }
+    
+    override fun onUnavailableGuildLeave(event: UnavailableGuildLeaveEvent) {
+        val guildId = event.guildId
+        logger.debug { "Left unavailable guild with id $guildId" }
     }
 }

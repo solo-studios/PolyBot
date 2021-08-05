@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 03-08-2021 10:34 p.m.
+ * Last modified on 05-08-2021 12:49 a.m.
  *
  * MIT License
  *
@@ -31,7 +31,6 @@ package com.solostudios.polybot
 import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.meta.SimpleCommandMeta
 import com.solostudios.polybot.cache.CacheManager
-import com.solostudios.polybot.cache.MessageCacheListener
 import com.solostudios.polybot.cloud.event.EventMapper
 import com.solostudios.polybot.cloud.event.MessageEvent
 import com.solostudios.polybot.cloud.parser.MemberParser
@@ -75,7 +74,7 @@ import cloud.commandframework.jda.JDA4CommandManager as CommandManager
 import com.solostudios.polybot.cloud.preprocessor.JDAMessagePreprocessor as MessagePreprocessor
 
 @ExperimentalTime
-@Suppress("UNUSED_ANONYMOUS_PARAMETER", "MemberVisibilityCanBePrivate", "unused")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownService() {
     private val logger by getLogger()
     
@@ -91,7 +90,6 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     
     val jda = builder.apply {
         eventListeners += LoggingListener(this@PolyBot)
-        eventListeners += MessageCacheListener(this@PolyBot)
         eventListeners += PolyBotListener(this@PolyBot)
     }.build()
     
