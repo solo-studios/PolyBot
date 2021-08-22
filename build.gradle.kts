@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 03-08-2021 03:50 p.m.
+ * Last modified on 22-08-2021 12:11 a.m.
  *
  * MIT License
  *
@@ -100,13 +100,15 @@ plugins {
     java
     application
     kotlin("jvm")
-    kotlin("plugin.serialization")
     kotlin("plugin.noarg")
+    kotlin("plugin.serialization")
+    id("org.ajoberstar.grgit") version "4.0.2"
     //    id("ca.cutterslade.analyze")
 }
 
 group = "com.solostudios.polyhedralbot"
-version = "0.1.0"
+val versionObj = Version("0", "0", "0")
+version = versionObj
 
 repositories {
     mavenCentral()
@@ -242,13 +244,31 @@ noArg {
     invokeInitializers = true
     annotation("kotlinx.serialization.Serializable")
 }
-
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-        apiVersion = "1.5"
-        languageVersion = "1.5"
-        freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+tasks {
+    getByName<Test>("test") {
+        useJUnitPlatform()
+    }
+    
+    processResources {
+        filesMatching("polybot.properties") {
+            expand(
+                    "versionMajor" to versionObj.major,
+                    "versionMinor" to versionObj.minor,
+                    "versionPatch" to versionObj.patch,
+                    "buildNumber" to versionObj.buildNumber,
+                    "gitHash" to versionObj.gitHash,
+                    "localBuild" to versionObj.localBuild.toString(),
+                  )
+        }
+    }
+    
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_11.toString()
+            apiVersion = "1.5"
+            languageVersion = "1.5"
+            freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+        }
     }
 }
 
@@ -257,6 +277,33 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+/**
+ * Version class that does version stuff.
+ */
+@Suppress("MemberVisibilityCanBePrivate")
+class Version(val major: String, val minor: String, val patch: String) {
+    val localBuild: Boolean
+        get() = env["BUILD_NUMBER"] == null
+    
+    val buildNumber: String
+        get() = env["BUILD_NUMBER"] ?: "0"
+    
+    val gitHash: String
+        get() = grgit.head().id
+    
+    val shortGitHash: String
+        get() = grgit.head().id
+    
+    override fun toString(): String {
+        return if (localBuild) // Only use git hash if it's a local build.
+            "$major.$minor.$patch-local+${getGitHash()}"
+        else
+            "$major.$minor.$patch+${env["BUILD_NUMBER"]}"
+    }
 }
+
+fun getGitHash(): String = grgit.head().abbreviatedId
+
+val env: Map<String, String>
+    get() = System.getenv()
+

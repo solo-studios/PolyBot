@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 07-08-2021 05:39 p.m.
+ * The file Version.kt is part of PolyhedralBot
+ * Last modified on 21-08-2021 11:04 p.m.
  *
  * MIT License
  *
@@ -26,21 +26,24 @@
  * SOFTWARE.
  */
 
-rootProject.name = "PolyhedralBot"
+@file:Suppress("MemberVisibilityCanBePrivate")
 
-pluginManagement {
-    plugins {
-        @Suppress("PropertyName", "LocalVariableName")
-        val KOTLIN_VERSION: String by settings
-        kotlin("jvm").version(KOTLIN_VERSION)
-        kotlin("plugin.serialization").version(KOTLIN_VERSION)
-        kotlin("plugin.noarg").version(KOTLIN_VERSION)
-        id("ca.cutterslade.analyze") version "1.6.0"
-    }
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
+package com.solostudios.polybot
+
+import com.solostudios.polybot.config.PropertiesConfig
+
+object Version : PropertiesConfig("/polybot") {
+    val major: String by properties
+    val minor: String by properties
+    val patch: String by properties
+    val hash: String by properties
+    val build: String by properties
+    val local: String by properties
+    
+    fun isLocal(): Boolean = local.toBoolean()
+    
+    val version: String = if (isLocal())
+        "%s.%s.%s+local.%.8s".format(major, minor, patch, hash)
+    else
+        "%s.%s.%s+%s.build-%.8s".format(major, minor, patch, hash, build)
 }
-
-// includeBuild("")

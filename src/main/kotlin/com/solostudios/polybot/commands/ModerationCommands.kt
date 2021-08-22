@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:23 a.m.
+ * Last modified on 22-08-2021 02:32 a.m.
  *
  * MIT License
  *
@@ -32,6 +32,7 @@ import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.specifier.Greedy
+import cloud.commandframework.annotations.specifier.Range
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
@@ -63,7 +64,7 @@ class ModerationCommands(val bot: PolyBot) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
         
         moderationManager.banMember(message.guild, member, message.member!!, realReason, days ?: 3) {
-            message.reply(it).queue()
+            message.reply(it).mentionRepliedUser(false).queue()
         }
     }
     
@@ -78,7 +79,7 @@ class ModerationCommands(val bot: PolyBot) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
     
         moderationManager.kickMember(message.guild, member, message.member!!, realReason) {
-            message.reply(it).queue()
+            message.reply(it).mentionRepliedUser(false).queue()
         }
     }
     
@@ -86,6 +87,7 @@ class ModerationCommands(val bot: PolyBot) {
     @JDABotPermission(Permission.MESSAGE_MANAGE)
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     fun purgeMessages(message: Message,
+                      @Range(min = "1", max = "100")
                       @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
                       amount: Int,
                       @Flag("user", aliases = ["u"], description = "Delete only messages from this user.")
@@ -112,6 +114,8 @@ class ModerationCommands(val bot: PolyBot) {
     
     
         val messages = PastMessageSequence(message.channel.history).filter {
+            it.idLong == message.idLong
+        }.filter {
             if (user != null) it.author == user else true
         }.filter {
             if (regex != null) it.contentStripped.matches(regex) else true
@@ -123,10 +127,10 @@ class ModerationCommands(val bot: PolyBot) {
             if (botOnly) it.author.isBot else true
         }.take(amount).toList()
     
+        message.delete().queue()
     
-        message.replyFormat("User %s ran command to clear %d messages", message.member?.effectiveName, amount).queue()
-        logger.info(amount, user, messageRegex, startsWith, endsWith, botOnly, caseInsensitive) {
-            "amount = [{}], user = [{}], messageRegex = [{}], startsWith = [{}], endsWith = [{}], botOnly = [{}], caseInsensitive = [{}]"
+        message.textChannel.deleteMessages(messages).queue {
+            message.channel.sendMessage("Deleted ${messages.size} messages.")
         }
     }
     
@@ -137,17 +141,22 @@ class ModerationCommands(val bot: PolyBot) {
                    member: Member,
                    @Argument("reason")
                    reason: String?) {
+        // TODO: 2021-08-22 Warning
         logger.info(message.member?.effectiveName, member.effectiveName, reason) { "User {} ran command to warn {} for '{}'" }
-        message.replyFormat("User %s ran command to warn %s for '%s'", message.member?.effectiveName, member.effectiveName, reason).queue()
+        message.replyFormat("User %s ran command to warn %s for '%s'", message.member?.effectiveName, member.effectiveName, reason)
+                .mentionRepliedUser(false)
+                .queue()
     }
     
     private class PastMessageSequence(private val history: MessageHistory, private val bulkQuery: Int = 24) : Sequence<Message> {
+        private val logger by getLogger()
+    
         override fun iterator(): Iterator<Message> = object : Iterator<Message> {
-            var stack: List<Message> = emptyList()
-            
+            var stack: MutableList<Message> = mutableListOf()
+        
             override fun next(): Message {
                 if (hasNext())
-                    return stack.first()
+                    return stack.removeFirst()
                 else
                     throw NoSuchElementException()
             }
@@ -155,8 +164,10 @@ class ModerationCommands(val bot: PolyBot) {
             override fun hasNext(): Boolean {
                 if (stack.isEmpty())
                     stack = history.retrievePast(bulkQuery).complete()
-                
-                return stack.isEmpty()
+    
+                logger.debug("size: ${stack.size}")
+    
+                return stack.isNotEmpty()
             }
         }
     }

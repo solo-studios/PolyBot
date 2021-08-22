@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 05-08-2021 12:49 a.m.
+ * Last modified on 22-08-2021 02:32 a.m.
  *
  * MIT License
  *
@@ -60,6 +60,7 @@ import kotlin.system.exitProcess
 private val logger by getLogger()
 
 fun main() {
+    println(Version.version)
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     
     val config = readConfig(Constants.configFile)

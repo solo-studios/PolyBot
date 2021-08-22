@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file date-time.kt is part of PolyhedralBot
- * Last modified on 04-08-2021 11:21 p.m.
+ * Last modified on 07-08-2021 04:30 p.m.
  *
  * MIT License
  *
@@ -53,14 +53,54 @@ fun StringBuilder.footerDate(time: OffsetDateTime, separator: String = " • "):
         append(separator).append(time.format(dateFormatter))
 
 
+private const val nanosPerMicro = 1000
+private const val microsPerMillis = 1000
+private const val millisPerSecond = 1000
+private const val secondsPerMinute = 60
+private const val minutesPerHour = 60
+private const val hoursPerDay = 24
+
 fun Duration.shortFormat(): String {
     return when {
-        inWholeDays > 0         -> "${inWholeDays}d${inWholeHours}h${inWholeMinutes}m${inWholeSeconds}s"
-        inWholeHours > 0        -> "${inWholeHours}h${inWholeMinutes}m${inWholeSeconds}s${inWholeMilliseconds}ms"
-        inWholeMinutes > 0      -> "${inWholeMinutes}m${inWholeSeconds}s${inWholeMilliseconds}ms${inWholeMicroseconds}μs"
-        inWholeSeconds > 0      -> "${inWholeSeconds}s${inWholeMilliseconds}ms${inWholeMicroseconds}μs${inWholeNanoseconds}ns"
-        inWholeMilliseconds > 0 -> "${inWholeMilliseconds}ms${inWholeMicroseconds}μs${inWholeNanoseconds}ns"
-        inWholeMicroseconds > 0 -> "${inWholeMicroseconds}μs${inWholeNanoseconds}ns"
-        else                    -> "${inWholeNanoseconds}ns"
+        days > 0    -> "${days}d${hours}h${minutes}m${seconds}s"
+        hours > 0   -> "${hours}h${minutes}m${seconds}s${millis}ms"
+        minutes > 0 -> "${minutes}m${seconds}s${millis}ms${micros}μs"
+        seconds > 0 -> "${seconds}s${millis}ms${micros}μs${nanos}ns"
+        millis > 0  -> "${millis}ms${micros}μs${nanos}ns"
+        micros > 0  -> "${micros}μs${nanos}ns"
+        else        -> "${nanos}ns"
     }
 }
+
+fun Duration.longFormat(): String {
+    return when {
+        days > 0    -> "$days days, $hours hours, $minutes minutes"
+        hours > 0   -> "$hours hours, $minutes minutes, $seconds seconds"
+        minutes > 0 -> "$minutes minutes, $seconds seconds, $millis milliseconds"
+        seconds > 0 -> "$seconds seconds, $millis milliseconds, $micros microseconds"
+        millis > 0  -> "$millis milliseconds, $micros microseconds, $nanos nanoseconds"
+        micros > 0  -> "$micros microseconds, $nanos nanoseconds"
+        else        -> "$nanos nanoseconds"
+    }
+}
+
+val Duration.days
+    get() = inWholeDays
+
+val Duration.hours
+    get() = inWholeHours % hoursPerDay
+
+val Duration.minutes
+    get() = inWholeMinutes % minutesPerHour
+
+val Duration.seconds
+    get() = inWholeSeconds % secondsPerMinute
+
+val Duration.millis
+    get() = inWholeMilliseconds % millisPerSecond
+
+val Duration.micros
+    get() = inWholeMicroseconds % microsPerMillis
+
+val Duration.nanos
+    get() = inWholeNanoseconds % nanosPerMicro

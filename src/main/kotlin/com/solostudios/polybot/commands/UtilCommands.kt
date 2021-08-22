@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:24 a.m.
+ * Last modified on 22-08-2021 02:32 a.m.
  *
  * MIT License
  *
@@ -30,12 +30,23 @@ package com.solostudios.polybot.commands
 
 import cloud.commandframework.annotations.CommandMethod
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.Version
 import com.solostudios.polybot.cloud.event.GuildMessageEvent
+import com.solostudios.polybot.util.commandCount
+import com.solostudios.polybot.util.freeMemory
+import com.solostudios.polybot.util.longFormat
+import com.solostudios.polybot.util.maxMemory
+import com.solostudios.polybot.util.runtime
+import com.solostudios.polybot.util.runtimeMXBean
+import com.solostudios.polybot.util.totalMemory
 import dev.minn.jda.ktx.Embed
+import java.time.Instant
 import java.time.temporal.ChronoUnit
+import net.dv8tion.jda.api.JDAInfo
 import net.dv8tion.jda.api.entities.Message
 import org.intellij.lang.annotations.Language
 import org.slf4j.kotlin.getLogger
+import kotlin.time.Duration.Companion.milliseconds
 
 class UtilCommands(val bot: PolyBot) {
     private val logger by getLogger()
@@ -44,16 +55,70 @@ class UtilCommands(val bot: PolyBot) {
     fun ping(message: Message) {
         message.textChannel.sendTyping().queue()
         message.jda.restPing.queue { restPing ->
-            message.reply("Checking ping...").queue { msg ->
-                val ping = message.timeCreated.until(msg.timeCreated, ChronoUnit.MILLIS)
-                msg.editMessage("Ping: ${ping / 3}ms | Heartbeat: ${message.jda.gatewayPing}ms | Rest: ${restPing}ms").queue()
-            }
+            message.reply("Checking ping...")
+                    .mentionRepliedUser(false)
+                    .queue { msg ->
+                        val ping = message.timeCreated.until(msg.timeCreated, ChronoUnit.MILLIS)
+                        msg.editMessage("Ping: ${ping / 3}ms | Heartbeat: ${message.jda.gatewayPing}ms | Rest: ${restPing}ms").queue()
+                    }
         }
     }
     
     @CommandMethod("info|polybot|bot|botinfo")
     fun info(message: Message) {
+        val embed = Embed {
+            author {
+                name = "Polybot"
+                iconUrl = message.jda.selfUser.effectiveAvatarUrl
+            }
+            title = "PolyBot Info"
+        
+            field("Description", inline = false) {
+                value = """
+                    PolyBot is a multipurpose bot designed for the Polyhedral Development discord server.
+                    It is created to help manage the server and perform various tasks automatically to aid the moderators.
+                    
+                    The goal of this bot was to create a FOSS discord bot for managing servers centered around Open Source projects.
+                """.trimIndent()
+            }
+        
+            field("Author", "solonovamax#6983")
+            field("Repository", "[PolyBot](https://github.com/solonovamax/PolyBot)")
+            field("Library", "[JDA](https://github.com/DV8FromTheWorld/JDA)")
+        
+            field("Version") {
+                value = Version.version
+            }
+            field("Uptime", milliseconds(runtimeMXBean.uptime).longFormat())
+            field("Members") {
+                value = "%,d".format(message.jda.guildCache.sumOf { it.memberCount })
+            }
+        
+            field("JDA Version") {
+                value = JDAInfo.VERSION
+            }
+            field("Memory Usage") {
+                val free = runtime.freeMemory
+                val total = runtime.totalMemory
+                val max = runtime.maxMemory
+                val used = total - free
+            
+                value = "%.2f MB/%.2f MB".format(used.toFloat() / (1 shl 20), max.toFloat() / (1 shl 20))
+            }
+            field("JVM Version") {
+                value = System.getProperty("java.runtime.name") + "\n" + System.getProperty("java.runtime.version")
+            }
+        
+            field("Commands") {
+                value = bot.commandManager.commandCount.toString()
+            }
+        
+            timestamp = Instant.now()
+        }
     
+        message.replyEmbeds(embed)
+                .mentionRepliedUser(false)
+                .queue()
     }
     
     @CommandMethod("serverinfo|server")

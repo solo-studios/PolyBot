@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Constants.kt is part of PolyhedralBot
- * Last modified on 04-08-2021 08:23 p.m.
+ * Last modified on 07-08-2021 06:15 p.m.
  *
  * MIT License
  *
@@ -35,7 +35,7 @@ import com.solostudios.polybot.Constants.InternalConstants.inviteRegexString
 import com.solostudios.polybot.Constants.InternalConstants.messageLinkRegexString
 import org.intellij.lang.annotations.Language
 
-@Suppress("MemberVisibilityCanBePrivate", "RegExpUnnecessaryNonCapturingGroup", "RegExpRedundantEscape")
+@Suppress("RegExpUnnecessaryNonCapturingGroup", "RegExpRedundantEscape")
 object Constants {
     
     const val logEmbedColour = 0x00FF00
@@ -60,14 +60,6 @@ object Constants {
     
     @JvmField
     val allInviteRegex = Regex(allInviteRegexString)
-    
-    const val botVersionMajor = "@versionMajor@"
-    const val botVersionMinor = "@versionMinor@"
-    const val botVersionPatch = "@versionRevision@"
-    const val botGitHash = "@gitHash@"
-    val botVersion: String = if (isDevBuild()) "$botGitHash-dev" else "$botVersionMajor.$botVersionMinor.$botVersionPatch+$botGitHash"
-    
-    fun isDevBuild() = botVersionMajor.startsWith('@')
     
     private object InternalConstants {
         @Language("RegExp")

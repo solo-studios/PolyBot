@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file builder.kt is part of PolyhedralBot
- * Last modified on 12-06-2021 11:25 p.m.
+ * The file PropertiesConfig.kt is part of PolyhedralBot
+ * Last modified on 22-08-2021 02:31 a.m.
  *
  * MIT License
  *
@@ -26,18 +26,22 @@
  * SOFTWARE.
  */
 
-@file:Suppress("FunctionName")
+package com.solostudios.polybot.config
 
-package org.ehcache
+import java.io.InputStream
+import java.util.Properties
+import kotlin.reflect.KProperty
 
-//inline fun <T : CacheManager> CacheManager(
-//    builder: InlineCacheManager<T>.() -> Unit = {}
-//                                          ): T {
-//
-//}
-//
-//class InlineCacheManager<T : CacheManager>(val builder: CacheManagerBuilder<T>) {
-//    fun build() = builder.build()
-//
-//    fun build(init: Boolean) = builder.build(init)
-//}
+abstract class PropertiesConfig(val name: String) {
+    protected val properties = PropertiesDelegate(this::class.java.getResourceAsStream("$name.properties")!!)
+    
+    class PropertiesDelegate(stream: InputStream) {
+        private val properties = Properties().also { properties ->
+            stream.use {
+                properties.load(it)
+            }
+        }
+        
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): String = properties.getProperty(property.name)
+    }
+}

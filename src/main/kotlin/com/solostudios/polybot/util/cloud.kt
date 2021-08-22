@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file cloud.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:11 a.m.
+ * Last modified on 21-08-2021 11:21 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package com.solostudios.polybot.util
 
 import cloud.commandframework.CommandManager
+import cloud.commandframework.CommandTree
 import cloud.commandframework.annotations.AnnotationAccessor
 import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.annotations.injection.ParameterInjectorRegistry
@@ -58,3 +59,13 @@ inline fun <reified T, C> ParameterInjectorRegistry<C>.registerInjector(noinline
 
 inline fun <reified C> AnnotationParser(commandManager: CommandManager<C>, noinline metaMapper: (ParserParameters) -> CommandMeta) =
         AnnotationParser(commandManager, C::class.java, metaMapper)
+
+val CommandManager<*>.commandCount: Int
+    get() = commandTree.rootNodes.sumOf { it.count() }
+
+
+private fun CommandTree.Node<*>.count(): Int {
+    return children.size + children.sumOf {
+        it.count()
+    }
+}

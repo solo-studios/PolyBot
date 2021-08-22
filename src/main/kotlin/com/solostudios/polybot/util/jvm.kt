@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file jvm.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:14 a.m.
+ * Last modified on 06-08-2021 03:21 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,8 @@
 
 package com.solostudios.polybot.util
 
+import java.lang.management.ManagementFactory
+import java.lang.management.RuntimeMXBean
 import kotlin.concurrent.thread
 
 fun onJvmShutdown(block: () -> Unit) = onJvmShutdown("JVM-Shutdown-Thread", block)
@@ -40,8 +42,29 @@ fun onJvmShutdown(name: String, block: () -> Unit) {
 val runtime: Runtime
     get() = Runtime.getRuntime()
 
+/**
+ * [Runtime.freeMemory]
+ */
+val Runtime.freeMemory: Long
+    get() = freeMemory()
+
+/**
+ * [Runtime.totalMemory]
+ */
+val Runtime.totalMemory: Long
+    get() = totalMemory()
+
+/**
+ * [Runtime.maxMemory]
+ */
+val Runtime.maxMemory: Long
+    get() = maxMemory()
+
 val Runtime.processors: Int
     get() = availableProcessors()
 
 val Runtime.availableProcessors: Int
     get() = availableProcessors()
+
+val runtimeMXBean: RuntimeMXBean
+    get() = ManagementFactory.getRuntimeMXBean()
