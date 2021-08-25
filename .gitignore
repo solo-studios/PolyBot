@@ -1,3 +1,7 @@
+.cache
+logs
+search-cache
+
 ### Kotlin template
 # Compiled class file
 *.class
