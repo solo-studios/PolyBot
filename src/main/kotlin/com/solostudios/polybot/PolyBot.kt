@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 22-08-2021 02:32 a.m.
+ * Last modified on 25-08-2021 07:55 p.m.
  *
  * MIT License
  *
@@ -40,12 +40,14 @@ import com.solostudios.polybot.cloud.permission.PermissionMetaModifier
 import com.solostudios.polybot.cloud.permission.UserPermissionPostprocessor
 import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
 import com.solostudios.polybot.commands.EasterEggCommands
 import com.solostudios.polybot.commands.MessageCacheCommands
 import com.solostudios.polybot.commands.ModerationCommands
 import com.solostudios.polybot.commands.UtilCommands
 import com.solostudios.polybot.config.PolyConfig
 import com.solostudios.polybot.event.EventManager
+import com.solostudios.polybot.listener.AutoQuoteListener
 import com.solostudios.polybot.logging.LoggingListener
 import com.solostudios.polybot.search.SearchManager
 import com.solostudios.polybot.service.ShutdownService
@@ -63,7 +65,9 @@ import dev.minn.jda.ktx.InlineJDABuilder
 import java.util.concurrent.ThreadFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancel
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Message
@@ -92,6 +96,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     val jda = builder.apply {
         eventListeners += LoggingListener(this@PolyBot)
         eventListeners += PolyBotListener(this@PolyBot)
+        eventListeners += AutoQuoteListener(this@PolyBot)
     }.build()
     
     @Suppress("HasPlatformType")
@@ -99,7 +104,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     
     val coroutineDispatcher: ExecutorCoroutineDispatcher = scheduledThreadPool.asCoroutineDispatcher()
     
-    val globalBotCoroutineScope = CoroutineScope(coroutineDispatcher)
+    val scope = CoroutineScope(SupervisorJob() + coroutineDispatcher)
     
     val permissionManager = PermissionManager(this@PolyBot)
     
@@ -113,8 +118,9 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
                                                                       EventMapper::messageEventToSender).apply {
         parserRegistry.registerParserSupplier(MemberParser())
         parserRegistry.registerParserSupplier(UserParser())
-        
+    
         registerCommandPreProcessor(MessagePreprocessor(this))
+        registerCommandPreProcessor(AntiWebhookPreProcessor(this))
         registerCommandPostProcessor(UserPermissionPostprocessor(this@PolyBot))
         registerCommandPostProcessor(BotPermissionPostprocessor())
         
@@ -131,7 +137,6 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     }
     
     init {
-        globalBotCoroutineScope
         scheduledThreadPool.fixedRate(Duration.milliseconds(100), Duration.minutes(5)) {
             jda.presence.apply {
                 val botActivity = botConfig.activities.random()
@@ -163,6 +168,8 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         scheduledThreadPool.shutdown()
         coroutineDispatcher.close()
     
+        scope.cancel("Shutdown")
+    
         super.shutdown()
     }
     
@@ -172,5 +179,4 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         
         override fun newThread(runnable: Runnable): Thread = Thread(threadGroup, runnable, "PolyBot-Worker-${threadCount++}", 0)
     }
-    
 }
