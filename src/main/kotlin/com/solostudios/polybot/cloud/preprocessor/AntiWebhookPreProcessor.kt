@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file JDAMessagePreprocessor.kt is part of PolyhedralBot
+ * The file AntiWebhookPreProcessor.kt is part of PolyhedralBot
  * Last modified on 25-08-2021 07:34 p.m.
  *
  * MIT License
@@ -31,35 +31,19 @@ package com.solostudios.polybot.cloud.preprocessor
 import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
 import cloud.commandframework.execution.preprocessor.CommandPreprocessor
 import cloud.commandframework.jda.JDA4CommandManager
+import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.slf4j.kotlin.getLogger
+import org.checkerframework.checker.units.qual.C
 
-/**
- * The JDA Command Preprocessor for storing JDA-specific contexts in the command contexts
- *
- * @param mgr The JDACommandManager
- */
-class JDAMessagePreprocessor<C>(private val mgr: JDA4CommandManager<C>) : CommandPreprocessor<C> {
-    private val logger by getLogger()
-    
-    /**
-     * Stores the [net.dv8tion.jda.api.JDA] in the context with the key "JDA",
-     * the [net.dv8tion.jda.api.events.message.MessageReceivedEvent] with the key "MessageReceivedEvent", and
-     * the [net.dv8tion.jda.api.entities.MessageChannel] with the key "MessageChannel".
-     *
-     * If the message was sent in a guild, the [net.dv8tion.jda.api.entities.Guild] will be stored in the context with the
-     * key "Guild". If the message was also sent in a text channel, the [net.dv8tion.jda.api.entities.TextChannel] will be
-     * stored in the context with the key "TextChannel".
-     *
-     * If the message was sent in a DM instead of in a guild, the [net.dv8tion.jda.api.entities.PrivateChannel] will be
-     * stored in the context with the key "PrivateChannel".
-     */
+class AntiWebhookPreProcessor<C>(private val mgr: JDA4CommandManager<C>) : CommandPreprocessor<C> {
     override fun accept(context: CommandPreprocessingContext<C>) {
         val event: MessageReceivedEvent = try {
             mgr.backwardsCommandSenderMapper.apply(context.commandContext.sender!!)
         } catch (e: IllegalStateException) {
             return
         }
-        context.commandContext.store("Message", event.message)
+        
+        if (event.isWebhookMessage)
+            ConsumerService.interrupt()
     }
 }
