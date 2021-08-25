@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 25-08-2021 04:33 p.m.
+ * Last modified on 25-08-2021 05:09 p.m.
  *
  * MIT License
  *
@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("PropertyName")
 val JDA_VERSION: String by project
+
+@Suppress("PropertyName")
+val DISCORD_WEBHOOKS: String by project
 
 @Suppress("PropertyName")
 val JDA_UTILITIES_VERSION: String by project
@@ -157,6 +160,7 @@ dependencies {
     implementation("net.dv8tion:JDA:$JDA_VERSION") {
         exclude(module = "opus-java")
     }
+    implementation("club.minnced:discord-webhooks:$DISCORD_WEBHOOKS")
     
     implementation("org.jetbrains:annotations:$JETBRAINS_ANNOTATIONS_VERSION")
     
