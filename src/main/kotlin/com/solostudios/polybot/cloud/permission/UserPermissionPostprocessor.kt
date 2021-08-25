@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:16 p.m.
+ * Last modified on 25-08-2021 07:35 p.m.
  *
  * MIT License
  *
@@ -45,14 +45,14 @@ class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T>
         val commandMeta = postprocessingContext.command.commandMeta
         val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")
         
-        if (commandMeta.getOrDefault(CO_OWNER_ONLY, NotBoolean(true)).value) {
+        if (commandMeta.getOrDefault(CO_OWNER_ONLY, NotBoolean(false)).value) {
             if (event.author.idLong !in bot.botConfig.ownerIds && event.author.idLong !in bot.botConfig.coOwnerIds) {
                 event.message.replyFormat("This command can only be performed by co-owners and owners of the bot.")
                         .mentionRepliedUser(false)
                         .queue()
                 ConsumerService.interrupt()
             }
-        } else if (commandMeta.getOrDefault(OWNER_ONLY, NotBoolean(true)).value) {
+        } else if (commandMeta.getOrDefault(OWNER_ONLY, NotBoolean(false)).value) {
             if (event.author.idLong !in bot.botConfig.ownerIds) {
                 event.message.replyFormat("This command can only be performed by owners of the bot.")
                         .mentionRepliedUser(false)
