@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 22-08-2021 02:32 a.m.
+ * Last modified on 25-08-2021 04:38 p.m.
  *
  * MIT License
  *
@@ -34,10 +34,10 @@ import com.solostudios.polybot.Version
 import com.solostudios.polybot.cloud.event.GuildMessageEvent
 import com.solostudios.polybot.util.commandCount
 import com.solostudios.polybot.util.freeMemory
-import com.solostudios.polybot.util.longFormat
 import com.solostudios.polybot.util.maxMemory
 import com.solostudios.polybot.util.runtime
 import com.solostudios.polybot.util.runtimeMXBean
+import com.solostudios.polybot.util.shortFormat
 import com.solostudios.polybot.util.totalMemory
 import dev.minn.jda.ktx.Embed
 import java.time.Instant
@@ -85,11 +85,11 @@ class UtilCommands(val bot: PolyBot) {
             field("Author", "solonovamax#6983")
             field("Repository", "[PolyBot](https://github.com/solonovamax/PolyBot)")
             field("Library", "[JDA](https://github.com/DV8FromTheWorld/JDA)")
-        
+    
             field("Version") {
                 value = Version.version
             }
-            field("Uptime", milliseconds(runtimeMXBean.uptime).longFormat())
+            field("Uptime", milliseconds(runtimeMXBean.uptime).shortFormat())
             field("Members") {
                 value = "%,d".format(message.jda.guildCache.sumOf { it.memberCount })
             }

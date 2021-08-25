@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 22-08-2021 02:32 a.m.
+ * Last modified on 25-08-2021 04:38 p.m.
  *
  * MIT License
  *
@@ -38,7 +38,6 @@ import com.jasonclawson.jackson.dataformat.hocon.HoconFactory
 import com.solostudios.polybot.config.PolyConfig
 import com.solostudios.polybot.util.onJvmShutdown
 import com.solostudios.polybot.util.or
-import dev.minn.jda.ktx.CoroutineEventManager
 import dev.minn.jda.ktx.DefaultJDABuilder
 import java.io.File
 import java.nio.file.Path
@@ -99,9 +98,7 @@ fun main() {
         enableShutdownHook = true
         bulkDeleteSplitting = false
     
-        injectKtx = false
-    
-        eventManager = CoroutineEventManager()
+        injectKtx = true
     }
     
     val polybot = PolyBot(config, jda)

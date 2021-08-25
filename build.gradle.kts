@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 22-08-2021 12:11 a.m.
+ * Last modified on 25-08-2021 04:33 p.m.
  *
  * MIT License
  *
@@ -96,6 +96,9 @@ val LUCENE_VERSION: String by project
 @Suppress("PropertyName")
 val INTELLIJ_MARKDOWN_VERSION: String by project
 
+@Suppress("PropertyName")
+val SLF4K_VERSION: String by project
+
 plugins {
     java
     application
@@ -143,7 +146,7 @@ application {
 
 dependencies {
     // Kotlin
-    //    implementation(kotlin("stdlib"))
+    implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
     implementation(kotlin("script-runtime"))
     implementation(kotlin("script-util"))
@@ -182,11 +185,7 @@ dependencies {
     // Logging
     implementation("org.slf4j:slf4j-api:$SLF4J_VERSION")
     implementation("ch.qos.logback:logback-classic:$LOGBACK_VERSION")
-    
-    // other stuff (remove me)
-    //    api("com.jagrosh:EasySQL:0.3")
-    //    api("club.minnced:discord-webhooks:0.1.8")
-    //    api("com.typesafe:config:1.3.2")
+    implementation("ca.solo-studios:slf4k:$SLF4K_VERSION")
     
     // Kotlin HTTP api
     implementation("com.github.kittinunf.fuel:fuel:$FUEL_VERSION")
