@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationManager.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 08:15 p.m.
+ * Last modified on 25-08-2021 08:33 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,7 @@ package com.solostudios.polybot
 
 import com.solostudios.polybot.event.moderation.PolyBanEvent
 import com.solostudios.polybot.event.moderation.PolyKickEvent
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import org.slf4j.kotlin.debug
@@ -44,30 +45,32 @@ class ModerationManager(val bot: PolyBot) {
                   reason: String,
                   daysToDelete: Int,
                   replyAction: (String) -> Unit) {
-        val event = PolyBanEvent(member, reason, moderator)
+        bot.scope.launch {
+            val event = PolyBanEvent(member, reason, moderator)
         
-        bot.eventManager.dispatch(event)
+            bot.eventManager.dispatch(event)
         
-        val user = member.user
+            val user = member.user
         
-        when (member.idLong) {
-            moderator.idLong        -> {
-                replyAction("You cannot ban yourself!")
-            }
+            when (member.idLong) {
+                moderator.idLong        -> {
+                    replyAction("You cannot ban yourself!")
+                }
             
-            guild.selfMember.idLong -> {
-                replyAction("You cannot ban the bot!")
-            }
+                guild.selfMember.idLong -> {
+                    replyAction("You cannot ban the bot!")
+                }
             
-            else                    -> {
-                replyAction("User ${user.name}#${user.discriminator} has been banned from the server, and $daysToDelete days of messages have been deleted, $reason")
+                else                    -> {
+                    replyAction("User ${user.name}#${user.discriminator} has been banned from the server, and $daysToDelete days of messages have been deleted, $reason")
                 
-                guild.ban(user, daysToDelete)
-                        .reason(reason)
-                        .queue()
+                    guild.ban(user, daysToDelete)
+                            .reason(reason)
+                            .queue()
                 
-                logger.debug(user.name, user.discriminator, guild.name, daysToDelete, reason) {
-                    "User {}#{} has been banned from the server {}, and {} days of messages have been deleted. {}"
+                    logger.debug(user.name, user.discriminator, guild.name, daysToDelete, reason) {
+                        "User {}#{} has been banned from the server {}, and {} days of messages have been deleted. {}"
+                    }
                 }
             }
         }
@@ -78,30 +81,32 @@ class ModerationManager(val bot: PolyBot) {
                    moderator: Member = guild.selfMember,
                    reason: String,
                    replyAction: (String) -> Unit) {
-        val event = PolyKickEvent(member, reason, moderator)
+        bot.scope.launch {
+            val event = PolyKickEvent(member, reason, moderator)
         
-        bot.eventManager.dispatch(event)
+            bot.eventManager.dispatch(event)
         
-        val user = member.user
+            val user = member.user
         
-        when (member.idLong) {
-            moderator.idLong        -> {
-                replyAction("You cannot kick yourself!")
-            }
+            when (member.idLong) {
+                moderator.idLong        -> {
+                    replyAction("You cannot kick yourself!")
+                }
             
-            guild.selfMember.idLong -> {
-                replyAction("You cannot kick the bot!")
-            }
+                guild.selfMember.idLong -> {
+                    replyAction("You cannot kick the bot!")
+                }
             
-            else                    -> {
-                member.kick(reason)
-                        .queue()
+                else                    -> {
+                    member.kick(reason)
+                            .queue()
                 
-                replyAction("User ${user.name}#${user.discriminator} has been kicked from the server, $reason")
+                    replyAction("User ${user.name}#${user.discriminator} has been kicked from the server, $reason")
                 
-                // log to console
-                logger.debug(user.name, user.discriminator, member.guild.name, reason) {
-                    "User {}#{} has been kicked from the server {}, {}."
+                    // log to console
+                    logger.debug(user.name, user.discriminator, member.guild.name, reason) {
+                        "User {}#{} has been kicked from the server {}, {}."
+                    }
                 }
             }
         }

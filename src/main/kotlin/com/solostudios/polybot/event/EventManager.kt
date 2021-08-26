@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EventManager.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 08:33 p.m.
+ * Last modified on 25-08-2021 08:32 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package com.solostudios.polybot.event
 
 import com.solostudios.polybot.PolyBot
+import kotlinx.coroutines.launch
 import kotlin.reflect.KClass
 
 open class Event
@@ -61,11 +62,13 @@ class EventManager(val bot: PolyBot) {
     }
     
     fun <T : Event> dispatch(event: T) {
-        listeners.forEach {
-            if (it.clazz.java.isAssignableFrom(event::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                val listener = it.listener as EventListener<T>
-                listener(event)
+        bot.scope.launch {
+            listeners.forEach {
+                if (it.clazz.java.isAssignableFrom(event::class.java)) {
+                    @Suppress("UNCHECKED_CAST")
+                    val listener = it.listener as EventListener<T>
+                    listener(event)
+                }
             }
         }
     }

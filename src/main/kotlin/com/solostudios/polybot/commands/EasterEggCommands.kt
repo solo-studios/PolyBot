@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EasterEggCommands.kt is part of PolyhedralBot
- * Last modified on 22-08-2021 02:28 a.m.
+ * Last modified on 25-08-2021 08:33 p.m.
  *
  * MIT License
  *
@@ -32,6 +32,7 @@ import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import org.slf4j.kotlin.getLogger
@@ -42,7 +43,9 @@ class EasterEggCommands(val bot: PolyBot) {
     
     @CommandMethod("gay|crimes")
     fun crimes(message: Message) {
-        message.reply("Be gay, do crimes.").mentionRepliedUser(false).queue()
+        bot.scope.launch {
+            message.reply("Be gay, do crimes.").mentionRepliedUser(false).queue()
+        }
     }
     
     @CommandMethod("uwu|uwuify|owo|owoify <text>")
@@ -50,13 +53,15 @@ class EasterEggCommands(val bot: PolyBot) {
                @Greedy
                @Argument("text")
                text: String) {
-        val uwuText = UwU.transformTextToUwU(text)
+        bot.scope.launch {
+            val uwuText = UwU.transformTextToUwU(text)
         
-        logger.info(uwuText.trim())
+            logger.info(uwuText.trim())
         
-        message.reply(uwuText.takeIf { it.length <= 4000 } ?: uwuText.substring(0, 4000))
-                .mentionRepliedUser(false)
-                .queue()
+            message.reply(uwuText.takeIf { it.length <= 4000 } ?: uwuText.substring(0, 4000))
+                    .mentionRepliedUser(false)
+                    .queue()
+        }
     }
     
     /**

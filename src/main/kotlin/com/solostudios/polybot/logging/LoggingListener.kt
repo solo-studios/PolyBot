@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 05-08-2021 12:49 a.m.
+ * Last modified on 25-08-2021 08:33 p.m.
  *
  * MIT License
  *
@@ -34,9 +34,11 @@ import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.util.idFooter
 import dev.minn.jda.ktx.Embed
 import dev.minn.jda.ktx.InlineEmbed
+import dev.minn.jda.ktx.await
 import java.awt.Color
 import java.time.OffsetDateTime
 import java.util.Locale
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.audit.ActionType
 import net.dv8tion.jda.api.entities.Category
 import net.dv8tion.jda.api.entities.Guild
@@ -105,47 +107,52 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     }
     
     override fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
-        val oldMessage = messageCache.getMessage(event.messageIdLong)
-        val message = event.message
+        bot.scope.launch {
+            val oldMessage = messageCache.getMessage(event.messageIdLong)
+            val message = event.message
         
-        messageCache.putMessage(message)
+            messageCache.putMessage(message)
         
-        loggingEmbed(tempLogChannel, event.guild, event.author, event.channel, message, message.timeEdited!!) {
-            description = "**${message.author.asMention} edited a message in ${message.textChannel.asMention}.**"
+            loggingEmbed(tempLogChannel, event.guild, event.author, event.channel, message, message.timeEdited!!) {
+                description = "**${message.author.asMention} edited a message in ${message.textChannel.asMention}.**"
             
-            field {
-                name = "Before"
-                value = oldMessage?.content?.takeIf { it.length < 1024 } ?: oldMessage?.content?.substring(0, 1020)?.plus("\n...") ?: "???"
-                inline = false
-            }
-            field {
-                name = "After"
-                value = message.contentRaw.takeIf { it.length < 1024 } ?: (message.contentRaw.substring(0, 1020) + "\n...")
-                inline = false
+                field {
+                    name = "Before"
+                    value = oldMessage?.content?.takeIf { it.length < 1024 } ?: oldMessage?.content?.substring(0, 1020)?.plus("\n...")
+                            ?: "???"
+                    inline = false
+                }
+                field {
+                    name = "After"
+                    value = message.contentRaw.takeIf { it.length < 1024 } ?: (message.contentRaw.substring(0, 1020) + "\n...")
+                    inline = false
+                }
             }
         }
     }
     
     override fun onGuildMessageDelete(event: GuildMessageDeleteEvent) {
-        val message = messageCache.getMessage(event.messageIdLong)
-    
-        if (message != null) {
-            val user: User? = bot.jda.retrieveUserById(message.author)
-                    .onErrorMap { null }
-                    .complete()
+        bot.scope.launch {
+            val message = messageCache.getMessage(event.messageIdLong)
         
-            loggingEmbed(tempLogChannel, event.guild, user, event.channel) {
-                description = buildString {
-                    append("**")
-                    append("<@").append(message.author).append('>')
-                    append("'s message in ")
-                    append("<#").append(message.channel).append('>')
-                    append(" was deleted.**\n")
-                
-                    if (message.content.length > 1024 - this.length)
-                        append(message.content.substring(0, 1020 - this.length)).append("\n...")
-                    else
-                        append(message.content)
+            if (message != null) {
+                val user: User? = bot.jda.retrieveUserById(message.author)
+                        .onErrorMap { null }
+                        .await()
+            
+                loggingEmbed(tempLogChannel, event.guild, user, event.channel) {
+                    description = buildString {
+                        append("**")
+                        append("<@").append(message.author).append('>')
+                        append("'s message in ")
+                        append("<#").append(message.channel).append('>')
+                        append(" was deleted.**\n")
+                    
+                        if (message.content.length > 1024 - this.length)
+                            append(message.content.substring(0, 1020 - this.length)).append("\n...")
+                        else
+                            append(message.content)
+                    }
                 }
             }
         }
@@ -323,29 +330,33 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     }
     
     override fun onGuildBan(event: GuildBanEvent) {
-        val bannedUser: Guild.Ban? = event.guild.retrieveBan(event.user).onErrorMap { null }.complete()
+        bot.scope.launch {
+            val bannedUser: Guild.Ban? = event.guild.retrieveBan(event.user).onErrorMap { null }.await()
         
-        loggingEmbed(tempLogChannel, event.guild, event.user) {
-            description = """
+            loggingEmbed(tempLogChannel, event.guild, event.user) {
+                description = """
                 **Banned user ${event.user.asTag}.**
                 Banned by ${bannedUser?.user ?: "Unknown"} for ${bannedUser?.run { reason ?: "No reason provided" } ?: "Unknown"}
                 """.trimIndent()
+            }
         }
     }
     
     override fun onGuildUnban(event: GuildUnbanEvent) {
-        val bannedUser = event.guild.retrieveAuditLogs().type(ActionType.UNBAN).takeUntilAsync(1) {
-            return@takeUntilAsync it.targetIdLong == event.user.idLong
-        }.get().firstOrNull()
-    
-        loggingEmbed(tempLogChannel, event.guild, event.user) {
-            description = if (bannedUser == null)
-                "**Unbanned user ${event.user.asTag}.**"
-            else
-                """
+        bot.scope.launch {
+            val bannedUser = event.guild.retrieveAuditLogs().type(ActionType.UNBAN).takeUntilAsync(1) {
+                return@takeUntilAsync it.targetIdLong == event.user.idLong
+            }.await().firstOrNull()
+        
+            loggingEmbed(tempLogChannel, event.guild, event.user) {
+                description = if (bannedUser == null)
+                    "**Unbanned user ${event.user.asTag}.**"
+                else
+                    """
                     **Unbanned user ${event.user.asTag}.**
                     Unbanned by ${bannedUser.user ?: "Unknown"} for ${bannedUser.reason ?: "No reason provided"}}
                 """.trimIndent()
+            }
         }
     }
     

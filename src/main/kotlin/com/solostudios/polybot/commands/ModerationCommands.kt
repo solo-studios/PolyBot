@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 22-08-2021 02:32 a.m.
+ * Last modified on 25-08-2021 08:33 p.m.
  *
  * MIT License
  *
@@ -37,6 +37,7 @@ import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 import com.solostudios.polybot.event.moderation.PolyClearEvent
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
@@ -102,35 +103,37 @@ class ModerationCommands(val bot: PolyBot) {
                       botOnly: Boolean = false,
                       @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
                       caseInsensitive: Boolean = false) {
-        val event = PolyClearEvent(message.textChannel, message.author)
-        bot.eventManager.dispatch(event)
-    
-        logger.info(message.member?.effectiveName, amount) { "User {} ran command to clear {} messages" }
-        val regex =
-                if (caseInsensitive)
-                    messageRegex?.toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
-                else
-                    messageRegex?.toRegex(RegexOption.MULTILINE)
-    
-    
-        val messages = PastMessageSequence(message.channel.history).filter {
-            it.idLong == message.idLong
-        }.filter {
-            if (user != null) it.author == user else true
-        }.filter {
-            if (regex != null) it.contentStripped.matches(regex) else true
-        }.filter {
-            if (startsWith != null) it.contentStripped.startsWith(startsWith, caseInsensitive) else true
-        }.filter {
-            if (endsWith != null) it.contentStripped.endsWith(endsWith, caseInsensitive) else true
-        }.filter {
-            if (botOnly) it.author.isBot else true
-        }.take(amount).toList()
-    
-        message.delete().queue()
-    
-        message.textChannel.deleteMessages(messages).queue {
-            message.channel.sendMessage("Deleted ${messages.size} messages.")
+        bot.scope.launch {
+            val event = PolyClearEvent(message.textChannel, message.author)
+            bot.eventManager.dispatch(event)
+        
+            logger.info(message.member?.effectiveName, amount) { "User {} ran command to clear {} messages" }
+            val regex =
+                    if (caseInsensitive)
+                        messageRegex?.toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
+                    else
+                        messageRegex?.toRegex(RegexOption.MULTILINE)
+        
+        
+            val messages = PastMessageSequence(message.channel.history).filter {
+                it.idLong == message.idLong
+            }.filter {
+                if (user != null) it.author == user else true
+            }.filter {
+                if (regex != null) it.contentStripped.matches(regex) else true
+            }.filter {
+                if (startsWith != null) it.contentStripped.startsWith(startsWith, caseInsensitive) else true
+            }.filter {
+                if (endsWith != null) it.contentStripped.endsWith(endsWith, caseInsensitive) else true
+            }.filter {
+                if (botOnly) it.author.isBot else true
+            }.take(amount).toList()
+        
+            message.delete().queue()
+        
+            message.textChannel.deleteMessages(messages).queue {
+                message.channel.sendMessage("Deleted ${messages.size} messages.")
+            }
         }
     }
     

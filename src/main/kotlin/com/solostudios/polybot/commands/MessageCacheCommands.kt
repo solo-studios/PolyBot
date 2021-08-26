@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 05-08-2021 12:49 a.m.
+ * Last modified on 25-08-2021 08:33 p.m.
  *
  * MIT License
  *
@@ -36,6 +36,8 @@ import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 import com.solostudios.polybot.util.idFooter
 import dev.minn.jda.ktx.Embed
+import dev.minn.jda.ktx.await
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.entities.Message
 import org.slf4j.kotlin.getLogger
 import org.slf4j.kotlin.info
@@ -49,30 +51,32 @@ class MessageCacheCommands(val bot: PolyBot) {
     fun messageFromCache(message: Message,
                          @Argument("id")
                          id: Long) {
-        val cachedMessage = bot.cacheManager.messageCache.getMessage(id)
+        bot.scope.launch {
+            val cachedMessage = bot.cacheManager.messageCache.getMessage(id)
         
-        if (cachedMessage != null) {
-            logger.info(cachedMessage) { "here is the message {}" }
+            if (cachedMessage != null) {
+                logger.info(cachedMessage) { "here is the message {}" }
             
-            val embed = Embed {
-                author {
-                    name = "${cachedMessage.username}#${cachedMessage.discriminator}"
-                    url = cachedMessage.url
-                    iconUrl = bot.jda.retrieveUserById(cachedMessage.author)
-                            .map { it.effectiveAvatarUrl }
-                            .onErrorMap { null }
-                            .complete() ?: Constants.defaultAvatarUrl
-                }
-                color = 0x2ECC70
+                val embed = Embed {
+                    author {
+                        name = "${cachedMessage.username}#${cachedMessage.discriminator}"
+                        url = cachedMessage.url
+                        iconUrl = bot.jda.retrieveUserById(cachedMessage.author)
+                                .map { it.effectiveAvatarUrl }
+                                .onErrorMap { null }
+                                .await() ?: Constants.defaultAvatarUrl
+                    }
+                    color = 0x2ECC70
                 
-                description = "**<@${cachedMessage.author}> sent a message in <#${cachedMessage.channel}>.**\n${cachedMessage.content}"
-    
-                idFooter(message.timeCreated, message.guild, message.channel, message.author, message)
-            }
+                    description = "**<@${cachedMessage.author}> sent a message in <#${cachedMessage.channel}>.**\n${cachedMessage.content}"
+                
+                    idFooter(message.timeCreated, message.guild, message.channel, message.author, message)
+                }
             
-            message.replyEmbeds(embed)
-                    .mentionRepliedUser(false)
-                    .queue()
+                message.replyEmbeds(embed)
+                        .mentionRepliedUser(false)
+                        .queue()
+            }
         }
     }
 }
