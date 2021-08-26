@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 07:55 p.m.
+ * Last modified on 25-08-2021 11:41 p.m.
  *
  * MIT License
  *
@@ -42,6 +42,7 @@ import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 import com.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
 import com.solostudios.polybot.commands.EasterEggCommands
+import com.solostudios.polybot.commands.GithubCommands
 import com.solostudios.polybot.commands.MessageCacheCommands
 import com.solostudios.polybot.commands.ModerationCommands
 import com.solostudios.polybot.commands.UtilCommands
@@ -148,7 +149,8 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         annotationParser.parse(UtilCommands(this@PolyBot),
                                ModerationCommands(this@PolyBot),
                                MessageCacheCommands(this@PolyBot),
-                               EasterEggCommands(this@PolyBot))
+                               EasterEggCommands(this@PolyBot),
+                               GithubCommands(this@PolyBot))
     }
     
     @Suppress("UNUSED_PARAMETER")

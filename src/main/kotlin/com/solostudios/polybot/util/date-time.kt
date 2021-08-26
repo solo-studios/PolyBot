@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file date-time.kt is part of PolyhedralBot
- * Last modified on 07-08-2021 04:30 p.m.
+ * Last modified on 25-08-2021 10:42 p.m.
  *
  * MIT License
  *
@@ -34,7 +34,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import kotlin.time.Duration
 
-val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+val dayMonthYearFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME
 
@@ -42,7 +42,7 @@ fun footerDate(millis: Long, separator: String = " • ") = footerDate(Instant.o
 
 fun footerDate(instant: Instant, separator: String = " • ") = footerDate(instant.atOffset(ZoneOffset.UTC), separator)
 
-fun footerDate(time: OffsetDateTime, separator: String = " • ") = " $separator ${time.format(dateFormatter)}"
+fun footerDate(time: OffsetDateTime, separator: String = " • ") = " $separator ${time.format(dayMonthYearFormatter)}"
 
 fun StringBuilder.footerDate(millis: Long, separator: String = " • "): StringBuilder = footerDate(Instant.ofEpochMilli(millis), separator)
 
@@ -50,7 +50,7 @@ fun StringBuilder.footerDate(instant: Instant, separator: String = " • "): Str
         footerDate(instant.atOffset(ZoneOffset.UTC), separator)
 
 fun StringBuilder.footerDate(time: OffsetDateTime, separator: String = " • "): StringBuilder =
-        append(separator).append(time.format(dateFormatter))
+        append(separator).append(time.format(dayMonthYearFormatter))
 
 
 private const val nanosPerMicro = 1000

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 25-08-2021 05:09 p.m.
+ * Last modified on 25-08-2021 09:01 p.m.
  *
  * MIT License
  *
@@ -101,6 +101,12 @@ val INTELLIJ_MARKDOWN_VERSION: String by project
 
 @Suppress("PropertyName")
 val SLF4K_VERSION: String by project
+
+@Suppress("PropertyName")
+val GITHUB_API_VERSION: String by project
+
+@Suppress("PropertyName")
+val XCHART_VERSION: String by project
 
 plugins {
     java
@@ -239,6 +245,9 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:5.7.0")
     
+    implementation("org.kohsuke:github-api:$GITHUB_API_VERSION")
+    
+    implementation("org.knowm.xchart:xchart:$XCHART_VERSION")
     // idk
     //    api(kotlin("script-runtime"))
 }
