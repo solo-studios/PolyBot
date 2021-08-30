@@ -26,87 +26,37 @@
  * SOFTWARE.
  */
 
-@file:Suppress("SuspiciousCollectionReassignment")
+@file:Suppress("SuspiciousCollectionReassignment", "PropertyName")
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-@Suppress("PropertyName")
-val JDA_VERSION: String by project
-
-@Suppress("PropertyName")
-val DISCORD_WEBHOOKS: String by project
-
-@Suppress("PropertyName")
-val JDA_UTILITIES_VERSION: String by project
-
-@Suppress("PropertyName")
-val CLOUD_VERSION: String by project
-
-@Suppress("PropertyName")
-val KOTLINX_SERIALIZATION_VERSION: String by project
-
-@Suppress("PropertyName")
-val KOTLINX_COROUTINES_VERSION: String by project
-
-@Suppress("PropertyName")
 val KOTLIN_VERSION: String by project
-
-@Suppress("PropertyName")
-val JACKSON_VERSION: String by project
-
-@Suppress("PropertyName")
-val JACKSON_HOCON_VERSION: String by project
-
-@Suppress("PropertyName")
-val FUEL_VERSION: String by project
-
-@Suppress("PropertyName")
-val EXPOSED_VERSION: String by project
-
-@Suppress("PropertyName")
-val SQLITE_VERSION: String by project
-
-@Suppress("PropertyName")
-val GUAVA_VERSION: String by project
-
-@Suppress("PropertyName")
-val REFLECTIONS_VERSION: String by project
-
-@Suppress("PropertyName")
-val LOGBACK_VERSION: String by project
-
-@Suppress("PropertyName")
-val SLF4J_VERSION: String by project
-
-@Suppress("PropertyName")
-val JDA_KTX_VERSION: String by project
-
-@Suppress("PropertyName")
+val KOTLINX_SERIALIZATION_VERSION: String by project
+val KOTLINX_COROUTINES_VERSION: String by project
 val JETBRAINS_ANNOTATIONS_VERSION: String by project
-
-@Suppress("PropertyName")
+val JDA_VERSION: String by project
+val DISCORD_WEBHOOKS: String by project
+val JDA_KTX_VERSION: String by project
+val JDA_UTILITIES_VERSION: String by project
+val CLOUD_VERSION: String by project
 val KRYO_VERSION: String by project
-
-@Suppress("PropertyName")
-val EHCACHE_VERSION: String by project
-
-@Suppress("PropertyName")
-val CACHE_4K_VERSION: String by project
-
-@Suppress("PropertyName")
-val LUCENE_VERSION: String by project
-
-@Suppress("PropertyName")
-val INTELLIJ_MARKDOWN_VERSION: String by project
-
-@Suppress("PropertyName")
+val REFLECTIONS_VERSION: String by project
+val SLF4J_VERSION: String by project
 val SLF4K_VERSION: String by project
-
-@Suppress("PropertyName")
+val LOGBACK_VERSION: String by project
+val FUEL_VERSION: String by project
+val JACKSON_VERSION: String by project
+val JACKSON_HOCON_VERSION: String by project
+val CACHE_4K_VERSION: String by project
+val EHCACHE_VERSION: String by project
+val GUAVA_VERSION: String by project
+val SQLITE_VERSION: String by project
+val EXPOSED_VERSION: String by project
+val LUCENE_VERSION: String by project
+val INTELLIJ_MARKDOWN_VERSION: String by project
 val GITHUB_API_VERSION: String by project
-
-@Suppress("PropertyName")
 val XCHART_VERSION: String by project
+
 
 plugins {
     java
@@ -125,12 +75,12 @@ version = versionObj
 repositories {
     mavenCentral()
     
-    // maven {
-    //     name = "incendo-snapshots"
-    //     url = uri("https://repo.incendo.org/content/repositories/snapshots")
-    // }
+    maven { // Incendo (Cloud)
+        name = "incendo-snapshots"
+        url = uri("https://repo.incendo.org/content/repositories/snapshots")
+    }
     
-    maven {
+    maven { // JDA
         name = "dv8tion-repo"
         url = uri("https://m2.dv8tion.net/releases")
     }
@@ -156,100 +106,100 @@ application {
 dependencies {
     // Kotlin
     implementation(kotlin("stdlib"))
-    implementation(kotlin("reflect"))
-    implementation(kotlin("script-runtime"))
+    implementation(kotlin("reflect")) // Reflection stuff
+    implementation(kotlin("script-runtime")) // For executing scripts at runtime
     implementation(kotlin("script-util"))
     implementation(kotlin("compiler-embeddable"))
     implementation(kotlin("scripting-compiler-embeddable"))
+    // Kotlin Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$KOTLINX_SERIALIZATION_VERSION")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_VERSION")
+    // Kotlin Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$KOTLINX_COROUTINES_VERSION")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
+    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$KOTLINX_COROUTINES_VERSION")
+    
+    // Utility annotations
+    implementation("org.jetbrains:annotations:$JETBRAINS_ANNOTATIONS_VERSION")
     
     // JDA
     implementation("net.dv8tion:JDA:$JDA_VERSION") {
         exclude(module = "opus-java")
     }
+    // Discord webhooks
     implementation("club.minnced:discord-webhooks:$DISCORD_WEBHOOKS")
-    
-    implementation("org.jetbrains:annotations:$JETBRAINS_ANNOTATIONS_VERSION")
-    
+    // JDA Kotlin extensions
+    implementation("com.github.solonovamax:jda-ktx:${JDA_KTX_VERSION}")
     // JDA utilities
     implementation("com.jagrosh:jda-utilities-commons:$JDA_UTILITIES_VERSION")
     implementation("com.jagrosh:jda-utilities-menu:$JDA_UTILITIES_VERSION")
     
-    // Cloud
+    // Cloud (Command handler)
     implementation("cloud.commandframework:cloud-core:$CLOUD_VERSION")
-    implementation("cloud.commandframework:cloud-annotations:$CLOUD_VERSION")
-    implementation("cloud.commandframework:cloud-jda:$CLOUD_VERSION")
-    implementation("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_VERSION")
+    implementation("cloud.commandframework:cloud-annotations:$CLOUD_VERSION") // Annotation parser
+    implementation("cloud.commandframework:cloud-jda:$CLOUD_VERSION") // JDA impl
+    implementation("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_VERSION") // Kotlin extensions
     
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$KOTLINX_SERIALIZATION_VERSION")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_VERSION")
-    
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$KOTLINX_COROUTINES_VERSION")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
-    //    api("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$KOTLINX_COROUTINES_VERSION")
-    
+    // Kryo fast object serialization
     implementation("com.esotericsoftware:kryo:$KRYO_VERSION")
     
-    // Reflections //11.15.1.2318
+    // Reflections
     implementation("org.reflections:reflections:$REFLECTIONS_VERSION")
     
-    // Logging
+    // SLF4J
     implementation("org.slf4j:slf4j-api:$SLF4J_VERSION")
+    implementation("ca.solo-studios:slf4k:$SLF4K_VERSION") // SLF4J extension library
     implementation("ch.qos.logback:logback-classic:$LOGBACK_VERSION")
-    implementation("ca.solo-studios:slf4k:$SLF4K_VERSION")
     
     // Kotlin HTTP api
     implementation("com.github.kittinunf.fuel:fuel:$FUEL_VERSION")
     implementation("com.github.kittinunf.fuel:fuel-coroutines:$FUEL_VERSION")
     implementation("com.github.kittinunf.fuel:fuel-jackson:$FUEL_VERSION")
-    //    api("com.github.kittinunf.fuel:fuel-reactor:$FUEL_VERSION") // Use Reactor??
+    // implementation("com.github.kittinunf.fuel:fuel-reactor:$FUEL_VERSION") // Use Reactor??
     
-    // Jackson
+    // Jackson (JSON object serialization/deserialization)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$JACKSON_VERSION")
     implementation("com.fasterxml.jackson.core:jackson-core:$JACKSON_VERSION")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$JACKSON_VERSION")
     implementation("com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION")
-    implementation("org.honton.chas.hocon:jackson-dataformat-hocon:$JACKSON_HOCON_VERSION")
+    implementation("org.honton.chas.hocon:jackson-dataformat-hocon:$JACKSON_HOCON_VERSION") // HOCON support for Jackson
     
+    // Kotlin Cache utility
     implementation("io.github.reactivecircus.cache4k:cache4k:$CACHE_4K_VERSION")
-    
+    // Persistent cache
     implementation("org.ehcache:ehcache:$EHCACHE_VERSION")
     
     // Guava
     implementation("com.google.guava:guava:$GUAVA_VERSION")
     
     // SQLite
-    implementation("org.xerial:sqlite-jdbc:$SQLITE_VERSION")
-    
-    // Make using SQL actually bearable to use
+    implementation("org.xerial:sqlite-jdbc:$SQLITE_VERSION") // TODO: 8/30/21 Support more SQL types
+    // Make using SQL not the most excrutiating shit ever and actually bearable to use
     implementation("org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
     
-    implementation("com.github.solonovamax:jda-ktx:${JDA_KTX_VERSION}")
-    
+    // Apache Lucene search engine
     implementation("org.apache.lucene:lucene-core:$LUCENE_VERSION")
     implementation("org.apache.lucene:lucene-memory:$LUCENE_VERSION")
     implementation("org.apache.lucene:lucene-suggest:$LUCENE_VERSION")
     implementation("org.apache.lucene:lucene-queryparser:$LUCENE_VERSION")
     implementation("org.apache.lucene:lucene-analyzers-common:$LUCENE_VERSION")
     
+    // Markdown library
     implementation("org.jetbrains:markdown:$INTELLIJ_MARKDOWN_VERSION")
     
-    // Testing (switch to JUnit 5)
-    //    testapi("junit:junit:4.13.1")
-    //    testapi("org.hamcrest:hamcrest-core:1.3")
+    // Github API
+    implementation("org.kohsuke:github-api:$GITHUB_API_VERSION")
+    
+    // Chart drawing ??
+    implementation("org.knowm.xchart:xchart:$XCHART_VERSION")
     
     // Testing (JUnit 5)
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:5.7.0")
-    
-    implementation("org.kohsuke:github-api:$GITHUB_API_VERSION")
-    
-    implementation("org.knowm.xchart:xchart:$XCHART_VERSION")
-    // idk
-    //    api(kotlin("script-runtime"))
 }
 
 noArg {
