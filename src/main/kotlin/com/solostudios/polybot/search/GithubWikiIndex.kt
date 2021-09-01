@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubWikiIndex.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 04:00 p.m.
+ * Last modified on 01-09-2021 06:18 p.m.
  *
  * MIT License
  *
@@ -30,20 +30,46 @@
 
 package com.solostudios.polybot.search
 
+import com.github.kittinunf.fuel.core.FuelManager
+import com.github.kittinunf.fuel.coroutines.awaitUnit
+import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.config.search.GithubWikiSearchLocation
+import java.io.File
+import java.util.zip.ZipFile
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.store.Directory
 
 class GithubWikiIndex(
+        val bot: PolyBot,
         override val searchLocation: GithubWikiSearchLocation,
         cacheDirectory: Directory,
                      ) : Index(StandardAnalyzer(), cacheDirectory) {
+    private val fuel = FuelManager()
     
-    val githubWikiTarball = "https://github.com/${searchLocation.repoOwner}/${searchLocation.repoName}/archive/master.tar.xz"
+    private val githubWiki = "https://github.com/${searchLocation.repoOwner}/${searchLocation.repoName}/archive/master"
+    private val githubWikiTarball = "$githubWiki.tar.gz"
+    private val githubWikiZip = "$githubWiki.zip"
     
-    override fun updateIndex(writer: IndexWriter) {
-    
+    override suspend fun updateIndex(writer: IndexWriter) {
+        @Suppress("BlockingMethodInNonBlockingContext")
+        withContext(Dispatchers.IO) {
+            val temp = File.createTempFile("github_wiki", "zip")
+            
+            fuel.download(githubWikiTarball).fileDestination { _, _ -> temp }.awaitUnit()
+            
+            
+            ZipFile(temp).use { zip ->
+                zip.entries().asSequence().forEach { entry ->
+                    zip.getInputStream(entry).use { input ->
+                    
+                    }
+                }
+            }
+            
+        }
     }
     
 }

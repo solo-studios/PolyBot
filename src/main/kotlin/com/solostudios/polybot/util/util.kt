@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file util.kt is part of PolyhedralBot
- * Last modified on 04-08-2021 10:06 p.m.
+ * Last modified on 01-09-2021 04:58 p.m.
  *
  * MIT License
  *
@@ -81,15 +81,17 @@ fun InlineEmbed.idFooter(time: OffsetDateTime = OffsetDateTime.now(),
             
             append("Guild: ")
             append(guild)
-            
+    
             println(this.toString())
-            
+    
             footerDate(time)
-            
+    
         }
         println(name)
     }
 }
+
+operator fun String.get(start: Int, end: Int) = substring(start, end)
 
 // fun formatEmbedFooter(guild: Guild, channel: MessageChannel, message: Message, user: User, separator: String = "|") = ""
 //

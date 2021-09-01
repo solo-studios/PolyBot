@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ShutdownService.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:18 a.m.
+ * Last modified on 01-09-2021 04:58 p.m.
  *
  * MIT License
  *
@@ -35,7 +35,13 @@ abstract class ShutdownService {
     open val running
         get() = !shutdown
     
-    open fun shutdown() {
+    fun shutdown() {
+        if (shutdown)
+            return
         shutdown = true
+        
+        serviceShutdown()
     }
+    
+    protected abstract fun serviceShutdown()
 }

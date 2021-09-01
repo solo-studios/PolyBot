@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:24 a.m.
+ * Last modified on 01-09-2021 04:58 p.m.
  *
  * MIT License
  *
@@ -43,8 +43,7 @@ import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser
 import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.Query
 import org.apache.lucene.store.Directory
-import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.info
+import org.slf4j.kotlin.*
 import kotlin.time.Duration
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
@@ -54,6 +53,7 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : ShutdownSe
     
     private val indexWriterConfig = IndexWriterConfig(analyzer).setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND)
     private val indexWriter = IndexWriter(cacheDirectory, indexWriterConfig)
+    
     private var indexReader: DirectoryReader = DirectoryReader.open(indexWriter)
         get() {
             val reader: DirectoryReader? = DirectoryReader.openIfChanged(field, indexWriter)
@@ -64,6 +64,7 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : ShutdownSe
             
             return field
         }
+    
     private var indexSearcher = IndexSearcher(indexReader)
         get() {
             return if (indexReader == field.indexReader)
@@ -99,7 +100,7 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : ShutdownSe
         return results
     }
     
-    fun updateIndex() {
+    suspend fun updateIndex() {
         val duration = measureTime {
             updateIndex(indexWriter)
         }
@@ -109,14 +110,12 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : ShutdownSe
     
     protected abstract val searchLocation: SearchLocation
     
-    abstract fun updateIndex(writer: IndexWriter)
+    abstract suspend fun updateIndex(writer: IndexWriter)
     
-    override fun shutdown() {
+    override fun serviceShutdown() {
         indexReader.close()
         indexWriter.commit()
         indexWriter.close()
-        
-        super.shutdown()
     }
     
     private fun String.query(): Query = queryParserHelper.parse(this, "body")

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CacheManager.kt is part of PolyhedralBot
- * Last modified on 03-08-2021 01:53 p.m.
+ * Last modified on 01-09-2021 04:58 p.m.
  *
  * MIT License
  *
@@ -33,10 +33,8 @@ import com.solostudios.polybot.service.ShutdownService
 import com.solostudios.polybot.util.cacheConfigBuilder
 import com.solostudios.polybot.util.getCache
 import com.solostudios.polybot.util.withKotlinValueSerializer
-import java.time.Duration
 import org.ehcache.PersistentCacheManager
 import org.ehcache.config.builders.CacheManagerBuilder
-import org.ehcache.config.builders.ExpiryPolicyBuilder
 import org.ehcache.config.builders.ResourcePoolsBuilder
 import org.ehcache.config.units.EntryUnit
 import org.ehcache.config.units.MemoryUnit
@@ -44,20 +42,22 @@ import org.ehcache.config.units.MemoryUnit
 @Suppress("MemberVisibilityCanBePrivate")
 class CacheManager(val bot: PolyBot) : ShutdownService() {
     val cacheManager: PersistentCacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-            .with(CacheManagerBuilder.persistence(".cache"))
+            .with(CacheManagerBuilder.persistence(bot.getCacheDirectory("ehcache").toFile()))
             .withCache("messages", cacheConfigBuilder<Long, CachedMessage>(ResourcePoolsBuilder.newResourcePoolsBuilder()
                                                                                    .heap(10_000L, EntryUnit.ENTRIES)
                                                                                    .offheap(500L, MemoryUnit.MB)
-                                                                                   .disk(1L, MemoryUnit.GB))
-                    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofDays(56L)))
+                                                                                   .disk(1L, MemoryUnit.GB, true))
+                    // .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofDays(56L)))
                     .withKotlinValueSerializer())
             .build(true)
     
+    // init {
+    //     cacheManager.init()
+    // }
+    
     val messageCache = MessageCache(this, cacheManager.getCache("messages"))
     
-    override fun shutdown() {
+    override fun serviceShutdown() {
         cacheManager.close()
-        
-        super.shutdown()
     }
 }

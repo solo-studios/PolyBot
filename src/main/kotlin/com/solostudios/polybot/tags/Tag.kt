@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file SearchLocation.kt is part of PolyhedralBot
+ * The file Tag.kt is part of PolyhedralBot
  * Last modified on 01-09-2021 04:58 p.m.
  *
  * MIT License
@@ -26,23 +26,21 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.config.search
+package com.solostudios.polybot.tags
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+import java.time.LocalDateTime
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "type"
-             )
-@JsonSubTypes(
-        JsonSubTypes.Type(value = GithubWikiSearchLocation::class, names = ["github-wiki"]),
-        JsonSubTypes.Type(value = GithubWikiSearchLocation::class, names = ["github-wiki"]),
-             )
-sealed class SearchLocation @JsonCreator constructor(
-        @JsonProperty("name")
-        val name: String,
-                                                    )
+data class Tag(
+        var text: String,
+        val server: Long,
+        val created: LocalDateTime,
+        var aliases: List<String>,
+        private var _usages: Long,
+              ) {
+    
+    val usages by ::_usages
+    
+    fun incrementUsages() {
+        _usages = _usages++
+    }
+}

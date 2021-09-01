@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:24 a.m.
+ * Last modified on 01-09-2021 06:18 p.m.
  *
  * MIT License
  *
@@ -33,9 +33,7 @@ import com.solostudios.polybot.config.search.GithubWikiSearchLocation
 import com.solostudios.polybot.service.ShutdownService
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.store.NRTCachingDirectory
-import org.slf4j.kotlin.error
-import org.slf4j.kotlin.getLogger
-import kotlin.io.path.Path
+import org.slf4j.kotlin.*
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -54,18 +52,14 @@ class SearchManager(val bot: PolyBot) : ShutdownService() {
         for (location in searchConfig.searchLocations) {
             when (location) {
                 is GithubWikiSearchLocation -> {
-                    val diskCache = FSDirectory.open(Path(searchConfig.searchCache, location.name))
+                    val diskCache = FSDirectory.open(bot.getCacheDirectory("search", location.name))
                     val diskRamCache = NRTCachingDirectory(diskCache, 5.0, 60.0)
-                    
-                    val index = GithubWikiIndex(location, diskRamCache)
+    
+                    val index = GithubWikiIndex(bot, location, diskRamCache)
                     indexes[location.name] = index
-                    
+    
                     if (location.name == searchConfig.default)
                         default = index
-                }
-    
-                else                        -> {
-                    logger.error { "Search location ${location.name} not a known subtype" }
                 }
             }
         }
@@ -74,10 +68,9 @@ class SearchManager(val bot: PolyBot) : ShutdownService() {
         defaultIndex = default ?: throw NullPointerException("Could not find default index value.")
     }
     
-    override fun shutdown() {
+    override fun serviceShutdown() {
         searchIndexes.forEach { (_, index) ->
             index.shutdown()
         }
-        super.shutdown()
     }
 }

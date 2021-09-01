@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file SearchLocation.kt is part of PolyhedralBot
- * Last modified on 01-09-2021 04:58 p.m.
+ * The file BotAdminCommands.kt is part of PolyhedralBot
+ * Last modified on 30-08-2021 03:06 p.m.
  *
  * MIT License
  *
@@ -26,23 +26,21 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.config.search
+package com.solostudios.polybot.commands
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+import cloud.commandframework.annotations.CommandMethod
+import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import org.slf4j.kotlin.*
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "type"
-             )
-@JsonSubTypes(
-        JsonSubTypes.Type(value = GithubWikiSearchLocation::class, names = ["github-wiki"]),
-        JsonSubTypes.Type(value = GithubWikiSearchLocation::class, names = ["github-wiki"]),
-             )
-sealed class SearchLocation @JsonCreator constructor(
-        @JsonProperty("name")
-        val name: String,
-                                                    )
+
+class BotAdminCommands(val bot: PolyBot) {
+    private val logger by getLogger()
+    
+    @CommandMethod("shutdown")
+    @JDAUserPermission(ownerOnly = true)
+    fun shutdown() {
+        logger.info { "Shutting down PolyBot" }
+        bot.shutdown()
+    }
+}

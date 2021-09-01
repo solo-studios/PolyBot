@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 11:41 p.m.
+ * Last modified on 01-09-2021 04:58 p.m.
  *
  * MIT License
  *
@@ -41,10 +41,13 @@ import com.solostudios.polybot.cloud.permission.UserPermissionPostprocessor
 import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 import com.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
+import com.solostudios.polybot.commands.BotAdminCommands
 import com.solostudios.polybot.commands.EasterEggCommands
 import com.solostudios.polybot.commands.GithubCommands
+import com.solostudios.polybot.commands.LuceneCommands
 import com.solostudios.polybot.commands.MessageCacheCommands
 import com.solostudios.polybot.commands.ModerationCommands
+import com.solostudios.polybot.commands.TagCommands
 import com.solostudios.polybot.commands.UtilCommands
 import com.solostudios.polybot.config.PolyConfig
 import com.solostudios.polybot.event.EventManager
@@ -72,7 +75,9 @@ import kotlinx.coroutines.cancel
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Message
-import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.*
+import kotlin.io.path.Path
+import kotlin.system.exitProcess
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator as CommandCoordinator
@@ -150,29 +155,36 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
                                ModerationCommands(this@PolyBot),
                                MessageCacheCommands(this@PolyBot),
                                EasterEggCommands(this@PolyBot),
-                               GithubCommands(this@PolyBot))
+                               GithubCommands(this@PolyBot),
+                               LuceneCommands(this@PolyBot),
+                               BotAdminCommands(this@PolyBot),
+                               TagCommands(this@PolyBot))
     }
+    
+    fun getCacheDirectory(vararg name: String) = Path(".cache", *name)
     
     @Suppress("UNUSED_PARAMETER")
     private fun botPrefix(event: MessageEvent) = botConfig.prefix
     
-    override fun shutdown() {
+    override fun serviceShutdown() {
         jda.presence.apply {
             onlineStatus = OnlineStatus.DO_NOT_DISTURB
             activity = Activity.watching("Shutting down PolyBot...")
         }
-    
-        jda.shutdown()
-    
+        
+        jda.shutdownNow()
+        
         cacheManager.shutdown()
         searchManager.shutdown()
-    
+        
         scheduledThreadPool.shutdown()
         coroutineDispatcher.close()
-    
+        
         scope.cancel("Shutdown")
-    
-        super.shutdown()
+        
+        logger.info { "Shutdown of PolyBot finished" }
+        
+        exitProcess(0)
     }
     
     object PolyThreadFactory : ThreadFactory {

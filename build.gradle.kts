@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 25-08-2021 09:01 p.m.
+ * Last modified on 01-09-2021 06:17 p.m.
  *
  * MIT License
  *
@@ -54,6 +54,7 @@ val SQLITE_VERSION: String by project
 val EXPOSED_VERSION: String by project
 val LUCENE_VERSION: String by project
 val INTELLIJ_MARKDOWN_VERSION: String by project
+val JGIT_VERSION: String by project
 val GITHUB_API_VERSION: String by project
 val XCHART_VERSION: String by project
 
@@ -88,6 +89,11 @@ repositories {
     maven {
         name = "jitpack"
         url = uri("https://jitpack.io/")
+    }
+    
+    maven {
+        name = "ajoberstar-backup"
+        url = uri("https://ajoberstar.org/bintray-backup/")
     }
     
     @Suppress("DEPRECATION")
@@ -189,6 +195,9 @@ dependencies {
     
     // Markdown library
     implementation("org.jetbrains:markdown:$INTELLIJ_MARKDOWN_VERSION")
+    
+    // Git
+    implementation("org.eclipse.jgit:org.eclipse.jgit:$JGIT_VERSION")
     
     // Github API
     implementation("org.kohsuke:github-api:$GITHUB_API_VERSION")
