@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 07:40 p.m.
+ * Last modified on 13-09-2021 08:56 p.m.
  *
  * MIT License
  *
@@ -39,7 +39,7 @@ import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import org.slf4j.kotlin.info
+import org.slf4j.kotlin.*
 import kotlin.time.Duration.Companion.hours
 
 class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
@@ -52,7 +52,7 @@ class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
      *
      * Returns a [JDAWebhookClient], or null.
      */
-    private val webhookCache: Cache<Pair<Long, String>, JDAWebhookClient> = Cache.Builder.newBuilder()
+    private val webhookCache: Cache<Pair<Long, String>, JDAWebhookClient> = Cache.Builder()
             .expireAfterAccess(hours(4))
             .maximumCacheSize(40)
             .build()

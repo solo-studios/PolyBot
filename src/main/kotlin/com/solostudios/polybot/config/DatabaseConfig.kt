@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MessageEvent.kt is part of PolyhedralBot
+ * The file DatabaseConfig.kt is part of PolyhedralBot
  * Last modified on 13-09-2021 08:56 p.m.
  *
  * MIT License
@@ -26,16 +26,17 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.event
+package com.solostudios.polybot.config
 
-import cloud.commandframework.jda.JDACommandSender
-import net.dv8tion.jda.api.entities.MessageChannel
-import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import com.fasterxml.jackson.annotation.JsonProperty
 
-open class MessageEvent(
-        open val sender: JDACommandSender,
-        open val event: MessageReceivedEvent,
-        open val user: User,
-        open val channel: MessageChannel,
-                       ) 
+data class DatabaseConfig(
+        @JsonProperty("url")
+        val url: String,
+        @JsonProperty("datasource")
+        val datasource: String,
+        @JsonProperty("username")
+        val username: String,
+        @JsonProperty("password")
+        val password: String,
+                         ) 

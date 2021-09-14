@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyConfig.kt is part of PolyhedralBot
- * Last modified on 25-07-2021 12:34 p.m.
+ * Last modified on 01-09-2021 06:32 p.m.
  *
  * MIT License
  *
@@ -37,4 +37,6 @@ data class PolyConfig(
         val botConfig: BotConfig,
         @JsonProperty("search")
         val searchConfig: SearchConfig,
+        @JsonProperty("database")
+        val databaseConfig: DatabaseConfig,
                      )

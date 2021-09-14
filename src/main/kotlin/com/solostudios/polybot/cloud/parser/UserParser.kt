@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserParser.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:23 a.m.
+ * Last modified on 13-09-2021 08:56 p.m.
  *
  * MIT License
  *
@@ -37,8 +37,7 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
-import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.info
+import org.slf4j.kotlin.*
 
 class UserParser<C> : ArgumentParser<C, User> {
     private val logger by getLogger()
@@ -49,7 +48,22 @@ class UserParser<C> : ArgumentParser<C, User> {
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
         val event = commandContext.get<MessageReceivedEvent>("MessageReceivedEvent")
-        
+        val message = event.message
+    
+        if ("^" == input.trim()) {
+            val messageReference = message.messageReference
+            if (messageReference != null) {
+                try {
+                    val parentMessage = messageReference.resolve()
+                            .complete()
+                
+                    ArgumentParseResult.success(parentMessage.member!!)
+                } catch (e: Exception) {
+                    return ArgumentParseResult.failure(MemberParser.MemberParseException("Could not find the linked message."))
+                }
+            }
+        }
+    
         val stringId = if (input.startsWith("<@") && input.endsWith(">")) {
             if (input.startsWith("<@!"))
                 input.substring(3, input.length - 1)

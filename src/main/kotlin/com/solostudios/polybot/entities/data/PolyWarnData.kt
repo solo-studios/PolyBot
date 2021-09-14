@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file Tag.kt is part of PolyhedralBot
- * Last modified on 01-09-2021 04:58 p.m.
+ * The file PolyWarnData.kt is part of PolyhedralBot
+ * Last modified on 13-09-2021 07:05 p.m.
  *
  * MIT License
  *
@@ -26,21 +26,24 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.tags
+package com.solostudios.polybot.entities.data
 
+import com.solostudios.polybot.PolyBot
 import java.time.LocalDateTime
+import java.util.UUID
 
-data class Tag(
-        var text: String,
-        val server: Long,
-        val created: LocalDateTime,
-        var aliases: List<String>,
-        private var _usages: Long,
-              ) {
+class PolyWarnData(
+        val bot: PolyBot,
+        val uuid: UUID,
+        val guildId: Long,
+        val memberId: Long,
+        val moderatorId: Long,
+        val time: LocalDateTime,
+        var reason: String,
+                  ) {
+    val guild by bot.guild(guildId)
     
-    val usages by ::_usages
+    val member by bot.member(guildId, memberId)
     
-    fun incrementUsages() {
-        _usages = _usages++
-    }
+    val moderator by bot.member(guildId, moderatorId)
 }

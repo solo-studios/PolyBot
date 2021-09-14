@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 01-09-2021 04:58 p.m.
+ * Last modified on 13-09-2021 08:56 p.m.
  *
  * MIT License
  *
@@ -50,12 +50,15 @@ import com.solostudios.polybot.commands.ModerationCommands
 import com.solostudios.polybot.commands.TagCommands
 import com.solostudios.polybot.commands.UtilCommands
 import com.solostudios.polybot.config.PolyConfig
+import com.solostudios.polybot.database.DatabaseManager
+import com.solostudios.polybot.entities.EntityManager
 import com.solostudios.polybot.event.EventManager
 import com.solostudios.polybot.listener.AutoQuoteListener
 import com.solostudios.polybot.logging.LoggingListener
 import com.solostudios.polybot.search.SearchManager
 import com.solostudios.polybot.service.ShutdownService
 import com.solostudios.polybot.util.AnnotationParser
+import com.solostudios.polybot.util.BackedReference
 import com.solostudios.polybot.util.ScheduledThreadPool
 import com.solostudios.polybot.util.currentThread
 import com.solostudios.polybot.util.fixedRate
@@ -91,6 +94,13 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     
     val botConfig = config.botConfig
     
+    @Suppress("HasPlatformType")
+    val scheduledThreadPool = ScheduledThreadPool((runtime.processors - 1).takeIf { it > 0 } ?: 1, PolyThreadFactory)
+    
+    val coroutineDispatcher: ExecutorCoroutineDispatcher = scheduledThreadPool.asCoroutineDispatcher()
+    
+    val scope = CoroutineScope(SupervisorJob() + coroutineDispatcher)
+    
     val cacheManager = CacheManager(this@PolyBot)
     
     val eventManager = EventManager(this@PolyBot)
@@ -105,12 +115,9 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         eventListeners += AutoQuoteListener(this@PolyBot)
     }.build()
     
-    @Suppress("HasPlatformType")
-    val scheduledThreadPool = ScheduledThreadPool((runtime.processors - 1).takeIf { it > 0 } ?: 1, PolyThreadFactory)
+    val databaseManager = DatabaseManager(this@PolyBot)
     
-    val coroutineDispatcher: ExecutorCoroutineDispatcher = scheduledThreadPool.asCoroutineDispatcher()
-    
-    val scope = CoroutineScope(SupervisorJob() + coroutineDispatcher)
+    val entityManager = EntityManager(this@PolyBot)
     
     val permissionManager = PermissionManager(this@PolyBot)
     
@@ -166,6 +173,20 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     @Suppress("UNUSED_PARAMETER")
     private fun botPrefix(event: MessageEvent) = botConfig.prefix
     
+    fun guild(guildId: Long) = BackedReference(guildId, { jda.getGuildById(it) }, { it.idLong ?: 0 })
+    
+    fun textChannel(channelId: Long) = BackedReference(channelId, { jda.getTextChannelById(it) }, { it.idLong ?: 0 })
+    
+    fun voiceChannel(channelId: Long) = BackedReference(channelId, { jda.getVoiceChannelById(it) }, { it.idLong ?: 0 })
+    
+    fun role(roleId: Long) = BackedReference(roleId, { jda.getRoleById(it) }, { it.idLong ?: 0 })
+    
+    fun user(userId: Long) = BackedReference(userId, { jda.getUserById(it) }, { it.idLong ?: 0 })
+    
+    fun member(guildId: Long, userId: Long) = BackedReference(guildId to userId,
+                                                              { jda.getGuildById(it.first)?.getMemberById(it.second) },
+                                                              { it?.let { it.idLong to it.guild.idLong } ?: (0L to 0L) })
+    
     override fun serviceShutdown() {
         jda.presence.apply {
             onlineStatus = OnlineStatus.DO_NOT_DISTURB
@@ -174,6 +195,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         
         jda.shutdownNow()
         
+        databaseManager.shutdown()
         cacheManager.shutdown()
         searchManager.shutdown()
         

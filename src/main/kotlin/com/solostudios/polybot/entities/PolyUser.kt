@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MessageEvent.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 08:56 p.m.
+ * The file PolyUser.kt is part of PolyhedralBot
+ * Last modified on 12-09-2021 08:52 p.m.
  *
  * MIT License
  *
@@ -26,16 +26,14 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.event
+package com.solostudios.polybot.entities
 
-import cloud.commandframework.jda.JDACommandSender
-import net.dv8tion.jda.api.entities.MessageChannel
+import com.solostudios.polybot.PolyBot
 import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-open class MessageEvent(
-        open val sender: JDACommandSender,
-        open val event: MessageReceivedEvent,
-        open val user: User,
-        open val channel: MessageChannel,
-                       ) 
+class PolyUser(val bot: PolyBot, val user: User) {
+    val id: Long
+        get() = user.idLong
+    
+    // val data by lazy { bot.databaseManager }
+}

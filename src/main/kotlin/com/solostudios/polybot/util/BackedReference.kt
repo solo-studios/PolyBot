@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MessageEvent.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 08:56 p.m.
+ * The file BackedReference.kt is part of PolyhedralBot
+ * Last modified on 13-09-2021 06:49 p.m.
  *
  * MIT License
  *
@@ -26,16 +26,33 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.event
+package com.solostudios.polybot.util
 
-import cloud.commandframework.jda.JDACommandSender
-import net.dv8tion.jda.api.entities.MessageChannel
-import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import java.lang.ref.WeakReference
+import kotlin.reflect.KProperty
 
-open class MessageEvent(
-        open val sender: JDACommandSender,
-        open val event: MessageReceivedEvent,
-        open val user: User,
-        open val channel: MessageChannel,
-                       ) 
+open class BackedReference<T, V>(
+        private var backingProperty: V,
+        private val refresh: (V) -> T,
+        private val getBackingProperty: (T) -> V,
+                                ) {
+    private var reference: WeakReference<T>? = null
+    
+    operator fun getValue(thisRef: Any, property: KProperty<*>): T {
+        val referent = reference?.get()
+        
+        return if (referent != null) {
+            referent
+        } else {
+            val newReferent = refresh(backingProperty)
+            reference = WeakReference(newReferent)
+            
+            newReferent
+        }
+    }
+    
+    operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        backingProperty = getBackingProperty(value)
+        reference = WeakReference(value)
+    }
+}

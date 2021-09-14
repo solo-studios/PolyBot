@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MessageEvent.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 08:56 p.m.
+ * The file PolyGuildData.kt is part of PolyhedralBot
+ * Last modified on 13-09-2021 08:29 p.m.
  *
  * MIT License
  *
@@ -26,16 +26,30 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.event
+package com.solostudios.polybot.entities.data
 
-import cloud.commandframework.jda.JDACommandSender
-import net.dv8tion.jda.api.entities.MessageChannel
-import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import com.solostudios.polybot.PolyBot
 
-open class MessageEvent(
-        open val sender: JDACommandSender,
-        open val event: MessageReceivedEvent,
-        open val user: User,
-        open val channel: MessageChannel,
-                       ) 
+data class PolyGuildData(
+        val bot: PolyBot,
+        val guildId: Long,
+        val tags: MutableList<PolyTagData>,
+        var loggingChannelId: Long,
+        var mutedRoleId: Long,
+        var autoRoleId: Long,
+        var prefix: String?,
+        var autoDehoist: Boolean,
+        var filterInvites: Boolean,
+                        ) {
+    val autoRoleEnabled: Boolean
+        get() = autoRoleId != -1L
+    
+    val hasPrefix: Boolean
+        get() = prefix != null
+    
+    val loggingChannel by bot.textChannel(loggingChannelId)
+    
+    val mutedRole by bot.role(mutedRoleId)
+    
+    val autoRole by bot.role(autoRoleId)
+}
