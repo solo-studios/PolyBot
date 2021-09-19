@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 04:38 p.m.
+ * Last modified on 19-09-2021 06:33 p.m.
  *
  * MIT License
  *
@@ -50,9 +50,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.slf4j.kotlin.error
-import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.info
+import org.slf4j.kotlin.*
 import kotlin.io.path.Path
 import kotlin.system.exitProcess
 

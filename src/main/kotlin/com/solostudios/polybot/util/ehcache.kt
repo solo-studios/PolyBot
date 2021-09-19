@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ehcache.kt is part of PolyhedralBot
- * Last modified on 03-08-2021 01:53 p.m.
+ * Last modified on 19-09-2021 06:33 p.m.
  *
  * MIT License
  *
@@ -40,7 +40,7 @@ import org.ehcache.config.builders.ResourcePoolsBuilder
 import org.ehcache.spi.serialization.Serializer
 
 inline fun <reified K, reified T> CacheManager.getCache(alias: String): Cache<K, T> =
-    getCache(alias, K::class.java, T::class.java)
+        getCache(alias, K::class.java, T::class.java)
 
 //inline fun <reified K : Any, V : Any> CacheConfigurationBuilder<K, V>.withKotlinSerializer(clazz: KClass<K>) {
 //    return withSerializer(clazz.java, getKotlinSerializer<K>())

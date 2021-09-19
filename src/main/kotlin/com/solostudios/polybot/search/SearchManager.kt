@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 01-09-2021 06:18 p.m.
+ * Last modified on 19-09-2021 06:33 p.m.
  *
  * MIT License
  *

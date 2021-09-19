@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCache.kt is part of PolyhedralBot
- * Last modified on 03-08-2021 11:26 p.m.
+ * Last modified on 19-09-2021 06:33 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,7 @@ package com.solostudios.polybot.cache
 import com.solostudios.polybot.util.set
 import net.dv8tion.jda.api.entities.Message
 import org.ehcache.Cache
-import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.*
 
 class MessageCache(private val cacheManager: CacheManager,
                    private val messageCache: Cache<Long, CachedMessage>) {

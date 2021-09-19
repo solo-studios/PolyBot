@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:31 p.m.
+ * Last modified on 19-09-2021 06:33 p.m.
  *
  * MIT License
  *
@@ -156,7 +156,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     
     val annotationParser: AnnotationParser<MessageEvent> = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
         parameterInjectorRegistry.registerInjector { context, _ ->
-            context.get<Message>("Message").poly(this@PolyBot)
+            context.get<Message>("PolyMessage").poly(this@PolyBot)
         }
     
         installCoroutineSupport(this@PolyBot.scope)
