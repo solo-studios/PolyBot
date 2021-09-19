@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 08:33 p.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -93,7 +93,7 @@ import net.dv8tion.jda.api.events.role.update.GenericRoleUpdateEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdateColorEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.*
 
 @Suppress("RedundantOverride")
 class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
@@ -110,12 +110,12 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         bot.scope.launch {
             val oldMessage = messageCache.getMessage(event.messageIdLong)
             val message = event.message
-        
+    
             messageCache.putMessage(message)
-        
+    
             loggingEmbed(tempLogChannel, event.guild, event.author, event.channel, message, message.timeEdited!!) {
                 description = "**${message.author.asMention} edited a message in ${message.textChannel.asMention}.**"
-            
+        
                 field {
                     name = "Before"
                     value = oldMessage?.content?.takeIf { it.length < 1024 } ?: oldMessage?.content?.substring(0, 1020)?.plus("\n...")
@@ -134,12 +134,12 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     override fun onGuildMessageDelete(event: GuildMessageDeleteEvent) {
         bot.scope.launch {
             val message = messageCache.getMessage(event.messageIdLong)
-        
+    
             if (message != null) {
                 val user: User? = bot.jda.retrieveUserById(message.author)
                         .onErrorMap { null }
                         .await()
-            
+        
                 loggingEmbed(tempLogChannel, event.guild, user, event.channel) {
                     description = buildString {
                         append("**")
@@ -147,7 +147,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                         append("'s message in ")
                         append("<#").append(message.channel).append('>')
                         append(" was deleted.**\n")
-                    
+    
                         if (message.content.length > 1024 - this.length)
                             append(message.content.substring(0, 1020 - this.length)).append("\n...")
                         else
@@ -332,7 +332,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     override fun onGuildBan(event: GuildBanEvent) {
         bot.scope.launch {
             val bannedUser: Guild.Ban? = event.guild.retrieveBan(event.user).onErrorMap { null }.await()
-        
+    
             loggingEmbed(tempLogChannel, event.guild, event.user) {
                 description = """
                 **Banned user ${event.user.asTag}.**
@@ -347,7 +347,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
             val bannedUser = event.guild.retrieveAuditLogs().type(ActionType.UNBAN).takeUntilAsync(1) {
                 return@takeUntilAsync it.targetIdLong == event.user.idLong
             }.await().firstOrNull()
-        
+    
             loggingEmbed(tempLogChannel, event.guild, event.user) {
                 description = if (bannedUser == null)
                     "**Unbanned user ${event.user.asTag}.**"
@@ -533,8 +533,8 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                 iconUrl = eventIcon
             }
             block(this)
-            
-            idFooter(time, guild, channel, user, message)
+    
+            idFooter(time, guild.idLong, channel?.idLong, user?.idLong, message?.idLong)
         }
         
         loggingChannel.sendMessageEmbeds(embed).queue()

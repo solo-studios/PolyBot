@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 08:33 p.m.
+ * Last modified on 18-09-2021 06:52 p.m.
  *
  * MIT License
  *
@@ -33,30 +33,30 @@ import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import com.solostudios.polybot.Constants
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.util.idFooter
 import dev.minn.jda.ktx.Embed
 import dev.minn.jda.ktx.await
 import kotlinx.coroutines.launch
-import net.dv8tion.jda.api.entities.Message
-import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.info
+import org.slf4j.kotlin.*
 
-class MessageCacheCommands(val bot: PolyBot) {
+class MessageCacheCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
     @CommandDescription("Get message from cache")
     @CommandMethod("cache|msg-cache <id>")
     @JDAUserPermission(ownerOnly = true)
-    fun messageFromCache(message: Message,
+    fun messageFromCache(message: PolyMessage,
                          @Argument("id")
                          id: Long) {
         bot.scope.launch {
             val cachedMessage = bot.cacheManager.messageCache.getMessage(id)
-        
+            
             if (cachedMessage != null) {
                 logger.info(cachedMessage) { "here is the message {}" }
-            
+                
                 val embed = Embed {
                     author {
                         name = "${cachedMessage.username}#${cachedMessage.discriminator}"
@@ -67,15 +67,13 @@ class MessageCacheCommands(val bot: PolyBot) {
                                 .await() ?: Constants.defaultAvatarUrl
                     }
                     color = 0x2ECC70
-                
+                    
                     description = "**<@${cachedMessage.author}> sent a message in <#${cachedMessage.channel}>.**\n${cachedMessage.content}"
-                
+                    
                     idFooter(message.timeCreated, message.guild, message.channel, message.author, message)
                 }
-            
-                message.replyEmbeds(embed)
-                        .mentionRepliedUser(false)
-                        .queue()
+                
+                message.reply(embed)
             }
         }
     }

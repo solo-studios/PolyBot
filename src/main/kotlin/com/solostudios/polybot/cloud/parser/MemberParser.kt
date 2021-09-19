@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MemberParser.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 08:56 p.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -32,24 +32,26 @@ import cloud.commandframework.arguments.parser.ArgumentParseResult
 import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.context.CommandContext
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException
+import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.entities.PolyMember
+import com.solostudios.polybot.util.poly
 import java.util.Queue
-import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import org.slf4j.kotlin.*
 
-class MemberParser<C> : ArgumentParser<C, Member> {
+class MemberParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMember> {
     private val logger by getLogger()
     
     @Suppress("DuplicatedCode")
-    override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<Member> {
+    override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyMember> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
         val event = commandContext.get<MessageReceivedEvent>("MessageReceivedEvent")
         val message = event.message
-    
+        
         if (!event.isFromGuild) {
             return ArgumentParseResult.failure(MemberParseException("This command may only be run in a guild."))
         }
@@ -87,7 +89,7 @@ class MemberParser<C> : ArgumentParser<C, Member> {
             logger.info { "member is ${member == null}" }
             if (member != null) {
                 inputQueue.remove()
-                return ArgumentParseResult.success(member)
+                return ArgumentParseResult.success(member.poly(bot))
             }
         } catch (e: NumberFormatException) {
         } catch (e: ErrorResponseException) {
@@ -103,7 +105,7 @@ class MemberParser<C> : ArgumentParser<C, Member> {
         val members = event.guild.getMembersByEffectiveName(input, true)
         
         return when {
-            members.size == 1 -> inputQueue.remove().run { ArgumentParseResult.success(members[0]) }
+            members.size == 1 -> inputQueue.remove().run { ArgumentParseResult.success(members[0].poly(bot)) }
             members.isEmpty() -> ArgumentParseResult.failure(MemberNotFoundParseException(input))
             else              -> ArgumentParseResult.failure(TooManyMembersFoundParseException(input))
         }

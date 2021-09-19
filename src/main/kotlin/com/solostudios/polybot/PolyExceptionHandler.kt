@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyExceptionHandler.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:18 a.m.
+ * Last modified on 18-09-2021 07:11 p.m.
  *
  * MIT License
  *
@@ -39,10 +39,9 @@ import cloud.commandframework.exceptions.NoPermissionException
 import cloud.commandframework.exceptions.NoSuchCommandException
 import com.solostudios.polybot.cloud.event.MessageEvent
 import java.util.function.BiConsumer
-import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.warn
+import org.slf4j.kotlin.*
 
-class PolyExceptionHandler(val manager: CommandManager<MessageEvent>) {
+class PolyExceptionHandler(val bot: PolyBot, private val manager: CommandManager<MessageEvent>) {
     private val logger by getLogger()
     
     init {

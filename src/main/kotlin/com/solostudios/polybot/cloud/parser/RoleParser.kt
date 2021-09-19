@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file UserParser.kt is part of PolyhedralBot
+ * The file RoleParser.kt is part of PolyhedralBot
  * Last modified on 18-09-2021 08:02 p.m.
  *
  * MIT License
@@ -33,7 +33,7 @@ import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.context.CommandContext
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException
 import com.solostudios.polybot.PolyBot
-import com.solostudios.polybot.entities.PolyUser
+import com.solostudios.polybot.entities.PolyRole
 import com.solostudios.polybot.util.poly
 import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
@@ -41,33 +41,25 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import org.slf4j.kotlin.*
 
-class UserParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyUser> {
+class RoleParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyRole> {
     private val logger by getLogger()
     
     @Suppress("DuplicatedCode")
-    override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyUser> {
+    override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyRole> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
         val event = commandContext.get<MessageReceivedEvent>("MessageReceivedEvent")
         val message = event.message
         
-        if ("^" == input.trim()) {
-            val messageReference = message.messageReference
-            if (messageReference != null) {
-                try {
-                    val parentMessage = messageReference.resolve()
-                            .complete()
-                    
-                    ArgumentParseResult.success(parentMessage.member!!)
-                } catch (e: Exception) {
-                    return ArgumentParseResult.failure(MemberParser.MemberParseException("Could not find the linked message."))
-                }
-            }
+        var exception: Exception
+        
+        if (!event.isFromGuild) {
+            return ArgumentParseResult.failure(IllegalArgumentException("Channel arguments can only be parsed in guilds"))
         }
         
-        val stringId = if (input.startsWith("<@") && input.endsWith(">")) {
-            if (input.startsWith("<@!"))
+        val stringId = if (input.startsWith("<@&") && input.endsWith(">")) {
+            if (input.startsWith("<@&!"))
                 input.substring(3, input.length - 1)
             else
                 input.substring(2, input.length - 1)
@@ -80,28 +72,27 @@ class UserParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyUser> {
             
             logger.info { "here's the id: $id" }
             
-            val user = event.jda.retrieveUserById(id).complete()
-            if (user != null) {
+            val role = event.jda.getRoleById(id)
+            if (role != null) {
                 inputQueue.remove()
-                return ArgumentParseResult.success(user.poly(bot))
+                return ArgumentParseResult.success(role.poly(bot))
             }
         } catch (e: NumberFormatException) {
         } catch (e: ErrorResponseException) {
             when (e.errorResponse) {
-                ErrorResponse.UNKNOWN_MEMBER -> return ArgumentParseResult.failure(UserNotFoundParseException(input))
-                ErrorResponse.UNKNOWN_USER   -> return ArgumentParseResult.failure(UserNotFoundParseException(input))
+                ErrorResponse.UNKNOWN_ROLE -> return ArgumentParseResult.failure(RoleNotFoundParseException(input))
                 
-                else                         -> {
+                else                       -> {
                 }
             }
         }
         
-        val users = event.guild.getMembersByEffectiveName(input, true).map { it.user }
+        val roles = event.guild.getRolesByName(input, true)
         
         return when {
-            users.size == 1 -> inputQueue.remove().run { ArgumentParseResult.success(users[0].poly(bot)) }
-            users.isEmpty() -> ArgumentParseResult.failure(UserNotFoundParseException(input))
-            else            -> ArgumentParseResult.failure(TooManyUsersFoundParseException(input))
+            roles.size == 1 -> inputQueue.remove().run { ArgumentParseResult.success(roles[0].poly(bot)) }
+            roles.isEmpty() -> ArgumentParseResult.failure(RoleNotFoundParseException(input))
+            else            -> ArgumentParseResult.failure(TooManyRolesFoundParseException(input))
         }
     }
     
@@ -109,15 +100,15 @@ class UserParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyUser> {
         return true
     }
     
-    open class UserParseException(val input: String) : IllegalArgumentException()
+    open class RoleParseException(val input: String) : IllegalArgumentException()
     
-    class TooManyUsersFoundParseException(input: String) : UserParseException(input) {
+    class TooManyRolesFoundParseException(input: String) : RoleParseException(input) {
         override val message: String
-            get() = "Too many members found for '$input'."
+            get() = "Too many channels found for '$input'."
     }
     
-    class UserNotFoundParseException(input: String) : UserParseException(input) {
+    class RoleNotFoundParseException(input: String) : RoleParseException(input) {
         override val message: String
-            get() = "Member not found for '$input'."
+            get() = "Channel not found for '$input'."
     }
 }

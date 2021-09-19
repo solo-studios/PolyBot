@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 08:51 p.m.
+ * Last modified on 18-09-2021 08:18 p.m.
  *
  * MIT License
  *
@@ -64,7 +64,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
         
         val hikariConfig = HikariConfig().apply {
             jdbcUrl = config.url
-            dataSourceClassName = config.datasource
+            driverClassName = config.driver
             username = config.username
             password = config.password
         }
@@ -84,6 +84,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
         logger.info { "Ran migrations successfully." }
     }
     
+    @Suppress("UNCHECKED_CAST")
     private val guildCache = (Caffeine.newBuilder() as Caffeine<Long, PolyGuildData>)
             .expireAfterAccess(20, TimeUnit.MINUTES)
             .maximumSize(1_000)
@@ -95,6 +96,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
                 }
             }.build<Long, PolyGuildData> { getGuildData(it) }
     
+    @Suppress("UNCHECKED_CAST")
     private val memberCache = (Caffeine.newBuilder() as Caffeine<Pair<Long, Long>, PolyMemberData>)
             .expireAfterAccess(5, TimeUnit.MINUTES)
             .maximumSize(10_000)

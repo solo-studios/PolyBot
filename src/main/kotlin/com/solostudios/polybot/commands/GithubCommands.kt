@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubCommands.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 11:41 p.m.
+ * Last modified on 18-09-2021 06:52 p.m.
  *
  * MIT License
  *
@@ -29,25 +29,26 @@
 package com.solostudios.polybot.commands
 
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.PolyCommands
+import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.util.dayMonthYearFormatter
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import java.time.LocalDate
 import java.time.Period
 import java.time.ZoneId
-import net.dv8tion.jda.api.entities.Message
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChartBuilder
 import org.knowm.xchart.style.Styler
 import org.kohsuke.github.GitHub
-import org.slf4j.kotlin.info
+import org.slf4j.kotlin.*
 
-class GithubCommands(val bot: PolyBot) {
+class GithubCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by org.slf4j.kotlin.getLogger()
     val github: GitHub = GitHub.connectAnonymously()
     
     // @CommandMethod("ghstatus|gh-status|gh status")
-    fun ghStatus(message: Message) {
+    fun ghStatus(message: PolyMessage) {
         val now = LocalDate.now()
         
         val sixMonths = now.minus(Period.ofMonths(6))
@@ -87,7 +88,7 @@ class GithubCommands(val bot: PolyBot) {
         val input = PipedInputStream()
         val output = PipedOutputStream(input)
         
-        message.textChannel.sendFile(input, "image.png").queue()
+        // message.textChannel.sendFile(input, "image.png").queue()
         
         BitmapEncoder.saveBitmap(chart, output, BitmapEncoder.BitmapFormat.PNG)
         logger.info { "Finished" }

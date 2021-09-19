@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 07:35 p.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -34,17 +34,19 @@ import cloud.commandframework.services.types.ConsumerService
 import com.solostudios.polybot.PolyBot
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.*
 
 class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T> {
     private val logger by getLogger()
     
     @Suppress("DuplicatedCode")
     override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
+        logger.info { "Ya" }
+    
         val context = postprocessingContext.commandContext
         val commandMeta = postprocessingContext.command.commandMeta
         val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")
-        
+    
         if (commandMeta.getOrDefault(CO_OWNER_ONLY, NotBoolean(false)).value) {
             if (event.author.idLong !in bot.botConfig.ownerIds && event.author.idLong !in bot.botConfig.coOwnerIds) {
                 event.message.replyFormat("This command can only be performed by co-owners and owners of the bot.")

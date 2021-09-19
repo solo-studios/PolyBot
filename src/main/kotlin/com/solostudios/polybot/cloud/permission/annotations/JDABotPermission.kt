@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file JDABotPermission.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:25 a.m.
+ * Last modified on 15-09-2021 08:16 p.m.
  *
  * MIT License
  *
@@ -30,4 +30,7 @@ package com.solostudios.polybot.cloud.permission.annotations
 
 import net.dv8tion.jda.api.Permission
 
+@MustBeDocumented
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class JDABotPermission(vararg val permissions: Permission)

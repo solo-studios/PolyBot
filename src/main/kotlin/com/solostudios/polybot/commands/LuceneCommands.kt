@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 30-08-2021 03:06 p.m.
+ * Last modified on 18-09-2021 06:52 p.m.
  *
  * MIT License
  *
@@ -32,9 +32,10 @@ import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.util.get
-import net.dv8tion.jda.api.entities.Message
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
@@ -43,12 +44,12 @@ import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 import org.slf4j.kotlin.*
 
-class LuceneCommands(val bot: PolyBot) {
+class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
     @CommandMethod("lucene <markdown>")
     @JDAUserPermission(ownerOnly = true)
-    fun lucene(message: Message,
+    fun lucene(message: PolyMessage,
                @Greedy
                @Argument("markdown")
                markdown: String) {

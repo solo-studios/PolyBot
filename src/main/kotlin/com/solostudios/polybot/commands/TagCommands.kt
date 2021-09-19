@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 01-09-2021 06:18 p.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -30,57 +30,58 @@ package com.solostudios.polybot.commands
 
 import cloud.commandframework.annotations.CommandMethod
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.entities.PolyMessage
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.Message
 
-class TagCommands(val bot: PolyBot) {
+class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("tag")
-    fun tag(message: Message) {
+    fun tag(message: PolyMessage) {
     
     }
     
     @CommandMethod("tag alias")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun addTagAlias(message: Message) {
+    fun addTagAlias(message: PolyMessage) {
     
     }
     
     @CommandMethod("tag create")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun createTag(message: Message) {
+    fun createTag(message: PolyMessage) {
     
     }
     
     @CommandMethod("tag delete")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun deleteTag(message: Message) {
+    fun deleteTag(message: PolyMessage) {
     
     }
     
     @CommandMethod("tag edit")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun editTag(message: Message) {
+    fun editTag(message: PolyMessage) {
     
     }
     
     @CommandMethod("tag info")
-    fun tagInfo(message: Message) {
+    fun tagInfo(message: PolyMessage) {
     
     }
     
     @CommandMethod("tag list")
-    fun listTags(message: Message) {
+    fun listTags(message: PolyMessage) {
     
     }
     
     @CommandMethod("tag raw")
-    fun rawTag(message: Message) {
+    fun rawTag(message: PolyMessage) {
     
     }
     
     @CommandMethod("tag view")
-    fun viewTag(message: Message) {
+    fun viewTag(message: PolyMessage) {
     
     }
     

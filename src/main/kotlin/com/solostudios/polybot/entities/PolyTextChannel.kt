@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyClearEvent.kt is part of PolyhedralBot
+ * The file PolyTextChannel.kt is part of PolyhedralBot
  * Last modified on 18-09-2021 05:56 p.m.
  *
  * MIT License
@@ -26,10 +26,15 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.event.moderation
+package com.solostudios.polybot.entities
 
-import com.solostudios.polybot.entities.PolyMember
-import com.solostudios.polybot.entities.PolyTextChannel
-import com.solostudios.polybot.event.Event
+import com.solostudios.polybot.PolyBot
+import dev.minn.jda.ktx.await
+import net.dv8tion.jda.api.entities.TextChannel
 
-class PolyClearEvent(val channel: PolyTextChannel, val moderator: PolyMember) : Event()
+class PolyTextChannel(bot: PolyBot, override val jdaChannel: TextChannel) : PolyMessageChannel(bot, jdaChannel) {
+    suspend fun deleteMessages(messages: Collection<PolyMessage>) {
+        jdaChannel.deleteMessages(messages.map { it.jdaMessage })
+                .await()
+    }
+}

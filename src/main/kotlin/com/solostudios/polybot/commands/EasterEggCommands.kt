@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EasterEggCommands.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 08:33 p.m.
+ * Last modified on 18-09-2021 06:52 p.m.
  *
  * MIT License
  *
@@ -32,35 +32,34 @@ import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.PolyCommands
+import com.solostudios.polybot.entities.PolyMessage
 import kotlinx.coroutines.launch
-import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
-import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.*
 import kotlin.random.Random
 
-class EasterEggCommands(val bot: PolyBot) {
+class EasterEggCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
     @CommandMethod("gay|crimes")
-    fun crimes(message: Message) {
+    fun crimes(message: PolyMessage) {
         bot.scope.launch {
-            message.reply("Be gay, do crimes.").mentionRepliedUser(false).queue()
+            message.reply("Be gay, do crimes.")
         }
     }
     
     @CommandMethod("uwu|uwuify|owo|owoify <text>")
-    fun uwuify(message: Message,
+    fun uwuify(message: PolyMessage,
                @Greedy
                @Argument("text")
                text: String) {
         bot.scope.launch {
             val uwuText = UwU.transformTextToUwU(text)
-        
+            
             logger.info(uwuText.trim())
-        
+            
             message.reply(uwuText.takeIf { it.length <= 4000 } ?: uwuText.substring(0, 4000))
-                    .mentionRepliedUser(false)
-                    .queue()
         }
     }
     

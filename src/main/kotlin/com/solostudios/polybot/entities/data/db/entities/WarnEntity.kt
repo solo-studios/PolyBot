@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file WarnEntity.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 06:15 p.m.
+ * Last modified on 18-09-2021 08:14 p.m.
  *
  * MIT License
  *
@@ -40,10 +40,10 @@ object WarnTable : UUIDTable("WARN_DATA") {
     val guild = reference("guild", GuildTable).index()
     val guildId = long("guild_id").index()
     val member = reference("member", MemberTable).index()
-    val memberId = long("member").index()
+    val memberId = long("member_id").index()
     val reason = text("reason")
     val moderator = reference("moderator", MemberTable)
-    val moderatorId = long("moderator")
+    val moderatorId = long("moderator_id")
     val time = datetime("time")
 }
 

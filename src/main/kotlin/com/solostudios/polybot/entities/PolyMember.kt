@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMember.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 05:09 p.m.
+ * Last modified on 18-09-2021 06:14 p.m.
  *
  * MIT License
  *
@@ -29,14 +29,63 @@
 package com.solostudios.polybot.entities
 
 import com.solostudios.polybot.PolyBot
+import java.time.LocalDateTime
 import net.dv8tion.jda.api.entities.Member
 
-class PolyMember(val bot: PolyBot, val member: Member) {
+class PolyMember(val bot: PolyBot, val jdaMember: Member) {
     val id: Long
-        get() = member.idLong
+        get() = jdaMember.idLong
+    
+    val isBot: Boolean
+        get() = jdaMember.user.isBot
+    
+    val name: String
+        get() = jdaMember.user.name
+    
+    val discriminator: String
+        get() = jdaMember.user.discriminator
+    
+    val effectiveName: String
+        get() = jdaMember.effectiveName
+    
+    val mention: String
+        get() = jdaMember.asMention
+    
+    val user: PolyUser
+        get() = PolyUser(bot, jdaMember.user)
+    
+    val guild: PolyGuild
+        get() = PolyGuild(bot, jdaMember.guild)
     
     val guildId: Long
-        get() = member.guild.idLong
+        get() = jdaMember.guild.idLong
     
-    // val data by lazy { bot.entityManager.getMember(this) }
+    val data by lazy { bot.entityManager.getMember(this) }
+    
+    val warns by lazy { bot.entityManager.getWarns(this) }
+    
+    fun ban(reason: String, daysToDelete: Int, moderator: PolyMember, replyAction: suspend (String) -> Unit) {
+        bot.moderationManager.banMember(this, moderator, reason, daysToDelete, replyAction)
+    }
+    
+    fun kick(reason: String, moderator: PolyMember, replyAction: suspend (String) -> Unit) {
+        bot.moderationManager.kickMember(this, moderator, reason, replyAction)
+    }
+    
+    fun warn(reason: String, moderator: PolyMember, time: LocalDateTime = LocalDateTime.now(), replyAction: suspend (String) -> Unit) {
+        bot.moderationManager.warnMember(guild, this, moderator, reason, time, replyAction)
+    }
+    
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        
+        other as PolyMember
+        
+        return jdaMember != other.jdaMember
+    }
+    
+    override fun hashCode(): Int {
+        return jdaMember.hashCode()
+    }
 }

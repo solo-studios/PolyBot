@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file DatabaseConfig.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 08:56 p.m.
+ * Last modified on 18-09-2021 08:18 p.m.
  *
  * MIT License
  *
@@ -33,8 +33,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class DatabaseConfig(
         @JsonProperty("url")
         val url: String,
-        @JsonProperty("datasource")
-        val datasource: String,
+        @JsonProperty("driver")
+        val driver: String,
         @JsonProperty("username")
         val username: String,
         @JsonProperty("password")

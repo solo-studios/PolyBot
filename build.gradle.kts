@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 12-09-2021 06:46 p.m.
+ * Last modified on 18-09-2021 08:51 p.m.
  *
  * MIT License
  *
@@ -80,7 +80,7 @@ version = versionObj
 repositories {
     mavenCentral()
     
-    maven { // Incendo (Cloud)
+    maven { // Incendo (Cloud) Snapshots
         name = "incendo-snapshots"
         url = uri("https://repo.incendo.org/content/repositories/snapshots")
     }

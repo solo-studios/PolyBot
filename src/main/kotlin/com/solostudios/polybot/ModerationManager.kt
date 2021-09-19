@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationManager.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 08:33 p.m.
+ * Last modified on 18-09-2021 06:28 p.m.
  *
  * MIT License
  *
@@ -28,47 +28,48 @@
 
 package com.solostudios.polybot
 
+import com.solostudios.polybot.entities.PolyGuild
+import com.solostudios.polybot.entities.PolyMember
+import com.solostudios.polybot.entities.data.PolyWarnData
 import com.solostudios.polybot.event.moderation.PolyBanEvent
 import com.solostudios.polybot.event.moderation.PolyKickEvent
+import dev.minn.jda.ktx.await
+import java.time.LocalDateTime
+import java.util.UUID
 import kotlinx.coroutines.launch
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Member
-import org.slf4j.kotlin.debug
-import org.slf4j.kotlin.getLogger
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
+import org.slf4j.kotlin.*
 
 class ModerationManager(val bot: PolyBot) {
     private val logger by getLogger()
     
-    fun banMember(guild: Guild,
-                  member: Member,
-                  moderator: Member = guild.selfMember,
+    fun banMember(member: PolyMember,
+                  moderator: PolyMember,
                   reason: String,
                   daysToDelete: Int,
-                  replyAction: (String) -> Unit) {
+                  replyAction: suspend (String) -> Unit) {
         bot.scope.launch {
-            val event = PolyBanEvent(member, reason, moderator)
-        
-            bot.eventManager.dispatch(event)
-        
-            val user = member.user
-        
-            when (member.idLong) {
-                moderator.idLong        -> {
+            when (member.id) {
+                moderator.id -> {
                     replyAction("You cannot ban yourself!")
                 }
-            
-                guild.selfMember.idLong -> {
+                
+                bot.id       -> {
                     replyAction("You cannot ban the bot!")
                 }
-            
-                else                    -> {
-                    replyAction("User ${user.name}#${user.discriminator} has been banned from the server, and $daysToDelete days of messages have been deleted, $reason")
                 
-                    guild.ban(user, daysToDelete)
-                            .reason(reason)
-                            .queue()
-                
-                    logger.debug(user.name, user.discriminator, guild.name, daysToDelete, reason) {
+                else         -> {
+                    val event = PolyBanEvent(member, reason, moderator)
+                    
+                    bot.eventManager.dispatch(event)
+                    
+                    member.jdaMember.ban(daysToDelete, reason)
+                            .await()
+                    
+                    replyAction("User ${member.name}#${member.discriminator} has been banned from the server, " +
+                                        "and $daysToDelete days of messages have been deleted, $reason")
+                    
+                    logger.debug(member.name, member.discriminator, member.guild.name, daysToDelete, reason) {
                         "User {}#{} has been banned from the server {}, and {} days of messages have been deleted. {}"
                     }
                 }
@@ -76,36 +77,86 @@ class ModerationManager(val bot: PolyBot) {
         }
     }
     
-    fun kickMember(guild: Guild,
-                   member: Member,
-                   moderator: Member = guild.selfMember,
+    fun kickMember(member: PolyMember,
+                   moderator: PolyMember,
                    reason: String,
-                   replyAction: (String) -> Unit) {
+                   replyAction: suspend (String) -> Unit) {
         bot.scope.launch {
-            val event = PolyKickEvent(member, reason, moderator)
-        
-            bot.eventManager.dispatch(event)
-        
-            val user = member.user
-        
-            when (member.idLong) {
-                moderator.idLong        -> {
+            when (member.id) {
+                moderator.id -> {
                     replyAction("You cannot kick yourself!")
                 }
-            
-                guild.selfMember.idLong -> {
+                
+                bot.id       -> {
                     replyAction("You cannot kick the bot!")
                 }
-            
-                else                    -> {
-                    member.kick(reason)
-                            .queue()
                 
-                    replyAction("User ${user.name}#${user.discriminator} has been kicked from the server, $reason")
-                
+                else         -> {
+                    member.jdaMember.kick(reason)
+                            .submit()
+                            .await()
+                    
+                    val event = PolyKickEvent(member, reason, moderator)
+                    
+                    bot.eventManager.dispatch(event)
+                    
+                    replyAction("User ${member.name}#${member.discriminator} has been kicked from the server, $reason")
+                    
                     // log to console
-                    logger.debug(user.name, user.discriminator, member.guild.name, reason) {
-                        "User {}#{} has been kicked from the server {}, {}."
+                    logger.debug(member.name, member.discriminator, member.id, member.guild.name, reason) {
+                        "User {}#{} <@{}> has been kicked from the server {}, {}."
+                    }
+                }
+            }
+        }
+    }
+    
+    fun warnMember(
+            guild: PolyGuild,
+            member: PolyMember,
+            moderator: PolyMember,
+            reason: String,
+            time: LocalDateTime,
+            replyAction: suspend (String) -> Unit,
+                  ) {
+        bot.scope.launch {
+            when {
+                member.id == moderator.id -> {
+                    replyAction("You cannot warn yourself!")
+                }
+                
+                member.id == bot.id       -> {
+                    replyAction("You cannot warn the bot!")
+                }
+                
+                member.isBot              -> {
+                    replyAction("You cannot warn another bot!")
+                }
+                
+                else                      -> {
+                    val warnFailed = try {
+                        val channel = member.user.privateChannel()
+                        
+                        channel.sendMessage("You have been warned. blah blah blah")
+                        
+                        false
+                    } catch (e: InsufficientPermissionException) {
+                        true
+                    } catch (e: UnsupportedOperationException) {
+                        true
+                    }
+                    val warn = PolyWarnData(bot, UUID.randomUUID(), guild.id, member.id, moderator.id, time, reason)
+                    
+                    bot.entityManager.saveWarn(warn)
+                    
+                    replyAction("${member.mention} has been warned for $reason.")
+                    
+                    if (warnFailed)
+                        replyAction("Member ${member.name}#${member.discriminator} could not be messaged because they either don't share a server with this bot, or have dms off.")
+                    
+                    
+                    logger.debug(member.name, member.discriminator, member.id, member.guild.name, reason) {
+                        "User {}#{} <@{}> has been warned in the server {}, {}."
                     }
                 }
             }

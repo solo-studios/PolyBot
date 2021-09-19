@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file util.kt is part of PolyhedralBot
- * Last modified on 01-09-2021 04:58 p.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -28,13 +28,13 @@
 
 package com.solostudios.polybot.util
 
+import com.solostudios.polybot.entities.PolyAbstractChannel
+import com.solostudios.polybot.entities.PolyGuild
+import com.solostudios.polybot.entities.PolyMessage
+import com.solostudios.polybot.entities.PolyUser
 import dev.minn.jda.ktx.InlineEmbed
 import java.time.OffsetDateTime
 import java.util.EnumSet
-import net.dv8tion.jda.api.entities.AbstractChannel
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.User
 
 
 inline fun <T> stringIfNotNull(fromObject: T?, transform: (T) -> String): String = if (fromObject != null) transform(fromObject) else ""
@@ -42,27 +42,11 @@ inline fun <T> stringIfNotNull(fromObject: T?, transform: (T) -> String): String
 inline fun <reified T : Enum<T>> enumSetOf(vararg elems: T): EnumSet<T> = EnumSet.noneOf(T::class.java).apply { addAll(elems) }
 
 fun InlineEmbed.idFooter(time: OffsetDateTime = OffsetDateTime.now(),
-                         guild: Guild,
-                         channel: AbstractChannel? = null,
-                         user: User? = null,
-                         message: Message? = null,
-                         separator: String = " | ") {
-    footer {
-        name = buildString {
-            if (user != null)
-                append("Author: ").append(user.id).append(separator)
-            if (message != null)
-                append("Message: ").append(message.id).append(separator)
-            if (channel != null)
-                append("Channel: ").append(channel.id).append(separator)
-            
-            append("Guild: ")
-            append(guild.id)
-            
-            footerDate(time)
-        }
-    }
-}
+                         guild: PolyGuild,
+                         channel: PolyAbstractChannel? = null,
+                         user: PolyUser? = null,
+                         message: PolyMessage? = null,
+                         separator: String = " | ") = idFooter(time, guild.id, channel?.id, user?.id, message?.id, separator)
 
 fun InlineEmbed.idFooter(time: OffsetDateTime = OffsetDateTime.now(),
                          guild: Long,
@@ -87,7 +71,6 @@ fun InlineEmbed.idFooter(time: OffsetDateTime = OffsetDateTime.now(),
             footerDate(time)
     
         }
-        println(name)
     }
 }
 

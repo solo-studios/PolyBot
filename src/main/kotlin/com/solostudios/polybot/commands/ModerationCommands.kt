@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 08:33 p.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -34,29 +34,30 @@ import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.specifier.Greedy
 import cloud.commandframework.annotations.specifier.Range
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
+import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.entities.PolyMember
+import com.solostudios.polybot.entities.PolyMessage
+import com.solostudios.polybot.entities.PolyMessageChannel
+import com.solostudios.polybot.entities.PolyUser
 import com.solostudios.polybot.event.moderation.PolyClearEvent
+import com.solostudios.polybot.util.poly
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.MessageHistory
-import net.dv8tion.jda.api.entities.User
-import org.slf4j.kotlin.getLogger
-import org.slf4j.kotlin.info
+import org.slf4j.kotlin.*
 
-class ModerationCommands(val bot: PolyBot) {
+class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
-    private val moderationManager = bot.moderationManager
-    
-    @CommandMethod("ban|banish|begone <member> [reason]")
+    @JDAGuildCommand
     @JDABotPermission(Permission.BAN_MEMBERS)
     @JDAUserPermission(Permission.BAN_MEMBERS)
-    fun banUser(message: Message,
+    @CommandMethod("ban|banish|begone <member> [reason]")
+    fun banUser(message: PolyMessage,
                 @Argument("member")
-                member: Member,
+                member: PolyMember,
                 @Argument("reason")
                 @Greedy
                 reason: String?,
@@ -64,35 +65,37 @@ class ModerationCommands(val bot: PolyBot) {
                 days: Int?) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
         
-        moderationManager.banMember(message.guild, member, message.member!!, realReason, days ?: 3) {
-            message.reply(it).mentionRepliedUser(false).queue()
+        member.ban(realReason, days ?: 3, message.member) {
+            message.reply(it)
         }
     }
     
-    @CommandMethod("kick|yeet <member> [reason]")
+    @JDAGuildCommand
     @JDABotPermission(Permission.KICK_MEMBERS)
     @JDAUserPermission(Permission.KICK_MEMBERS)
-    fun kickMember(message: Message,
+    @CommandMethod("kick|yeet <member> [reason]")
+    fun kickMember(message: PolyMessage,
                    @Argument("member")
-                   member: Member,
+                   member: PolyMember,
                    @Argument("reason", description = "The reason the member was kicked.")
                    reason: String?) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
-    
-        moderationManager.kickMember(message.guild, member, message.member!!, realReason) {
-            message.reply(it).mentionRepliedUser(false).queue()
+        
+        member.kick(realReason, message.member) {
+            message.reply(it)
         }
     }
     
-    @CommandMethod("purge|clear|clean <amount>")
+    @JDAGuildCommand
     @JDABotPermission(Permission.MESSAGE_MANAGE)
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun purgeMessages(message: Message,
+    @CommandMethod("purge|clear|clean <amount>")
+    fun purgeMessages(message: PolyMessage,
                       @Range(min = "1", max = "100")
                       @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
                       amount: Int,
                       @Flag("user", aliases = ["u"], description = "Delete only messages from this user.")
-                      user: User?,
+                      user: PolyUser?,
                       @Flag("message-regex", aliases = ["e"], description = "Delete only messages that match this regex.")
                       messageRegex: String?,
                       @Flag("starts-with", description = "Delete only messages that start with this string.")
@@ -104,60 +107,68 @@ class ModerationCommands(val bot: PolyBot) {
                       @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
                       caseInsensitive: Boolean = false) {
         bot.scope.launch {
-            val event = PolyClearEvent(message.textChannel, message.author)
+            val event = PolyClearEvent(message.textChannel, message.member)
             bot.eventManager.dispatch(event)
-        
-            logger.info(message.member?.effectiveName, amount) { "User {} ran command to clear {} messages" }
+    
+            logger.info(message.member.effectiveName, amount) { "User {} ran command to clear {} messages" }
             val regex =
                     if (caseInsensitive)
                         messageRegex?.toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
                     else
                         messageRegex?.toRegex(RegexOption.MULTILINE)
-        
-        
-            val messages = PastMessageSequence(message.channel.history).filter {
-                it.idLong == message.idLong
+    
+    
+            val messages = PastMessageSequence(message.channel).filter {
+                it.id == message.id
             }.filter {
                 if (user != null) it.author == user else true
             }.filter {
-                if (regex != null) it.contentStripped.matches(regex) else true
+                if (regex != null) it.matches(regex) else true
             }.filter {
-                if (startsWith != null) it.contentStripped.startsWith(startsWith, caseInsensitive) else true
+                if (startsWith != null) it.startsWith(startsWith, caseInsensitive) else true
             }.filter {
-                if (endsWith != null) it.contentStripped.endsWith(endsWith, caseInsensitive) else true
+                if (endsWith != null) it.endsWith(endsWith, caseInsensitive) else true
             }.filter {
-                if (botOnly) it.author.isBot else true
+                if (botOnly) it.fromBot else true
             }.take(amount).toList()
-        
-            message.delete().queue()
-        
-            message.textChannel.deleteMessages(messages).queue {
-                message.channel.sendMessage("Deleted ${messages.size} messages.")
+    
+            message.delete()
+    
+            message.textChannel.deleteMessages(messages)
+    
+            message.channel.sendMessage("Deleted ${messages.size} messages.")
+        }
+    }
+    
+    @JDAGuildCommand
+    @JDAUserPermission(Permission.MESSAGE_MANAGE)
+    @CommandMethod("warn|warning <member> <reason>")
+    fun warnMember(message: PolyMessage,
+                   @Argument("member")
+                   member: PolyMember,
+                   @Argument("reason")
+                   reason: String?) {
+        bot.scope.launch {
+            val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
+            
+            member.warn(realReason, message.member) {
+                message.reply(it)
             }
         }
     }
     
-    @CommandMethod("warn|warning <member> <reason>")
-    @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun warnMember(message: Message,
-                   @Argument("member")
-                   member: Member,
-                   @Argument("reason")
-                   reason: String?) {
-        // TODO: 2021-08-22 Warning
-        logger.info(message.member?.effectiveName, member.effectiveName, reason) { "User {} ran command to warn {} for '{}'" }
-        message.replyFormat("User %s ran command to warn %s for '%s'", message.member?.effectiveName, member.effectiveName, reason)
-                .mentionRepliedUser(false)
-                .queue()
-    }
-    
-    private class PastMessageSequence(private val history: MessageHistory, private val bulkQuery: Int = 24) : Sequence<Message> {
+    private class PastMessageSequence(
+            val channel: PolyMessageChannel,
+            private val bulkQuery: Int = 24,
+                                     ) : Sequence<PolyMessage> {
         private val logger by getLogger()
-    
-        override fun iterator(): Iterator<Message> = object : Iterator<Message> {
-            var stack: MutableList<Message> = mutableListOf()
         
-            override fun next(): Message {
+        private val history = channel.jdaChannel.history
+        
+        override fun iterator(): Iterator<PolyMessage> = object : Iterator<PolyMessage> {
+            var stack: MutableList<PolyMessage> = mutableListOf()
+            
+            override fun next(): PolyMessage {
                 if (hasNext())
                     return stack.removeFirst()
                 else
@@ -166,10 +177,8 @@ class ModerationCommands(val bot: PolyBot) {
             
             override fun hasNext(): Boolean {
                 if (stack.isEmpty())
-                    stack = history.retrievePast(bulkQuery).complete()
-    
-                logger.debug("size: ${stack.size}")
-    
+                    stack.addAll(history.retrievePast(bulkQuery).complete().map { it.poly(channel.bot) })
+                
                 return stack.isNotEmpty()
             }
         }

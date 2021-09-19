@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyUser.kt is part of PolyhedralBot
- * Last modified on 12-09-2021 08:52 p.m.
+ * Last modified on 18-09-2021 06:14 p.m.
  *
  * MIT License
  *
@@ -29,11 +29,43 @@
 package com.solostudios.polybot.entities
 
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.util.poly
+import dev.minn.jda.ktx.await
 import net.dv8tion.jda.api.entities.User
 
-class PolyUser(val bot: PolyBot, val user: User) {
+class PolyUser(val bot: PolyBot, val jdaUser: User) {
     val id: Long
-        get() = user.idLong
+        get() = jdaUser.idLong
+    
+    val isBot: Boolean
+        get() = jdaUser.isBot
+    
+    val name: String
+        get() = jdaUser.name
+    
+    val discriminator: String
+        get() = jdaUser.discriminator
+    
+    val mention: String
+        get() = jdaUser.asMention
+    
+    suspend fun privateChannel(): PolyMessageChannel {
+        return jdaUser.openPrivateChannel().await().poly(bot)
+    }
+    
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        
+        other as PolyUser
+        
+        return jdaUser != other.jdaUser
+    }
+    
+    override fun hashCode(): Int {
+        return jdaUser.hashCode()
+    }
     
     // val data by lazy { bot.databaseManager }
+    
 }

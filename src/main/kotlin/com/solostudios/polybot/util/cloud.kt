@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file cloud.kt is part of PolyhedralBot
- * Last modified on 21-08-2021 11:21 p.m.
+ * Last modified on 18-09-2021 09:09 p.m.
  *
  * MIT License
  *
@@ -37,12 +37,29 @@ import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.arguments.parser.ParserParameters
 import cloud.commandframework.arguments.parser.ParserRegistry
 import cloud.commandframework.context.CommandContext
+import cloud.commandframework.execution.postprocessor.CommandPostprocessor
+import cloud.commandframework.execution.preprocessor.CommandPreprocessor
 import cloud.commandframework.meta.CommandMeta
 import io.leangen.geantyref.TypeToken
 
-fun <C> AnnotationParser<C>.parse(vararg instances: Any) {
+fun <C> AnnotationParser<C>.parseCommands(vararg instances: Any) {
     for (instance in instances)
         parse(instance)
+}
+
+fun <C> AnnotationParser<C>.parseCommands(instances: List<Any>) {
+    for (instance in instances)
+        parse(instance)
+}
+
+fun <C> CommandManager<C>.registerCommandPreProcessors(vararg preProcessors: CommandPreprocessor<C>) {
+    for (preProcessor in preProcessors)
+        registerCommandPreProcessor(preProcessor)
+}
+
+fun <C> CommandManager<C>.registerCommandPostProcessors(vararg postProcessors: CommandPostprocessor<C>) {
+    for (postProcessor in postProcessors)
+        registerCommandPostProcessor(postProcessor)
 }
 
 inline fun <reified T, C> ParserRegistry<C>.registerParserSupplier(noinline supplier: (ParserParameters) -> ArgumentParser<C, T>) {

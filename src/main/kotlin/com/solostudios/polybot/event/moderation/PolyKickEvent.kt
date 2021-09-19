@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyKickEvent.kt is part of PolyhedralBot
- * Last modified on 24-07-2021 08:21 p.m.
+ * Last modified on 15-09-2021 06:46 p.m.
  *
  * MIT License
  *
@@ -28,10 +28,10 @@
 
 package com.solostudios.polybot.event.moderation
 
-import net.dv8tion.jda.api.entities.Member
+import com.solostudios.polybot.entities.PolyMember
 
 class PolyKickEvent(
-        punishedMember: Member,
+        punishedMember: PolyMember,
         reason: String,
-        moderator: Member,
+        moderator: PolyMember,
                    ) : PolyModerationEvent(punishedMember, reason, moderator)

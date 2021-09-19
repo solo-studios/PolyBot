@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file UserParser.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 08:02 p.m.
+ * The file ChannelParser.kt is part of PolyhedralBot
+ * Last modified on 18-09-2021 08:01 p.m.
  *
  * MIT License
  *
@@ -33,41 +33,32 @@ import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.context.CommandContext
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException
 import com.solostudios.polybot.PolyBot
-import com.solostudios.polybot.entities.PolyUser
+import com.solostudios.polybot.entities.PolyMessageChannel
 import com.solostudios.polybot.util.poly
 import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
-import net.dv8tion.jda.api.requests.ErrorResponse
 import org.slf4j.kotlin.*
 
-class UserParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyUser> {
+class ChannelParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMessageChannel> {
     private val logger by getLogger()
     
     @Suppress("DuplicatedCode")
-    override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyUser> {
+    override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyMessageChannel> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
         val event = commandContext.get<MessageReceivedEvent>("MessageReceivedEvent")
         val message = event.message
         
-        if ("^" == input.trim()) {
-            val messageReference = message.messageReference
-            if (messageReference != null) {
-                try {
-                    val parentMessage = messageReference.resolve()
-                            .complete()
-                    
-                    ArgumentParseResult.success(parentMessage.member!!)
-                } catch (e: Exception) {
-                    return ArgumentParseResult.failure(MemberParser.MemberParseException("Could not find the linked message."))
-                }
-            }
+        var exception: Exception
+        
+        if (!event.isFromGuild) {
+            return ArgumentParseResult.failure(IllegalArgumentException("Channel arguments can only be parsed in guilds"))
         }
         
-        val stringId = if (input.startsWith("<@") && input.endsWith(">")) {
-            if (input.startsWith("<@!"))
+        val stringId = if (input.startsWith("<#") && input.endsWith(">")) {
+            if (input.startsWith("<#!"))
                 input.substring(3, input.length - 1)
             else
                 input.substring(2, input.length - 1)
@@ -80,28 +71,27 @@ class UserParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyUser> {
             
             logger.info { "here's the id: $id" }
             
-            val user = event.jda.retrieveUserById(id).complete()
-            if (user != null) {
+            val channel = event.jda.getTextChannelById(id)
+            if (channel != null) {
                 inputQueue.remove()
-                return ArgumentParseResult.success(user.poly(bot))
+                return ArgumentParseResult.success(channel.poly(bot))
             }
         } catch (e: NumberFormatException) {
         } catch (e: ErrorResponseException) {
-            when (e.errorResponse) {
-                ErrorResponse.UNKNOWN_MEMBER -> return ArgumentParseResult.failure(UserNotFoundParseException(input))
-                ErrorResponse.UNKNOWN_USER   -> return ArgumentParseResult.failure(UserNotFoundParseException(input))
-                
-                else                         -> {
-                }
-            }
+            // when (e.errorResponse) {
+            //     ErrorResponse.UNKNOWN_CHANNEL -> return ArgumentParseResult.failure(ChannelNotFoundParseException(input))
+            //
+            //     else                          -> {
+            //     }
+            // }
         }
         
-        val users = event.guild.getMembersByEffectiveName(input, true).map { it.user }
+        val channels = event.guild.getTextChannelsByName(input, true).map { it }
         
         return when {
-            users.size == 1 -> inputQueue.remove().run { ArgumentParseResult.success(users[0].poly(bot)) }
-            users.isEmpty() -> ArgumentParseResult.failure(UserNotFoundParseException(input))
-            else            -> ArgumentParseResult.failure(TooManyUsersFoundParseException(input))
+            channels.size == 1 -> inputQueue.remove().run { ArgumentParseResult.success(channels[0].poly(bot)) }
+            channels.isEmpty() -> ArgumentParseResult.failure(ChannelNotFoundParseException(input))
+            else               -> ArgumentParseResult.failure(TooManyChannelsFoundParseException(input))
         }
     }
     
@@ -109,15 +99,15 @@ class UserParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyUser> {
         return true
     }
     
-    open class UserParseException(val input: String) : IllegalArgumentException()
+    open class ChannelParseException(val input: String) : IllegalArgumentException()
     
-    class TooManyUsersFoundParseException(input: String) : UserParseException(input) {
+    class TooManyChannelsFoundParseException(input: String) : ChannelParseException(input) {
         override val message: String
-            get() = "Too many members found for '$input'."
+            get() = "Too many channels found for '$input'."
     }
     
-    class UserNotFoundParseException(input: String) : UserParseException(input) {
+    class ChannelNotFoundParseException(input: String) : ChannelParseException(input) {
         override val message: String
-            get() = "Member not found for '$input'."
+            get() = "Channel not found for '$input'."
     }
 }

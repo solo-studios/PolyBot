@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Constants.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 07:55 p.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -42,7 +42,9 @@ object Constants {
     const val logEmbedColour = 0x00FF00
     
     const val defaultUsername = "Unknown User#0000"
+    
     private const val defaultAvatarId = 0
+    
     const val defaultAvatarUrl = "https://cdn.discordapp.com/embed/avatars/$defaultAvatarId.png"
     
     const val configFile = "polybot.conf"
@@ -76,7 +78,7 @@ object Constants {
                 "(?<guild>\\d+)\\/" +   // Guild ID
                 "(?<channel>\\d+)\\/" + // Channel ID
                 "(?<message>\\d+)\\/" + // Message ID
-                "?(?:\\?\\S*|#\\S*)?"       // Useless bullshit
+                "?(?:\\?\\S*|#\\S*)?"   // Useless bullshit
     
         @Language("RegExp")
         const val inviteRegexString = "$discordDomainRegex(?:\\/invite)?\\/(?<invite>[a-z0-9-]+)(?:\\?\\S*)?(?:#\\S*)?"

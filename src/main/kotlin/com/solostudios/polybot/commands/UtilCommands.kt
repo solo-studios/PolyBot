@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 08:33 p.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,9 @@ package com.solostudios.polybot.commands
 import cloud.commandframework.annotations.CommandMethod
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.Version
+import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.event.GuildMessageEvent
+import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.util.commandCount
 import com.solostudios.polybot.util.freeMemory
 import com.solostudios.polybot.util.maxMemory
@@ -45,37 +47,36 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDAInfo
-import net.dv8tion.jda.api.entities.Message
 import org.intellij.lang.annotations.Language
-import org.slf4j.kotlin.getLogger
+import org.slf4j.kotlin.*
 import kotlin.time.Duration.Companion.milliseconds
 
-class UtilCommands(val bot: PolyBot) {
+class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
     @CommandMethod("ping|pong")
-    fun ping(message: Message) {
+    fun ping(message: PolyMessage) {
         bot.scope.launch {
-            message.textChannel.sendTyping().await()
-            val restPing = message.jda.restPing.await()
-        
-            val msg = message.reply("Checking ping...").mentionRepliedUser(false).await()
-        
+            message.textChannel.sendTyping()
+            val restPing = bot.jda.restPing.await()
+            
+            val msg = message.reply("Checking ping...")
+            
             val ping = message.timeCreated.until(msg.timeCreated, ChronoUnit.MILLIS)
-            msg.editMessage("Ping: ${ping / 3}ms | Heartbeat: ${message.jda.gatewayPing}ms | Rest: ${restPing}ms").queue()
+            msg.edit("Ping: ${ping / 3}ms | Heartbeat: ${bot.jda.gatewayPing}ms | Rest: ${restPing}ms")
         }
     }
     
     @CommandMethod("info|polybot|bot|botinfo")
-    fun info(message: Message) {
+    fun info(message: PolyMessage) {
         bot.scope.launch {
             val embed = Embed {
                 author {
                     name = "Polybot"
-                    iconUrl = message.jda.selfUser.effectiveAvatarUrl
+                    iconUrl = bot.avatarUrl
                 }
                 title = "PolyBot Info"
-            
+                
                 field("Description", inline = false) {
                     value = """
                     PolyBot is a multipurpose bot designed for the Polyhedral Development discord server.
@@ -84,19 +85,19 @@ class UtilCommands(val bot: PolyBot) {
                     The goal of this bot was to create a FOSS discord bot for managing servers centered around Open Source projects.
                 """.trimIndent()
                 }
-            
+                
                 field("Author", "solonovamax#6983")
                 field("Repository", "[PolyBot](https://github.com/solonovamax/PolyBot)")
                 field("Library", "[JDA](https://github.com/DV8FromTheWorld/JDA)")
-            
+                
                 field("Version") {
                     value = Version.version
                 }
                 field("Uptime", milliseconds(runtimeMXBean.uptime).shortFormat())
                 field("Members") {
-                    value = "%,d".format(message.jda.guildCache.sumOf { it.memberCount })
+                    value = "%,d".format(bot.totalMembers)
                 }
-            
+                
                 field("JDA Version") {
                     value = JDAInfo.VERSION
                 }
@@ -105,23 +106,21 @@ class UtilCommands(val bot: PolyBot) {
                     val total = runtime.totalMemory
                     val max = runtime.maxMemory
                     val used = total - free
-                
+    
                     value = "%.2f MB/%.2f MB".format(used.toFloat() / (1 shl 20), max.toFloat() / (1 shl 20))
                 }
                 field("JVM Version") {
                     value = System.getProperty("java.runtime.name") + "\n" + System.getProperty("java.runtime.version")
                 }
-            
+                
                 field("Commands") {
                     value = bot.commandManager.commandCount.toString()
                 }
-            
+                
                 timestamp = Instant.now()
             }
-        
-            message.replyEmbeds(embed)
-                    .mentionRepliedUser(false)
-                    .queue()
+            
+            message.reply(embed)
         }
     }
     
@@ -133,37 +132,37 @@ class UtilCommands(val bot: PolyBot) {
                 color = 0x8fd032
                 description = serverDescription
                 thumbnail = githubImage
-            
+    
                 field {
                     name = "Who We Are"
                     value = whoWeAreDescription
                     inline = false
                 }
-            
+    
                 field {
                     name = "Rules"
                     value = rulesDescription
                     inline = false
                 }
-            
+    
                 field {
                     name = "Useful Links"
                     value = usefulLinks
                     inline = false
                 }
-            
+    
                 field {
                     name = "Getting Support"
                     value = supportDescription
                     inline = false
                 }
-            
+    
                 footer {
                     name = "Requested by ${event.member.effectiveName} (${event.user.name}#${event.user.discriminator})"
                     iconUrl = event.user.avatarUrl
                 }
             }
-        
+    
             event.event.message.replyEmbeds(embed)
                     .mentionRepliedUser(false)
                     .queue()

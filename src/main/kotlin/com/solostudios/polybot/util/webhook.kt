@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file webhook.kt is part of PolyhedralBot
- * Last modified on 25-08-2021 07:07 p.m.
+ * Last modified on 18-09-2021 08:46 p.m.
  *
  * MIT License
  *
@@ -31,11 +31,16 @@
 package com.solostudios.polybot.util
 
 import club.minnced.discord.webhook.send.AllowedMentions
+import club.minnced.discord.webhook.send.WebhookEmbed
+import club.minnced.discord.webhook.send.WebhookEmbed.EmbedAuthor
+import club.minnced.discord.webhook.send.WebhookEmbed.EmbedFooter
+import club.minnced.discord.webhook.send.WebhookEmbed.EmbedTitle
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder
 import club.minnced.discord.webhook.send.WebhookMessage
 import club.minnced.discord.webhook.send.WebhookMessageBuilder
 import java.io.File
 import java.io.InputStream
+import java.time.OffsetDateTime
 
 inline fun WebhookMessage(builder: InlineWebhookMessage.() -> Unit = {}): WebhookMessage {
     return WebhookMessageBuilder().run {
@@ -69,8 +74,8 @@ class InlineWebhookMessage(val builder: WebhookMessageBuilder) {
             field = value
         }
     
-    inline fun embed(build: InlineWebhookEmbed.() -> Unit) {
-        InlineWebhookEmbed(WebhookEmbedBuilder()).also(build)
+    inline fun embed(builder: InlineWebhookEmbed.() -> Unit) {
+        this.builder.addEmbeds(InlineWebhookEmbed(WebhookEmbedBuilder()).also(builder).build())
     }
     
     var content: String? = null
@@ -112,5 +117,51 @@ class InlineWebhookMessage(val builder: WebhookMessageBuilder) {
 }
 
 class InlineWebhookEmbed(val builder: WebhookEmbedBuilder) {
-    // TODO: 2021-08-25 Actually finish this class
+    fun build() = builder.build()
+    
+    var timestamp: OffsetDateTime? = null
+        set(value) {
+            builder.setTimestamp(value)
+            field = value
+        }
+    
+    var color: Int? = null
+        set(value) {
+            builder.setColor(value)
+            field = value
+        }
+    
+    var description: String? = null
+        set(value) {
+            builder.setDescription(value)
+            field = value
+        }
+    
+    var thumbnailUrl: String? = null
+        set(value) {
+            builder.setThumbnailUrl(value)
+            field = value
+        }
+    
+    var imageUrl: String? = null
+        set(value) {
+            builder.setImageUrl(value)
+            field = value
+        }
+    
+    inline fun footer(text: String, icon: String?) {
+        builder.setFooter(EmbedFooter(text, icon))
+    }
+    
+    inline fun title(text: String, url: String?) {
+        builder.setTitle(EmbedTitle(text, url))
+    }
+    
+    inline fun author(name: String, iconUrl: String?, url: String?) {
+        builder.setAuthor(EmbedAuthor(name, iconUrl, url))
+    }
+    
+    inline fun field(name: String, content: String, inline: Boolean = false) {
+        builder.addField(WebhookEmbed.EmbedField(inline, name, content))
+    }
 }

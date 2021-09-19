@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 08:56 p.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -29,26 +29,23 @@
 package com.solostudios.polybot
 
 import cloud.commandframework.annotations.AnnotationParser
+import cloud.commandframework.kotlin.coroutines.installCoroutineSupport
 import cloud.commandframework.meta.SimpleCommandMeta
 import com.solostudios.polybot.cache.CacheManager
+import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.event.EventMapper
 import com.solostudios.polybot.cloud.event.MessageEvent
+import com.solostudios.polybot.cloud.parser.ChannelParser
 import com.solostudios.polybot.cloud.parser.MemberParser
+import com.solostudios.polybot.cloud.parser.RoleParser
 import com.solostudios.polybot.cloud.parser.UserParser
 import com.solostudios.polybot.cloud.permission.BotPermissionPostprocessor
 import com.solostudios.polybot.cloud.permission.PermissionMetaModifier
 import com.solostudios.polybot.cloud.permission.UserPermissionPostprocessor
 import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.preprocessor.AntiBotPreProcessor
 import com.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
-import com.solostudios.polybot.commands.BotAdminCommands
-import com.solostudios.polybot.commands.EasterEggCommands
-import com.solostudios.polybot.commands.GithubCommands
-import com.solostudios.polybot.commands.LuceneCommands
-import com.solostudios.polybot.commands.MessageCacheCommands
-import com.solostudios.polybot.commands.ModerationCommands
-import com.solostudios.polybot.commands.TagCommands
-import com.solostudios.polybot.commands.UtilCommands
 import com.solostudios.polybot.config.PolyConfig
 import com.solostudios.polybot.database.DatabaseManager
 import com.solostudios.polybot.entities.EntityManager
@@ -63,11 +60,15 @@ import com.solostudios.polybot.util.ScheduledThreadPool
 import com.solostudios.polybot.util.currentThread
 import com.solostudios.polybot.util.fixedRate
 import com.solostudios.polybot.util.onlineStatus
-import com.solostudios.polybot.util.parse
+import com.solostudios.polybot.util.parseCommands
+import com.solostudios.polybot.util.poly
 import com.solostudios.polybot.util.processors
+import com.solostudios.polybot.util.registerCommandPostProcessors
+import com.solostudios.polybot.util.registerCommandPreProcessors
 import com.solostudios.polybot.util.registerInjector
 import com.solostudios.polybot.util.registerParserSupplier
 import com.solostudios.polybot.util.runtime
+import com.solostudios.polybot.util.subTypesOf
 import dev.minn.jda.ktx.InlineJDABuilder
 import java.util.concurrent.ThreadFactory
 import kotlinx.coroutines.CoroutineScope
@@ -78,6 +79,8 @@ import kotlinx.coroutines.cancel
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.requests.restaction.MessageAction
+import org.reflections.Reflections
 import org.slf4j.kotlin.*
 import kotlin.io.path.Path
 import kotlin.system.exitProcess
@@ -90,6 +93,18 @@ import com.solostudios.polybot.cloud.preprocessor.JDAMessagePreprocessor as Mess
 @ExperimentalTime
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownService() {
+    val id: Long
+        get() = jda.selfUser.idLong
+    
+    val avatarUrl: String
+        get() = jda.selfUser.effectiveAvatarUrl
+    
+    val totalMembers: Long
+        get() = jda.guildCache.sumOf { it.memberCount }.toLong()
+    
+    val guilds: Long
+        get() = jda.guildCache.size() + jda.unavailableGuilds.size
+    
     private val logger by getLogger()
     
     val botConfig = config.botConfig
@@ -129,25 +144,28 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
                                                                               .build(),
                                                                       EventMapper::senderToMessageEvent,
                                                                       EventMapper::messageEventToSender).apply {
-        parserRegistry.registerParserSupplier(MemberParser())
-        parserRegistry.registerParserSupplier(UserParser())
+        parserRegistry.registerParserSupplier(MemberParser(this@PolyBot))
+        parserRegistry.registerParserSupplier(UserParser(this@PolyBot))
+        parserRegistry.registerParserSupplier(ChannelParser(this@PolyBot))
+        parserRegistry.registerParserSupplier(RoleParser(this@PolyBot))
     
-        registerCommandPreProcessor(MessagePreprocessor(this))
-        registerCommandPreProcessor(AntiWebhookPreProcessor(this))
-        registerCommandPostProcessor(UserPermissionPostprocessor(this@PolyBot))
-        registerCommandPostProcessor(BotPermissionPostprocessor())
-        
-        PolyExceptionHandler(this)
+        registerCommandPreProcessors(MessagePreprocessor(this), AntiWebhookPreProcessor(this), AntiBotPreProcessor(this))
+    
+        registerCommandPostProcessors(UserPermissionPostprocessor(this@PolyBot), BotPermissionPostprocessor())
     }
     
     val annotationParser: AnnotationParser<MessageEvent> = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
         parameterInjectorRegistry.registerInjector { context, _ ->
-            context.get<Message>("Message")
+            context.get<Message>("Message").poly(this@PolyBot)
         }
-        
+    
+        installCoroutineSupport(this@PolyBot.scope)
+    
         registerBuilderModifier(JDABotPermission::class.java, PermissionMetaModifier::botPermissionModifier)
         registerBuilderModifier(JDAUserPermission::class.java, PermissionMetaModifier::userPermissionModifier)
     }
+    
+    val exceptionHandler = PolyExceptionHandler(this@PolyBot, commandManager)
     
     init {
         scheduledThreadPool.fixedRate(Duration.milliseconds(100), Duration.minutes(5)) {
@@ -157,15 +175,21 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
                 activity = botActivity.getActivity()
             }
         }
-    
-        annotationParser.parse(UtilCommands(this@PolyBot),
-                               ModerationCommands(this@PolyBot),
-                               MessageCacheCommands(this@PolyBot),
-                               EasterEggCommands(this@PolyBot),
-                               GithubCommands(this@PolyBot),
-                               LuceneCommands(this@PolyBot),
-                               BotAdminCommands(this@PolyBot),
-                               TagCommands(this@PolyBot))
+        
+        val reflections = Reflections("com.solostudios.polybot.commands")
+        
+        
+        val commands = reflections.subTypesOf<PolyCommands>().map { klass ->
+            val constructor = klass.constructors.single()
+            
+            return@map constructor.call(this@PolyBot)
+        }
+        
+        annotationParser.parseCommands(commands)
+        
+        logger.info { "Commands: ${commands.size}" }
+        
+        MessageAction.setDefaultMentionRepliedUser(true)
     }
     
     fun getCacheDirectory(vararg name: String) = Path(".cache", *name)
@@ -173,15 +197,15 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     @Suppress("UNUSED_PARAMETER")
     private fun botPrefix(event: MessageEvent) = botConfig.prefix
     
-    fun guild(guildId: Long) = BackedReference(guildId, { jda.getGuildById(it) }, { it.idLong ?: 0 })
+    fun guild(guildId: Long) = BackedReference(guildId, { jda.getGuildById(it) }, { it?.idLong ?: 0 })
     
-    fun textChannel(channelId: Long) = BackedReference(channelId, { jda.getTextChannelById(it) }, { it.idLong ?: 0 })
+    fun textChannel(channelId: Long) = BackedReference(channelId, { jda.getTextChannelById(it) }, { it?.idLong ?: 0 })
     
-    fun voiceChannel(channelId: Long) = BackedReference(channelId, { jda.getVoiceChannelById(it) }, { it.idLong ?: 0 })
+    fun voiceChannel(channelId: Long) = BackedReference(channelId, { jda.getVoiceChannelById(it) }, { it?.idLong ?: 0 })
     
-    fun role(roleId: Long) = BackedReference(roleId, { jda.getRoleById(it) }, { it.idLong ?: 0 })
+    fun role(roleId: Long) = BackedReference(roleId, { jda.getRoleById(it) }, { it?.idLong ?: 0 })
     
-    fun user(userId: Long) = BackedReference(userId, { jda.getUserById(it) }, { it.idLong ?: 0 })
+    fun user(userId: Long) = BackedReference(userId, { jda.getUserById(it) }, { it?.idLong ?: 0 })
     
     fun member(guildId: Long, userId: Long) = BackedReference(guildId to userId,
                                                               { jda.getGuildById(it.first)?.getMemberById(it.second) },

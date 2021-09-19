@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file M0001_CreateInitialDB.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 08:51 p.m.
+ * Last modified on 18-09-2021 08:14 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,8 @@
 
 package com.solostudios.polybot.entities.data.db.migrations
 
+import com.solostudios.polybot.entities.data.db.entities.GuildTable
+import com.solostudios.polybot.entities.data.db.entities.MemberTable
 import gay.solonovamax.exposed.migrations.Migration
 import java.time.LocalDateTime
 import org.jetbrains.exposed.dao.id.LongIdTable
@@ -58,7 +60,7 @@ class M0001_CreateInitialDB : Migration() {
     }
     
     object MigrationTagTable : UUIDTable("TAG_DATA") {
-        val guild = reference("guild", MigrationGuildTable).index()
+        val guild = reference("guild", GuildTable).index()
         val guildId = long("guild_id").index()
         val content = text("content", eagerLoading = true)
         val aliases = text("aliases").default("")
@@ -67,13 +69,13 @@ class M0001_CreateInitialDB : Migration() {
     }
     
     object MigrationWarnTable : UUIDTable("WARN_DATA") {
-        val guild = reference("guild", MigrationGuildTable).index()
+        val guild = reference("guild", GuildTable).index()
         val guildId = long("guild_id").index()
-        val member = reference("member", MigrationMemberTable).index()
-        val memberId = long("member").index()
+        val member = reference("member", MemberTable).index()
+        val memberId = long("member_id").index()
         val reason = text("reason")
-        val moderator = reference("moderator", MigrationMemberTable)
-        val moderatorId = long("moderator")
+        val moderator = reference("moderator", MemberTable)
+        val moderatorId = long("moderator_id")
         val time = datetime("time")
     }
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file jda.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:10 a.m.
+ * Last modified on 19-09-2021 06:31 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,26 @@
 
 package com.solostudios.polybot.util
 
+import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.entities.PolyAbstractChannel
+import com.solostudios.polybot.entities.PolyGuild
+import com.solostudios.polybot.entities.PolyMember
+import com.solostudios.polybot.entities.PolyMessage
+import com.solostudios.polybot.entities.PolyMessageChannel
+import com.solostudios.polybot.entities.PolyRole
+import com.solostudios.polybot.entities.PolyTextChannel
+import com.solostudios.polybot.entities.PolyUser
+import com.solostudios.polybot.entities.PolyVoiceChannel
 import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.entities.AbstractChannel
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.MessageChannel
+import net.dv8tion.jda.api.entities.Role
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.Presence
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 
@@ -41,5 +60,25 @@ infix fun MemberCachePolicy.and(policy: MemberCachePolicy): MemberCachePolicy {
 }
 
 var Presence.onlineStatus: OnlineStatus
-    set(value) = setStatus(value)
+    set(value) {
+        status = value
+    }
     get() = status
+
+fun Member.poly(bot: PolyBot): PolyMember = PolyMember(bot, this)
+
+fun User.poly(bot: PolyBot): PolyUser = PolyUser(bot, this)
+
+fun Guild.poly(bot: PolyBot): PolyGuild = PolyGuild(bot, this)
+
+fun Message.poly(bot: PolyBot): PolyMessage = PolyMessage(bot, this)
+
+fun Role.poly(bot: PolyBot): PolyRole = PolyRole(bot, this)
+
+fun AbstractChannel.poly(bot: PolyBot): PolyAbstractChannel = PolyAbstractChannel(bot, this)
+
+fun MessageChannel.poly(bot: PolyBot): PolyMessageChannel = PolyMessageChannel(bot, this)
+
+fun TextChannel.poly(bot: PolyBot): PolyTextChannel = PolyTextChannel(bot, this)
+
+fun VoiceChannel.poly(bot: PolyBot): PolyVoiceChannel = PolyVoiceChannel(bot, this)
