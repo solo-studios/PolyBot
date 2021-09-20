@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PrivateMessageEvent.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 02:18 a.m.
+ * Last modified on 20-09-2021 01:46 a.m.
  *
  * MIT License
  *
@@ -29,14 +29,9 @@
 package com.solostudios.polybot.cloud.event
 
 import cloud.commandframework.jda.JDACommandSender
-import net.dv8tion.jda.api.entities.PrivateChannel
-import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import com.solostudios.polybot.PolyBot
 
 data class PrivateMessageEvent(
+        override val bot: PolyBot,
         override val sender: JDACommandSender,
-        override val event: MessageReceivedEvent,
-        override val user: User,
-        @Suppress("MemberVisibilityCanBePrivate")
-        val privateChannel: PrivateChannel,
-                              ) : MessageEvent(sender, event, user, privateChannel)
+                              ) : MessageEvent(bot, sender)

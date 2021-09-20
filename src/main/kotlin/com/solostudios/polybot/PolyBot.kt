@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:33 p.m.
+ * Last modified on 20-09-2021 01:46 a.m.
  *
  * MIT License
  *
@@ -29,9 +29,9 @@
 package com.solostudios.polybot
 
 import cloud.commandframework.annotations.AnnotationParser
-import cloud.commandframework.kotlin.coroutines.installCoroutineSupport
 import cloud.commandframework.meta.SimpleCommandMeta
 import com.solostudios.polybot.cache.CacheManager
+import com.solostudios.polybot.cloud.CloudInjectorService
 import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.event.EventMapper
 import com.solostudios.polybot.cloud.event.MessageEvent
@@ -40,9 +40,11 @@ import com.solostudios.polybot.cloud.parser.MemberParser
 import com.solostudios.polybot.cloud.parser.RoleParser
 import com.solostudios.polybot.cloud.parser.UserParser
 import com.solostudios.polybot.cloud.permission.BotPermissionPostprocessor
+import com.solostudios.polybot.cloud.permission.GuildCommandPostProcessor
 import com.solostudios.polybot.cloud.permission.PermissionMetaModifier
 import com.solostudios.polybot.cloud.permission.UserPermissionPostprocessor
 import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
+import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 import com.solostudios.polybot.cloud.preprocessor.AntiBotPreProcessor
 import com.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
@@ -57,15 +59,14 @@ import com.solostudios.polybot.service.ShutdownService
 import com.solostudios.polybot.util.AnnotationParser
 import com.solostudios.polybot.util.BackedReference
 import com.solostudios.polybot.util.ScheduledThreadPool
+import com.solostudios.polybot.util.addCoroutineSupport
 import com.solostudios.polybot.util.currentThread
 import com.solostudios.polybot.util.fixedRate
 import com.solostudios.polybot.util.onlineStatus
 import com.solostudios.polybot.util.parseCommands
-import com.solostudios.polybot.util.poly
 import com.solostudios.polybot.util.processors
 import com.solostudios.polybot.util.registerCommandPostProcessors
 import com.solostudios.polybot.util.registerCommandPreProcessors
-import com.solostudios.polybot.util.registerInjector
 import com.solostudios.polybot.util.registerParserSupplier
 import com.solostudios.polybot.util.runtime
 import com.solostudios.polybot.util.subTypesOf
@@ -78,7 +79,6 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
-import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 import org.reflections.Reflections
 import org.slf4j.kotlin.*
@@ -136,33 +136,36 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     
     val permissionManager = PermissionManager(this@PolyBot)
     
+    val eventMapper = EventMapper(this@PolyBot)
+    
     val commandManager: CommandManager<MessageEvent> = CommandManager(jda,
                                                                       this::botPrefix,
                                                                       permissionManager::permissionCheck,
                                                                       CommandCoordinator.newBuilder<MessageEvent>()
                                                                               .withAsynchronousParsing()
                                                                               .build(),
-                                                                      EventMapper::senderToMessageEvent,
-                                                                      EventMapper::messageEventToSender).apply {
+                                                                      eventMapper::senderToMessageEvent,
+                                                                      eventMapper::messageEventToSender).apply {
         parserRegistry.registerParserSupplier(MemberParser(this@PolyBot))
         parserRegistry.registerParserSupplier(UserParser(this@PolyBot))
         parserRegistry.registerParserSupplier(ChannelParser(this@PolyBot))
         parserRegistry.registerParserSupplier(RoleParser(this@PolyBot))
-    
+        
         registerCommandPreProcessors(MessagePreprocessor(this), AntiWebhookPreProcessor(this), AntiBotPreProcessor(this))
-    
-        registerCommandPostProcessors(UserPermissionPostprocessor(this@PolyBot), BotPermissionPostprocessor())
+        
+        registerCommandPostProcessors(GuildCommandPostProcessor(this@PolyBot),
+                                      UserPermissionPostprocessor(this@PolyBot),
+                                      BotPermissionPostprocessor(this@PolyBot))
     }
     
     val annotationParser: AnnotationParser<MessageEvent> = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
-        parameterInjectorRegistry.registerInjector { context, _ ->
-            context.get<Message>("PolyMessage").poly(this@PolyBot)
-        }
+        parameterInjectorRegistry.registerInjectionService(CloudInjectorService(this@PolyBot))
     
-        installCoroutineSupport(this@PolyBot.scope)
+        addCoroutineSupport(this@PolyBot.scope)
     
         registerBuilderModifier(JDABotPermission::class.java, PermissionMetaModifier::botPermissionModifier)
         registerBuilderModifier(JDAUserPermission::class.java, PermissionMetaModifier::userPermissionModifier)
+        registerBuilderModifier(JDAGuildCommand::class.java, PermissionMetaModifier::guildCommandModifier)
     }
     
     val exceptionHandler = PolyExceptionHandler(this@PolyBot, commandManager)
@@ -218,7 +221,8 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         }
         
         jda.shutdownNow()
-        
+    
+        entityManager.shutdown()
         databaseManager.shutdown()
         cacheManager.shutdown()
         searchManager.shutdown()

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PermissionMetaModifier.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:23 a.m.
+ * Last modified on 19-09-2021 11:14 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,7 @@ package com.solostudios.polybot.cloud.permission
 
 import cloud.commandframework.Command
 import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
+import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 
 object PermissionMetaModifier {
@@ -41,6 +42,10 @@ object PermissionMetaModifier {
         return builder.meta(USER_PERMISSIONS, userPermission.permissions.asList())
                 .meta(OWNER_ONLY, NotBoolean(userPermission.ownerOnly))
                 .meta(CO_OWNER_ONLY, NotBoolean(userPermission.coOwnerOnly))
+    }
+    
+    fun <T> guildCommandModifier(guildCommand: JDAGuildCommand, builder: Command.Builder<T>): Command.Builder<T> {
+        return builder.meta(GUILD_ONLY, NotBoolean(true))
     }
 }
 

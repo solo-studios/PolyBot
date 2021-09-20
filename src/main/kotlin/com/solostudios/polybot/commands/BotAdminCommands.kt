@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotAdminCommands.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:31 p.m.
+ * Last modified on 20-09-2021 12:53 a.m.
  *
  * MIT License
  *
@@ -30,10 +30,12 @@ package com.solostudios.polybot.commands
 
 import cloud.commandframework.annotations.CommandMethod
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.PolyCommandContainer
 import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 import org.slf4j.kotlin.*
 
+@PolyCommandContainer
 class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     

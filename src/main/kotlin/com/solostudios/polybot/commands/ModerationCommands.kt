@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:31 p.m.
+ * Last modified on 20-09-2021 01:46 a.m.
  *
  * MIT License
  *
@@ -34,6 +34,7 @@ import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.specifier.Greedy
 import cloud.commandframework.annotations.specifier.Range
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.PolyCommandContainer
 import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
 import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
@@ -44,10 +45,10 @@ import com.solostudios.polybot.entities.PolyMessageChannel
 import com.solostudios.polybot.entities.PolyUser
 import com.solostudios.polybot.event.moderation.PolyClearEvent
 import com.solostudios.polybot.util.poly
-import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.Permission
 import org.slf4j.kotlin.*
 
+@PolyCommandContainer
 class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
@@ -55,14 +56,14 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDABotPermission(Permission.BAN_MEMBERS)
     @JDAUserPermission(Permission.BAN_MEMBERS)
     @CommandMethod("ban|banish|begone <member> [reason]")
-    fun banUser(message: PolyMessage,
-                @Argument("member")
-                member: PolyMember,
-                @Argument("reason")
-                @Greedy
-                reason: String?,
-                @Flag("days", aliases = ["d"], description = "The amount of days to delete when banning the user. Defaults to 3.")
-                days: Int?) {
+    suspend fun banUser(message: PolyMessage,
+                        @Argument("member")
+                        member: PolyMember,
+                        @Argument("reason")
+                        @Greedy
+                        reason: String?,
+                        @Flag("days", aliases = ["d"], description = "The amount of days to delete when banning the user. Defaults to 3.")
+                        days: Int?) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
         
         member.ban(realReason, days ?: 3, message.member) {
@@ -74,11 +75,11 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDABotPermission(Permission.KICK_MEMBERS)
     @JDAUserPermission(Permission.KICK_MEMBERS)
     @CommandMethod("kick|yeet <member> [reason]")
-    fun kickMember(message: PolyMessage,
-                   @Argument("member")
-                   member: PolyMember,
-                   @Argument("reason", description = "The reason the member was kicked.")
-                   reason: String?) {
+    suspend fun kickMember(message: PolyMessage,
+                           @Argument("member")
+                           member: PolyMember,
+                           @Argument("reason", description = "The reason the member was kicked.")
+                           reason: String?) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
         
         member.kick(realReason, message.member) {
@@ -90,70 +91,71 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDABotPermission(Permission.MESSAGE_MANAGE)
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("purge|clear|clean <amount>")
-    fun purgeMessages(message: PolyMessage,
-                      @Range(min = "1", max = "100")
-                      @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
-                      amount: Int,
-                      @Flag("user", aliases = ["u"], description = "Delete only messages from this user.")
-                      user: PolyUser?,
-                      @Flag("message-regex", aliases = ["e"], description = "Delete only messages that match this regex.")
-                      messageRegex: String?,
-                      @Flag("starts-with", description = "Delete only messages that start with this string.")
-                      startsWith: String?,
-                      @Flag("ends-with", description = "Delete only messages that end with this string.")
-                      endsWith: String?,
-                      @Flag("bot-only", aliases = ["b"], description = "Delete only messages from bots.")
-                      botOnly: Boolean = false,
-                      @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
-                      caseInsensitive: Boolean = false) {
-        bot.scope.launch {
-            val event = PolyClearEvent(message.textChannel, message.member)
-            bot.eventManager.dispatch(event)
-    
-            logger.info(message.member.effectiveName, amount) { "User {} ran command to clear {} messages" }
-            val regex =
-                    if (caseInsensitive)
-                        messageRegex?.toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
-                    else
-                        messageRegex?.toRegex(RegexOption.MULTILINE)
-    
-    
-            val messages = PastMessageSequence(message.channel).filter {
-                it.id == message.id
-            }.filter {
-                if (user != null) it.author == user else true
-            }.filter {
-                if (regex != null) it.matches(regex) else true
-            }.filter {
-                if (startsWith != null) it.startsWith(startsWith, caseInsensitive) else true
-            }.filter {
-                if (endsWith != null) it.endsWith(endsWith, caseInsensitive) else true
-            }.filter {
-                if (botOnly) it.fromBot else true
-            }.take(amount).toList()
-    
-            message.delete()
-    
-            message.textChannel.deleteMessages(messages)
-    
-            message.channel.sendMessage("Deleted ${messages.size} messages.")
-        }
+    suspend fun purgeMessages(message: PolyMessage,
+                              @Range(min = "1", max = "100")
+                              @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
+                              amount: Int,
+                              @Flag("user", aliases = ["u"], description = "Delete only messages from this user.")
+                              user: PolyUser?,
+                              @Flag("message-regex", aliases = ["e"], description = "Delete only messages that match this regex.")
+                              messageRegex: String?,
+                              @Flag("starts-with", description = "Delete only messages that start with this string.")
+                              startsWith: String?,
+                              @Flag("ends-with", description = "Delete only messages that end with this string.")
+                              endsWith: String?,
+                              @Flag("bot-only", aliases = ["b"], description = "Delete only messages from bots.")
+                              botOnly: Boolean = false,
+                              @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
+                              caseInsensitive: Boolean = false) {
+        logger.info { "Running clear command" }
+        
+        val event = PolyClearEvent(message.textChannel, message.member)
+        bot.eventManager.dispatch(event)
+        
+        logger.info { "Dispatched clear event" }
+        
+        val regex =
+                if (caseInsensitive)
+                    messageRegex?.toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
+                else
+                    messageRegex?.toRegex(RegexOption.MULTILINE)
+        
+        
+        val messages = PastMessageSequence(message.channel).take(500).filter {
+            it.id != message.id
+        }.filter {
+            if (user != null) it.author == user else true
+        }.filter {
+            if (regex != null) it.matches(regex) else true
+        }.filter {
+            if (startsWith != null) it.startsWith(startsWith, caseInsensitive) else true
+        }.filter {
+            if (endsWith != null) it.endsWith(endsWith, caseInsensitive) else true
+        }.filter {
+            if (botOnly) it.fromBot else true
+        }.take(amount).toList()
+        
+        logger.info { "clearing: ${messages.map { it.contentRaw }}" }
+        
+        message.delete()
+        
+        message.textChannel.deleteMessages(messages)
+        
+        message.channel.sendMessage("Deleted ${messages.size} messages.")
     }
     
     @JDAGuildCommand
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("warn|warning <member> <reason>")
-    fun warnMember(message: PolyMessage,
-                   @Argument("member")
-                   member: PolyMember,
-                   @Argument("reason")
-                   reason: String?) {
-        bot.scope.launch {
-            val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
-            
-            member.warn(realReason, message.member) {
-                message.reply(it)
-            }
+    suspend fun warnMember(message: PolyMessage,
+                           @Argument("member")
+                           member: PolyMember,
+                           @Argument("reason")
+                           reason: String?) {
+        val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
+        
+        member.warn(realReason, message.member) {
+            message.reply(it)
         }
     }
     

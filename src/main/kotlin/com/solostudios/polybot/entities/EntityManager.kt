@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 08:18 p.m.
+ * Last modified on 20-09-2021 01:46 a.m.
  *
  * MIT License
  *
@@ -28,7 +28,9 @@
 
 package com.solostudios.polybot.entities
 
-import com.github.benmanes.caffeine.cache.Caffeine
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.entities.data.PolyGuildData
 import com.solostudios.polybot.entities.data.PolyMemberData
@@ -85,40 +87,40 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
     }
     
     @Suppress("UNCHECKED_CAST")
-    private val guildCache = (Caffeine.newBuilder() as Caffeine<Long, PolyGuildData>)
+    private val guildCache = CacheBuilder.newBuilder()
             .expireAfterAccess(20, TimeUnit.MINUTES)
             .maximumSize(1_000)
-            .evictionListener { key: Long?, value: PolyGuildData?, _ ->
+            .removalListener<Long, PolyGuildData> { (key: Long, value: PolyGuildData) ->
                 if (key != null && value != null) {
                     saveGuildData(value)
                 } else {
                     logger.error { "One of key or value was null while saving guild. key: $key, value: $value" }
                 }
-            }.build<Long, PolyGuildData> { getGuildData(it) }
+            }.build { getGuildData(it) }
     
     @Suppress("UNCHECKED_CAST")
-    private val memberCache = (Caffeine.newBuilder() as Caffeine<Pair<Long, Long>, PolyMemberData>)
+    private val memberCache = CacheBuilder.newBuilder()
             .expireAfterAccess(5, TimeUnit.MINUTES)
             .maximumSize(10_000)
-            .evictionListener { key: Pair<Long, Long>?, value: PolyMemberData?, _ ->
+            .removalListener<Pair<Long, Long>, PolyMemberData> { (key: Pair<Long, Long>, value: PolyMemberData) ->
                 if (key != null && value != null) {
                     saveMemberData(value)
                 } else {
                     logger.error { "One of key or value was null while saving member. key: $key, value: $value" }
                 }
-            }.build<Pair<Long, Long>, PolyMemberData> { getMemberData(it.first, it.second) }
+            }.build { getMemberData(it.first, it.second) }
     
-    fun getMember(member: PolyMember) = memberCache[member.guildId to member.id]
+    fun getMember(member: PolyMember): PolyMemberData = memberCache[member.guildId to member.id]
     
     fun getWarns(member: PolyMember) = getWarnDataList(member.guildId, member.id)
     
-    fun getWarn(uuid: UUID) = getWarnData(uuid)
+    fun getWarn(uuid: UUID): PolyWarnData = getWarnData(uuid)!!
     
     fun deleteWarn(warnData: PolyWarnData) = deleteWarnData(warnData)
     
     fun saveWarn(warnData: PolyWarnData) = saveWarnData(warnData)
     
-    fun getGuild(guild: PolyGuild) = guildCache[guild.id]
+    fun getGuild(guild: PolyGuild): PolyGuildData = guildCache[guild.id]!!
     
     private fun getMemberData(guildId: Long, memberId: Long): PolyMemberData {
         return transaction(db) {
@@ -179,7 +181,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
             val tags = entity.tags
             
             val tagList = tags.map { tag ->
-                PolyTagData(bot, tag.id.value, tag.guildId, tag.content, tag.aliases.toMutableList(), tag.created, tag.usages)
+                PolyTagData(bot, tag.id.value, tag.guildId, tag.name, tag.content, tag.aliases.toMutableList(), tag.created, tag.usages)
             }.toMutableList()
             
             return@transaction PolyGuildData(
@@ -198,35 +200,38 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
     
     private fun saveGuildData(guildData: PolyGuildData) {
         transaction(db) {
+            logger.info { "Saving guild ${guildData.guildId}" }
             val entity = getGuildEntity(guildData.guildId)
-            
+    
             val tagIdMap = guildData.tags.map { it.uuid }
-            
+    
             entity.loggingChannel = guildData.loggingChannelId
             entity.mutedRole = guildData.mutedRoleId
             entity.autoRole = guildData.autoRoleId
             entity.prefix = guildData.prefix
             entity.autoDehoist = guildData.autoDehoist
             entity.filterInvites = guildData.filterInvites
-            
+    
             entity.tags.filter {
                 tagIdMap.contains(it.id.value)
             }.forEach { // delete removed tags
                 it.delete()
             }
-            
+    
             guildData.tags.forEach(::saveTagData)
         }
     }
     
     private fun saveTagData(tagData: PolyTagData) {
         transaction(db) {
+            logger.info { "Saving tag ${tagData.name} with content ${tagData.content}" }
             val entity = TagEntity.findById(tagData.uuid) ?: TagEntity.new {
                 guild = getGuildEntity(tagData.guildId)
                 guildId = tagData.guildId
                 created = tagData.created
             }
-            
+    
+            entity.name = tagData.name
             entity.content = tagData.content
             entity.aliases = tagData.aliases
             entity.usages = tagData.usages
@@ -266,8 +271,16 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
         guildCache.cleanUp()
         guildCache.invalidateAll()
         guildCache.cleanUp()
+        guildCache.cleanUp()
         memberCache.invalidateAll()
-        
+        guildCache.cleanUp()
+    
         hikari.close()
     }
+}
+
+private fun <T, U> CacheBuilder<T, U>.build(function: (T) -> U): LoadingCache<T, U> {
+    return this.build(object : CacheLoader<T, U>() {
+        override fun load(key: T): U = function(key)
+    })
 }

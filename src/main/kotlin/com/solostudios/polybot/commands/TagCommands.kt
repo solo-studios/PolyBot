@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:31 p.m.
+ * Last modified on 20-09-2021 01:46 a.m.
  *
  * MIT License
  *
@@ -28,58 +28,97 @@
 
 package com.solostudios.polybot.commands
 
+import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandMethod
+import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.PolyCommandContainer
 import com.solostudios.polybot.cloud.PolyCommands
+import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
 import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.entities.PolyGuild
 import com.solostudios.polybot.entities.PolyMessage
+import com.solostudios.polybot.entities.data.Tag
 import net.dv8tion.jda.api.Permission
 
+@PolyCommandContainer
 class TagCommands(bot: PolyBot) : PolyCommands(bot) {
-    @CommandMethod("tag")
-    fun tag(message: PolyMessage) {
-    
+    @JDAGuildCommand
+    @CommandMethod("tag <tag>")
+    suspend fun tag(message: PolyMessage,
+                    guild: PolyGuild,
+                    @Argument("tag")
+                    tag: String) {
+        val tags = guild.data.tags
+        
+        val tag = tags.find { tag == it.name || tag in it.aliases }
+        
+        if (tag == null) {
+            message.reply("Could not find tag,")
+            
+            return
+        }
+        
+        message.channel.sendMessage(tag.content)
     }
     
+    @JDAGuildCommand
     @CommandMethod("tag alias")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     fun addTagAlias(message: PolyMessage) {
     
     }
     
-    @CommandMethod("tag create")
+    @JDAGuildCommand
+    @CommandMethod("tag create <name> <content>")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun createTag(message: PolyMessage) {
-    
+    suspend fun createTag(message: PolyMessage,
+                          guild: PolyGuild,
+                          @Argument("name")
+                          name: String,
+                          @Greedy
+                          @Argument("content")
+                          content: String) {
+        val tag = Tag(bot, guild, name, content)
+        
+        guild.data.tags.add(tag)
+        
+        message.reply("Added tag $name")
     }
     
+    @JDAGuildCommand
     @CommandMethod("tag delete")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     fun deleteTag(message: PolyMessage) {
     
     }
     
+    @JDAGuildCommand
     @CommandMethod("tag edit")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     fun editTag(message: PolyMessage) {
     
     }
     
+    @JDAGuildCommand
     @CommandMethod("tag info")
     fun tagInfo(message: PolyMessage) {
     
     }
     
+    @JDAGuildCommand
     @CommandMethod("tag list")
     fun listTags(message: PolyMessage) {
     
     }
     
+    @JDAGuildCommand
     @CommandMethod("tag raw")
     fun rawTag(message: PolyMessage) {
     
     }
     
+    @JDAGuildCommand
     @CommandMethod("tag view")
     fun viewTag(message: PolyMessage) {
     

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:31 p.m.
+ * Last modified on 20-09-2021 12:53 a.m.
  *
  * MIT License
  *
@@ -31,8 +31,10 @@ package com.solostudios.polybot.commands
 import cloud.commandframework.annotations.CommandMethod
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.Version
+import com.solostudios.polybot.cloud.PolyCommandContainer
 import com.solostudios.polybot.cloud.PolyCommands
 import com.solostudios.polybot.cloud.event.GuildMessageEvent
+import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
 import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.util.commandCount
 import com.solostudios.polybot.util.freeMemory
@@ -51,6 +53,7 @@ import org.intellij.lang.annotations.Language
 import org.slf4j.kotlin.*
 import kotlin.time.Duration.Companion.milliseconds
 
+@PolyCommandContainer
 class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
@@ -106,7 +109,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
                     val total = runtime.totalMemory
                     val max = runtime.maxMemory
                     val used = total - free
-    
+                    
                     value = "%.2f MB/%.2f MB".format(used.toFloat() / (1 shl 20), max.toFloat() / (1 shl 20))
                 }
                 field("JVM Version") {
@@ -124,6 +127,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
         }
     }
     
+    @JDAGuildCommand
     @CommandMethod("serverinfo|server")
     fun serverInfo(event: GuildMessageEvent) {
         bot.scope.launch {
@@ -132,37 +136,37 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
                 color = 0x8fd032
                 description = serverDescription
                 thumbnail = githubImage
-    
+                
                 field {
                     name = "Who We Are"
                     value = whoWeAreDescription
                     inline = false
                 }
-    
+                
                 field {
                     name = "Rules"
                     value = rulesDescription
                     inline = false
                 }
-    
+                
                 field {
                     name = "Useful Links"
                     value = usefulLinks
                     inline = false
                 }
-    
+                
                 field {
                     name = "Getting Support"
                     value = supportDescription
                     inline = false
                 }
-    
+                
                 footer {
-                    name = "Requested by ${event.member.effectiveName} (${event.user.name}#${event.user.discriminator})"
-                    iconUrl = event.user.avatarUrl
+                    name = "Requested by ${event.member.effectiveName} (${event.author.name}#${event.author.discriminator})"
+                    iconUrl = event.author.avatarUrl
                 }
             }
-    
+            
             event.event.message.replyEmbeds(embed)
                     .mentionRepliedUser(false)
                     .queue()
@@ -176,7 +180,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
         const val whoWeAreDescription = "Polyhedral Development is an open source initiative aimed at creating awesome projects " +
                 "to benefit everyone. We focus entirely on developing things for the community, rather than building software to profit.\n" +
                 "Currently our main focus is on the Terra World Generator, and minor projects surrounding it."
-    
+        
         @Language("Markdown")
         val usefulLinks = """
             [Discord Invite Link](https://discord.gg/PXUEbbF)
@@ -184,7 +188,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
             [Terra Generator Main Repository](https://github.com/PolyhedralDev/Terra)
             [dfsek's Patreon](https://www.patreon.com/dfsek)
         """.trimIndent()
-    
+        
         @Language("Markdown")
         val supportDescription = """
             **Asking for help**
@@ -200,7 +204,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
             - For Bukkit/Spigot/Paper use <#765260067812540416>
             - For Forge use <#838226038751232010>
         """.trimIndent()
-    
+        
         @Language("Markdown")
         val rulesDescription = """
             You will find a list of rules in <#715684015989981304> (shocking, I know)

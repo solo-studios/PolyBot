@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:31 p.m.
+ * Last modified on 20-09-2021 01:46 a.m.
  *
  * MIT License
  *
@@ -41,8 +41,6 @@ class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T>
     
     @Suppress("DuplicatedCode")
     override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
-        logger.info { "Ya" }
-    
         val context = postprocessingContext.commandContext
         val commandMeta = postprocessingContext.command.commandMeta
         val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")
@@ -74,7 +72,7 @@ class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T>
                         context.get<TextChannel>("TextChannel").getPermissionOverride(user)?.allowed ?: user.permissions
                     else
                         user.permissions
-            
+    
             val neededPermissions = commandMeta.getOrDefault(USER_PERMISSIONS, emptyList())
             if (!permissions.containsAll(neededPermissions)) {
                 event.message.replyFormat("Cannot execute command due to insufficient permission. You require the following permission(s) to do execute this command: %s.",
@@ -83,6 +81,8 @@ class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T>
                         .queue()
                 ConsumerService.interrupt()
             }
+        } else {
+            ConsumerService.interrupt()
         }
     }
 }

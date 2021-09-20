@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MessageEvent.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 11:04 p.m.
+ * The file CloudInjectorService.kt is part of PolyhedralBot
+ * Last modified on 19-09-2021 08:48 p.m.
  *
  * MIT License
  *
@@ -26,30 +26,35 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.event
+package com.solostudios.polybot.cloud
 
-import cloud.commandframework.jda.JDACommandSender
+import cloud.commandframework.annotations.AnnotationAccessor
+import cloud.commandframework.annotations.injection.InjectionService
+import cloud.commandframework.context.CommandContext
+import cloud.commandframework.types.tuples.Triplet
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.entities.PolyGuild
+import com.solostudios.polybot.entities.PolyMember
 import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.entities.PolyMessageChannel
 import com.solostudios.polybot.entities.PolyUser
+import com.solostudios.polybot.util.component1
+import com.solostudios.polybot.util.component2
 import com.solostudios.polybot.util.poly
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import net.dv8tion.jda.api.entities.Message
 
-open class MessageEvent(
-        open val bot: PolyBot,
-        open val sender: JDACommandSender,
-                       ) {
-    
-    val event: MessageReceivedEvent
-        get() = sender.event.get()
-    
-    open val author: PolyUser
-        get() = event.author.poly(bot)
-    
-    val message: PolyMessage
-        get() = event.message.poly(bot)
-    
-    open val channel: PolyMessageChannel
-        get() = event.channel.poly(bot)
+class CloudInjectorService<C>(val bot: PolyBot) : InjectionService<C> {
+    override fun handle(triplet: Triplet<CommandContext<C>, Class<*>, AnnotationAccessor>): Any? {
+        val (context, clazz) = triplet
+        
+        return when (clazz.kotlin) {
+            PolyBot::class            -> bot
+            PolyMessage::class        -> context.get<Message>("Message").poly(bot)
+            PolyUser::class           -> context.get<Message>("Message").author.poly(bot)
+            PolyMember::class         -> context.get<Message>("Message").member?.poly(bot)
+            PolyMessageChannel::class -> context.get<Message>("Message").channel.poly(bot)
+            PolyGuild::class          -> context.get<Message>("Message").guild.poly(bot)
+            else                      -> null
+        }
+    }
 }

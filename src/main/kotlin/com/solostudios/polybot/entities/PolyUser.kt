@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyUser.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 06:14 p.m.
+ * Last modified on 19-09-2021 11:00 p.m.
  *
  * MIT License
  *
@@ -48,6 +48,12 @@ class PolyUser(val bot: PolyBot, val jdaUser: User) {
     
     val mention: String
         get() = jdaUser.asMention
+    
+    val avatarUrl: String?
+        get() = jdaUser.avatarUrl
+    
+    val effectiveAvatarUrl: String
+        get() = jdaUser.effectiveAvatarUrl
     
     suspend fun privateChannel(): PolyMessageChannel {
         return jdaUser.openPrivateChannel().await().poly(bot)

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file M0001_CreateInitialDB.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 08:14 p.m.
+ * Last modified on 20-09-2021 01:08 a.m.
  *
  * MIT License
  *
@@ -62,8 +62,9 @@ class M0001_CreateInitialDB : Migration() {
     object MigrationTagTable : UUIDTable("TAG_DATA") {
         val guild = reference("guild", GuildTable).index()
         val guildId = long("guild_id").index()
+        val name = text("name", eagerLoading = true)
         val content = text("content", eagerLoading = true)
-        val aliases = text("aliases").default("")
+        val aliases = text("aliases", eagerLoading = true).default("")
         val created = datetime("created").default(LocalDateTime.now())
         val usages = long("usages").default(0)
     }

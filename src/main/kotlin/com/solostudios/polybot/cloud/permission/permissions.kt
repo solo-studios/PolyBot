@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file permissions.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:23 a.m.
+ * Last modified on 19-09-2021 11:14 p.m.
  *
  * MIT License
  *
@@ -37,3 +37,5 @@ val BOT_PERMISSIONS = CommandMeta.Key.of(object : TypeToken<List<Permission>>() 
 val USER_PERMISSIONS = CommandMeta.Key.of(object : TypeToken<List<Permission>>() {}, "user-permissions") { listOf() }
 val OWNER_ONLY = CommandMeta.Key.of(NotBoolean::class.java, "owner-only")
 val CO_OWNER_ONLY = CommandMeta.Key.of(NotBoolean::class.java, "co-owner-only")
+
+val GUILD_ONLY = CommandMeta.Key.of(NotBoolean::class.java, "guild-only") { NotBoolean(false) }

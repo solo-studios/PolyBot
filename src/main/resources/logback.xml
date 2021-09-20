@@ -3,7 +3,7 @@
   ~ Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
   ~
   ~ The file logback.xml is part of PolyhedralBot
-  ~ Last modified on 09-07-2021 03:32 p.m.
+  ~ Last modified on 19-09-2021 08:55 p.m.
   ~
   ~ MIT License
   ~
@@ -39,7 +39,7 @@
         </filter>
         <encoder>
             <!--            <pattern>%d %highlight(%-5level) [%thread] %class - %highlight(%msg %n) %xEx</pattern>-->
-            <pattern>%d %-20([%.-20(%thread)]) %highlight(%-5level) %logger{40} - %highlight(%msg){}%n{}%ex{full,DISPLAY_EX_EVAL}
+            <pattern>%d %-20([%.-18(%thread)]) %highlight(%-5level) %logger{40} - %highlight(%msg){}%n{}%ex{full,DISPLAY_EX_EVAL}
             </pattern>
         </encoder>
         <!--
@@ -61,7 +61,7 @@
             <maxFileSize>10MB</maxFileSize>
         </rollingPolicy>
         <encoder>
-            <pattern>%d %-20([%.-25(%thread)]) %-5level %-60logger{60} - %msg{}%n{}%ex{full, DISPLAY_EX_EVAL}</pattern>
+            <pattern>%d %-27([%.-25(%thread)]) %-5level %-60logger{60} - %msg{}%n{}%ex{full, DISPLAY_EX_EVAL}</pattern>
         </encoder>
     </appender>
     <root level="DEBUG">

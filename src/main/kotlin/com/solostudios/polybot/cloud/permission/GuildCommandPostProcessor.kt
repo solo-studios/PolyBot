@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file BotPermissionPostprocessor.kt is part of PolyhedralBot
+ * The file GuildCommandPostProcessor.kt is part of PolyhedralBot
  * Last modified on 19-09-2021 11:14 p.m.
  *
  * MIT License
@@ -32,38 +32,21 @@ import cloud.commandframework.execution.postprocessor.CommandPostprocessingConte
 import cloud.commandframework.execution.postprocessor.CommandPostprocessor
 import cloud.commandframework.services.types.ConsumerService
 import com.solostudios.polybot.PolyBot
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.slf4j.kotlin.*
 
-class BotPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T> {
+class GuildCommandPostProcessor<C>(val bot: PolyBot) : CommandPostprocessor<C> {
     private val logger by getLogger()
     
     @Suppress("DuplicatedCode")
-    override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
+    override fun accept(postprocessingContext: CommandPostprocessingContext<C>) {
         val context = postprocessingContext.commandContext
         val commandMeta = postprocessingContext.command.commandMeta
         val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")
         
-        if (context.contains("Guild")) {
-            val guild = context.get<Guild>("Guild")
-            val bot = guild.selfMember
-            
-            val permissions =
-                    if (context.contains("TextChannel"))
-                        context.get<TextChannel>("TextChannel").getPermissionOverride(bot)?.allowed ?: bot.permissions
-                    else
-                        bot.permissions
-            
-            val neededPermissions = commandMeta.getOrDefault(BOT_PERMISSIONS, emptyList())
-            if (!permissions.containsAll(neededPermissions)) {
-                event.message.replyFormat("Cannot execute command due to insufficient permission. The bot requires the following permission(s) to execute this command: %s.",
-                                          neededPermissions.subtract(permissions).joinToString(separator = ", ") { it.getName() })
-                        .mentionRepliedUser(false)
-                        .queue()
+        if (commandMeta.getOrDefault(GUILD_ONLY, NotBoolean(false)).value)
+            if (!event.isFromGuild)
                 ConsumerService.interrupt()
-            }
-        }
     }
+    
 }
