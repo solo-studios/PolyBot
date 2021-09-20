@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 01:46 a.m.
+ * Last modified on 20-09-2021 02:25 a.m.
  *
  * MIT License
  *
@@ -279,7 +279,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
     }
 }
 
-private fun <T, U> CacheBuilder<T, U>.build(function: (T) -> U): LoadingCache<T, U> {
+private inline fun <T, U> CacheBuilder<T, U>.build(crossinline function: (T) -> U): LoadingCache<T, U> {
     return this.build(object : CacheLoader<T, U>() {
         override fun load(key: T): U = function(key)
     })
