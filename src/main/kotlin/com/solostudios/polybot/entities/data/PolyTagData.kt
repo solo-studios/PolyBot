@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyTagData.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 01:08 a.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -30,22 +30,24 @@ package com.solostudios.polybot.entities.data
 
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.entities.PolyGuild
-import java.time.LocalDateTime
-import java.util.UUID
+import java.time.Instant
+import kotlinx.uuid.UUID
+import kotlinx.uuid.generateUUID
 
 data class PolyTagData(
         val bot: PolyBot,
         val uuid: UUID,
         val guildId: Long,
-        val name: String,
+        var name: String,
         var content: String,
         var aliases: MutableList<String>,
-        val created: LocalDateTime,
+        val created: Instant,
         var usages: Long,
                       ) {
     val guild by bot.guild(guildId)
 }
 
+@Suppress("FunctionName")
 fun Tag(bot: PolyBot, guild: PolyGuild, name: String, content: String, aliases: MutableList<String> = mutableListOf()): PolyTagData {
-    return PolyTagData(bot, UUID.randomUUID(), guild.id, name, content, aliases, created = LocalDateTime.now(), 0)
+    return PolyTagData(bot, UUID.generateUUID(bot.globalRandom), guild.id, name, content, aliases, created = Instant.now(), 0)
 }

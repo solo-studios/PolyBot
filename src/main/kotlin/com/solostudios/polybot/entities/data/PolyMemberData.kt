@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMemberData.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 07:04 p.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -29,11 +29,12 @@
 package com.solostudios.polybot.entities.data
 
 import com.solostudios.polybot.PolyBot
-import java.util.UUID
+import kotlinx.uuid.UUID
+import kotlinx.uuid.generateUUID
 
 data class PolyMemberData(
         val bot: PolyBot,
-        val uuid: UUID = UUID.randomUUID(),
+        val uuid: UUID = UUID.generateUUID(bot.globalRandom),
         val guildId: Long,
         val userId: Long,
                          ) {

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagEntity.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 01:08 a.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -28,26 +28,26 @@
 
 package com.solostudios.polybot.entities.data.db.entities
 
-import java.time.LocalDateTime
-import java.util.UUID
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import java.time.Instant
+import kotlinx.uuid.UUID
+import kotlinx.uuid.exposed.KotlinxUUIDEntity
+import kotlinx.uuid.exposed.KotlinxUUIDEntityClass
+import kotlinx.uuid.exposed.KotlinxUUIDTable
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.`java-time`.datetime
+import org.jetbrains.exposed.sql.`java-time`.timestamp
 
-object TagTable : UUIDTable("TAG_DATA") {
+object TagTable : KotlinxUUIDTable("TAG_DATA") {
     val guild = reference("guild", GuildTable).index()
     val guildId = long("guild_id").index()
     val name = text("name", eagerLoading = true)
     val content = text("content", eagerLoading = true)
     val aliases = text("aliases", eagerLoading = true).default("")
-    val created = datetime("created").default(LocalDateTime.now())
+    val created = timestamp("created").clientDefault(Instant::now)
     val usages = long("usages").default(0)
 }
 
-class TagEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<TagEntity>(TagTable) {
+class TagEntity(id: EntityID<UUID>) : KotlinxUUIDEntity(id) {
+    companion object : KotlinxUUIDEntityClass<TagEntity>(TagTable) {
         const val SEPARATOR = ","
     }
     

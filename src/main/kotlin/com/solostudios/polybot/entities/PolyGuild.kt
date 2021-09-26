@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuild.kt is part of PolyhedralBot
- * Last modified on 15-09-2021 08:29 p.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package com.solostudios.polybot.entities
 
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.entities.data.PolyTagData
 import net.dv8tion.jda.api.entities.Guild
 
 class PolyGuild(val bot: PolyBot, val jdaGuild: Guild) {
@@ -40,6 +41,9 @@ class PolyGuild(val bot: PolyBot, val jdaGuild: Guild) {
         get() = jdaGuild.name
     
     val data by lazy { bot.entityManager.getGuild(this) }
+    
+    val tags: MutableList<PolyTagData>
+        get() = data.tags
     
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

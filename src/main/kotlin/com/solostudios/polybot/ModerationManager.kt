@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationManager.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 06:28 p.m.
+ * Last modified on 25-09-2021 09:41 p.m.
  *
  * MIT License
  *
@@ -35,8 +35,9 @@ import com.solostudios.polybot.event.moderation.PolyBanEvent
 import com.solostudios.polybot.event.moderation.PolyKickEvent
 import dev.minn.jda.ktx.await
 import java.time.LocalDateTime
-import java.util.UUID
 import kotlinx.coroutines.launch
+import kotlinx.uuid.UUID
+import kotlinx.uuid.generateUUID
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
 import org.slf4j.kotlin.*
 
@@ -136,16 +137,16 @@ class ModerationManager(val bot: PolyBot) {
                 else                      -> {
                     val warnFailed = try {
                         val channel = member.user.privateChannel()
-                        
+    
                         channel.sendMessage("You have been warned. blah blah blah")
-                        
+    
                         false
                     } catch (e: InsufficientPermissionException) {
                         true
                     } catch (e: UnsupportedOperationException) {
                         true
                     }
-                    val warn = PolyWarnData(bot, UUID.randomUUID(), guild.id, member.id, moderator.id, time, reason)
+                    val warn = PolyWarnData(bot, UUID.generateUUID(bot.globalRandom), guild.id, member.id, moderator.id, time, reason)
                     
                     bot.entityManager.saveWarn(warn)
                     

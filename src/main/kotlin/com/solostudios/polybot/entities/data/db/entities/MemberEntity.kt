@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MemberEntity.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 05:53 p.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -28,22 +28,22 @@
 
 package com.solostudios.polybot.entities.data.db.entities
 
-import java.util.UUID
-import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.dao.UUIDEntity
+import kotlinx.uuid.UUID
+import kotlinx.uuid.exposed.KotlinxUUIDEntity
+import kotlinx.uuid.exposed.KotlinxUUIDEntityClass
+import kotlinx.uuid.exposed.KotlinxUUIDTable
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.UUIDTable
 
-object MemberTable : UUIDTable("MEMBER_DATA") {
+object MemberTable : KotlinxUUIDTable("MEMBER_DATA") {
     val guildId = long("guild_id").index()
     val memberId = long("member_id").index()
 }
 
-class MemberEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+class MemberEntity(id: EntityID<UUID>) : KotlinxUUIDEntity(id) {
     var memberId: Long by MemberTable.memberId
     var guildId: Long by MemberTable.guildId
     
     val warns by WarnEntity referrersOn WarnTable.member
     
-    companion object : EntityClass<UUID, MemberEntity>(MemberTable)
+    companion object : KotlinxUUIDEntityClass<MemberEntity>(MemberTable)
 }

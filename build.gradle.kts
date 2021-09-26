@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 18-09-2021 08:51 p.m.
+ * Last modified on 25-09-2021 06:29 p.m.
  *
  * MIT License
  *
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val KOTLIN_VERSION: String by project
 val KOTLINX_SERIALIZATION_VERSION: String by project
 val KOTLINX_COROUTINES_VERSION: String by project
+val KOTLINX_UUID_VERSION: String by project
 val JETBRAINS_ANNOTATIONS_VERSION: String by project
 val JDA_VERSION: String by project
 val DISCORD_WEBHOOKS: String by project
@@ -129,6 +130,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
     // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$KOTLINX_COROUTINES_VERSION")
     
+    implementation("app.softwork:kotlinx-uuid-core:$KOTLINX_UUID_VERSION")
+    implementation("app.softwork:kotlinx-uuid-exposed:$KOTLINX_UUID_VERSION")
+    
     // Utility annotations
     implementation("org.jetbrains:annotations:$JETBRAINS_ANNOTATIONS_VERSION")
     
@@ -216,6 +220,9 @@ dependencies {
     
     // Chart drawing ??
     implementation("org.knowm.xchart:xchart:$XCHART_VERSION")
+    
+    // Xo
+    implementation("it.unimi.dsi:dsiutils:2.6.17")
     
     // Testing (JUnit 5)
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")

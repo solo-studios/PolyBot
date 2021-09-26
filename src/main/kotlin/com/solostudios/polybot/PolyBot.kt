@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 01:46 a.m.
+ * Last modified on 25-09-2021 09:41 p.m.
  *
  * MIT License
  *
@@ -38,6 +38,7 @@ import com.solostudios.polybot.cloud.event.MessageEvent
 import com.solostudios.polybot.cloud.parser.ChannelParser
 import com.solostudios.polybot.cloud.parser.MemberParser
 import com.solostudios.polybot.cloud.parser.RoleParser
+import com.solostudios.polybot.cloud.parser.TagParser
 import com.solostudios.polybot.cloud.parser.UserParser
 import com.solostudios.polybot.cloud.permission.BotPermissionPostprocessor
 import com.solostudios.polybot.cloud.permission.GuildCommandPostProcessor
@@ -71,6 +72,9 @@ import com.solostudios.polybot.util.registerParserSupplier
 import com.solostudios.polybot.util.runtime
 import com.solostudios.polybot.util.subTypesOf
 import dev.minn.jda.ktx.InlineJDABuilder
+import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
+import java.util.EnumSet
+import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ThreadFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
@@ -79,10 +83,12 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 import org.reflections.Reflections
 import org.slf4j.kotlin.*
 import kotlin.io.path.Path
+import kotlin.random.asKotlinRandom
 import kotlin.system.exitProcess
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
@@ -90,27 +96,17 @@ import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator 
 import cloud.commandframework.jda.JDA4CommandManager as CommandManager
 import com.solostudios.polybot.cloud.preprocessor.JDAMessagePreprocessor as MessagePreprocessor
 
+
 @ExperimentalTime
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownService() {
-    val id: Long
-        get() = jda.selfUser.idLong
-    
-    val avatarUrl: String
-        get() = jda.selfUser.effectiveAvatarUrl
-    
-    val totalMembers: Long
-        get() = jda.guildCache.sumOf { it.memberCount }.toLong()
-    
-    val guilds: Long
-        get() = jda.guildCache.size() + jda.unavailableGuilds.size
-    
     private val logger by getLogger()
     
     val botConfig = config.botConfig
     
-    @Suppress("HasPlatformType")
-    val scheduledThreadPool = ScheduledThreadPool((runtime.processors - 1).takeIf { it > 0 } ?: 1, PolyThreadFactory)
+    val globalRandom = XoShiRo256PlusPlusRandom().asKotlinRandom()
+    
+    val scheduledThreadPool: ScheduledExecutorService = ScheduledThreadPool((runtime.processors - 1).coerceAtLeast(1), PolyThreadFactory)
     
     val coroutineDispatcher: ExecutorCoroutineDispatcher = scheduledThreadPool.asCoroutineDispatcher()
     
@@ -150,6 +146,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         parserRegistry.registerParserSupplier(UserParser(this@PolyBot))
         parserRegistry.registerParserSupplier(ChannelParser(this@PolyBot))
         parserRegistry.registerParserSupplier(RoleParser(this@PolyBot))
+        parserRegistry.registerParserSupplier(TagParser(this@PolyBot))
         
         registerCommandPreProcessors(MessagePreprocessor(this), AntiWebhookPreProcessor(this), AntiBotPreProcessor(this))
         
@@ -184,16 +181,29 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         
         val commands = reflections.subTypesOf<PolyCommands>().map { klass ->
             val constructor = klass.constructors.single()
-            
+    
             return@map constructor.call(this@PolyBot)
         }
-        
+    
         annotationParser.parseCommands(commands)
-        
+    
         logger.info { "Commands: ${commands.size}" }
-        
+    
         MessageAction.setDefaultMentionRepliedUser(true)
+        MessageAction.setDefaultMentions(EnumSet.complementOf(EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE)))
     }
+    
+    val id: Long
+        get() = jda.selfUser.idLong
+    
+    val avatarUrl: String
+        get() = jda.selfUser.effectiveAvatarUrl
+    
+    val totalMembers: Long
+        get() = jda.guildCache.sumOf { it.memberCount }.toLong()
+    
+    val guilds: Long
+        get() = jda.guildCache.size() + jda.unavailableGuilds.size
     
     fun getCacheDirectory(vararg name: String) = Path(".cache", *name)
     

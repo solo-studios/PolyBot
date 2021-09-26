@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GuildEntity.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 06:24 p.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -28,8 +28,8 @@
 
 package com.solostudios.polybot.entities.data.db.entities
 
-import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.SizedIterable
@@ -55,5 +55,5 @@ class GuildEntity(id: EntityID<Long>) : LongEntity(id) {
     val tags: SizedIterable<TagEntity> by TagEntity referrersOn TagTable.guild
     val warns: SizedIterable<WarnEntity> by WarnEntity referrersOn WarnTable.guild
     
-    companion object : EntityClass<Long, GuildEntity>(GuildTable)
+    companion object : LongEntityClass<GuildEntity>(GuildTable)
 }

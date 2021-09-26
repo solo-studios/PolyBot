@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BanEntity.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 08:51 p.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,7 @@
 package com.solostudios.polybot.entities.data.db.entities
 
 /*
-object BanTable : UUIDTable("BAN_DATA") {
+object BanTable : KotlinxUUIDTable("BAN_DATA") {
     val guild = long("guild").index()
     val member = long("member")
     val reason = text("reason")
@@ -37,13 +37,13 @@ object BanTable : UUIDTable("BAN_DATA") {
     val time = datetime("time").index()
 }
 
-class BanEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+class BanEntity(id: EntityID<UUID>) : KotlinxUUIDEntity(id) {
     var guild by BanTable.guild
     var reason: String by BanTable.reason
     var member by BanTable.member
     var moderator by BanTable.moderator
     var time: LocalDateTime by BanTable.time
     
-    companion object : EntityClass<UUID, BanEntity>(BanTable)
+    companion object : KotlinxUUIDEntityClass<BanEntity>(BanTable)
 }
 */

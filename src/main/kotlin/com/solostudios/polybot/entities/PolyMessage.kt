@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessage.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 06:28 p.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -32,7 +32,9 @@ import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.util.poly
 import dev.minn.jda.ktx.await
 import java.time.OffsetDateTime
+import java.util.EnumSet
 import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.Message.MentionType
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 
@@ -88,16 +90,18 @@ class PolyMessage(val bot: PolyBot, val jdaMessage: Message) {
     
     fun endsWithStripped(prefix: String, ignoreCase: Boolean = false) = contentStripped.endsWith(prefix, ignoreCase)
     
-    suspend fun reply(content: String): PolyMessage {
-        return reply(jdaMessage.reply(content))
+    suspend fun reply(content: String, deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): PolyMessage {
+        return reply(jdaMessage.reply(content), deniedMentions)
     }
     
-    suspend fun reply(embed: MessageEmbed): PolyMessage {
-        return reply(jdaMessage.replyEmbeds(embed))
+    suspend fun reply(embed: MessageEmbed,
+                      deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): PolyMessage {
+        return reply(jdaMessage.replyEmbeds(embed), deniedMentions)
     }
     
-    private suspend fun reply(action: MessageAction): PolyMessage {
+    private suspend fun reply(action: MessageAction, deniedMentions: List<MentionType>): PolyMessage {
         return action.mentionRepliedUser(false)
+                .allowedMentions(EnumSet.complementOf(EnumSet.copyOf(deniedMentions)))
                 .await()
                 .poly(bot)
     }

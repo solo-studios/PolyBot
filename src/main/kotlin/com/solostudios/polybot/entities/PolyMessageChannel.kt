@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageChannel.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 06:28 p.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -31,14 +31,32 @@ package com.solostudios.polybot.entities
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.util.poly
 import dev.minn.jda.ktx.await
+import java.util.EnumSet
+import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageChannel
+import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.requests.restaction.MessageAction
 
 open class PolyMessageChannel(bot: PolyBot, override val jdaChannel: MessageChannel) : PolyAbstractChannel(bot, jdaChannel) {
     suspend fun sendTyping() {
         jdaChannel.sendTyping().await()
     }
     
-    suspend fun sendMessage(contents: String): PolyMessage {
-        return jdaChannel.sendMessage(contents).await().poly(bot)
+    suspend fun sendMessage(content: String,
+                            deniedMentions: List<Message.MentionType> = listOf(Message.MentionType.EVERYONE,
+                                                                               Message.MentionType.HERE)): PolyMessage {
+        return sendMessage(jdaChannel.sendMessage(content), deniedMentions)
+    }
+    
+    suspend fun sendMessage(content: MessageEmbed,
+                            deniedMentions: List<Message.MentionType> = listOf(Message.MentionType.EVERYONE,
+                                                                               Message.MentionType.HERE)): PolyMessage {
+        return sendMessage(jdaChannel.sendMessageEmbeds(content), deniedMentions)
+    }
+    
+    private suspend fun sendMessage(action: MessageAction, deniedMentions: List<Message.MentionType>): PolyMessage {
+        return action.allowedMentions(EnumSet.complementOf(EnumSet.copyOf(deniedMentions)))
+                .await()
+                .poly(bot)
     }
 }

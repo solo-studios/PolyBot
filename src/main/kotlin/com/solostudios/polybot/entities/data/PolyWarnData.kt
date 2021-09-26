@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyWarnData.kt is part of PolyhedralBot
- * Last modified on 13-09-2021 07:05 p.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package com.solostudios.polybot.entities.data
 
 import com.solostudios.polybot.PolyBot
 import java.time.LocalDateTime
-import java.util.UUID
+import kotlinx.uuid.UUID
 
 class PolyWarnData(
         val bot: PolyBot,

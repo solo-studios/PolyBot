@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 02:25 a.m.
+ * Last modified on 25-09-2021 09:41 p.m.
  *
  * MIT License
  *
@@ -46,8 +46,8 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import gay.solonovamax.exposed.migrations.loadMigrationsFrom
 import gay.solonovamax.exposed.migrations.runMigrations
-import java.util.UUID
 import java.util.concurrent.TimeUnit
+import kotlinx.uuid.UUID
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file WarnEntity.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 08:14 p.m.
+ * Last modified on 25-09-2021 09:42 p.m.
  *
  * MIT License
  *
@@ -29,14 +29,14 @@
 package com.solostudios.polybot.entities.data.db.entities
 
 import java.time.LocalDateTime
-import java.util.UUID
-import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.dao.UUIDEntity
+import kotlinx.uuid.UUID
+import kotlinx.uuid.exposed.KotlinxUUIDEntity
+import kotlinx.uuid.exposed.KotlinxUUIDEntityClass
+import kotlinx.uuid.exposed.KotlinxUUIDTable
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.`java-time`.datetime
 
-object WarnTable : UUIDTable("WARN_DATA") {
+object WarnTable : KotlinxUUIDTable("WARN_DATA") {
     val guild = reference("guild", GuildTable).index()
     val guildId = long("guild_id").index()
     val member = reference("member", MemberTable).index()
@@ -47,7 +47,7 @@ object WarnTable : UUIDTable("WARN_DATA") {
     val time = datetime("time")
 }
 
-class WarnEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+class WarnEntity(id: EntityID<UUID>) : KotlinxUUIDEntity(id) {
     var guild: GuildEntity by GuildEntity referencedOn WarnTable.guild
     var guildId: Long by WarnTable.guildId
     var reason: String by WarnTable.reason
@@ -57,5 +57,5 @@ class WarnEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var moderatorId: Long by WarnTable.moderatorId
     var time: LocalDateTime by WarnTable.time
     
-    companion object : EntityClass<UUID, WarnEntity>(WarnTable)
+    companion object : KotlinxUUIDEntityClass<WarnEntity>(WarnTable)
 }
