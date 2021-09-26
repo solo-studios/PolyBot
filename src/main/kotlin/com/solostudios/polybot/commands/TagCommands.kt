@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 01:46 a.m.
+ * Last modified on 25-09-2021 09:45 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,7 @@ package com.solostudios.polybot.commands
 
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandMethod
+import cloud.commandframework.annotations.ProxiedBy
 import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.cloud.PolyCommandContainer
@@ -39,39 +40,34 @@ import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 import com.solostudios.polybot.entities.PolyGuild
 import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.entities.data.Tag
+import com.solostudios.polybot.util.chunkedBy
+import com.solostudios.polybot.util.toDiscordTimestamp
+import dev.minn.jda.ktx.Embed
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Message.MentionType
+import net.dv8tion.jda.api.utils.MarkdownSanitizer
+import org.slf4j.kotlin.*
+import com.solostudios.polybot.entities.data.PolyTagData as PolyTag
 
 @PolyCommandContainer
+@Suppress("DuplicatedCode")
 class TagCommands(bot: PolyBot) : PolyCommands(bot) {
+    private val logger by getLogger()
+    
     @JDAGuildCommand
-    @CommandMethod("tag <tag>")
+    @ProxiedBy("tag")
+    @CommandMethod("tag|t view|v <tag>")
     suspend fun tag(message: PolyMessage,
-                    guild: PolyGuild,
                     @Argument("tag")
-                    tag: String) {
-        val tags = guild.data.tags
+                    tag: PolyTag) {
+        tag.usages++
         
-        val tag = tags.find { tag == it.name || tag in it.aliases }
-        
-        if (tag == null) {
-            message.reply("Could not find tag,")
-            
-            return
-        }
-        
-        message.channel.sendMessage(tag.content)
+        message.channel.sendMessage(tag.content, listOf(MentionType.EVERYONE, MentionType.HERE, MentionType.ROLE, MentionType.USER))
     }
     
     @JDAGuildCommand
-    @CommandMethod("tag alias")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun addTagAlias(message: PolyMessage) {
-    
-    }
-    
-    @JDAGuildCommand
-    @CommandMethod("tag create <name> <content>")
-    @JDAUserPermission(Permission.MESSAGE_MANAGE)
+    @CommandMethod("tag|t create|c <name> <content>")
     suspend fun createTag(message: PolyMessage,
                           guild: PolyGuild,
                           @Argument("name")
@@ -79,49 +75,232 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
                           @Greedy
                           @Argument("content")
                           content: String) {
+        if (!isValidTagNameAlias(name)) {
+            message.reply(invalidTag(name))
+            return
+        }
+    
+        val matchingTag = guild.tags.find { name == it.name || name in it.aliases }
+    
+        if (matchingTag != null) {
+            if (matchingTag.name == name)
+                message.reply("The name of a tag cannot be the same as the name of an already existing tag. This name conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`.")
+            else
+                message.reply("The name of a tag cannot be the same as the alias of an already existing tag. This name conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`")
+        
+            return
+        }
+    
         val tag = Tag(bot, guild, name, content)
-        
-        guild.data.tags.add(tag)
-        
-        message.reply("Added tag $name")
+    
+        guild.tags.add(tag)
+    
+        message.reply("Created tag '$name' with the UUID `${tag.uuid}`.")
     }
     
     @JDAGuildCommand
-    @CommandMethod("tag delete")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun deleteTag(message: PolyMessage) {
-    
+    @CommandMethod("tag|t rename|ren <tag> <new-name>")
+    suspend fun renameTag(message: PolyMessage,
+                          guild: PolyGuild,
+                          @Argument("tag")
+                          tag: PolyTag,
+                          @Argument("new-name")
+                          newName: String) {
+        if (!isValidTagNameAlias(newName)) {
+            message.reply(invalidTag(newName))
+            return
+        }
+        
+        val matchingTag = guild.tags.find { newName == it.name || newName in it.aliases }
+        
+        if (matchingTag != null) {
+            if (matchingTag.name == newName)
+                message.reply("The name of a tag cannot be the same as the name of an already existing tag. This name conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`.")
+            else
+                message.reply("The name of a tag cannot be the same as the alias of an already existing tag. This name conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`")
+            
+            return
+        }
+        
+        val oldName = tag.name
+        tag.name = newName
+        
+        message.reply("Renamed tag '$oldName' with UUID `${tag.uuid}` to '$newName'.")
     }
     
     @JDAGuildCommand
-    @CommandMethod("tag edit")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    fun editTag(message: PolyMessage) {
-    
+    @CommandMethod("tag|t edit|ed|e <tag> <content>")
+    suspend fun editTag(message: PolyMessage,
+                        @Argument("tag")
+                        tag: PolyTag,
+                        @Greedy
+                        @Argument("content")
+                        content: String) {
+        tag.content = content
+        
+        message.reply("Updated the content of tag '${tag.name}' with UUID `${tag.uuid}`")
     }
     
     @JDAGuildCommand
-    @CommandMethod("tag info")
-    fun tagInfo(message: PolyMessage) {
-    
+    @JDAUserPermission(Permission.MESSAGE_MANAGE)
+    @CommandMethod("tag|t alias|a add|a <tag> <alias>")
+    suspend fun addTagAlias(message: PolyMessage,
+                            guild: PolyGuild,
+                            @Argument("tag")
+                            tag: PolyTag,
+                            @Argument("alias")
+                            alias: String) {
+        if (!isValidTagNameAlias(alias)) {
+            message.reply(invalidTag(alias))
+            return
+        }
+        
+        if (tag.aliases.size > 32) {
+            message.reply("Tags cannot have more than 32 aliases. What are you doing with 32 aliases, anyways?")
+            return
+        }
+        
+        val matchingTag = guild.tags.find { alias == it.name || alias in it.aliases }
+        
+        if (matchingTag != null) {
+            if (matchingTag.name == alias)
+                message.reply("An alias cannot be the same as the name of an already existing tag. This alias conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`.")
+            else
+                message.reply("An alias cannot be the same as the alias of an already existing tag. This alias conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`")
+            
+            return
+        }
+        
+        tag.aliases.add(alias)
+        
+        message.reply("Added alias '$alias' to the tag '${tag.name}'")
     }
     
     @JDAGuildCommand
-    @CommandMethod("tag list")
-    fun listTags(message: PolyMessage) {
-    
+    @JDAUserPermission(Permission.MESSAGE_MANAGE)
+    @CommandMethod("tag|t alias|a delete|d <tag> <alias>")
+    suspend fun deleteTagAlias(message: PolyMessage,
+                               @Argument("tag")
+                               tag: PolyTag,
+                               @Argument("alias")
+                               alias: String) {
+        if (tag.aliases.remove(alias))
+            message.reply("Deleted alias '${alias}' from tag '${tag.name}' with UUID `${tag.uuid}`.")
+        else
+            message.reply("Could not find the alias '${alias}' on the tag '${tag.name}' with UUID `${tag.uuid}`")
+        
     }
     
     @JDAGuildCommand
-    @CommandMethod("tag raw")
-    fun rawTag(message: PolyMessage) {
-    
+    @CommandMethod("tag|t delete|del|d|remove|rm <tag>")
+    @JDAUserPermission(Permission.MESSAGE_MANAGE)
+    suspend fun deleteTag(message: PolyMessage,
+                          guild: PolyGuild,
+                          @Argument("tag")
+                          tag: PolyTag) {
+        if (guild.tags.remove(tag))
+            message.reply("Deleted tag '${tag.name}'.")
+        else
+            message.reply("Could not find tag '${tag.name}' with UUID `${tag.uuid}` in this guild's tags, even though we found it earlier. Please report this to the developers")
     }
     
     @JDAGuildCommand
-    @CommandMethod("tag view")
-    fun viewTag(message: PolyMessage) {
-    
+    @CommandMethod("tag|t info|i <tag>")
+    suspend fun tagInfo(message: PolyMessage,
+                        @Argument("tag")
+                        tag: PolyTag) {
+        val tagEmbed = Embed {
+            title = "Info for Tag ${tag.name}."
+            description = tag.content
+            
+            field {
+                name = "Aliases"
+                value = tag.aliases.joinToString(separator = ", ", postfix = ".")
+                inline = false
+            }
+            
+            field {
+                name = "Created"
+                value = "This tag was created on: ${tag.created.toDiscordTimestamp()}."
+            }
+            
+            field {
+                name = "Usages"
+                value = "This tag has been used ${tag.usages} times."
+            }
+            
+            field {
+                name = "UUID"
+                value = "`${tag.uuid}`"
+            }
+        }
+        
+        message.reply(tagEmbed)
     }
     
+    @JDAGuildCommand
+    @ProxiedBy("tags")
+    @CommandMethod("tag|t list|l")
+    suspend fun listTags(message: PolyMessage,
+                         guild: PolyGuild) {
+        val chunkedTags = guild.tags.chunkedBy(1800) { this.name.length + 2 /* 2 to include ", ". */ }
+        
+        val splitTagNameList = chunkedTags.map { tagList ->
+            tagList.joinToString(separator = ", ", postfix = ".") { tag -> tag.content }
+        }
+        
+        when {
+            splitTagNameList.isEmpty() -> message.reply("There are no tags for this guild.")
+            splitTagNameList.size == 1 -> message.reply("Here is a list of all the tags for this guild: ${splitTagNameList.first()}")
+            
+            else                       -> {
+                message.reply("There are too many tags in this guild for one message. " +
+                                      "They will be split into multiple messages. " +
+                                      "Here are the tags for this guild:")
+                
+                val size = splitTagNameList.size
+                
+                splitTagNameList.forEachIndexed { index, tagNames ->
+                    message.reply("""
+                                    $index/$size:
+                                    $tagNames
+                                  """.trimIndent())
+                }
+            }
+        }
+        
+        
+        message.reply("Here is a list of all the tags for this guild: ")
+    }
+    
+    @JDAGuildCommand
+    @CommandMethod("tag|t raw|r <tag>")
+    suspend fun rawTag(message: PolyMessage,
+                       @Argument("tag")
+                       tag: PolyTag) {
+        val escapedTag = MarkdownSanitizer.sanitize(tag.content, MarkdownSanitizer.SanitizationStrategy.ESCAPE)
+        
+        if (escapedTag.length <= 2000)
+            message.reply(escapedTag, listOf(MentionType.EVERYONE,
+                                             MentionType.HERE,
+                                             MentionType.ROLE,
+                                             MentionType.USER,
+                                             MentionType.CHANNEL,
+                                             MentionType.EMOTE))
+        else
+            message.reply("Could not send raw tag because it exceeded 2000 characters")
+    }
+    
+    private fun isValidTagNameAlias(name: String): Boolean {
+        return name.none { it !in 'A' .. 'Z' && it !in 'a' .. 'z' && it !in '0' .. '9' && it != '.' && it != '_' && it != '-' } && name.length <= 64
+    }
+    
+    private fun invalidTag(name: String): String {
+        //language=Markdown
+        return "The name '$name' is invalid. " +
+                "A tag name or alias must *only* contain A-Z, a-z, 0-9, `.`, `_`, or `-` and no other characters, " +
+                "and cannot be longer than 64 characters. Please choose a new name."
+    }
 }
