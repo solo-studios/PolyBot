@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessage.kt is part of PolyhedralBot
- * Last modified on 25-09-2021 09:42 p.m.
+ * Last modified on 25-09-2021 09:53 p.m.
  *
  * MIT License
  *
@@ -36,6 +36,7 @@ import java.util.EnumSet
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.Message.MentionType
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 
 class PolyMessage(val bot: PolyBot, val jdaMessage: Message) {
@@ -91,19 +92,27 @@ class PolyMessage(val bot: PolyBot, val jdaMessage: Message) {
     fun endsWithStripped(prefix: String, ignoreCase: Boolean = false) = contentStripped.endsWith(prefix, ignoreCase)
     
     suspend fun reply(content: String, deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): PolyMessage {
-        return reply(jdaMessage.reply(content), deniedMentions)
+        return reply(jdaMessage.reply(content), deniedMentions).await().poly(bot)
+    }
+    
+    fun replyAsync(content: String,
+                   deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): RestAction<PolyMessage> {
+        return reply(jdaMessage.reply(content), deniedMentions).map { it.poly(bot) }
+    }
+    
+    fun replyAsync(embed: MessageEmbed,
+                   deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): RestAction<PolyMessage> {
+        return reply(jdaMessage.replyEmbeds(embed), deniedMentions).map { it.poly(bot) }
     }
     
     suspend fun reply(embed: MessageEmbed,
                       deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): PolyMessage {
-        return reply(jdaMessage.replyEmbeds(embed), deniedMentions)
+        return reply(jdaMessage.replyEmbeds(embed), deniedMentions).await().poly(bot)
     }
     
-    private suspend fun reply(action: MessageAction, deniedMentions: List<MentionType>): PolyMessage {
+    private fun reply(action: MessageAction, deniedMentions: List<MentionType>): MessageAction {
         return action.mentionRepliedUser(false)
                 .allowedMentions(EnumSet.complementOf(EnumSet.copyOf(deniedMentions)))
-                .await()
-                .poly(bot)
     }
     
     suspend fun edit(content: String): PolyMessage {

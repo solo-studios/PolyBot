@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 25-09-2021 09:45 p.m.
+ * Last modified on 25-09-2021 10:18 p.m.
  *
  * MIT License
  *
@@ -156,14 +156,14 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
             message.reply(invalidTag(alias))
             return
         }
-        
-        if (tag.aliases.size > 32) {
-            message.reply("Tags cannot have more than 32 aliases. What are you doing with 32 aliases, anyways?")
+    
+        if (tag.aliases.size > 8) {
+            message.reply("Tags cannot have more than 8 aliases. What are you doing with more than 8 aliases, anyways?")
             return
         }
-        
+    
         val matchingTag = guild.tags.find { alias == it.name || alias in it.aliases }
-        
+    
         if (matchingTag != null) {
             if (matchingTag.name == alias)
                 message.reply("An alias cannot be the same as the name of an already existing tag. This alias conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`.")
@@ -214,26 +214,39 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
         val tagEmbed = Embed {
             title = "Info for Tag ${tag.name}."
             description = tag.content
+    
+            if (tag.aliases.isNotEmpty()) {
+                field {
+                    val aliases = tag.aliases.joinToString(prefix = "`", separator = ", ", postfix = "`")
             
-            field {
-                name = "Aliases"
-                value = tag.aliases.joinToString(separator = ", ", postfix = ".")
-                inline = false
+                    name = "Aliases"
+                    value = "This tag has the following aliases: $aliases."
+                    inline = false
+                }
+            } else {
+                field {
+                    name = "Aliases"
+                    value = "This tag has no aliases"
+                    inline = false
+                }
             }
-            
+    
             field {
                 name = "Created"
                 value = "This tag was created on: ${tag.created.toDiscordTimestamp()}."
+                inline = false
             }
-            
+    
             field {
                 name = "Usages"
                 value = "This tag has been used ${tag.usages} times."
+                inline = false
             }
             
             field {
                 name = "UUID"
                 value = "`${tag.uuid}`"
+                inline = false
             }
         }
         
@@ -245,15 +258,15 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("tag|t list|l")
     suspend fun listTags(message: PolyMessage,
                          guild: PolyGuild) {
-        val chunkedTags = guild.tags.chunkedBy(1800) { this.name.length + 2 /* 2 to include ", ". */ }
+        val chunkedTags = guild.tags.chunkedBy(1800) { this.name.length + 4 /* 2 to include ", ". */ }
         
         val splitTagNameList = chunkedTags.map { tagList ->
-            tagList.joinToString(separator = ", ", postfix = ".") { tag -> tag.content }
+            tagList.joinToString(prefix = "`", separator = "`, `", postfix = "`.") { tag -> tag.name }
         }
         
         when {
             splitTagNameList.isEmpty() -> message.reply("There are no tags for this guild.")
-            splitTagNameList.size == 1 -> message.reply("Here is a list of all the tags for this guild: ${splitTagNameList.first()}")
+            splitTagNameList.size == 1 -> message.reply("Here is a list of all the tags for this guild:\n${splitTagNameList.first()}")
             
             else                       -> {
                 message.reply("There are too many tags in this guild for one message. " +
@@ -263,16 +276,13 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
                 val size = splitTagNameList.size
                 
                 splitTagNameList.forEachIndexed { index, tagNames ->
-                    message.reply("""
-                                    $index/$size:
-                                    $tagNames
-                                  """.trimIndent())
+                    message.replyAsync("""
+                        $index/$size:
+                        $tagNames
+                    """.trimIndent())
                 }
             }
         }
-        
-        
-        message.reply("Here is a list of all the tags for this guild: ")
     }
     
     @JDAGuildCommand

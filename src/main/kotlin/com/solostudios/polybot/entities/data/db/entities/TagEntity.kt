@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagEntity.kt is part of PolyhedralBot
- * Last modified on 25-09-2021 09:42 p.m.
+ * Last modified on 25-09-2021 10:13 p.m.
  *
  * MIT License
  *
@@ -48,7 +48,7 @@ object TagTable : KotlinxUUIDTable("TAG_DATA") {
 
 class TagEntity(id: EntityID<UUID>) : KotlinxUUIDEntity(id) {
     companion object : KotlinxUUIDEntityClass<TagEntity>(TagTable) {
-        const val SEPARATOR = ","
+        const val SEPARATOR = ";"
     }
     
     var guild by GuildEntity referencedOn TagTable.guild
@@ -56,7 +56,7 @@ class TagEntity(id: EntityID<UUID>) : KotlinxUUIDEntity(id) {
     var name by TagTable.name
     var content by TagTable.content
     var aliases by TagTable.aliases.transform({ alias -> alias.joinToString(separator = SEPARATOR) },
-                                              { aliases -> aliases.split(SEPARATOR) })
+                                              { aliases -> aliases.split(SEPARATOR).filter { it.isNotEmpty() } })
     var created by TagTable.created
     var usages by TagTable.usages
 }
