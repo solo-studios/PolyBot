@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file util.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:33 p.m.
+ * Last modified on 25-09-2021 09:44 p.m.
  *
  * MIT License
  *
@@ -35,6 +35,40 @@ import com.solostudios.polybot.entities.PolyUser
 import dev.minn.jda.ktx.InlineEmbed
 import java.time.OffsetDateTime
 import java.util.EnumSet
+
+
+/**
+ * Splits a collection into sublists not exceeding the given size.  This is a
+ * generalisation of [List.chunked]; but where that limits the _number_ of items in
+ * each sublist, this limits their total size, according to a given sizing function.
+ *
+ * This *method* (and *only* this method) licensed under [CC BY-SA](https://creativecommons.org/licenses/by-sa/4.0/),
+ * and is taken from [StackOverflow](https://stackoverflow.com/a/63634737).
+ *
+ * @param maxSize None of the returned lists will have a total size greater than this
+ *                (unless a single item does).
+ * @param size Function giving the size of an item.
+ * @author [gidds](https://stackoverflow.com/users/10134209/gidds)
+ */
+inline fun <T> Iterable<T>.chunkedBy(maxSize: Int, size: T.() -> Int): List<List<T>> {
+    val result = mutableListOf<List<T>>()
+    var sublist = mutableListOf<T>()
+    var sublistSize = 0L
+    for (item in this) {
+        val itemSize = item.size()
+        if (sublistSize + itemSize > maxSize && sublist.isNotEmpty()) {
+            result += sublist
+            sublist = mutableListOf()
+            sublistSize = 0
+        }
+        sublist.add(item)
+        sublistSize += itemSize
+    }
+    if (sublist.isNotEmpty())
+        result += sublist
+    
+    return result
+}
 
 
 inline fun <T> stringIfNotNull(fromObject: T?, transform: (T) -> String): String = if (fromObject != null) transform(fromObject) else ""

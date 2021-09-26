@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file jda.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:31 p.m.
+ * Last modified on 25-09-2021 07:30 p.m.
  *
  * MIT License
  *
@@ -38,6 +38,7 @@ import com.solostudios.polybot.entities.PolyRole
 import com.solostudios.polybot.entities.PolyTextChannel
 import com.solostudios.polybot.entities.PolyUser
 import com.solostudios.polybot.entities.PolyVoiceChannel
+import java.time.Instant
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.AbstractChannel
 import net.dv8tion.jda.api.entities.Guild
@@ -61,9 +62,20 @@ infix fun MemberCachePolicy.and(policy: MemberCachePolicy): MemberCachePolicy {
 
 var Presence.onlineStatus: OnlineStatus
     set(value) {
-        status = value
+        setStatus(value)
     }
     get() = status
+
+fun Instant.toDiscordTimestamp(timestampType: DiscordTimestampType = DiscordTimestampType.FULL): String {
+    return "<t:${this.epochSecond}:${timestampType.format}>"
+}
+
+enum class DiscordTimestampType(val format: String) {
+    RELATIVE("R"),
+    DATE("D"),
+    TIME("T"),
+    FULL("F")
+}
 
 fun Member.poly(bot: PolyBot): PolyMember = PolyMember(bot, this)
 
