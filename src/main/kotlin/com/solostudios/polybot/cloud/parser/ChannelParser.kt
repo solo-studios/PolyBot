@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ChannelParser.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 08:01 p.m.
+ * Last modified on 25-09-2021 07:07 p.m.
  *
  * MIT License
  *
@@ -49,9 +49,6 @@ class ChannelParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMessageCh
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
         val event = commandContext.get<MessageReceivedEvent>("MessageReceivedEvent")
-        val message = event.message
-        
-        var exception: Exception
         
         if (!event.isFromGuild) {
             return ArgumentParseResult.failure(IllegalArgumentException("Channel arguments can only be parsed in guilds"))

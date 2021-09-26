@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserParser.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 08:02 p.m.
+ * Last modified on 25-09-2021 07:07 p.m.
  *
  * MIT License
  *
@@ -113,11 +113,11 @@ class UserParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyUser> {
     
     class TooManyUsersFoundParseException(input: String) : UserParseException(input) {
         override val message: String
-            get() = "Too many members found for '$input'."
+            get() = "Too many users found for '$input'."
     }
     
     class UserNotFoundParseException(input: String) : UserParseException(input) {
         override val message: String
-            get() = "Member not found for '$input'."
+            get() = "User not found for '$input'."
     }
 }

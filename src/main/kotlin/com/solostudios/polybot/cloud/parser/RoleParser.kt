@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file RoleParser.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 08:02 p.m.
+ * Last modified on 25-09-2021 07:07 p.m.
  *
  * MIT License
  *
@@ -50,9 +50,6 @@ class RoleParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyRole> {
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
         val event = commandContext.get<MessageReceivedEvent>("MessageReceivedEvent")
-        val message = event.message
-        
-        var exception: Exception
         
         if (!event.isFromGuild) {
             return ArgumentParseResult.failure(IllegalArgumentException("Channel arguments can only be parsed in guilds"))
@@ -104,11 +101,11 @@ class RoleParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyRole> {
     
     class TooManyRolesFoundParseException(input: String) : RoleParseException(input) {
         override val message: String
-            get() = "Too many channels found for '$input'."
+            get() = "Too many roles found for '$input'."
     }
     
     class RoleNotFoundParseException(input: String) : RoleParseException(input) {
         override val message: String
-            get() = "Channel not found for '$input'."
+            get() = "Role not found for '$input'."
     }
 }
