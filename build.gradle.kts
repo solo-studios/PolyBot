@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 25-09-2021 06:29 p.m.
+ * Last modified on 29-09-2021 12:43 p.m.
  *
  * MIT License
  *
@@ -110,6 +110,11 @@ repositories {
     }
 }
 
+configurations.all {
+    // Check for updates every build
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}
+
 application {
     mainClass.set("com.solostudios.polybot.LauncherKt")
 }
@@ -149,10 +154,10 @@ dependencies {
     implementation("com.jagrosh:jda-utilities-menu:$JDA_UTILITIES_VERSION")
     
     // Cloud (Command handler)
-    implementation("cloud.commandframework:cloud-core:$CLOUD_VERSION")
-    implementation("cloud.commandframework:cloud-annotations:$CLOUD_VERSION") // Annotation parser
-    implementation("cloud.commandframework:cloud-jda:$CLOUD_VERSION") // JDA impl
-    implementation("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_VERSION") // Kotlin extensions
+    implementation("cloud.commandframework:cloud-core:$CLOUD_VERSION") { isChanging = true }
+    implementation("cloud.commandframework:cloud-annotations:$CLOUD_VERSION") { isChanging = true } // Annotation parser
+    implementation("cloud.commandframework:cloud-jda:$CLOUD_VERSION") { isChanging = true } // JDA impl
+    implementation("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_VERSION") { isChanging = true } // Kotlin extensions
     
     // Kryo fast object serialization
     implementation("com.esotericsoftware:kryo:$KRYO_VERSION")
@@ -225,9 +230,9 @@ dependencies {
     implementation("it.unimi.dsi:dsiutils:2.6.17")
     
     // Testing (JUnit 5)
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:5.7.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:5.8.0")
 }
 
 noArg {
