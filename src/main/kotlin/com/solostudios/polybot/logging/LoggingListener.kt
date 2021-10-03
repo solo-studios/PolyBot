@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:33 p.m.
+ * Last modified on 03-10-2021 06:58 p.m.
  *
  * MIT License
  *
@@ -103,19 +103,28 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     private val messageCache = bot.cacheManager.messageCache
     
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
+        if (!event.message.isFromGuild || event.message.author.isSystem || event.isWebhookMessage || event.message.author.isBot)
+            return
+    
         messageCache.putMessage(event.message)
     }
     
     override fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
+        if (!event.message.isFromGuild || event.message.author.isSystem || event.message.author.isBot)
+            return
+    
         bot.scope.launch {
             val oldMessage = messageCache.getMessage(event.messageIdLong)
             val message = event.message
-    
+        
+            if (!message.isEdited)
+                return@launch
+        
             messageCache.putMessage(message)
-    
+        
             loggingEmbed(tempLogChannel, event.guild, event.author, event.channel, message, message.timeEdited!!) {
                 description = "**${message.author.asMention} edited a message in ${message.textChannel.asMention}.**"
-        
+            
                 field {
                     name = "Before"
                     value = oldMessage?.content?.takeIf { it.length < 1024 } ?: oldMessage?.content?.substring(0, 1020)?.plus("\n...")

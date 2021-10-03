@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 01:46 a.m.
+ * Last modified on 03-10-2021 06:49 p.m.
  *
  * MIT License
  *
@@ -34,11 +34,12 @@ import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.specifier.Greedy
 import cloud.commandframework.annotations.specifier.Range
 import com.solostudios.polybot.PolyBot
-import com.solostudios.polybot.cloud.PolyCommandContainer
-import com.solostudios.polybot.cloud.PolyCommands
-import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
-import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
-import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.commands.PolyCommandContainer
+import com.solostudios.polybot.cloud.commands.PolyCommands
+import com.solostudios.polybot.cloud.commands.annotations.JDABotPermission
+import com.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
+import com.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import com.solostudios.polybot.entities.PolyMember
 import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.entities.PolyMessageChannel
@@ -48,6 +49,7 @@ import com.solostudios.polybot.util.poly
 import net.dv8tion.jda.api.Permission
 import org.slf4j.kotlin.*
 
+@PolyCategory(MOD_CATEGORY)
 @PolyCommandContainer
 class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()

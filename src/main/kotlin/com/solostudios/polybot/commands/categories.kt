@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file JDAUserPermission.kt is part of PolyhedralBot
- * Last modified on 15-09-2021 08:16 p.m.
+ * The file categories.kt is part of PolyhedralBot
+ * Last modified on 03-10-2021 06:49 p.m.
  *
  * MIT License
  *
@@ -26,15 +26,24 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.permission.annotations
+package com.solostudios.polybot.commands
 
-import net.dv8tion.jda.api.Permission
+const val MOD_CATEGORY = "category.mod"
+const val UTIL_CATEGORY = "category.util"
+const val EASTER_EGG_CATEGORY = "category.easter-egg"
+const val GITHUB_CATEGORY = "category.github"
+const val BOT_ADMIN_CATEGORY = "category.bot-admin"
+const val TAG_CATEGORY = "category.tag"
 
-@MustBeDocumented
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class JDAUserPermission(
-        vararg val permissions: Permission,
-        val ownerOnly: Boolean = false,
-        val coOwnerOnly: Boolean = false,
-                                  )
+private val categoryMap = mapOf(
+        MOD_CATEGORY to Category("Moderation", listOf("mod", "admin", "administration")),
+        UTIL_CATEGORY to Category("Utilities", listOf("util")),
+        EASTER_EGG_CATEGORY to Category("Easter Eggs", listOf("surprise", "easter-egg")),
+        GITHUB_CATEGORY to Category("GitHub", listOf()),
+        BOT_ADMIN_CATEGORY to Category("Bot Administration", listOf("bot", "bot admin", "bot-administration", "bot-admin")),
+        TAG_CATEGORY to Category("Tags", listOf())
+                               )
+
+fun getCategory(categoryKey: String): Category = categoryMap.getValue(categoryKey)
+
+data class Category(val name: String, val aliases: List<String>)

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file util.kt is part of PolyhedralBot
- * Last modified on 25-09-2021 09:44 p.m.
+ * Last modified on 03-10-2021 06:58 p.m.
  *
  * MIT License
  *
@@ -35,6 +35,7 @@ import com.solostudios.polybot.entities.PolyUser
 import dev.minn.jda.ktx.InlineEmbed
 import java.time.OffsetDateTime
 import java.util.EnumSet
+import java.util.Optional
 
 
 /**
@@ -117,3 +118,7 @@ operator fun String.get(start: Int, end: Int) = substring(start, end)
 // fun formatEmbedFooter(guild: Guild, user: User, separator: String = "|") = ""
 //
 // fun formatEmbedFooter(guild: Guild, separator: String = "|") = ""
+
+fun <T> Optional<T>.orNull(): T? = orElse(null)
+
+fun <T> Optional<T>.or(t: T): T = orElse(t)

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 25-09-2021 10:18 p.m.
+ * Last modified on 03-10-2021 06:49 p.m.
  *
  * MIT License
  *
@@ -33,10 +33,11 @@ import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.ProxiedBy
 import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
-import com.solostudios.polybot.cloud.PolyCommandContainer
-import com.solostudios.polybot.cloud.PolyCommands
-import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
-import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.commands.PolyCommandContainer
+import com.solostudios.polybot.cloud.commands.PolyCommands
+import com.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
+import com.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import com.solostudios.polybot.entities.PolyGuild
 import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.entities.data.Tag
@@ -49,6 +50,7 @@ import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import org.slf4j.kotlin.*
 import com.solostudios.polybot.entities.data.PolyTagData as PolyTag
 
+@PolyCategory(TAG_CATEGORY)
 @PolyCommandContainer
 @Suppress("DuplicatedCode")
 class TagCommands(bot: PolyBot) : PolyCommands(bot) {
@@ -79,22 +81,22 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
             message.reply(invalidTag(name))
             return
         }
-    
+        
         val matchingTag = guild.tags.find { name == it.name || name in it.aliases }
-    
+        
         if (matchingTag != null) {
             if (matchingTag.name == name)
                 message.reply("The name of a tag cannot be the same as the name of an already existing tag. This name conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`.")
             else
                 message.reply("The name of a tag cannot be the same as the alias of an already existing tag. This name conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`")
-        
+            
             return
         }
-    
+        
         val tag = Tag(bot, guild, name, content)
-    
+        
         guild.tags.add(tag)
-    
+        
         message.reply("Created tag '$name' with the UUID `${tag.uuid}`.")
     }
     
@@ -156,14 +158,14 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
             message.reply(invalidTag(alias))
             return
         }
-    
+        
         if (tag.aliases.size > 8) {
             message.reply("Tags cannot have more than 8 aliases. What are you doing with more than 8 aliases, anyways?")
             return
         }
-    
+        
         val matchingTag = guild.tags.find { alias == it.name || alias in it.aliases }
-    
+        
         if (matchingTag != null) {
             if (matchingTag.name == alias)
                 message.reply("An alias cannot be the same as the name of an already existing tag. This alias conflicts with the tag '${matchingTag.name}' with the UUID `${matchingTag.uuid}`.")
@@ -214,11 +216,11 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
         val tagEmbed = Embed {
             title = "Info for Tag ${tag.name}."
             description = tag.content
-    
+            
             if (tag.aliases.isNotEmpty()) {
                 field {
                     val aliases = tag.aliases.joinToString(prefix = "`", separator = ", ", postfix = "`")
-            
+                    
                     name = "Aliases"
                     value = "This tag has the following aliases: $aliases."
                     inline = false
@@ -230,13 +232,13 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
                     inline = false
                 }
             }
-    
+            
             field {
                 name = "Created"
                 value = "This tag was created on: ${tag.created.toDiscordTimestamp()}."
                 inline = false
             }
-    
+            
             field {
                 name = "Usages"
                 value = "This tag has been used ${tag.usages} times."

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 25-09-2021 09:41 p.m.
+ * Last modified on 03-10-2021 06:58 p.m.
  *
  * MIT License
  *
@@ -32,7 +32,15 @@ import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.meta.SimpleCommandMeta
 import com.solostudios.polybot.cache.CacheManager
 import com.solostudios.polybot.cloud.CloudInjectorService
-import com.solostudios.polybot.cloud.PolyCommands
+import com.solostudios.polybot.cloud.commands.PolyCommands
+import com.solostudios.polybot.cloud.commands.PolyMeta
+import com.solostudios.polybot.cloud.commands.annotations.JDABotPermission
+import com.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
+import com.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import com.solostudios.polybot.cloud.commands.permission.BotPermissionPostprocessor
+import com.solostudios.polybot.cloud.commands.permission.GuildCommandPostProcessor
+import com.solostudios.polybot.cloud.commands.permission.UserPermissionPostprocessor
 import com.solostudios.polybot.cloud.event.EventMapper
 import com.solostudios.polybot.cloud.event.MessageEvent
 import com.solostudios.polybot.cloud.parser.ChannelParser
@@ -40,13 +48,6 @@ import com.solostudios.polybot.cloud.parser.MemberParser
 import com.solostudios.polybot.cloud.parser.RoleParser
 import com.solostudios.polybot.cloud.parser.TagParser
 import com.solostudios.polybot.cloud.parser.UserParser
-import com.solostudios.polybot.cloud.permission.BotPermissionPostprocessor
-import com.solostudios.polybot.cloud.permission.GuildCommandPostProcessor
-import com.solostudios.polybot.cloud.permission.PermissionMetaModifier
-import com.solostudios.polybot.cloud.permission.UserPermissionPostprocessor
-import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
-import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
-import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
 import com.solostudios.polybot.cloud.preprocessor.AntiBotPreProcessor
 import com.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
 import com.solostudios.polybot.config.PolyConfig
@@ -160,9 +161,10 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     
         addCoroutineSupport(this@PolyBot.scope)
     
-        registerBuilderModifier(JDABotPermission::class.java, PermissionMetaModifier::botPermissionModifier)
-        registerBuilderModifier(JDAUserPermission::class.java, PermissionMetaModifier::userPermissionModifier)
-        registerBuilderModifier(JDAGuildCommand::class.java, PermissionMetaModifier::guildCommandModifier)
+        registerBuilderModifier(JDABotPermission::class.java, PolyMeta::botPermissionModifier)
+        registerBuilderModifier(JDAUserPermission::class.java, PolyMeta::userPermissionModifier)
+        registerBuilderModifier(JDAGuildCommand::class.java, PolyMeta::guildCommandModifier)
+        registerBuilderModifier(PolyCategory::class.java, PolyMeta::categoryCommandModifier)
     }
     
     val exceptionHandler = PolyExceptionHandler(this@PolyBot, commandManager)
@@ -187,8 +189,6 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     
         annotationParser.parseCommands(commands)
     
-        logger.info { "Commands: ${commands.size}" }
-    
         MessageAction.setDefaultMentionRepliedUser(true)
         MessageAction.setDefaultMentions(EnumSet.complementOf(EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE)))
     }
@@ -204,6 +204,9 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     
     val guilds: Long
         get() = jda.guildCache.size() + jda.unavailableGuilds.size
+    
+    val commands: Int
+        get() = commandManager.commandHelpHandler.allCommands.size
     
     fun getCacheDirectory(vararg name: String) = Path(".cache", *name)
     

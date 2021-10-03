@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PermissionMetaModifier.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 11:14 p.m.
+ * The file PolyCommands.kt is part of PolyhedralBot
+ * Last modified on 27-09-2021 05:05 p.m.
  *
  * MIT License
  *
@@ -26,27 +26,14 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.permission
+package com.solostudios.polybot.cloud.commands
 
-import cloud.commandframework.Command
-import com.solostudios.polybot.cloud.permission.annotations.JDABotPermission
-import com.solostudios.polybot.cloud.permission.annotations.JDAGuildCommand
-import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.PolyBot
 
-object PermissionMetaModifier {
-    fun <T> botPermissionModifier(botPermission: JDABotPermission, builder: Command.Builder<T>): Command.Builder<T> {
-        return builder.meta(BOT_PERMISSIONS, botPermission.permissions.asList())
-    }
-    
-    fun <T> userPermissionModifier(userPermission: JDAUserPermission, builder: Command.Builder<T>): Command.Builder<T> {
-        return builder.meta(USER_PERMISSIONS, userPermission.permissions.asList())
-                .meta(OWNER_ONLY, NotBoolean(userPermission.ownerOnly))
-                .meta(CO_OWNER_ONLY, NotBoolean(userPermission.coOwnerOnly))
-    }
-    
-    fun <T> guildCommandModifier(guildCommand: JDAGuildCommand, builder: Command.Builder<T>): Command.Builder<T> {
-        return builder.meta(GUILD_ONLY, NotBoolean(true))
-    }
-}
+abstract class PolyCommands(val bot: PolyBot)
 
-// object : TypeToken<List<String>>(){}
+
+@MustBeDocumented
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class PolyCommandContainer

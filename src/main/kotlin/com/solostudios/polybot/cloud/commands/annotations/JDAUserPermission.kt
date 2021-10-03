@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file NotBoolean.kt is part of PolyhedralBot
- * Last modified on 31-07-2021 01:23 a.m.
+ * The file JDAUserPermission.kt is part of PolyhedralBot
+ * Last modified on 26-09-2021 09:53 p.m.
  *
  * MIT License
  *
@@ -26,15 +26,15 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.permission
+package com.solostudios.polybot.cloud.commands.annotations
 
-/**
- * This class is a bruh moment.
- *
- * It only exists because of some jvm buffoonery that I can't work around.
- * (Where the type Boolean is compared to the primitive boolean, so they're ""not compatible"")
- *
- * @property value
- * @constructor Create empty Not boolean
- */
-data class NotBoolean(val value: Boolean)
+import net.dv8tion.jda.api.Permission
+
+@MustBeDocumented
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class JDAUserPermission(
+        vararg val permissions: Permission,
+        val ownerOnly: Boolean = false,
+        val coOwnerOnly: Boolean = false,
+                                  )

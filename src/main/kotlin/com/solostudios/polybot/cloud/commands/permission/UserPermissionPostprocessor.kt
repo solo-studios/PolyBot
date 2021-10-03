@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 01:46 a.m.
+ * Last modified on 03-10-2021 06:58 p.m.
  *
  * MIT License
  *
@@ -26,12 +26,13 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.permission
+package com.solostudios.polybot.cloud.commands.permission
 
 import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext
 import cloud.commandframework.execution.postprocessor.CommandPostprocessor
 import cloud.commandframework.services.types.ConsumerService
 import com.solostudios.polybot.PolyBot
+import com.solostudios.polybot.cloud.commands.PolyMeta
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.slf4j.kotlin.*
@@ -45,14 +46,14 @@ class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T>
         val commandMeta = postprocessingContext.command.commandMeta
         val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")
     
-        if (commandMeta.getOrDefault(CO_OWNER_ONLY, NotBoolean(false)).value) {
+        if (commandMeta.getOrDefault(PolyMeta.CO_OWNER_ONLY, false)) {
             if (event.author.idLong !in bot.botConfig.ownerIds && event.author.idLong !in bot.botConfig.coOwnerIds) {
                 event.message.replyFormat("This command can only be performed by co-owners and owners of the bot.")
                         .mentionRepliedUser(false)
                         .queue()
                 ConsumerService.interrupt()
             }
-        } else if (commandMeta.getOrDefault(OWNER_ONLY, NotBoolean(false)).value) {
+        } else if (commandMeta.getOrDefault(PolyMeta.OWNER_ONLY, false)) {
             if (event.author.idLong !in bot.botConfig.ownerIds) {
                 event.message.replyFormat("This command can only be performed by owners of the bot.")
                         .mentionRepliedUser(false)
@@ -66,14 +67,14 @@ class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T>
         
         if (context.contains("Guild")) {
             val user = event.member ?: return
-            
+    
             val permissions =
                     if (context.contains("TextChannel"))
                         context.get<TextChannel>("TextChannel").getPermissionOverride(user)?.allowed ?: user.permissions
                     else
                         user.permissions
     
-            val neededPermissions = commandMeta.getOrDefault(USER_PERMISSIONS, emptyList())
+            val neededPermissions = commandMeta.getOrDefault(PolyMeta.USER_PERMISSIONS, emptyList())
             if (!permissions.containsAll(neededPermissions)) {
                 event.message.replyFormat("Cannot execute command due to insufficient permission. You require the following permission(s) to do execute this command: %s.",
                                           neededPermissions.subtract(permissions).joinToString(separator = ", ") { it.getName() })

@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file JDAGuildCommand.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:31 p.m.
+ * The file PolyCategory.kt is part of PolyhedralBot
+ * Last modified on 03-10-2021 06:36 p.m.
  *
  * MIT License
  *
@@ -26,9 +26,9 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.cloud.permission.annotations
+package com.solostudios.polybot.cloud.commands.annotations
 
 @MustBeDocumented
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class JDAGuildCommand
+annotation class PolyCategory(val category: String)

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 01:46 a.m.
+ * Last modified on 03-10-2021 06:49 p.m.
  *
  * MIT License
  *
@@ -30,11 +30,13 @@ package com.solostudios.polybot.commands
 
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandMethod
+import cloud.commandframework.annotations.Hidden
 import cloud.commandframework.annotations.specifier.Greedy
 import com.solostudios.polybot.PolyBot
-import com.solostudios.polybot.cloud.PolyCommandContainer
-import com.solostudios.polybot.cloud.PolyCommands
-import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.commands.PolyCommandContainer
+import com.solostudios.polybot.cloud.commands.PolyCommands
+import com.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.util.get
 import org.intellij.markdown.MarkdownElementTypes
@@ -45,11 +47,13 @@ import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 import org.slf4j.kotlin.*
 
+@Hidden
+@PolyCategory(UTIL_CATEGORY)
 @PolyCommandContainer
 class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
-    @CommandMethod("lucene <markdown>")
+    @CommandMethod("lucene markdown <markdown>")
     @JDAUserPermission(ownerOnly = true)
     fun lucene(message: PolyMessage,
                @Greedy

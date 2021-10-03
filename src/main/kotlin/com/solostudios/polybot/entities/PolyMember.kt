@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMember.kt is part of PolyhedralBot
- * Last modified on 18-09-2021 06:14 p.m.
+ * Last modified on 27-09-2021 06:27 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,7 @@ package com.solostudios.polybot.entities
 
 import com.solostudios.polybot.PolyBot
 import java.time.LocalDateTime
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 
 class PolyMember(val bot: PolyBot, val jdaMember: Member) {
@@ -60,9 +61,18 @@ class PolyMember(val bot: PolyBot, val jdaMember: Member) {
     val guildId: Long
         get() = jdaMember.guild.idLong
     
+    val guildPermissions: List<Permission>
+        get() = jdaMember.permissions.toList()
+    
     val data by lazy { bot.entityManager.getMember(this) }
     
     val warns by lazy { bot.entityManager.getWarns(this) }
+    
+    val isOwner: Boolean
+        get() = id in bot.botConfig.ownerIds
+    
+    val isCoOwner: Boolean
+        get() = id in bot.botConfig.ownerIds || id in bot.botConfig.coOwnerIds
     
     fun ban(reason: String, daysToDelete: Int, moderator: PolyMember, replyAction: suspend (String) -> Unit) {
         bot.moderationManager.banMember(this, moderator, reason, daysToDelete, replyAction)

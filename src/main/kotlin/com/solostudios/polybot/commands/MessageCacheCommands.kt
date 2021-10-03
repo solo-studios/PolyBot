@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 20-09-2021 01:46 a.m.
+ * Last modified on 03-10-2021 06:50 p.m.
  *
  * MIT License
  *
@@ -31,11 +31,13 @@ package com.solostudios.polybot.commands
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
+import cloud.commandframework.annotations.Hidden
 import com.solostudios.polybot.Constants
 import com.solostudios.polybot.PolyBot
-import com.solostudios.polybot.cloud.PolyCommandContainer
-import com.solostudios.polybot.cloud.PolyCommands
-import com.solostudios.polybot.cloud.permission.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.commands.PolyCommandContainer
+import com.solostudios.polybot.cloud.commands.PolyCommands
+import com.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
+import com.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import com.solostudios.polybot.entities.PolyMessage
 import com.solostudios.polybot.util.idFooter
 import dev.minn.jda.ktx.Embed
@@ -43,6 +45,8 @@ import dev.minn.jda.ktx.await
 import kotlinx.coroutines.launch
 import org.slf4j.kotlin.*
 
+@Hidden
+@PolyCategory(BOT_ADMIN_CATEGORY)
 @PolyCommandContainer
 class MessageCacheCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()

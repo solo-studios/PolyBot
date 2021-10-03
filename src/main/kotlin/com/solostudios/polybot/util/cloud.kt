@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file cloud.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 07:37 p.m.
+ * Last modified on 03-10-2021 05:38 p.m.
  *
  * MIT License
  *
@@ -43,13 +43,14 @@ import cloud.commandframework.execution.preprocessor.CommandPreprocessor
 import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.types.tuples.Triplet
 import io.leangen.geantyref.TypeToken
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.concurrent.CompletableFuture
 import java.util.function.Predicate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.future.asCompletableFuture
+import kotlinx.coroutines.future.future
+import org.slf4j.kotlin.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.full.callSuspend
@@ -91,7 +92,7 @@ inline fun <reified C> AnnotationParser(commandManager: CommandManager<C>, noinl
         AnnotationParser(commandManager, C::class.java, metaMapper)
 
 val CommandManager<*>.commandCount: Int
-    get() = commandTree.rootNodes.sumOf { it.count() }
+    get() = commandHelpHandler.allCommands.size
 
 
 private fun CommandTree.Node<*>.count(): Int {
@@ -122,16 +123,23 @@ private class KotlinMethodCommandExecutionHandler<C>(
         private val coroutineContext: CoroutineContext,
         context: CommandMethodContext<C>,
                                                     ) : MethodCommandExecutionHandler<C>(context) {
+    private val logger by getLogger()
     
-    override fun executeFuture(commandContext: CommandContext<C>): CompletableFuture<Any?> {
+    override fun executeFuture(commandContext: CommandContext<C>): CompletableFuture<Void?> {
         val instance = context().instance()
         val params = createParameterValues(commandContext, commandContext.flags(), false)
         // We need to propagate exceptions to the caller.
         
-        val job = coroutineScope.async(this.coroutineContext) {
-            context().method().kotlinFunction!!.callSuspend(instance, *params.toTypedArray())
+        val future = coroutineScope.future<Void?> {
+            try {
+                context().method().kotlinFunction!!.callSuspend(instance, *params.toTypedArray())
+            } catch (e: InvocationTargetException) {
+                logger.warn(e) { "invocation exception" }
+                e.cause?.let { throw it }
+            }
+            null
         }
         
-        return job.asCompletableFuture()
+        return future
     }
 }

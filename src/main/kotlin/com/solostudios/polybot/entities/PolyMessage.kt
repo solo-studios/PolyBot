@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessage.kt is part of PolyhedralBot
- * Last modified on 25-09-2021 09:53 p.m.
+ * Last modified on 26-09-2021 12:10 a.m.
  *
  * MIT License
  *
@@ -117,6 +117,13 @@ class PolyMessage(val bot: PolyBot, val jdaMessage: Message) {
     
     suspend fun edit(content: String): PolyMessage {
         return jdaMessage.editMessage(content)
+                .mentionRepliedUser(false)
+                .await()
+                .poly(bot)
+    }
+    
+    suspend fun edit(embed: MessageEmbed): PolyMessage {
+        return jdaMessage.editMessageEmbeds(embed)
                 .mentionRepliedUser(false)
                 .await()
                 .poly(bot)
