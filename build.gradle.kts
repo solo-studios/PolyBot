@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 29-09-2021 12:43 p.m.
+ * Last modified on 04-10-2021 04:59 p.m.
  *
  * MIT License
  *
@@ -62,6 +62,8 @@ val INTELLIJ_MARKDOWN_VERSION: String by project
 val JGIT_VERSION: String by project
 val GITHUB_API_VERSION: String by project
 val XCHART_VERSION: String by project
+val COMMONS_COMPRESS_VERSION: String by project
+val COMMONS_IO_VERSION: String by project
 
 
 plugins {
@@ -229,10 +231,13 @@ dependencies {
     // Xo
     implementation("it.unimi.dsi:dsiutils:2.6.17")
     
+    implementation("org.apache.commons:commons-compress:$COMMONS_COMPRESS_VERSION")
+    implementation("org.apache.commons:commons-io:$COMMONS_IO_VERSION")
+    
     // Testing (JUnit 5)
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:5.8.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-params")
 }
 
 noArg {
