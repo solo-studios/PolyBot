@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 03-10-2021 06:58 p.m.
+ * Last modified on 09-10-2021 06:40 p.m.
  *
  * MIT License
  *
@@ -32,6 +32,7 @@ import com.solostudios.polybot.Constants
 import com.solostudios.polybot.Constants.logEmbedColour
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.util.idFooter
+import com.solostudios.polybot.util.poly
 import dev.minn.jda.ktx.Embed
 import dev.minn.jda.ktx.InlineEmbed
 import dev.minn.jda.ktx.await
@@ -51,15 +52,18 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.UpdateEvent
 import net.dv8tion.jda.api.events.channel.category.CategoryCreateEvent
 import net.dv8tion.jda.api.events.channel.category.CategoryDeleteEvent
+import net.dv8tion.jda.api.events.channel.category.update.CategoryUpdatePositionEvent
 import net.dv8tion.jda.api.events.channel.category.update.GenericCategoryUpdateEvent
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent
 import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent
 import net.dv8tion.jda.api.events.channel.text.update.GenericTextChannelUpdateEvent
+import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdatePositionEvent
 import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateSlowmodeEvent
 import net.dv8tion.jda.api.events.channel.voice.VoiceChannelCreateEvent
 import net.dv8tion.jda.api.events.channel.voice.VoiceChannelDeleteEvent
 import net.dv8tion.jda.api.events.channel.voice.update.GenericVoiceChannelUpdateEvent
 import net.dv8tion.jda.api.events.channel.voice.update.VoiceChannelUpdateBitrateEvent
+import net.dv8tion.jda.api.events.channel.voice.update.VoiceChannelUpdatePositionEvent
 import net.dv8tion.jda.api.events.emote.EmoteAddedEvent
 import net.dv8tion.jda.api.events.emote.EmoteRemovedEvent
 import net.dv8tion.jda.api.events.emote.update.EmoteUpdateRolesEvent
@@ -92,6 +96,7 @@ import net.dv8tion.jda.api.events.role.RoleDeleteEvent
 import net.dv8tion.jda.api.events.role.update.GenericRoleUpdateEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdateColorEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent
+import net.dv8tion.jda.api.events.role.update.RoleUpdatePositionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.slf4j.kotlin.*
 
@@ -99,7 +104,6 @@ import org.slf4j.kotlin.*
 class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     private val logger by getLogger()
     
-    private val tempLogChannel by lazy { bot.jda.getTextChannelById(853107014766559243L)!! }
     private val messageCache = bot.cacheManager.messageCache
     
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
@@ -122,7 +126,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         
             messageCache.putMessage(message)
         
-            loggingEmbed(tempLogChannel, event.guild, event.author, event.channel, message, message.timeEdited!!) {
+            loggingEmbed(event.guild, event.author, event.channel, message, message.timeEdited!!) {
                 description = "**${message.author.asMention} edited a message in ${message.textChannel.asMention}.**"
             
                 field {
@@ -149,14 +153,14 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                         .onErrorMap { null }
                         .await()
         
-                loggingEmbed(tempLogChannel, event.guild, user, event.channel) {
+                loggingEmbed(event.guild, user, event.channel) {
                     description = buildString {
                         append("**")
                         append("<@").append(message.author).append('>')
                         append("'s message in ")
                         append("<#").append(message.channel).append('>')
                         append(" was deleted.**\n")
-    
+                
                         if (message.content.length > 1024 - this.length)
                             append(message.content.substring(0, 1020 - this.length)).append("\n...")
                         else
@@ -171,7 +175,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         val allowedPermissions = event.permissionOverride.allowed
         val deniedPermissions = event.permissionOverride.denied
     
-        loggingEmbed(tempLogChannel, "Guild Text Channel Permission Delete", event.guild, event.channel) {
+        loggingEmbed("Guild Text Channel Permission Delete", event.guild, event.channel) {
             description = "**Removed Permissions for ${event.channel.asMention}.**\nChanged permissions for " +
                     if (event.isMemberOverride)
                         "member ${event.member!!.asMention}."
@@ -199,7 +203,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         val newAllow = event.permissionOverride.allowed.subtract(event.oldAllow)
         val newDeny = event.permissionOverride.denied.subtract(event.oldDeny)
     
-        loggingEmbed(tempLogChannel, "Channel Permission Update", event.guild, event.channel) {
+        loggingEmbed("Channel Permission Update", event.guild, event.channel) {
             description = "**Updated Permissions for ${event.channel.asMention}.**\nChanged permissions for " +
                     if (event.isMemberOverride)
                         "member ${event.member!!.asMention}."
@@ -233,7 +237,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         val allowedPermissions = event.permissionOverride.allowed
         val deniedPermissions = event.permissionOverride.denied
     
-        loggingEmbed(tempLogChannel, "Channel Permission Created", event.guild, event.channel) {
+        loggingEmbed("Channel Permission Created", event.guild, event.channel) {
             description = "**Created Permissions for ${event.channel.asMention}.**\nChanged permissions for " +
                     if (event.isMemberOverride)
                         "member ${event.member!!.asMention}."
@@ -252,23 +256,26 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     }
     
     override fun onTextChannelDelete(event: TextChannelDeleteEvent) {
-        loggingEmbed(tempLogChannel, "Text Channel Deleted", event.guild, event.channel) {
+        loggingEmbed("Text Channel Deleted", event.guild, event.channel) {
             description = "**Deleted text channel `#${event.channel.name}`.**"
         }
     }
     
     override fun onTextChannelCreate(event: TextChannelCreateEvent) {
-        loggingEmbed(tempLogChannel, "Text Channel Created", event.guild, event.channel) {
+        loggingEmbed("Text Channel Created", event.guild, event.channel) {
             description = "**Created text channel ${event.channel.asMention}.**"
         }
     }
     
     override fun onGenericTextChannelUpdate(event: GenericTextChannelUpdateEvent<*>) {
-        loggingEmbed(tempLogChannel, "Text Channel Updated", event.guild, event.channel) {
+        if (event is TextChannelUpdatePositionEvent)
+            return
+    
+        loggingEmbed("Text Channel Updated", event.guild, event.channel) {
             description = "**Updated text channel ${event.channel.asMention} ${event.propertyIdentifier.replace('_', ' ')} setting.**"
-            
+        
             val (old, new) = event.valueString
-            
+        
             field {
                 name = "Previous Setting"
                 value = old
@@ -281,23 +288,26 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     }
     
     override fun onVoiceChannelDelete(event: VoiceChannelDeleteEvent) {
-        loggingEmbed(tempLogChannel, "Voice Channel Deleted", event.guild, event.channel) {
+        loggingEmbed("Voice Channel Deleted", event.guild, event.channel) {
             description = "**Deleted voice channel `#${event.channel.name}`.**"
         }
     }
     
     override fun onVoiceChannelCreate(event: VoiceChannelCreateEvent) {
-        loggingEmbed(tempLogChannel, "Voice Channel Created", event.guild, event.channel) {
+        loggingEmbed("Voice Channel Created", event.guild, event.channel) {
             description = "**Created voice channel ${event.channel.asMention}.**"
         }
     }
     
     override fun onGenericVoiceChannelUpdate(event: GenericVoiceChannelUpdateEvent<*>) {
-        loggingEmbed(tempLogChannel, "Voice Channel Updated", event.guild, event.channel) {
+        if (event is VoiceChannelUpdatePositionEvent)
+            return
+    
+        loggingEmbed("Voice Channel Updated", event.guild, event.channel) {
             description = "**Updated voice channel ${event.channel.asMention} ${event.propertyIdentifier.replace('_', ' ')} setting.**"
-            
+        
             val (old, new) = event.valueString
-            
+        
             field {
                 name = "Previous Setting"
                 value = old
@@ -310,23 +320,26 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     }
     
     override fun onCategoryDelete(event: CategoryDeleteEvent) {
-        loggingEmbed(tempLogChannel, "Category Deleted", event.guild, event.category) {
+        loggingEmbed("Category Deleted", event.guild, event.category) {
             description = "**Deleted category `#${event.category.name}`.**"
         }
     }
     
     override fun onCategoryCreate(event: CategoryCreateEvent) {
-        loggingEmbed(tempLogChannel, "Voice Channel Created", event.guild, event.category) {
+        loggingEmbed("Voice Channel Created", event.guild, event.category) {
             description = "**Created category channel ${event.category.asMention}.**"
         }
     }
     
     override fun onGenericCategoryUpdate(event: GenericCategoryUpdateEvent<*>) {
-        loggingEmbed(tempLogChannel, "Category Updated", event.guild, event.category) {
+        if (event is CategoryUpdatePositionEvent)
+            return
+    
+        loggingEmbed("Category Updated", event.guild, event.category) {
             description = "**Updated category channel ${event.category.asMention} ${event.propertyIdentifier.replace('_', ' ')} setting.**"
-            
+        
             val (old, new) = event.valueString
-            
+        
             field {
                 name = "Previous Setting"
                 value = old
@@ -342,7 +355,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         bot.scope.launch {
             val bannedUser: Guild.Ban? = event.guild.retrieveBan(event.user).onErrorMap { null }.await()
     
-            loggingEmbed(tempLogChannel, event.guild, event.user) {
+            loggingEmbed(event.guild, event.user) {
                 description = """
                 **Banned user ${event.user.asTag}.**
                 Banned by ${bannedUser?.user ?: "Unknown"} for ${bannedUser?.run { reason ?: "No reason provided" } ?: "Unknown"}
@@ -357,7 +370,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                 return@takeUntilAsync it.targetIdLong == event.user.idLong
             }.await().firstOrNull()
     
-            loggingEmbed(tempLogChannel, event.guild, event.user) {
+            loggingEmbed(event.guild, event.user) {
                 description = if (bannedUser == null)
                     "**Unbanned user ${event.user.asTag}.**"
                 else
@@ -370,23 +383,23 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     }
     
     override fun onGuildMemberRemove(event: GuildMemberRemoveEvent) {
-        loggingEmbed(tempLogChannel, event.guild, event.user) {
+        loggingEmbed(event.guild, event.user) {
             description = "**User ${event.user.asTag} has left the guild.**"
         }
     }
     
     override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
-        loggingEmbed(tempLogChannel, event.guild, event.user) {
+        loggingEmbed(event.guild, event.user) {
             description = "**Used ${event.user.asMention} has joined the guild.**"
         }
     }
     
     override fun onGenericGuildUpdate(event: GenericGuildUpdateEvent<*>) {
-        loggingEmbed(tempLogChannel, "Guild Updated", event.guild) {
+        loggingEmbed("Guild Updated", event.guild) {
             description = "**Updated guild ${event.propertyIdentifier.replace('_', ' ')} setting.**"
-            
+        
             val (old, new) = event.valueString
-            
+        
             field {
                 name = "Previous Setting"
                 value = old
@@ -401,12 +414,12 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     override fun onGenericGuildMemberUpdate(event: GenericGuildMemberUpdateEvent<*>) {
         if (event is GuildMemberUpdateBoostTimeEvent || event is GuildMemberUpdatePendingEvent)
             return
-        
-        loggingEmbed(tempLogChannel, "Guild Member Updated", event.guild) {
+    
+        loggingEmbed("Guild Member Updated", event.guild) {
             description = "**Updated guild member ${event.member.asMention} ${event.propertyIdentifier.replace('_', ' ')} setting.**"
-            
+        
             val (old, new) = event.valueString
-            
+        
             field {
                 name = "Previous Setting"
                 value = old
@@ -419,48 +432,51 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     }
     
     override fun onGuildInviteCreate(event: GuildInviteCreateEvent) {
-        loggingEmbed(tempLogChannel, "Guild Invite Created", event.guild, event.channel) {
+        loggingEmbed("Guild Invite Created", event.guild, event.channel) {
             description = "**Created guild invite ${event.invite.url} for channel ${event.channel.asMention}.**" +
                     event.invite.inviter?.run { "Created by $asMention (ID: $id)" }.orEmpty()
         }
     }
     
     override fun onGuildInviteDelete(event: GuildInviteDeleteEvent) {
-        loggingEmbed(tempLogChannel, "Guild Invite Deleted", event.guild, event.channel) {
+        loggingEmbed("Guild Invite Deleted", event.guild, event.channel) {
             description = "**Deleted guild invite for channel ${event.channel.asMention}.**"
         }
     }
     
     override fun onGuildMemberRoleAdd(event: GuildMemberRoleAddEvent) {
-        loggingEmbed(tempLogChannel, "Member Roles Updated", event.guild) {
+        loggingEmbed("Member Roles Updated", event.guild) {
             description = "**Added roles ${event.roles.joinToString { it.asMention }} to user ${event.user}.**"
         }
     }
     
     override fun onGuildMemberRoleRemove(event: GuildMemberRoleRemoveEvent) {
-        loggingEmbed(tempLogChannel, "Member Roles Updated", event.guild) {
+        loggingEmbed("Member Roles Updated", event.guild) {
             description = "**Removed roles ${event.roles.joinToString { it.asMention }} to user ${event.user}.**"
         }
     }
     
     override fun onRoleCreate(event: RoleCreateEvent) {
-        loggingEmbed(tempLogChannel, "Role Created", event.guild) {
+        loggingEmbed("Role Created", event.guild) {
             description = "**Created role ${event.role.asMention}**"
         }
     }
     
     override fun onRoleDelete(event: RoleDeleteEvent) {
-        loggingEmbed(tempLogChannel, "Role Deleted", event.guild) {
+        loggingEmbed("Role Deleted", event.guild) {
             description = "**Deleted role `@${event.role.name}`.**"
         }
     }
     
     override fun onGenericRoleUpdate(event: GenericRoleUpdateEvent<*>) {
-        loggingEmbed(tempLogChannel, "Role Updated", event.guild) {
+        if (event is RoleUpdatePositionEvent)
+            return
+    
+        loggingEmbed("Role Updated", event.guild) {
             description = "**Updated role ${event.role.asMention} ${event.propertyIdentifier.replace('_', ' ')} setting.**"
-            
+        
             val (old, new) = event.valueString
-            
+        
             field {
                 name = "Previous Setting"
                 value = old
@@ -473,23 +489,23 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     }
     
     override fun onEmoteAdded(event: EmoteAddedEvent) {
-        loggingEmbed(tempLogChannel, "Emote Created", event.guild) {
+        loggingEmbed("Emote Created", event.guild) {
             description = "**Created emote ${event.emote.asMention}**"
         }
     }
     
     override fun onEmoteRemoved(event: EmoteRemovedEvent) {
-        loggingEmbed(tempLogChannel, "Emote Deleted", event.guild) {
+        loggingEmbed("Emote Deleted", event.guild) {
             description = "**Deleted emote `:${event.emote.name}:`.**"
         }
     }
     
     override fun onGenericEmoteUpdate(event: GenericEmoteUpdateEvent<*>) {
-        loggingEmbed(tempLogChannel, "Guild Emote Updated", event.guild) {
+        loggingEmbed("Guild Emote Updated", event.guild) {
             description = "**Updated guild emote ${event.emote.asMention} ${event.propertyIdentifier.replace('_', ' ')} setting.**"
-            
+        
             val (old, new) = event.valueString
-            
+        
             field {
                 name = "Previous Setting"
                 value = old
@@ -501,8 +517,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         }
     }
     
-    private fun loggingEmbed(loggingChannel: TextChannel,
-                             guild: Guild,
+    private fun loggingEmbed(guild: Guild,
                              user: User?,
                              channel: GuildChannel? = null,
                              message: Message? = null,
@@ -511,23 +526,21 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         val author = user?.asTag ?: Constants.defaultUsername
         val icon = user?.effectiveAvatarUrl ?: Constants.defaultAvatarUrl
         
-        loggingEmbedImpl(loggingChannel, author, icon, guild, channel ?: message?.textChannel, user, message, time, block)
+        loggingEmbedImpl(author, icon, guild, channel ?: message?.textChannel, user, message, time, block)
     }
     
     
-    private fun loggingEmbed(loggingChannel: TextChannel,
-                             eventName: String,
+    private fun loggingEmbed(eventName: String,
                              guild: Guild,
                              channel: GuildChannel? = null,
                              time: OffsetDateTime = OffsetDateTime.now(),
                              block: (InlineEmbed).() -> Unit) {
         val authorName = "$eventName | ${channel?.name ?: guild.name}"
         
-        loggingEmbedImpl(loggingChannel, authorName, guild.iconUrl, guild, channel, time = time, block = block)
+        loggingEmbedImpl(authorName, guild.iconUrl, guild, channel, time = time, block = block)
     }
     
-    private fun loggingEmbedImpl(loggingChannel: TextChannel,
-                                 eventName: String,
+    private fun loggingEmbedImpl(eventName: String,
                                  eventIcon: String?,
                                  guild: Guild,
                                  channel: GuildChannel?,
@@ -535,6 +548,9 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                                  message: Message? = null,
                                  time: OffsetDateTime,
                                  block: InlineEmbed.() -> Unit) {
+        val polyGuild = guild.poly(bot)
+        val loggingChannel = polyGuild.data.loggingChannel ?: return
+        
         val embed = Embed {
             color = logEmbedColour
             author {
@@ -542,7 +558,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                 iconUrl = eventIcon
             }
             block(this)
-    
+            
             idFooter(time, guild.idLong, channel?.idLong, user?.idLong, message?.idLong)
         }
         
