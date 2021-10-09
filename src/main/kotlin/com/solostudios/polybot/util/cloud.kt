@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file cloud.kt is part of PolyhedralBot
- * Last modified on 03-10-2021 05:38 p.m.
+ * Last modified on 04-10-2021 06:58 p.m.
  *
  * MIT License
  *
@@ -32,7 +32,6 @@ import cloud.commandframework.CommandManager
 import cloud.commandframework.CommandTree
 import cloud.commandframework.annotations.AnnotationAccessor
 import cloud.commandframework.annotations.AnnotationParser
-import cloud.commandframework.annotations.MethodCommandExecutionHandler
 import cloud.commandframework.annotations.injection.ParameterInjectorRegistry
 import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.arguments.parser.ParserParameters
@@ -43,18 +42,6 @@ import cloud.commandframework.execution.preprocessor.CommandPreprocessor
 import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.types.tuples.Triplet
 import io.leangen.geantyref.TypeToken
-import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.Method
-import java.util.concurrent.CompletableFuture
-import java.util.function.Predicate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.future.future
-import org.slf4j.kotlin.*
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.reflect.full.callSuspend
-import kotlin.reflect.jvm.kotlinFunction
 
 fun <C> AnnotationParser<C>.parseCommands(vararg instances: Any) {
     for (instance in instances)
@@ -106,40 +93,3 @@ operator fun <U, V, W> Triplet<U, V, W>.component3(): W = this.third
 operator fun <U, V, W> Triplet<U, V, W>.component2(): V = this.second
 
 operator fun <U, V, W> Triplet<U, V, W>.component1(): U = this.first
-
-
-fun <C> AnnotationParser<C>.addCoroutineSupport(
-        scope: CoroutineScope = MainScope(),
-        context: CoroutineContext = EmptyCoroutineContext,
-                                               ) {
-    val predicate = Predicate<Method> { it.kotlinFunction?.isSuspend == true }
-    registerCommandExecutionMethodFactory(predicate) {
-        KotlinMethodCommandExecutionHandler(scope, context, it)
-    }
-}
-
-private class KotlinMethodCommandExecutionHandler<C>(
-        private val coroutineScope: CoroutineScope,
-        private val coroutineContext: CoroutineContext,
-        context: CommandMethodContext<C>,
-                                                    ) : MethodCommandExecutionHandler<C>(context) {
-    private val logger by getLogger()
-    
-    override fun executeFuture(commandContext: CommandContext<C>): CompletableFuture<Void?> {
-        val instance = context().instance()
-        val params = createParameterValues(commandContext, commandContext.flags(), false)
-        // We need to propagate exceptions to the caller.
-        
-        val future = coroutineScope.future<Void?> {
-            try {
-                context().method().kotlinFunction!!.callSuspend(instance, *params.toTypedArray())
-            } catch (e: InvocationTargetException) {
-                logger.warn(e) { "invocation exception" }
-                e.cause?.let { throw it }
-            }
-            null
-        }
-        
-        return future
-    }
-}

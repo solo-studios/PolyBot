@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:33 p.m.
+ * Last modified on 09-10-2021 06:06 p.m.
  *
  * MIT License
  *
@@ -40,24 +40,24 @@ import org.slf4j.kotlin.*
 class SearchManager(val bot: PolyBot) : ShutdownService() {
     private val logger by getLogger()
     
-    val searchIndexes: Map<String, Index>
+    val searchIndexes: Map<String, Index<*>>
     
-    val defaultIndex: Index
+    val defaultIndex: Index<*>
     
     init {
         val searchConfig = bot.config.searchConfig
-        val indexes = mutableMapOf<String, Index>()
-        var default: Index? = null
-        
+        val indexes = mutableMapOf<String, Index<*>>()
+        var default: Index<*>? = null
+    
         for (location in searchConfig.searchLocations) {
             when (location) {
                 is GithubWikiSearchLocation -> {
                     val diskCache = FSDirectory.open(bot.getCacheDirectory("search", location.name))
                     val diskRamCache = NRTCachingDirectory(diskCache, 5.0, 60.0)
-    
+                
                     val index = GithubWikiIndex(bot, location, diskRamCache)
                     indexes[location.name] = index
-    
+                
                     if (location.name == searchConfig.default)
                         default = index
                 }

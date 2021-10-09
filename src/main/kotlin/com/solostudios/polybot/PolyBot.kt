@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 03-10-2021 06:58 p.m.
+ * Last modified on 09-10-2021 06:06 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package com.solostudios.polybot
 
 import cloud.commandframework.annotations.AnnotationParser
+import cloud.commandframework.kotlin.coroutines.installCoroutineSupport
 import cloud.commandframework.meta.SimpleCommandMeta
 import com.solostudios.polybot.cache.CacheManager
 import com.solostudios.polybot.cloud.CloudInjectorService
@@ -61,7 +62,6 @@ import com.solostudios.polybot.service.ShutdownService
 import com.solostudios.polybot.util.AnnotationParser
 import com.solostudios.polybot.util.BackedReference
 import com.solostudios.polybot.util.ScheduledThreadPool
-import com.solostudios.polybot.util.addCoroutineSupport
 import com.solostudios.polybot.util.currentThread
 import com.solostudios.polybot.util.fixedRate
 import com.solostudios.polybot.util.onlineStatus
@@ -159,7 +159,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
     val annotationParser: AnnotationParser<MessageEvent> = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
         parameterInjectorRegistry.registerInjectionService(CloudInjectorService(this@PolyBot))
     
-        addCoroutineSupport(this@PolyBot.scope)
+        installCoroutineSupport(this@PolyBot.scope)
     
         registerBuilderModifier(JDABotPermission::class.java, PolyMeta::botPermissionModifier)
         registerBuilderModifier(JDAUserPermission::class.java, PolyMeta::userPermissionModifier)

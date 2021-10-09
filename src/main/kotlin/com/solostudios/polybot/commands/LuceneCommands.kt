@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 03-10-2021 06:49 p.m.
+ * Last modified on 09-10-2021 06:06 p.m.
  *
  * MIT License
  *
@@ -30,19 +30,22 @@ package com.solostudios.polybot.commands
 
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandMethod
+import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.Hidden
 import cloud.commandframework.annotations.specifier.Greedy
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.cloud.commands.PolyCommandContainer
 import com.solostudios.polybot.cloud.commands.PolyCommands
 import com.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import com.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import com.solostudios.polybot.entities.PolyMessage
+import com.solostudios.polybot.entities.PolyUser
+import com.solostudios.polybot.search.GithubWikiIndex
+import com.solostudios.polybot.util.MarkdownHeaderVisitor
+import com.solostudios.polybot.util.PaginationMenu
 import com.solostudios.polybot.util.get
-import org.intellij.markdown.MarkdownElementTypes
-import org.intellij.markdown.MarkdownTokenTypes
-import org.intellij.markdown.ast.ASTNode
-import org.intellij.markdown.ast.visitors.RecursiveVisitor
+import java.awt.Color
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 import org.slf4j.kotlin.*
@@ -51,43 +54,79 @@ import org.slf4j.kotlin.*
 @PolyCategory(UTIL_CATEGORY)
 @PolyCommandContainer
 class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
+    private val eventWaiter = EventWaiter(bot.scheduledThreadPool, false).apply { bot.jda.addEventListener(this) }
+    
     private val logger by getLogger()
     
     @CommandMethod("lucene markdown <markdown>")
     @JDAUserPermission(ownerOnly = true)
-    fun lucene(message: PolyMessage,
-               @Greedy
-               @Argument("markdown")
-               markdown: String) {
+    suspend fun lucene(message: PolyMessage,
+                       @Greedy
+                       @Argument("markdown")
+                       markdown: String) {
         val flavour = CommonMarkFlavourDescriptor()
         val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(markdown)
         
-        val visitor = HeaderVisitor()
+        val visitor = MarkdownHeaderVisitor()
         
         visitor.visitNode(parsedTree)
         
         visitor.headers.forEach {
             logger.info { "Header: ${markdown[it.first, it.last].trim()}" }
+            message.reply("Header: ${markdown[it.first, it.last].trim()}")
         }
         
         // message.reply(writer.writeValueAsString(parsedTree)).mentionRepliedUser(false).queue()
     }
     
-    private class HeaderVisitor : RecursiveVisitor() {
-        val headers = mutableListOf<IntRange>()
-        
-        override fun visitNode(node: ASTNode) {
-            if (node.type == MarkdownElementTypes.ATX_1 || node.type == MarkdownElementTypes.ATX_2 ||
-                node.type == MarkdownElementTypes.ATX_3 || node.type == MarkdownElementTypes.ATX_4 ||
-                node.type == MarkdownElementTypes.ATX_5 || node.type == MarkdownElementTypes.ATX_6) {
-                val content = node.children.find { astNode -> astNode.type == MarkdownTokenTypes.ATX_CONTENT }
-                
-                if (content != null) {
-                    headers += content.startOffset .. content.endOffset
-                }
-            } else {
-                super.visitNode(node)
+    @CommandMethod("lucene search <query>")
+    suspend fun search(message: PolyMessage,
+                       user: PolyUser,
+                       @Greedy
+                       @Argument("query")
+                       query: String,
+                       @Flag(value = "quick", aliases = ["q"])
+                       quick: Boolean = false) {
+        try {
+            val results = (bot.searchManager.defaultIndex as GithubWikiIndex).search(query, maxResults = 50)
+            
+            if (quick) {
+                message.reply(results.first().simple)
             }
+            
+            val menu = PaginationMenu.Builder().apply {
+                title = "Search"
+                text = { _, _ -> """Search results for "$query"""" }
+                color = { _, _ -> Color.GREEN }
+                eventWaiter = this@LuceneCommands.eventWaiter
+                users = listOf(user.jdaUser)
+                finalAction = { msg -> msg.clearReactions().queue() }
+                
+                itemsPerPage = 6
+                showPageNumbers = true
+                numberItems = true
+                waitOnSinglePage = false
+                bulkSkipNumber = 5
+                wrapPageEnds = false
+                allowTextInput = false
+                
+                items = results.map { it.title to it.body }
+            }.build()
+            
+            menu.display(message.channel.jdaChannel)
+        } catch (e: Exception) {
+            logger.warn(e) { "Error while searching" }
+        }
+    }
+    
+    @CommandMethod("lucene update")
+    suspend fun update(message: PolyMessage) {
+        try {
+            bot.searchManager.defaultIndex.updateIndex()
+            
+            message.reply("Updated index")
+        } catch (e: Exception) {
+            logger.warn(e) { "Error while updating" }
         }
     }
 }

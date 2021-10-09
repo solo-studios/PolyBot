@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file GithubWikiSearchLocation.kt is part of PolyhedralBot
- * Last modified on 04-10-2021 08:54 p.m.
+ * The file MarkdownHeaderVisitor.kt is part of PolyhedralBot
+ * Last modified on 04-10-2021 12:00 a.m.
  *
  * MIT License
  *
@@ -26,17 +26,27 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot.config.search
+package com.solostudios.polybot.util
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import org.intellij.markdown.MarkdownElementTypes
+import org.intellij.markdown.MarkdownTokenTypes
+import org.intellij.markdown.ast.ASTNode
+import org.intellij.markdown.ast.visitors.RecursiveVisitor
 
-class GithubWikiSearchLocation(
-        @JsonProperty("repo")
-        val repoName: String,
-        @JsonProperty("wiki")
-        val wikiRepo: String = repoName,
-        @JsonProperty("owner")
-        val repoOwner: String,
-        @JsonProperty("name")
-        name: String,
-                              ) : SearchLocation(name)
+class MarkdownHeaderVisitor : RecursiveVisitor() {
+    val headers = mutableListOf<IntRange>()
+    
+    override fun visitNode(node: ASTNode) {
+        if (node.type == MarkdownElementTypes.ATX_1 || node.type == MarkdownElementTypes.ATX_2 ||
+            node.type == MarkdownElementTypes.ATX_3 || node.type == MarkdownElementTypes.ATX_4 ||
+            node.type == MarkdownElementTypes.ATX_5 || node.type == MarkdownElementTypes.ATX_6) {
+            val content = node.children.find { astNode -> astNode.type == MarkdownTokenTypes.ATX_CONTENT }
+            
+            if (content != null) {
+                headers += content.startOffset .. content.endOffset
+            }
+        } else {
+            super.visitNode(node)
+        }
+    }
+}

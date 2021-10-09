@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 19-09-2021 06:33 p.m.
+ * Last modified on 09-10-2021 06:06 p.m.
  *
  * MIT License
  *
@@ -112,12 +112,12 @@ class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
                                 imageUrl = embed.image?.url
     
                                 if (embed.footer != null)
-                                    footer(embed.footer.text, embed.footer?.iconUrl)
+                                    footer(embed.footer!!.text ?: "", embed.footer?.iconUrl)
                                 if (embed.author != null)
-                                    author(embed.author.name, embed.author?.iconUrl, embed.author?.url)
+                                    author(embed.author!!.name ?: "", embed.author?.iconUrl, embed.author?.url)
     
                                 for (field in embed.fields) {
-                                    field(field.name, field.value, field.isInline)
+                                    field(field.name ?: "", field.value ?: "", field.isInline)
                                 }
                             }
                         }

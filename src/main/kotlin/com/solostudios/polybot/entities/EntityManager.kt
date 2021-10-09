@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 25-09-2021 09:41 p.m.
+ * Last modified on 09-10-2021 06:06 p.m.
  *
  * MIT License
  *
@@ -90,7 +90,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
     private val guildCache = CacheBuilder.newBuilder()
             .expireAfterAccess(20, TimeUnit.MINUTES)
             .maximumSize(1_000)
-            .removalListener<Long, PolyGuildData> { (key: Long, value: PolyGuildData) ->
+            .removalListener<Long, PolyGuildData> { (key: Long?, value: PolyGuildData?) ->
                 if (key != null && value != null) {
                     saveGuildData(value)
                 } else {
@@ -102,7 +102,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
     private val memberCache = CacheBuilder.newBuilder()
             .expireAfterAccess(5, TimeUnit.MINUTES)
             .maximumSize(10_000)
-            .removalListener<Pair<Long, Long>, PolyMemberData> { (key: Pair<Long, Long>, value: PolyMemberData) ->
+            .removalListener<Pair<Long, Long>, PolyMemberData> { (key: Pair<Long, Long>?, value: PolyMemberData?) ->
                 if (key != null && value != null) {
                     saveMemberData(value)
                 } else {
@@ -120,7 +120,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
     
     fun saveWarn(warnData: PolyWarnData) = saveWarnData(warnData)
     
-    fun getGuild(guild: PolyGuild): PolyGuildData = guildCache[guild.id]!!
+    fun getGuild(guild: PolyGuild): PolyGuildData = guildCache[guild.id]
     
     private fun getMemberData(guildId: Long, memberId: Long): PolyMemberData {
         return transaction(db) {

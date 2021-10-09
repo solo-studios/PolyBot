@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubWikiIndex.kt is part of PolyhedralBot
- * Last modified on 01-09-2021 06:18 p.m.
+ * Last modified on 09-10-2021 06:06 p.m.
  *
  * MIT License
  *
@@ -31,45 +31,129 @@
 package com.solostudios.polybot.search
 
 import com.github.kittinunf.fuel.core.FuelManager
-import com.github.kittinunf.fuel.coroutines.awaitUnit
+import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import com.solostudios.polybot.PolyBot
 import com.solostudios.polybot.config.search.GithubWikiSearchLocation
-import java.io.File
-import java.util.zip.ZipFile
+import com.solostudios.polybot.util.MarkdownHeaderVisitor
+import com.solostudios.polybot.util.get
+import java.io.InputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.apache.lucene.analysis.standard.StandardAnalyzer
+import org.apache.commons.compress.archivers.ArchiveEntry
+import org.apache.commons.compress.archivers.ArchiveInputStream
+import org.apache.commons.compress.archivers.ArchiveStreamFactory
+import org.apache.commons.compress.compressors.CompressorException
+import org.apache.commons.compress.compressors.CompressorStreamFactory
+import org.apache.commons.io.FilenameUtils
+import org.apache.lucene.analysis.en.EnglishAnalyzer
+import org.apache.lucene.document.Document
+import org.apache.lucene.document.Field
+import org.apache.lucene.document.StoredField
+import org.apache.lucene.document.TextField
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.store.Directory
+import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
+import org.intellij.markdown.parser.MarkdownParser
+import org.slf4j.kotlin.*
+
 
 class GithubWikiIndex(
         val bot: PolyBot,
         override val searchLocation: GithubWikiSearchLocation,
         cacheDirectory: Directory,
-                     ) : Index(StandardAnalyzer(), cacheDirectory) {
+                     ) : Index<GithubWikiResult>(EnglishAnalyzer(),
+                                                 cacheDirectory,
+                                                 mapOf(
+                                                         HUMAN_NAME to 25.0f,
+                                                         HEADERS to 15.0f,
+                                                         BODY to 1.0f,
+                                                      )) {
+    private val logger by getLogger()
     private val fuel = FuelManager()
     
-    private val githubWiki = "https://github.com/${searchLocation.repoOwner}/${searchLocation.repoName}/archive/master"
-    private val githubWikiTarball = "$githubWiki.tar.gz"
-    private val githubWikiZip = "$githubWiki.zip"
+    private val githubWiki = "https://github.com/${searchLocation.repoOwner}/${searchLocation.repoName}/wiki"
+    private val githubWikiRepo = "https://github.com/${searchLocation.repoOwner}/${searchLocation.wikiRepo}/archive/master"
+    private val githubWikiTarball = "$githubWikiRepo.tar.gz"
+    private val githubWikiZipball = "$githubWikiRepo.zip"
     
     override suspend fun updateIndex(writer: IndexWriter) {
-        @Suppress("BlockingMethodInNonBlockingContext")
-        withContext(Dispatchers.IO) {
-            val temp = File.createTempFile("github_wiki", "zip")
+        val bytes = fuel.get(githubWikiTarball).awaitByteArray()
+        
+        val input = bytes.inputStream().archiveStream()
+        
+        var entry: ArchiveEntry?
+        while (input.nextEntry.also { entry = it } != null) {
+            val name = FilenameUtils.getBaseName(entry?.name)
+            val extension = FilenameUtils.getExtension(entry?.name)
             
-            fuel.download(githubWikiTarball).fileDestination { _, _ -> temp }.awaitUnit()
-            
-            
-            ZipFile(temp).use { zip ->
-                zip.entries().asSequence().forEach { entry ->
-                    zip.getInputStream(entry).use { input ->
+            when {
+                !input.canReadEntryData(entry)             -> continue
+                entry?.isDirectory == true                 -> continue
+                !extension.equals("md", ignoreCase = true) -> continue
+                name.startsWith("_")                       -> continue
+                
+                else                                       -> {
+                    val humanName = name.replace('-', ' ').replace('_', ' ')
                     
-                    }
+                    logger.info { "Creating index for $name.$extension" }
+                    
+                    val text = input.bufferedReader().readText()
+                    val document = Document()
+                    val markdown = markdownParser.buildMarkdownTreeFromString(text)
+                    val visitor = MarkdownHeaderVisitor().apply { visitNode(markdown) }
+                    val headers = visitor.headers.joinToString(separator = "\n") { text[it.first, it.last] }
+                    
+                    document.add(StoredField(NAME, name))
+                    
+                    document.add(TextField(HUMAN_NAME, humanName, Field.Store.YES))
+                    document.add(TextField(BODY, text, Field.Store.NO))
+                    document.add(TextField(HEADERS, headers, Field.Store.NO))
+                    
+                    
+                    @Suppress("BlockingMethodInNonBlockingContext")
+                    withContext(Dispatchers.IO) { writer.addDocument(document) }
                 }
             }
-            
         }
     }
     
+    
+    override fun mapDocument(document: Document): GithubWikiResult = GithubWikiResult(document[HUMAN_NAME], document[NAME], githubWiki)
+    
+    companion object {
+        const val NAME = "name"
+        const val BODY = "body"
+        const val HEADERS = "headers"
+        
+        const val HUMAN_NAME = "human_name"
+        private val markdownFlavour = CommonMarkFlavourDescriptor()
+        
+        private val markdownParser = MarkdownParser(markdownFlavour)
+        private val archiveStreamFactory = ArchiveStreamFactory()
+        private val compressorStreamFactory = CompressorStreamFactory()
+    }
+    
+    private fun InputStream.archiveStream(): ArchiveInputStream {
+        val buffered = this.buffered()
+        val stream = try {
+            compressorStreamFactory.createCompressorInputStream(buffered)
+        } catch (e: CompressorException) {
+            buffered
+        }
+        
+        return archiveStreamFactory.createArchiveInputStream(stream.buffered())
+    }
+    
+}
+
+data class GithubWikiResult(val humanName: String, val name: String, val baseUrl: String) : Result {
+    override val body: String
+        get() = humanName
+    override val title: String
+        get() = url
+    override val simple: String
+        get() = "<$url>"
+    
+    val url: String
+        get() = "$baseUrl/$name"
 }

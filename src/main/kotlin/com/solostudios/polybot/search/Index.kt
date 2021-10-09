@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 01-09-2021 04:58 p.m.
+ * Last modified on 09-10-2021 06:06 p.m.
  *
  * MIT License
  *
@@ -48,11 +48,11 @@ import kotlin.time.Duration
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
-abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : ShutdownService() {
+abstract class Index<T : Result>(analyzer: Analyzer, cacheDirectory: Directory, boosts: Map<String, Float>) : ShutdownService() {
     private val logger by getLogger()
     
-    private val indexWriterConfig = IndexWriterConfig(analyzer).setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND)
-    private val indexWriter = IndexWriter(cacheDirectory, indexWriterConfig)
+    private var indexWriterConfig = IndexWriterConfig(analyzer).setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND)
+    private var indexWriter = IndexWriter(cacheDirectory, indexWriterConfig)
     
     private var indexReader: DirectoryReader = DirectoryReader.open(indexWriter)
         get() {
@@ -74,20 +74,22 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : ShutdownSe
                 field
             }
         }
-    private val queryParserHelper = StandardQueryParser(analyzer).also {
-        it.allowLeadingWildcard = true
-        it.locale = Locale.US
-        it.timeZone = TimeZone.getTimeZone(ZoneId.of("America/New_York"))
+    
+    private val queryParserHelper = StandardQueryParser(analyzer).apply {
+        allowLeadingWildcard = true
+        locale = Locale.US
+        timeZone = TimeZone.getTimeZone(ZoneId.of("America/New_York"))
+        fieldsBoost = boosts
     }
     
-    fun search(searchQuery: String, maxResults: Int): List<Document> {
+    fun search(searchQuery: String, maxResults: Int = 10): List<T> {
         val (results: List<Document>, duration: Duration) = measureTimedValue {
             return@measureTimedValue indexSearcher.search(searchQuery.query(), maxResults).scoreDocs.map { indexSearcher.doc(it.doc) }
         }
         
         logger.info { "Search query $searchQuery took ${duration.shortFormat()} to execute, returning ${results.size} results." }
         
-        return results
+        return results.map(::mapDocument)
     }
     
     fun count(searchQuery: String): Int {
@@ -102,15 +104,19 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : ShutdownSe
     
     suspend fun updateIndex() {
         val duration = measureTime {
+            indexWriter.deleteAll()
             updateIndex(indexWriter)
+            indexWriter.commit()
         }
-        
+    
         logger.info { "Took ${duration.shortFormat()} to update the ${searchLocation.name} index." }
     }
     
     protected abstract val searchLocation: SearchLocation
     
     abstract suspend fun updateIndex(writer: IndexWriter)
+    
+    abstract fun mapDocument(document: Document): T
     
     override fun serviceShutdown() {
         indexReader.close()
@@ -119,4 +125,10 @@ abstract class Index(analyzer: Analyzer, cacheDirectory: Directory) : ShutdownSe
     }
     
     private fun String.query(): Query = queryParserHelper.parse(this, "body")
+}
+
+interface Result {
+    val title: String
+    val body: String
+    val simple: String
 }
