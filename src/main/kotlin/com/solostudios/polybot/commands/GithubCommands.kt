@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubCommands.kt is part of PolyhedralBot
- * Last modified on 03-10-2021 06:49 p.m.
+ * Last modified on 09-10-2021 06:09 p.m.
  *
  * MIT License
  *
@@ -45,8 +45,8 @@ import org.knowm.xchart.style.Styler
 import org.kohsuke.github.GitHub
 import org.slf4j.kotlin.*
 
-@PolyCategory(GITHUB_CATEGORY)
 @PolyCommandContainer
+@PolyCategory(GITHUB_CATEGORY)
 class GithubCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by org.slf4j.kotlin.getLogger()
     val github: GitHub = GitHub.connectAnonymously()

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotAdminCommands.kt is part of PolyhedralBot
- * Last modified on 03-10-2021 06:49 p.m.
+ * Last modified on 09-10-2021 06:09 p.m.
  *
  * MIT License
  *
@@ -39,14 +39,14 @@ import com.solostudios.polybot.entities.PolyMessage
 import org.slf4j.kotlin.*
 
 @Hidden
-@PolyCategory(BOT_ADMIN_CATEGORY)
 @PolyCommandContainer
+@PolyCategory(BOT_ADMIN_CATEGORY)
 class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
     @Hidden
-    @CommandMethod("shutdown")
     @JDAUserPermission(ownerOnly = true)
+    @CommandMethod("shutdown")
     suspend fun shutdown(message: PolyMessage) {
         message.reply("Shutting down PolyBot")
         logger.info { "Shutting down PolyBot" }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 03-10-2021 06:50 p.m.
+ * Last modified on 09-10-2021 06:09 p.m.
  *
  * MIT License
  *
@@ -46,14 +46,14 @@ import kotlinx.coroutines.launch
 import org.slf4j.kotlin.*
 
 @Hidden
-@PolyCategory(BOT_ADMIN_CATEGORY)
 @PolyCommandContainer
+@PolyCategory(BOT_ADMIN_CATEGORY)
 class MessageCacheCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
-    @CommandDescription("Get message from cache")
-    @CommandMethod("cache|msg-cache <id>")
     @JDAUserPermission(ownerOnly = true)
+    @CommandMethod("cache|msg-cache <id>")
+    @CommandDescription("Get message from cache")
     fun messageFromCache(message: PolyMessage,
                          @Argument("id")
                          id: Long) {

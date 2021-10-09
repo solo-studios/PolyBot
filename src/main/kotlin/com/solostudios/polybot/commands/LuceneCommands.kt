@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 06:06 p.m.
+ * Last modified on 09-10-2021 06:09 p.m.
  *
  * MIT License
  *
@@ -50,16 +50,16 @@ import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 import org.slf4j.kotlin.*
 
-@Hidden
-@PolyCategory(UTIL_CATEGORY)
 @PolyCommandContainer
+@PolyCategory(UTIL_CATEGORY)
 class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     private val eventWaiter = EventWaiter(bot.scheduledThreadPool, false).apply { bot.jda.addEventListener(this) }
     
     private val logger by getLogger()
     
-    @CommandMethod("lucene markdown <markdown>")
+    @Hidden
     @JDAUserPermission(ownerOnly = true)
+    @CommandMethod("lucene markdown <markdown>")
     suspend fun lucene(message: PolyMessage,
                        @Greedy
                        @Argument("markdown")
