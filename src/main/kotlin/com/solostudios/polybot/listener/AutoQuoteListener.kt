@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 06:06 p.m.
+ * Last modified on 09-10-2021 06:27 p.m.
  *
  * MIT License
  *
@@ -94,7 +94,7 @@ class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
                     }
                     
                     val webhookMessage = WebhookMessage {
-                        username = quotedMessage.author.asTag
+                        username = "${quotedMessage.author.asTag} (Quoted)"
                         avatarUrl = quotedMessage.author.effectiveAvatarUrl
                         if (quotedMessage.contentRaw.isNotEmpty())
                             content = quotedMessage.contentRaw
