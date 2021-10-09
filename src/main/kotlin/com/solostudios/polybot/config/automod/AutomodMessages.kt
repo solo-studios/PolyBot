@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AutomodDomainConfig.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 06:25 p.m.
+ * The file AutomodMessages.kt is part of PolyhedralBot
+ * Last modified on 09-10-2021 06:15 p.m.
  *
  * MIT License
  *
@@ -30,10 +30,13 @@ package com.solostudios.polybot.config.automod
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class AutomodDomainConfig(
-        @JsonProperty("malicious")
-        val maliciousDomains: MaliciousDomains,
-        @JsonProperty("safe")
-        val safeDomains: SafeDomains,
-
-        )
+data class AutomodMessages(
+        @JsonProperty("warn")
+        val warn: String,
+        @JsonProperty("mute")
+        val mute: String,
+        @JsonProperty("kick")
+        val kick: String,
+        @JsonProperty("ban")
+        val ban: String,
+                          )

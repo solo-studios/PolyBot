@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutomodConfig.kt is part of PolyhedralBot
- * Last modified on 09-07-2021 03:32 p.m.
+ * Last modified on 09-10-2021 06:15 p.m.
  *
  * MIT License
  *
@@ -30,5 +30,9 @@ package com.solostudios.polybot.config.automod
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class AutomodConfig(@JsonProperty("domains")
-                         val automodDomainConfig: AutomodDomainConfig)
+data class AutomodConfig(
+        @JsonProperty("domains")
+        val automodDomainConfig: AutomodDomainConfig,
+        @JsonProperty("messages")
+        val messages: AutomodMessages,
+                        )
