@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 09:58 p.m.
+ * Last modified on 09-10-2021 09:59 p.m.
  *
  * MIT License
  *
@@ -49,6 +49,7 @@ import gay.solonovamax.exposed.migrations.runMigrations
 import java.util.concurrent.TimeUnit
 import kotlinx.uuid.UUID
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.kotlin.*
@@ -63,26 +64,29 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
         val config = bot.config.databaseConfig
         
         logger.info { "Connecting to bot database" }
-        
+    
         val hikariConfig = HikariConfig().apply {
             jdbcUrl = config.url
             driverClassName = config.driver
             username = config.username
             password = config.password
         }
-        
+    
         hikari = HikariDataSource(hikariConfig)
-        
-        db = Database.connect(hikari)
-        db.useNestedTransactions = true
-        
+    
+        val dbConfig = DatabaseConfig {
+            useNestedTransactions = true
+        }
+    
+        db = Database.connect(datasource = hikari, databaseConfig = dbConfig)
+    
         logger.info { "Connected to bot database. Loading migrations..." }
         val migrations = loadMigrationsFrom("com.solostudios.polybot.entities.data.db.migrations")
-        
+    
         logger.info { "Migrations loaded. Running migrations..." }
-        
+    
         runMigrations(migrations, db)
-        
+    
         logger.info { "Ran migrations successfully." }
     }
     
