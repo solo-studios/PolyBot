@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyRole.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:21 p.m.
  *
  * MIT License
  *
@@ -31,4 +31,5 @@ package ca.solostudios.polybot.entities
 import ca.solostudios.polybot.PolyBot
 import net.dv8tion.jda.api.entities.Role
 
+@Suppress("unused")
 class PolyRole(val bot: PolyBot, val jdaRole: Role)

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 09-10-2021 11:27 p.m.
  *
  * MIT License
  *
@@ -36,11 +36,8 @@ import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.slf4j.kotlin.*
 
 class BotPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T> {
-    private val logger by getLogger()
-    
     @Suppress("DuplicatedCode")
     override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
         val context = postprocessingContext.commandContext

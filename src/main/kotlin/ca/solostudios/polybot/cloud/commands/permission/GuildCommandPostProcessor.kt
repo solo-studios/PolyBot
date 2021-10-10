@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GuildCommandPostProcessor.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 09-10-2021 11:20 p.m.
  *
  * MIT License
  *
@@ -34,11 +34,8 @@ import cloud.commandframework.execution.postprocessor.CommandPostprocessingConte
 import cloud.commandframework.execution.postprocessor.CommandPostprocessor
 import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.slf4j.kotlin.*
 
 class GuildCommandPostProcessor<C>(val bot: PolyBot) : CommandPostprocessor<C> {
-    private val logger by getLogger()
-    
     @Suppress("DuplicatedCode")
     override fun accept(postprocessingContext: CommandPostprocessingContext<C>) {
         val context = postprocessingContext.commandContext

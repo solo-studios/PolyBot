@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 09-10-2021 11:20 p.m.
  *
  * MIT License
  *
@@ -97,12 +97,9 @@ import net.dv8tion.jda.api.events.role.update.RoleUpdateColorEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePositionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import org.slf4j.kotlin.*
 
 @Suppress("RedundantOverride")
 class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
-    private val logger by getLogger()
-    
     private val messageCache = bot.cacheManager.messageCache
     
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {

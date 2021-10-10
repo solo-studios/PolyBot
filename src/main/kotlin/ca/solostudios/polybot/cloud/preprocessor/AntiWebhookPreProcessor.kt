@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AntiWebhookPreProcessor.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * Last modified on 09-10-2021 11:14 p.m.
  *
  * MIT License
  *
@@ -33,7 +33,6 @@ import cloud.commandframework.execution.preprocessor.CommandPreprocessor
 import cloud.commandframework.jda.JDA4CommandManager
 import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.checkerframework.checker.units.qual.C
 
 class AntiWebhookPreProcessor<C>(private val mgr: JDA4CommandManager<C>) : CommandPreprocessor<C> {
     override fun accept(context: CommandPreprocessingContext<C>) {

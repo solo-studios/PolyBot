@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:19 p.m.
  *
  * MIT License
  *
@@ -165,8 +165,6 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
             val channel: PolyMessageChannel,
             private val bulkQuery: Int = 24,
                                      ) : Sequence<PolyMessage> {
-        private val logger by getLogger()
-        
         private val history = channel.jdaChannel.history
         
         override fun iterator(): Iterator<PolyMessage> = object : Iterator<PolyMessage> {

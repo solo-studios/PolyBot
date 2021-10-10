@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file util.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:27 p.m.
  *
  * MIT License
  *
@@ -25,6 +25,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+@file:Suppress("unused")
 
 package ca.solostudios.polybot.util
 
@@ -51,6 +53,7 @@ import java.util.Optional
  * @param size Function giving the size of an item.
  * @author [gidds](https://stackoverflow.com/users/10134209/gidds)
  */
+@Suppress("SpellCheckingInspection", "KDocUnresolvedReference")
 inline fun <T> Iterable<T>.chunkedBy(maxSize: Int, size: T.() -> Int): List<List<T>> {
     val result = mutableListOf<List<T>>()
     var sublist = mutableListOf<T>()

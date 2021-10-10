@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:20 p.m.
  *
  * MIT License
  *
@@ -47,15 +47,11 @@ import cloud.commandframework.annotations.specifier.Greedy
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import dev.minn.jda.ktx.Embed
 import java.awt.Color
-import org.slf4j.kotlin.*
 
+@Suppress("RedundantSuspendModifier")
 @PolyCommandContainer
 @PolyCategory(UTIL_CATEGORY)
 class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
-    private val logger by getLogger()
-    
-    private val commandManager = bot.commandManager
-    private val prefix = bot.config.botConfig.prefix
     private val helpHandler = HelpCommandHandler(bot).apply {
         addCommandFilter { _, command -> command.hidden }
         addCommandFilter { member, command -> if (command.ownerOnly) !member.isOwner else false }
@@ -87,21 +83,20 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
         
         when (val helpTopic = helpHandler.queryHelp(member, query)) {
             is IndexHelpTopic         -> {
-                printIndexHelpTopic(helpMessage, message, member.user, page, query, helpTopic)
+                printIndexHelpTopic(helpMessage, member.user, page, query, helpTopic)
             }
             
             is CategoryHelpTopic      -> {
-                printCategoryHelpTopic(helpMessage, message, member.user, page, query, helpTopic)
+                printCategoryHelpTopic(helpMessage, member.user, page, query, helpTopic)
             }
             
             is SingleCommandHelpTopic -> {
-                printSingleCommandHelpTopic(helpMessage, message, member.user, page, query, helpTopic)
+                printSingleCommandHelpTopic(helpMessage, member.user, page, query, helpTopic)
             }
         }
     }
     
     private suspend fun printIndexHelpTopic(helpMessage: PolyMessage,
-                                            message: PolyMessage,
                                             user: PolyUser,
                                             page: Int?,
                                             query: String?,
@@ -127,7 +122,6 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     private suspend fun printCategoryHelpTopic(helpMessage: PolyMessage,
-                                               message: PolyMessage,
                                                user: PolyUser,
                                                page: Int?,
                                                query: String?,
@@ -175,8 +169,8 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
         }
     }
     
+    @Suppress("UNUSED_PARAMETER")
     private suspend fun printSingleCommandHelpTopic(helpMessage: PolyMessage,
-                                                    message: PolyMessage,
                                                     user: PolyUser,
                                                     page: Int?,
                                                     query: String?,
@@ -202,6 +196,7 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
         allowTextInput = false
     }
     
+    @Suppress("unused")
     companion object {
         const val maxResultsPerPage = 6
         const val header = ""

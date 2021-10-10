@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommandHandler.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:20 p.m.
  *
  * MIT License
  *
@@ -38,10 +38,9 @@ import cloud.commandframework.Command
 import cloud.commandframework.arguments.StaticArgument
 import cloud.commandframework.meta.CommandMeta
 import net.dv8tion.jda.api.Permission
-import org.slf4j.kotlin.*
 
+@Suppress("CanBeParameter")
 class HelpCommandHandler(private val bot: PolyBot) {
-    private val logger by getLogger()
     private val commandManager = bot.commandManager
     
     private val commandFilters = mutableListOf<(PolyMember, CommandEntry) -> Boolean>()

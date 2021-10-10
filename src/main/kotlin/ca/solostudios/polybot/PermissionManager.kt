@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PermissionManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:17 p.m.
+ * Last modified on 09-10-2021 11:07 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,9 @@ package ca.solostudios.polybot
 
 import ca.solostudios.polybot.cloud.event.MessageEvent
 
-class PermissionManager(bot: PolyBot) {
+class PermissionManager(@Suppress("UNUSED_PARAMETER")
+                        bot: PolyBot) {
+    @Suppress("UNUSED_PARAMETER")
     fun permissionCheck(event: MessageEvent, permission: String): Boolean {
         return true
     }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuildData.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:19 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,7 @@ package ca.solostudios.polybot.entities.data
 
 import ca.solostudios.polybot.PolyBot
 
+@Suppress("unused")
 data class PolyGuildData(
         val bot: PolyBot,
         val guildId: Long,

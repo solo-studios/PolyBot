@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessage.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:23 p.m.
  *
  * MIT License
  *
@@ -39,6 +39,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class PolyMessage(val bot: PolyBot, val jdaMessage: Message) {
     val content: String
         get() = jdaMessage.contentDisplay

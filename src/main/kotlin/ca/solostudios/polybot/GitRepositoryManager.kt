@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GitRepositoryManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:27 p.m.
  *
  * MIT License
  *
@@ -31,6 +31,7 @@ package ca.solostudios.polybot
 import ca.solostudios.polybot.util.ShutdownService
 import java.nio.file.Path
 
+@Suppress("unused")
 class GitRepositoryManager : ShutdownService() {
     private val gitRepos = mapOf<String, Path>()
     

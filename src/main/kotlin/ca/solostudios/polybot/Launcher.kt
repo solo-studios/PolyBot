@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 09-10-2021 11:14 p.m.
  *
  * MIT License
  *
@@ -134,12 +134,12 @@ private fun createConfigFileAndExit(file: File) {
         """.trimIndent()
     }
     
-    val stream = PolyBot::class.java.getResourceAsStream(ca.solostudios.polybot.Constants.defaultConfig)
+    val stream = PolyBot::class.java.getResourceAsStream(Constants.defaultConfig)
     
     if (stream != null) {
         stream.transferTo(file.outputStream())
     } else {
-        logger.error { "Cannot write default config. Could not find the default config file at resource location: '${ca.solostudios.polybot.Constants.defaultConfig}'." }
+        logger.error { "Cannot write default config. Could not find the default config file at resource location: '${Constants.defaultConfig}'." }
         exitProcess(-2)
     }
     

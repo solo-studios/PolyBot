@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:34 p.m.
+ * Last modified on 09-10-2021 11:27 p.m.
  *
  * MIT License
  *
@@ -54,6 +54,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.kotlin.*
 
+@Suppress("unused")
 class EntityManager(val bot: PolyBot) : ShutdownService() {
     private val logger by getLogger()
     
@@ -64,29 +65,29 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
         val config = bot.config.databaseConfig
         
         logger.info { "Connecting to bot database" }
-    
+        
         val hikariConfig = HikariConfig().apply {
             jdbcUrl = config.url
             driverClassName = config.driver
             username = config.username
             password = config.password
         }
-    
+        
         hikari = HikariDataSource(hikariConfig)
-    
+        
         val dbConfig = DatabaseConfig {
             useNestedTransactions = true
         }
-    
+        
         db = Database.connect(datasource = hikari, databaseConfig = dbConfig)
-    
+        
         logger.info { "Connected to bot database. Loading migrations..." }
         val migrations = loadMigrationsFrom("ca.solostudios.polybot.entities.data.db.migrations")
-    
+        
         logger.info { "Migrations loaded. Running migrations..." }
-    
+        
         runMigrations(migrations, db)
-    
+        
         logger.info { "Ran migrations successfully." }
     }
     
@@ -206,22 +207,22 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
         transaction(db) {
             logger.info { "Saving guild ${guildData.guildId}" }
             val entity = getGuildEntity(guildData.guildId)
-    
+            
             val tagIdMap = guildData.tags.map { it.uuid }
-    
+            
             entity.loggingChannel = guildData.loggingChannelId
             entity.mutedRole = guildData.mutedRoleId
             entity.autoRole = guildData.autoRoleId
             entity.prefix = guildData.prefix
             entity.autoDehoist = guildData.autoDehoist
             entity.filterInvites = guildData.filterInvites
-    
+            
             entity.tags.filter {
                 tagIdMap.contains(it.id.value)
             }.forEach { // delete removed tags
                 it.delete()
             }
-    
+            
             guildData.tags.forEach(::saveTagData)
         }
     }
@@ -234,7 +235,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
                 guildId = tagData.guildId
                 created = tagData.created
             }
-    
+            
             entity.name = tagData.name
             entity.content = tagData.content
             entity.aliases = tagData.aliases
@@ -278,7 +279,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
         guildCache.cleanUp()
         memberCache.invalidateAll()
         guildCache.cleanUp()
-    
+        
         hikari.close()
     }
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PaginationMenu.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * Last modified on 09-10-2021 11:12 p.m.
  *
  * MIT License
  *
@@ -448,7 +448,6 @@ class PaginationMenu internal constructor(
          *
          * This clears any Users already registered before adding the ones specified.
          *
-         * @param  users
          * The Users allowed to use the Menu
          */
         var users: List<User>

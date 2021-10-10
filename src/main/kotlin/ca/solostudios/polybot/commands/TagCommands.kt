@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:21 p.m.
  *
  * MIT License
  *
@@ -47,15 +47,12 @@ import dev.minn.jda.ktx.Embed
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Message.MentionType
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
-import org.slf4j.kotlin.*
 import ca.solostudios.polybot.entities.data.PolyTagData as PolyTag
 
 @PolyCommandContainer
 @PolyCategory(TAG_CATEGORY)
 @Suppress("DuplicatedCode")
 class TagCommands(bot: PolyBot) : PolyCommands(bot) {
-    private val logger by getLogger()
-    
     @JDAGuildCommand
     @ProxiedBy("tag")
     @CommandMethod("tag|t view|v <tag>")

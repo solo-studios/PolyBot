@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file DatabaseManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:16 p.m.
  *
  * MIT License
  *
@@ -30,12 +30,9 @@ package ca.solostudios.polybot.database
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.util.ShutdownService
-import org.slf4j.kotlin.*
 
+@Suppress("unused")
 class DatabaseManager(val bot: PolyBot) : ShutdownService() {
-    private val logger by getLogger()
-    
-    
     override fun serviceShutdown() {
         // hikari.close()
     }

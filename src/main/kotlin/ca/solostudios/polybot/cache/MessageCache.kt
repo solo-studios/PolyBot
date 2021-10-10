@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCache.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:19 p.m.
  *
  * MIT License
  *
@@ -31,12 +31,12 @@ package ca.solostudios.polybot.cache
 import ca.solostudios.polybot.util.set
 import net.dv8tion.jda.api.entities.Message
 import org.ehcache.Cache
-import org.slf4j.kotlin.*
 
-class MessageCache(private val cacheManager: CacheManager,
-                   private val messageCache: Cache<Long, CachedMessage>) {
-    private val logger by getLogger()
-    
+class MessageCache(
+        @Suppress("unused")
+        private val cacheManager: CacheManager,
+        private val messageCache: Cache<Long, CachedMessage>,
+                  ) {
     fun putMessage(message: Message) {
         if (!message.isFromGuild) // only save guild messages.
             return

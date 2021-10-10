@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-10-2021 11:02 p.m.
+ * Last modified on 09-10-2021 11:12 p.m.
  *
  * MIT License
  *
@@ -50,11 +50,10 @@ val JACKSON_VERSION: String by project
 val JACKSON_HOCON_VERSION: String by project
 val CACHE_4K_VERSION: String by project
 val EHCACHE_VERSION: String by project
-val CAFFEINE_VERSION: String by project
 val GUAVA_VERSION: String by project
 val HIKARI_VERSION: String by project
 val MARIADB_VERSION: String by project
-val SQLITE_VERSION: String by project
+// val SQLITE_VERSION: String by project
 val EXPOSED_VERSION: String by project
 val EXPOSED_MIGRATIONS_VERSION: String by project
 val LUCENE_VERSION: String by project
@@ -189,8 +188,6 @@ dependencies {
     implementation("io.github.reactivecircus.cache4k:cache4k:$CACHE_4K_VERSION")
     // Persistent cache
     implementation("org.ehcache:ehcache:$EHCACHE_VERSION")
-    // Caching library
-    implementation("com.github.ben-manes.caffeine:caffeine:$CAFFEINE_VERSION")
     
     // Guava
     implementation("com.google.guava:guava:$GUAVA_VERSION")
@@ -198,21 +195,21 @@ dependencies {
     // Hikari (SQL Connection Pooling)
     implementation("com.zaxxer:HikariCP:$HIKARI_VERSION")
     // SQLite
-    implementation("org.xerial:sqlite-jdbc:$SQLITE_VERSION") // TODO: 8/30/21 Support more SQL types
+    // implementation("org.xerial:sqlite-jdbc:$SQLITE_VERSION")
     // MariaDB
     implementation("org.mariadb.jdbc:mariadb-java-client:$MARIADB_VERSION")
     // Make using SQL not the most excrutiating shit ever and actually bearable to use
     implementation("org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
+    // implementation("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
     // Exposed Migrations
     implementation("gay.solonovamax:exposed-migrations:$EXPOSED_MIGRATIONS_VERSION")
     
     // Apache Lucene search engine
     implementation("org.apache.lucene:lucene-core:$LUCENE_VERSION")
-    implementation("org.apache.lucene:lucene-memory:$LUCENE_VERSION")
-    implementation("org.apache.lucene:lucene-suggest:$LUCENE_VERSION")
+    // implementation("org.apache.lucene:lucene-memory:$LUCENE_VERSION")
+    // implementation("org.apache.lucene:lucene-suggest:$LUCENE_VERSION")
     implementation("org.apache.lucene:lucene-queryparser:$LUCENE_VERSION")
     implementation("org.apache.lucene:lucene-analyzers-common:$LUCENE_VERSION")
     

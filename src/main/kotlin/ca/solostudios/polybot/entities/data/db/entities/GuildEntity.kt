@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GuildEntity.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * Last modified on 09-10-2021 11:27 p.m.
  *
  * MIT License
  *
@@ -53,6 +53,8 @@ class GuildEntity(id: EntityID<Long>) : LongEntity(id) {
     var filterInvites: Boolean by GuildTable.filterInvites
     
     val tags: SizedIterable<TagEntity> by TagEntity referrersOn TagTable.guild
+    
+    @Suppress("unused")
     val warns: SizedIterable<WarnEntity> by WarnEntity referrersOn WarnTable.guild
     
     companion object : LongEntityClass<GuildEntity>(GuildTable)

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:23 p.m.
  *
  * MIT License
  *
@@ -51,14 +51,11 @@ import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDAInfo
 import org.intellij.lang.annotations.Language
-import org.slf4j.kotlin.*
 import kotlin.time.Duration.Companion.milliseconds
 
 @PolyCategory(UTIL_CATEGORY)
 @PolyCommandContainer
 class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
-    private val logger by getLogger()
-    
     @CommandMethod("ping|pong")
     suspend fun ping(message: PolyMessage) {
         bot.scope.launch {

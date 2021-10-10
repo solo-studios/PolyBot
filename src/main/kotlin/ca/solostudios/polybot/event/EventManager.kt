@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EventManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:17 p.m.
+ * Last modified on 09-10-2021 11:16 p.m.
  *
  * MIT License
  *
@@ -46,6 +46,7 @@ interface EventListener<T : Event> {
  * @property bot
  * @constructor Create empty Event manager
  */
+@Suppress("unused")
 class EventManager(val bot: PolyBot) {
     val listeners: MutableList<InternalEventListener<out Event>> = mutableListOf()
     

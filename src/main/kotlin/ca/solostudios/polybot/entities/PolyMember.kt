@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMember.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:20 p.m.
  *
  * MIT License
  *
@@ -33,6 +33,7 @@ import java.time.LocalDateTime
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 
+@Suppress("unused")
 class PolyMember(val bot: PolyBot, val jdaMember: Member) {
     val id: Long
         get() = jdaMember.idLong

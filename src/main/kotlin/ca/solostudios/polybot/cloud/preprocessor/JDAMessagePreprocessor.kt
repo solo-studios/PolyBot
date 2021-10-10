@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file JDAMessagePreprocessor.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * Last modified on 09-10-2021 11:19 p.m.
  *
  * MIT License
  *
@@ -32,7 +32,6 @@ import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
 import cloud.commandframework.execution.preprocessor.CommandPreprocessor
 import cloud.commandframework.jda.JDA4CommandManager
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.slf4j.kotlin.*
 
 /**
  * The JDA Command Preprocessor for storing JDA-specific contexts in the command contexts
@@ -40,8 +39,6 @@ import org.slf4j.kotlin.*
  * @param mgr The JDACommandManager
  */
 class JDAMessagePreprocessor<C>(private val mgr: JDA4CommandManager<C>) : CommandPreprocessor<C> {
-    private val logger by getLogger()
-    
     /**
      * Stores the [net.dv8tion.jda.api.JDA] in the context with the key "JDA",
      * the [net.dv8tion.jda.api.events.message.MessageReceivedEvent] with the key "MessageReceivedEvent", and

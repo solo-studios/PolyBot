@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:21 p.m.
  *
  * MIT License
  *
@@ -33,13 +33,10 @@ import ca.solostudios.polybot.config.search.GithubWikiSearchLocation
 import ca.solostudios.polybot.util.ShutdownService
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.store.NRTCachingDirectory
-import org.slf4j.kotlin.*
 
 
 @Suppress("MemberVisibilityCanBePrivate")
 class SearchManager(val bot: PolyBot) : ShutdownService() {
-    private val logger by getLogger()
-    
     val searchIndexes: Map<String, Index<*>>
     
     val defaultIndex: Index<*>

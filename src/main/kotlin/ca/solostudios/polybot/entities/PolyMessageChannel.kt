@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageChannel.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:21 p.m.
  *
  * MIT License
  *
@@ -37,6 +37,7 @@ import net.dv8tion.jda.api.entities.MessageChannel
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 
+@Suppress("unused")
 open class PolyMessageChannel(bot: PolyBot, override val jdaChannel: MessageChannel) : PolyAbstractChannel(bot, jdaChannel) {
     suspend fun sendTyping() {
         jdaChannel.sendTyping().await()

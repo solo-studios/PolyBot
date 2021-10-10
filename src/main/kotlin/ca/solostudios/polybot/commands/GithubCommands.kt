@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:23 p.m.
  *
  * MIT License
  *
@@ -49,9 +49,10 @@ import org.slf4j.kotlin.*
 @PolyCategory(GITHUB_CATEGORY)
 class GithubCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by org.slf4j.kotlin.getLogger()
-    val github: GitHub = GitHub.connectAnonymously()
+    private val github: GitHub = GitHub.connectAnonymously()
     
     // @CommandMethod("ghstatus|gh-status|gh status")
+    @Suppress("unused")
     fun ghStatus(message: PolyMessage) {
         val now = LocalDate.now()
         

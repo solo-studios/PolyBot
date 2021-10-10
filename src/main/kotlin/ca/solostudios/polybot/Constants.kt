@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Constants.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 09-10-2021 11:27 p.m.
  *
  * MIT License
  *
@@ -45,7 +45,7 @@ object Constants {
     
     private const val defaultAvatarId = 0
     
-    const val defaultAvatarUrl = "https://cdn.discordapp.com/embed/avatars/${ca.solostudios.polybot.Constants.defaultAvatarId}.png"
+    const val defaultAvatarUrl = "https://cdn.discordapp.com/embed/avatars/$defaultAvatarId.png"
     
     const val configFile = "polybot.conf"
     
@@ -65,17 +65,17 @@ object Constants {
         const val protocol = "(?:https?:\\/\\/)"
     
         @Language("RegExp")
-        const val domainPrefix = "${ca.solostudios.polybot.Constants.InternalConstants.protocol}?(?:[^\\s]*\\.)?"
+        const val domainPrefix = "$protocol?(?:[^\\s]*\\.)?"
     
         /**
          * Why are there so many discord domains... bruh.
          */
         @Language("RegExp")
         const val discordDomainRegex =
-                """${ca.solostudios.polybot.Constants.InternalConstants.domainPrefix}?(?:discord(?:\.com|\.gg|\.co|app\.com)|watchanimeattheoffice\.com|dis\.gd)"""
+                """$domainPrefix?(?:discord(?:\.com|\.gg|\.co|app\.com)|watchanimeattheoffice\.com|dis\.gd)"""
     
         @Language("RegExp")
-        const val messageLinkRegexString = "${ca.solostudios.polybot.Constants.InternalConstants.discordDomainRegex}\\/channels\\/" +
+        const val messageLinkRegexString = "$discordDomainRegex\\/channels\\/" +
                 "(?<guild>\\d+)\\/" +   // Guild ID
                 "(?<channel>\\d+)\\/" + // Channel ID
                 "(?<message>\\d+)\\/" + // Message ID
@@ -83,14 +83,14 @@ object Constants {
     
         @Language("RegExp")
         const val inviteRegexString =
-                "${ca.solostudios.polybot.Constants.InternalConstants.discordDomainRegex}(?:\\/invite)?\\/(?<invite>[a-z0-9-]+)(?:\\?\\S*)?(?:#\\S*)?"
+                "$discordDomainRegex(?:\\/invite)?\\/(?<invite>[a-z0-9-]+)(?:\\?\\S*)?(?:#\\S*)?"
     
         @Language("RegExp")
         const val discordVanityDomainRegex =
-                """${ca.solostudios.polybot.Constants.InternalConstants.domainPrefix}(?:dsc\.gg|invite\.gg|discordvanity\.com|discord\.(?:plus|link|io|me|li|st))"""
+                """$domainPrefix(?:dsc\.gg|invite\.gg|discordvanity\.com|discord\.(?:plus|link|io|me|li|st))"""
     
         @Language("RegExp")
         const val allInviteRegexString =
-                """(?:$inviteRegexString|${ca.solostudios.polybot.Constants.InternalConstants.discordVanityDomainRegex}\/[a-zA-Z\d.~:/?#@!$&'()*+,;%=\[\]\-]+)"""
+                """(?:$inviteRegexString|$discordVanityDomainRegex\/[a-zA-Z\d.~:/?#@!$&'()*+,;%=\[\]\-]+)"""
     }
 }

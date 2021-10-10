@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyModerationEvent.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:21 p.m.
  *
  * MIT License
  *
@@ -31,4 +31,9 @@ package ca.solostudios.polybot.event.moderation
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.event.Event
 
-open class PolyModerationEvent(val punishedMember: PolyMember, val reason: String, val moderator: PolyMember) : Event()
+open class PolyModerationEvent(
+        @Suppress("unused")
+        val punishedMember: PolyMember,
+        val reason: String,
+        val moderator: PolyMember,
+                              ) : Event()

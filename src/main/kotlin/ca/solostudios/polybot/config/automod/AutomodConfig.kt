@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutomodConfig.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * Last modified on 09-10-2021 11:14 p.m.
  *
  * MIT License
  *
@@ -35,4 +35,6 @@ data class AutomodConfig(
         val automodDomainConfig: AutomodDomainConfig,
         @JsonProperty("messages")
         val messages: AutomodMessages,
+        @JsonProperty("badWords")
+        val badWords: BadWords,
                         )

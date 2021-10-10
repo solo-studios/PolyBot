@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubWikiIndex.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 09-10-2021 11:27 p.m.
  *
  * MIT License
  *
@@ -74,6 +74,8 @@ class GithubWikiIndex(
     private val githubWiki = "https://github.com/${searchLocation.repoOwner}/${searchLocation.repoName}/wiki"
     private val githubWikiRepo = "https://github.com/${searchLocation.repoOwner}/${searchLocation.wikiRepo}/archive/master"
     private val githubWikiTarball = "$githubWikiRepo.tar.gz"
+    
+    @Suppress("unused")
     private val githubWikiZipball = "$githubWikiRepo.zip"
     
     override suspend fun updateIndex(writer: IndexWriter) {
