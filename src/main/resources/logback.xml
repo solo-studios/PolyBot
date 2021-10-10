@@ -3,7 +3,7 @@
   ~ Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
   ~
   ~ The file logback.xml is part of PolyhedralBot
-  ~ Last modified on 19-09-2021 08:55 p.m.
+  ~ Last modified on 09-10-2021 10:56 p.m.
   ~
   ~ MIT License
   ~
@@ -33,38 +33,36 @@
     </contextListener>
     <timestamp key="startTimestamp" datePattern="yyyyMMddHHmmssSSS"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <withJansi>true</withJansi>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
+        <withJansi>true</withJansi>
         <encoder>
-            <!--            <pattern>%d %highlight(%-5level) [%thread] %class - %highlight(%msg %n) %xEx</pattern>-->
-            <pattern>%d %-20([%.-18(%thread)]) %highlight(%-5level) %logger{40} - %highlight(%msg){}%n{}%ex{full,DISPLAY_EX_EVAL}
+            <pattern>%d %-24([%.-22(%thread)]) %highlight(%-5level) %-48logger{48} - %highlight(%msg){}%n{}%ex{full,DISPLAY_EX_EVAL}
             </pattern>
         </encoder>
-        <!--
-        <withJansi>true</withJansi>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d [%thread] %highlight(%-5level) %logger{15} - %highlight(%msg %n) %xEx</Pattern>
-        </layout>
-        -->
     </appender>
     <property name="LOG_DIR" value="logs/"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/polybot.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!-- hourly rollover -->
-            <fileNamePattern>${LOG_DIR}/polybot.%d{yyyy-MM-dd_HH}.%i.log.gz</fileNamePattern>
+            <!-- daily rollover -->
+            <fileNamePattern>${LOG_DIR}/polybot.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <!-- keep 60 days worth of history capped at 5GB total size & 10MB per file -->
             <maxHistory>60</maxHistory>
             <totalSizeCap>5GB</totalSizeCap>
             <maxFileSize>10MB</maxFileSize>
         </rollingPolicy>
         <encoder>
-            <pattern>%d %-27([%.-25(%thread)]) %-5level %-60logger{60} - %msg{}%n{}%ex{full, DISPLAY_EX_EVAL}</pattern>
+            <pattern>%d %-32([%.-30(%thread)]) %-5level %-64logger{64} - %msg{}%n{}%ex{full, DISPLAY_EX_EVAL}</pattern>
         </encoder>
     </appender>
-    <root level="DEBUG">
+
+    <logger level="DEBUG" name="ca.solostudios.polybot" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+    <root level="INFO">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-10-2021 10:05 p.m.
+ * Last modified on 09-10-2021 10:31 p.m.
  *
  * MIT License
  *
@@ -76,7 +76,7 @@ plugins {
     //    id("ca.cutterslade.analyze")
 }
 
-group = "com.solostudios.polyhedralbot"
+group = "ca.solostudios.polybot"
 val versionObj = Version("0", "0", "0")
 version = versionObj
 
@@ -118,7 +118,7 @@ configurations.all {
 }
 
 application {
-    mainClass.set("com.solostudios.polybot.Launcher")
+    mainClass.set("ca.solostudios.polybot.Launcher")
 }
 
 dependencies {
