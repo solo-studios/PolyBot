@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 04-10-2021 04:59 p.m.
+ * Last modified on 09-10-2021 07:05 p.m.
  *
  * MIT License
  *
@@ -265,8 +265,8 @@ tasks {
     withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_11.toString()
-            apiVersion = "1.6"
-            languageVersion = "1.6"
+            apiVersion = "1.5"
+            languageVersion = "1.5"
             freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
         }
     }
