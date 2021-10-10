@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-10-2021 10:31 p.m.
+ * Last modified on 09-10-2021 11:02 p.m.
  *
  * MIT License
  *
@@ -36,7 +36,7 @@ val KOTLINX_COROUTINES_VERSION: String by project
 val KOTLINX_UUID_VERSION: String by project
 val JETBRAINS_ANNOTATIONS_VERSION: String by project
 val JDA_VERSION: String by project
-val DISCORD_WEBHOOKS: String by project
+val DISCORD_WEBHOOKS_VERSION: String by project
 val JDA_KTX_VERSION: String by project
 val JDA_UTILITIES_VERSION: String by project
 val CLOUD_VERSION: String by project
@@ -148,7 +148,7 @@ dependencies {
         exclude(module = "opus-java")
     }
     // Discord webhooks
-    implementation("club.minnced:discord-webhooks:$DISCORD_WEBHOOKS")
+    implementation("club.minnced:discord-webhooks:$DISCORD_WEBHOOKS_VERSION")
     // JDA Kotlin extensions
     implementation("com.github.solonovamax:jda-ktx:${JDA_KTX_VERSION}")
     // JDA utilities
@@ -236,7 +236,9 @@ dependencies {
     
     // Testing (JUnit 5)
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    @Suppress("GradlePackageUpdate")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    @Suppress("GradlePackageUpdate")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-params")
 }
 
