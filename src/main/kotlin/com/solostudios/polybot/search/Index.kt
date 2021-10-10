@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 09:50 p.m.
+ * Last modified on 09-10-2021 09:58 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,7 @@
 package com.solostudios.polybot.search
 
 import com.solostudios.polybot.config.search.SearchLocation
-import com.solostudios.polybot.service.ShutdownService
+import com.solostudios.polybot.util.ShutdownService
 import com.solostudios.polybot.util.shortFormat
 import java.time.ZoneId
 import java.util.Locale

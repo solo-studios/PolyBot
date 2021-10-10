@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 09:53 p.m.
+ * Last modified on 09-10-2021 09:58 p.m.
  *
  * MIT License
  *
@@ -58,10 +58,10 @@ import com.solostudios.polybot.listener.AutoQuoteListener
 import com.solostudios.polybot.listener.LoggingListener
 import com.solostudios.polybot.listener.PolyBotListener
 import com.solostudios.polybot.search.SearchManager
-import com.solostudios.polybot.service.ShutdownService
 import com.solostudios.polybot.util.AnnotationParser
 import com.solostudios.polybot.util.BackedReference
 import com.solostudios.polybot.util.ScheduledThreadPool
+import com.solostudios.polybot.util.ShutdownService
 import com.solostudios.polybot.util.currentThread
 import com.solostudios.polybot.util.fixedRate
 import com.solostudios.polybot.util.onlineStatus

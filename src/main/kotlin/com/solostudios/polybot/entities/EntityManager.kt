@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 09:50 p.m.
+ * Last modified on 09-10-2021 09:58 p.m.
  *
  * MIT License
  *
@@ -41,7 +41,7 @@ import com.solostudios.polybot.entities.data.db.entities.MemberEntity
 import com.solostudios.polybot.entities.data.db.entities.MemberTable
 import com.solostudios.polybot.entities.data.db.entities.TagEntity
 import com.solostudios.polybot.entities.data.db.entities.WarnEntity
-import com.solostudios.polybot.service.ShutdownService
+import com.solostudios.polybot.util.ShutdownService
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import gay.solonovamax.exposed.migrations.loadMigrationsFrom
