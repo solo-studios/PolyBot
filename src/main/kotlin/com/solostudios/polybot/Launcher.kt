@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 09:50 p.m.
+ * Last modified on 09-10-2021 10:09 p.m.
  *
  * MIT License
  *
@@ -25,6 +25,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+@file:JvmName("Launcher")
 
 package com.solostudios.polybot
 

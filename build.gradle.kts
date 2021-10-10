@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-10-2021 07:05 p.m.
+ * Last modified on 09-10-2021 10:05 p.m.
  *
  * MIT License
  *
@@ -118,17 +118,17 @@ configurations.all {
 }
 
 application {
-    mainClass.set("com.solostudios.polybot.LauncherKt")
+    mainClass.set("com.solostudios.polybot.Launcher")
 }
 
 dependencies {
     // Kotlin
-    implementation(kotlin("stdlib"))
-    implementation(kotlin("reflect")) // Reflection stuff
-    implementation(kotlin("script-runtime")) // For executing scripts at runtime
-    implementation(kotlin("script-util"))
-    implementation(kotlin("compiler-embeddable"))
-    implementation(kotlin("scripting-compiler-embeddable"))
+    implementation(kotlin("stdlib", KOTLIN_VERSION))
+    implementation(kotlin("reflect", KOTLIN_VERSION)) // Reflection stuff
+    implementation(kotlin("script-runtime", KOTLIN_VERSION)) // For executing scripts at runtime
+    implementation(kotlin("script-util", KOTLIN_VERSION))
+    implementation(kotlin("compiler-embeddable", KOTLIN_VERSION))
+    implementation(kotlin("scripting-compiler-embeddable", KOTLIN_VERSION))
     // Kotlin Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$KOTLINX_SERIALIZATION_VERSION")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_VERSION")
