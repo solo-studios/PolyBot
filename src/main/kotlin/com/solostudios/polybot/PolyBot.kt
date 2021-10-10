@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 09:50 p.m.
+ * Last modified on 09-10-2021 09:53 p.m.
  *
  * MIT License
  *
@@ -52,7 +52,6 @@ import com.solostudios.polybot.cloud.parser.UserParser
 import com.solostudios.polybot.cloud.preprocessor.AntiBotPreProcessor
 import com.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
 import com.solostudios.polybot.config.PolyConfig
-import com.solostudios.polybot.database.DatabaseManager
 import com.solostudios.polybot.entities.EntityManager
 import com.solostudios.polybot.event.EventManager
 import com.solostudios.polybot.listener.AutoQuoteListener
@@ -127,7 +126,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         eventListeners += AutoQuoteListener(this@PolyBot)
     }.build()
     
-    val databaseManager = DatabaseManager(this@PolyBot)
+    // val databaseManager = DatabaseManager(this@PolyBot)
     
     val entityManager = EntityManager(this@PolyBot)
     
@@ -236,7 +235,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
         jda.shutdownNow()
     
         entityManager.shutdown()
-        databaseManager.shutdown()
+        // databaseManager.shutdown()
         cacheManager.shutdown()
         searchManager.shutdown()
         
