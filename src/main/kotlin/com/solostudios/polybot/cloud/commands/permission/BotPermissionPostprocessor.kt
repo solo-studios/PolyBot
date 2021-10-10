@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 03-10-2021 06:58 p.m.
+ * Last modified on 09-10-2021 09:50 p.m.
  *
  * MIT License
  *

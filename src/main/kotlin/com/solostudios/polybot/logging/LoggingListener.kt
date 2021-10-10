@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 06:40 p.m.
+ * Last modified on 09-10-2021 09:50 p.m.
  *
  * MIT License
  *
@@ -160,7 +160,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                         append("'s message in ")
                         append("<#").append(message.channel).append('>')
                         append(" was deleted.**\n")
-                
+    
                         if (message.content.length > 1024 - this.length)
                             append(message.content.substring(0, 1020 - this.length)).append("\n...")
                         else
@@ -397,9 +397,9 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     override fun onGenericGuildUpdate(event: GenericGuildUpdateEvent<*>) {
         loggingEmbed("Guild Updated", event.guild) {
             description = "**Updated guild ${event.propertyIdentifier.replace('_', ' ')} setting.**"
-        
+    
             val (old, new) = event.valueString
-        
+    
             field {
                 name = "Previous Setting"
                 value = old
@@ -503,9 +503,9 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     override fun onGenericEmoteUpdate(event: GenericEmoteUpdateEvent<*>) {
         loggingEmbed("Guild Emote Updated", event.guild) {
             description = "**Updated guild emote ${event.emote.asMention} ${event.propertyIdentifier.replace('_', ' ')} setting.**"
-        
+    
             val (old, new) = event.valueString
-        
+    
             field {
                 name = "Previous Setting"
                 value = old

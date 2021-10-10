@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 06:06 p.m.
+ * Last modified on 09-10-2021 09:50 p.m.
  *
  * MIT License
  *
@@ -54,10 +54,10 @@ class SearchManager(val bot: PolyBot) : ShutdownService() {
                 is GithubWikiSearchLocation -> {
                     val diskCache = FSDirectory.open(bot.getCacheDirectory("search", location.name))
                     val diskRamCache = NRTCachingDirectory(diskCache, 5.0, 60.0)
-                
+    
                     val index = GithubWikiIndex(bot, location, diskRamCache)
                     indexes[location.name] = index
-                
+    
                     if (location.name == searchConfig.default)
                         default = index
                 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file WarnEntity.kt is part of PolyhedralBot
- * Last modified on 25-09-2021 09:42 p.m.
+ * Last modified on 09-10-2021 09:50 p.m.
  *
  * MIT License
  *
@@ -34,7 +34,6 @@ import kotlinx.uuid.exposed.KotlinxUUIDEntity
 import kotlinx.uuid.exposed.KotlinxUUIDEntityClass
 import kotlinx.uuid.exposed.KotlinxUUIDTable
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.`java-time`.datetime
 
 object WarnTable : KotlinxUUIDTable("WARN_DATA") {
     val guild = reference("guild", GuildTable).index()
