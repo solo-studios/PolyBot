@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagEntity.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 09:50 p.m.
+ * Last modified on 09-10-2021 10:06 p.m.
  *
  * MIT License
  *
@@ -34,6 +34,7 @@ import kotlinx.uuid.exposed.KotlinxUUIDEntity
 import kotlinx.uuid.exposed.KotlinxUUIDEntityClass
 import kotlinx.uuid.exposed.KotlinxUUIDTable
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.javatime.timestamp
 
 object TagTable : KotlinxUUIDTable("TAG_DATA") {
     val guild = reference("guild", GuildTable).index()
@@ -41,7 +42,7 @@ object TagTable : KotlinxUUIDTable("TAG_DATA") {
     val name = text("name", eagerLoading = true)
     val content = text("content", eagerLoading = true)
     val aliases = text("aliases", eagerLoading = true).default("")
-    val created = timestamp.clientDefault(Instant::now)
+    val created = timestamp("created").clientDefault(Instant::now)
     val usages = long("usages").default(0)
 }
 

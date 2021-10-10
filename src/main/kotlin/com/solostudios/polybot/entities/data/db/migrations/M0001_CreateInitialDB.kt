@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file M0001_CreateInitialDB.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 09:50 p.m.
+ * Last modified on 09-10-2021 10:07 p.m.
  *
  * MIT License
  *
@@ -36,6 +36,8 @@ import kotlinx.uuid.exposed.KotlinxUUIDTable
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.sql.javatime.timestamp
 
 @Suppress("ClassName", "unused")
 class M0001_CreateInitialDB : Migration() {
@@ -64,7 +66,7 @@ class M0001_CreateInitialDB : Migration() {
         val name = text("name", eagerLoading = true)
         val content = text("content", eagerLoading = true)
         val aliases = text("aliases", eagerLoading = true).default("")
-        val created = timestamp.clientDefault(Instant::now)
+        val created = timestamp("created").clientDefault(Instant::now)
         val usages = long("usages").default(0)
     }
     
