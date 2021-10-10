@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotListener.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 06:38 p.m.
+ * Last modified on 09-10-2021 09:53 p.m.
  *
  * MIT License
  *
@@ -26,8 +26,9 @@
  * SOFTWARE.
  */
 
-package com.solostudios.polybot
+package com.solostudios.polybot.listener
 
+import com.solostudios.polybot.PolyBot
 import java.time.format.DateTimeFormatter
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.DisconnectEvent

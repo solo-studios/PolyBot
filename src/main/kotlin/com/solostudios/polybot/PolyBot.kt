@@ -55,7 +55,8 @@ import com.solostudios.polybot.config.PolyConfig
 import com.solostudios.polybot.entities.EntityManager
 import com.solostudios.polybot.event.EventManager
 import com.solostudios.polybot.listener.AutoQuoteListener
-import com.solostudios.polybot.logging.LoggingListener
+import com.solostudios.polybot.listener.LoggingListener
+import com.solostudios.polybot.listener.PolyBotListener
 import com.solostudios.polybot.search.SearchManager
 import com.solostudios.polybot.service.ShutdownService
 import com.solostudios.polybot.util.AnnotationParser
