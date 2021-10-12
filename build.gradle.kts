@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-10-2021 11:12 p.m.
+ * Last modified on 12-10-2021 06:15 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,7 @@
 
 @file:Suppress("SuspiciousCollectionReassignment", "PropertyName")
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val KOTLIN_VERSION: String by project
@@ -72,9 +73,12 @@ plugins {
     kotlin("plugin.noarg")
     kotlin("plugin.serialization")
     id("org.ajoberstar.grgit") version "4.0.2"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
     //    id("ca.cutterslade.analyze")
 }
 
+var mainClassName: String by application.mainClass
+mainClassName = "ca.solostudios.polybot.Launcher"
 group = "ca.solostudios.polybot"
 val versionObj = Version("0", "0", "0")
 version = versionObj
@@ -114,10 +118,6 @@ repositories {
 configurations.all {
     // Check for updates every build
     resolutionStrategy.cacheChangingModulesFor(0, "seconds")
-}
-
-application {
-    mainClass.set("ca.solostudios.polybot.Launcher")
 }
 
 dependencies {
@@ -201,7 +201,7 @@ dependencies {
     // Make using SQL not the most excrutiating shit ever and actually bearable to use
     implementation("org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION")
-    // implementation("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
     // Exposed Migrations
     implementation("gay.solonovamax:exposed-migrations:$EXPOSED_MIGRATIONS_VERSION")
@@ -276,6 +276,34 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
+tasks.withType<ShadowJar> {
+    mergeServiceFiles()
+    minimize {
+        exclude {
+            it.moduleGroup == "org.mariadb.jdbc" || it.moduleGroup == "ch.qos.logback" || it.moduleGroup == "org.jetbrains.kotlinx" ||
+                    it.moduleGroup == "org.ehcache" || it.moduleGroup == "org.jetbrains.exposed"
+        }
+        exclude {
+            it.moduleName == "kotlin-reflect"
+        }
+        exclude {
+            it.moduleGroup == "org.apache.lucene" && (it.moduleName == "lucene-core" || it.moduleName == "lucene-sandbox")
+        }
+    }
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes(
+                "Main-Class" to mainClassName,
+                "Built-By" to System.getProperty("user.name"),
+                "Built-Jdk" to System.getProperty("java.version"),
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to project.version.toString(),
+                  )
+    }
+}
+
 /**
  * Version class that does version stuff.
  */
@@ -297,7 +325,7 @@ class Version(val major: String, val minor: String, val patch: String) {
         return if (localBuild) // Only use git hash if it's a local build.
             "$major.$minor.$patch-local+${getGitHash()}"
         else
-            "$major.$minor.$patch+${env["BUILD_NUMBER"]}"
+            "$major.$minor.$patch+${buildNumber}"
     }
 }
 
