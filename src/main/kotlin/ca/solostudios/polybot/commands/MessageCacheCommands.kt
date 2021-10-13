@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 12-10-2021 08:00 p.m.
  *
  * MIT License
  *
@@ -75,7 +75,7 @@ class MessageCacheCommands(bot: PolyBot) : PolyCommands(bot) {
                     
                     description = "**<@${cachedMessage.author}> sent a message in <#${cachedMessage.channel}>.**\n${cachedMessage.content}"
                     
-                    idFooter(message.timeCreated, message.guild, message.channel, message.author, message)
+                    idFooter(message.timeCreated, message.guild, message.channel, message.member, message)
                 }
                 
                 message.reply(embed)

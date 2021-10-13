@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:19 p.m.
+ * Last modified on 12-10-2021 10:32 p.m.
  *
  * MIT License
  *
@@ -38,7 +38,6 @@ import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyMessageChannel
-import ca.solostudios.polybot.entities.PolyUser
 import ca.solostudios.polybot.event.moderation.PolyClearEvent
 import ca.solostudios.polybot.util.poly
 import cloud.commandframework.annotations.Argument
@@ -98,17 +97,17 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
                               @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
                               amount: Int,
                               @Flag("user", aliases = ["u"], description = "Delete only messages from this user.")
-                              user: PolyUser?,
+                                  member: PolyMember?,
                               @Flag("message-regex", aliases = ["e"], description = "Delete only messages that match this regex.")
-                              messageRegex: String?,
+                                  messageRegex: String?,
                               @Flag("starts-with", description = "Delete only messages that start with this string.")
-                              startsWith: String?,
+                                  startsWith: String?,
                               @Flag("ends-with", description = "Delete only messages that end with this string.")
-                              endsWith: String?,
+                                  endsWith: String?,
                               @Flag("bot-only", aliases = ["b"], description = "Delete only messages from bots.")
-                              botOnly: Boolean = false,
+                                  botOnly: Boolean = false,
                               @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
-                              caseInsensitive: Boolean = false) {
+                                  caseInsensitive: Boolean = false) {
         logger.info { "Running clear command" }
         
         val event = PolyClearEvent(message.textChannel, message.member)
@@ -126,7 +125,7 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
         val messages = PastMessageSequence(message.channel).take(500).filter {
             it.id != message.id
         }.filter {
-            if (user != null) it.author == user else true
+            if (member != null) it.member == member else true
         }.filter {
             if (regex != null) it.matches(regex) else true
         }.filter {
@@ -134,15 +133,16 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
         }.filter {
             if (endsWith != null) it.endsWith(endsWith, caseInsensitive) else true
         }.filter {
-            if (botOnly) it.fromBot else true
+            if (botOnly) it.isFromBot else true
         }.take(amount).toList()
-        
-        logger.info { "clearing: ${messages.map { it.contentRaw }}" }
-        
+    
         message.delete()
-        
-        message.textChannel.deleteMessages(messages)
-        
+    
+        if (messages.size == 1)
+            messages.first().delete()
+        else
+            message.textChannel.deleteMessages(messages)
+    
         message.channel.sendMessage("Deleted ${messages.size} messages.")
     }
     
