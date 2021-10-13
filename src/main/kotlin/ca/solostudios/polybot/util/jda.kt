@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file jda.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:19 p.m.
+ * Last modified on 12-10-2021 07:25 p.m.
  *
  * MIT License
  *
@@ -32,6 +32,7 @@ package ca.solostudios.polybot.util
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.PolyAbstractChannel
+import ca.solostudios.polybot.entities.PolyEmote
 import ca.solostudios.polybot.entities.PolyGuild
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
@@ -43,6 +44,7 @@ import ca.solostudios.polybot.entities.PolyVoiceChannel
 import java.time.Instant
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.AbstractChannel
+import net.dv8tion.jda.api.entities.Emote
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
@@ -87,3 +89,5 @@ fun MessageChannel.poly(bot: PolyBot): PolyMessageChannel = PolyMessageChannel(b
 fun TextChannel.poly(bot: PolyBot): PolyTextChannel = PolyTextChannel(bot, this)
 
 fun VoiceChannel.poly(bot: PolyBot): PolyVoiceChannel = PolyVoiceChannel(bot, this)
+
+fun Emote.poly(bot: PolyBot): PolyEmote = PolyEmote(bot, this)

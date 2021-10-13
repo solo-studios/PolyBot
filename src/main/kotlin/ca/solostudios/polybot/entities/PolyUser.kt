@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyUser.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:21 p.m.
+ * Last modified on 12-10-2021 09:41 p.m.
  *
  * MIT License
  *
@@ -34,18 +34,39 @@ import dev.minn.jda.ktx.await
 import net.dv8tion.jda.api.entities.User
 
 @Suppress("unused")
-class PolyUser(val bot: PolyBot, val jdaUser: User) {
+open class PolyUser(open val bot: PolyBot, val jdaUser: User) {
     val id: Long
         get() = jdaUser.idLong
     
     val isBot: Boolean
         get() = jdaUser.isBot
     
+    val isSystem: Boolean
+        get() = jdaUser.isSystem
+    
+    val isStaff: Boolean
+        get() = ((jdaUser.flagsRaw shr (User.UserFlag.STAFF.offset)) and 1) == 1 // bit magic
+    
+    val isPartner: Boolean
+        get() = ((jdaUser.flagsRaw shr (User.UserFlag.PARTNER.offset)) and 1) == 1 // bit magic
+    
+    val isVerifiedBot: Boolean
+        get() = ((jdaUser.flagsRaw shr (User.UserFlag.VERIFIED_BOT.offset)) and 1) == 1 // bit magic
+    
+    val isVerifiedDeveloper: Boolean
+        get() = ((jdaUser.flagsRaw shr (User.UserFlag.VERIFIED_DEVELOPER.offset)) and 1) == 1 // bit magic
+    
+    val isCertifiedModerator: Boolean
+        get() = ((jdaUser.flagsRaw shr (User.UserFlag.CERTIFIED_MODERATOR.offset)) and 1) == 1 // bit magic
+    
     val name: String
         get() = jdaUser.name
     
     val discriminator: String
         get() = jdaUser.discriminator
+    
+    val tag: String
+        get() = jdaUser.asTag
     
     val mention: String
         get() = jdaUser.asMention
@@ -55,6 +76,12 @@ class PolyUser(val bot: PolyBot, val jdaUser: User) {
     
     val effectiveAvatarUrl: String
         get() = jdaUser.effectiveAvatarUrl
+    
+    val isOwner: Boolean
+        get() = id in bot.botConfig.ownerIds
+    
+    val isCoOwner: Boolean
+        get() = id in bot.botConfig.ownerIds || id in bot.botConfig.coOwnerIds
     
     suspend fun privateChannel(): PolyMessageChannel {
         return jdaUser.openPrivateChannel().await().poly(bot)

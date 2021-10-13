@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMember.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:20 p.m.
+ * Last modified on 12-10-2021 07:57 p.m.
  *
  * MIT License
  *
@@ -29,32 +29,25 @@
 package ca.solostudios.polybot.entities
 
 import ca.solostudios.polybot.PolyBot
+import ca.solostudios.polybot.util.poly
+import dev.minn.jda.ktx.await
+import java.awt.Color
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.Role
 
 @Suppress("unused")
-class PolyMember(val bot: PolyBot, val jdaMember: Member) {
-    val id: Long
-        get() = jdaMember.idLong
-    
-    val isBot: Boolean
-        get() = jdaMember.user.isBot
-    
-    val name: String
-        get() = jdaMember.user.name
-    
-    val discriminator: String
-        get() = jdaMember.user.discriminator
-    
+class PolyMember(override val bot: PolyBot, val jdaMember: Member) : PolyUser(bot, jdaMember.user) {
     val effectiveName: String
         get() = jdaMember.effectiveName
     
-    val avatarUrl: String?
-        get() = jdaMember.user.avatarUrl
+    val nickname: String?
+        get() = jdaMember.nickname
     
-    val mention: String
-        get() = jdaMember.asMention
+    val hasNickname: Boolean
+        get() = jdaMember.nickname != null
     
     val user: PolyUser
         get() = PolyUser(bot, jdaMember.user)
@@ -68,26 +61,42 @@ class PolyMember(val bot: PolyBot, val jdaMember: Member) {
     val guildPermissions: List<Permission>
         get() = jdaMember.permissions.toList()
     
+    val timeJoined: OffsetDateTime
+        get() = jdaMember.timeJoined
+    
+    val roles: List<PolyRole>
+        get() = jdaMember.roles.map { it.poly(bot) }
+    
+    val color: Color?
+        get() = jdaMember.color
+    
+    val colorRaw: Int?
+        get() = if (jdaMember.colorRaw == Role.DEFAULT_COLOR_RAW) null else jdaMember.colorRaw
+    
+    val isGuildOwner: Boolean
+        get() = jdaMember.isOwner
+    
     val data by lazy { bot.entityManager.getMember(this) }
     
     val warns by lazy { bot.entityManager.getWarns(this) }
     
-    val isOwner: Boolean
-        get() = id in bot.botConfig.ownerIds
-    
-    val isCoOwner: Boolean
-        get() = id in bot.botConfig.ownerIds || id in bot.botConfig.coOwnerIds
-    
-    fun ban(reason: String, daysToDelete: Int, moderator: PolyMember, replyAction: suspend (String) -> Unit) {
+    suspend fun ban(reason: String, daysToDelete: Int, moderator: PolyMember, replyAction: suspend (String) -> Unit) {
         bot.moderationManager.banMember(this, moderator, reason, daysToDelete, replyAction)
     }
     
-    fun kick(reason: String, moderator: PolyMember, replyAction: suspend (String) -> Unit) {
+    suspend fun kick(reason: String, moderator: PolyMember, replyAction: suspend (String) -> Unit) {
         bot.moderationManager.kickMember(this, moderator, reason, replyAction)
     }
     
-    fun warn(reason: String, moderator: PolyMember, time: LocalDateTime = LocalDateTime.now(), replyAction: suspend (String) -> Unit) {
+    suspend fun warn(reason: String,
+                     moderator: PolyMember,
+                     time: LocalDateTime = LocalDateTime.now(),
+                     replyAction: suspend (String) -> Unit) {
         bot.moderationManager.warnMember(guild, this, moderator, reason, time, replyAction)
+    }
+    
+    suspend fun changeNickname(nickname: String?) {
+        jdaMember.modifyNickname(nickname).await()
     }
     
     override fun equals(other: Any?): Boolean {

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyTextChannel.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 12-10-2021 09:29 p.m.
  *
  * MIT License
  *
@@ -36,5 +36,9 @@ class PolyTextChannel(bot: PolyBot, override val jdaChannel: TextChannel) : Poly
     suspend fun deleteMessages(messages: Collection<PolyMessage>) {
         jdaChannel.deleteMessages(messages.map { it.jdaMessage })
                 .await()
+    }
+    
+    fun deleteMessagesAsync(messages: Collection<PolyMessage>) {
+        jdaChannel.deleteMessages(messages.map { it.jdaMessage }).queue()
     }
 }

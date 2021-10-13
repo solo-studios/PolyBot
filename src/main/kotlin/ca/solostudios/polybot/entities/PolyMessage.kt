@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessage.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:23 p.m.
+ * Last modified on 12-10-2021 08:31 p.m.
  *
  * MIT License
  *
@@ -36,6 +36,7 @@ import java.util.EnumSet
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.Message.MentionType
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.entities.MessageReaction
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 
@@ -53,14 +54,17 @@ class PolyMessage(val bot: PolyBot, val jdaMessage: Message) {
     val id: Long
         get() = jdaMessage.idLong
     
+    val fromGuild: Boolean
+        get() = jdaMessage.isFromGuild
+    
+    /**
+     * Throws [NullPointerException] when this message isn't from a guild.
+     */
     val member: PolyMember
         get() = jdaMessage.member?.poly(bot)!!
     
-    val author: PolyUser
+    val user: PolyUser
         get() = jdaMessage.author.poly(bot)
-    
-    val fromBot: Boolean
-        get() = jdaMessage.author.isBot
     
     val channel: PolyMessageChannel
         get() = jdaMessage.channel.poly(bot)
@@ -68,11 +72,62 @@ class PolyMessage(val bot: PolyBot, val jdaMessage: Message) {
     val textChannel: PolyTextChannel
         get() = jdaMessage.textChannel.poly(bot)
     
+    /**
+     * Throws [NullPointerException] when this message isn't from a guild.
+     */
     val guild: PolyGuild
         get() = jdaMessage.guild.poly(bot)
     
+    val referencedMessage: PolyMessage?
+        get() = jdaMessage.referencedMessage?.poly(bot)
+    
+    val mentionedUsers: List<PolyMember>
+        get() = jdaMessage.mentionedMembers.map { it.poly(bot) }
+    
+    val mentionedChannels: List<PolyTextChannel>
+        get() = jdaMessage.mentionedChannels.map { it.poly(bot) }
+    
+    val mentionedRoles: List<PolyRole>
+        get() = jdaMessage.mentionedRoles.map { it.poly(bot) }
+    
+    val mentionedMembers: List<PolyMember>
+        get() = jdaMessage.mentionedMembers.map { it.poly(bot) }
+    
+    val mentionedEmotes: List<PolyEmote>
+        get() = jdaMessage.emotes.map { it.poly(bot) }
+    
+    val mentionsEveryone: Boolean
+        get() = jdaMessage.mentionsEveryone()
+    
+    val isEdited: Boolean
+        get() = jdaMessage.isEdited
+    
+    val timeEdited: OffsetDateTime?
+        get() = jdaMessage.timeEdited
+    
+    val url: String
+        get() = jdaMessage.jumpUrl
+    
+    val invites: List<String>
+        get() = jdaMessage.invites
+    
+    val isFromBot: Boolean
+        get() = jdaMessage.author.isBot
+    
+    val isFromWebhook: Boolean
+        get() = jdaMessage.isWebhookMessage
+    
     val timeCreated: OffsetDateTime
         get() = jdaMessage.timeCreated
+    
+    val attachments: List<Message.Attachment>
+        get() = jdaMessage.attachments
+    
+    val reactions: List<MessageReaction>
+        get() = jdaMessage.reactions
+    
+    val isPinned: Boolean
+        get() = jdaMessage.isPinned
     
     fun matches(regex: Regex) = content.matches(regex)
     
@@ -92,48 +147,92 @@ class PolyMessage(val bot: PolyBot, val jdaMessage: Message) {
     
     fun endsWithStripped(prefix: String, ignoreCase: Boolean = false) = contentStripped.endsWith(prefix, ignoreCase)
     
-    suspend fun reply(content: String, deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): PolyMessage {
-        return reply(jdaMessage.reply(content), deniedMentions).await().poly(bot)
+    suspend fun reply(
+            content: String,
+            deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE),
+                     ): PolyMessage {
+        return replyImpl(jdaMessage.reply(content), deniedMentions).await()
     }
     
-    fun replyAsync(content: String,
-                   deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): RestAction<PolyMessage> {
-        return reply(jdaMessage.reply(content), deniedMentions).map { it.poly(bot) }
+    suspend fun reply(
+            embed: MessageEmbed,
+            deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE),
+                     ): PolyMessage {
+        return replyImpl(jdaMessage.replyEmbeds(embed), deniedMentions).await()
     }
     
-    fun replyAsync(embed: MessageEmbed,
-                   deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): RestAction<PolyMessage> {
-        return reply(jdaMessage.replyEmbeds(embed), deniedMentions).map { it.poly(bot) }
+    fun replyAsync(
+            content: String,
+            deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE),
+                  ) {
+        replyImpl(jdaMessage.reply(content), deniedMentions).queue()
     }
     
-    suspend fun reply(embed: MessageEmbed,
-                      deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE)): PolyMessage {
-        return reply(jdaMessage.replyEmbeds(embed), deniedMentions).await().poly(bot)
+    fun replyAsync(
+            embed: MessageEmbed,
+            deniedMentions: List<MentionType> = listOf(MentionType.EVERYONE, MentionType.HERE),
+                  ) {
+        replyImpl(jdaMessage.replyEmbeds(embed), deniedMentions).queue()
     }
     
-    private fun reply(action: MessageAction, deniedMentions: List<MentionType>): MessageAction {
+    private fun replyImpl(action: MessageAction, deniedMentions: List<MentionType>): RestAction<PolyMessage> {
         return action.mentionRepliedUser(false)
                 .allowedMentions(EnumSet.complementOf(EnumSet.copyOf(deniedMentions)))
+                .map { it.poly(bot) }
     }
     
     suspend fun edit(content: String): PolyMessage {
-        return jdaMessage.editMessage(content)
-                .mentionRepliedUser(false)
-                .await()
-                .poly(bot)
+        return editImpl(jdaMessage.editMessage(content)).await()
     }
     
     suspend fun edit(embed: MessageEmbed): PolyMessage {
-        return jdaMessage.editMessageEmbeds(embed)
-                .mentionRepliedUser(false)
-                .await()
-                .poly(bot)
+        return editImpl(jdaMessage.editMessageEmbeds(embed)).await()
+    }
+    
+    fun editAsync(content: String) {
+        editImpl(jdaMessage.editMessage(content)).queue()
+    }
+    
+    fun editAsync(embed: MessageEmbed) {
+        editImpl(jdaMessage.editMessageEmbeds(embed)).queue()
+    }
+    
+    private fun editImpl(action: MessageAction): RestAction<PolyMessage> {
+        return action.mentionRepliedUser(false).map { it.poly(bot) }
     }
     
     suspend fun delete() {
-        jdaMessage.delete()
-                .await()
+        jdaMessage.delete().await()
     }
+    
+    fun deleteAsync() {
+        jdaMessage.delete().queue()
+    }
+    
+    suspend fun pin() {
+        jdaMessage.pin().await()
+    }
+    
+    fun pinAsync() {
+        jdaMessage.pin().queue()
+    }
+    
+    suspend fun unpin() {
+        jdaMessage.unpin().await()
+    }
+    
+    fun unpinAsync() {
+        jdaMessage.unpin().queue()
+    }
+    
+    suspend fun clearReactions() {
+        jdaMessage.clearReactions().await()
+    }
+    
+    fun clearReactionsAsync() {
+        jdaMessage.clearReactions().queue()
+    }
+    
     
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

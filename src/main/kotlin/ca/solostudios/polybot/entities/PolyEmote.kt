@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyRole.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 09:28 p.m.
+ * The file PolyEmote.kt is part of PolyhedralBot
+ * Last modified on 12-10-2021 07:42 p.m.
  *
  * MIT License
  *
@@ -30,42 +30,19 @@ package ca.solostudios.polybot.entities
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.util.poly
-import java.awt.Color
-import net.dv8tion.jda.api.entities.Role
+import net.dv8tion.jda.api.entities.Emote
 
-@Suppress("unused")
-class PolyRole(val bot: PolyBot, val jdaRole: Role) {
-    val name: String
-        get() = jdaRole.name
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+class PolyEmote(val bot: PolyBot, val jdaEmote: Emote) {
+    val guild: PolyGuild?
+        get() = jdaEmote.guild?.poly(bot)
     
-    val isManaged: Boolean
-        get() = jdaRole.isManaged
+    val isAnimated: Boolean
+        get() = jdaEmote.isAnimated
     
-    val isHoisted: Boolean
-        get() = jdaRole.isHoisted
+    val url: String
+        get() = jdaEmote.imageUrl
     
-    val isMentionable: Boolean
-        get() = jdaRole.isMentionable
-    
-    val color: Color?
-        get() = jdaRole.color
-    
-    val guild: PolyGuild
-        get() = jdaRole.guild.poly(bot)
-    
-    val isBot: Boolean
-        get() = jdaRole.tags.isBot
-    
-    val botId: Long?
-        get() = if (jdaRole.tags.botIdLong == 0L) null else jdaRole.tags.botIdLong
-    
-    val isBoost: Boolean
-        get() = jdaRole.tags.isBoost
-    
-    val isIntegration: Boolean
-        get() = jdaRole.tags.isIntegration
-    
-    val integrationId: Long?
-        get() = if (jdaRole.tags.integrationIdLong == 0L) null else jdaRole.tags.integrationIdLong
-    
+    val asMention: String
+        get() = jdaEmote.asMention
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageChannel.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:21 p.m.
+ * Last modified on 12-10-2021 08:41 p.m.
  *
  * MIT License
  *
@@ -35,6 +35,7 @@ import java.util.EnumSet
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageChannel
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 
 @Suppress("unused")
@@ -43,21 +44,39 @@ open class PolyMessageChannel(bot: PolyBot, override val jdaChannel: MessageChan
         jdaChannel.sendTyping().await()
     }
     
-    suspend fun sendMessage(content: String,
-                            deniedMentions: List<Message.MentionType> = listOf(Message.MentionType.EVERYONE,
-                                                                               Message.MentionType.HERE)): PolyMessage {
-        return sendMessage(jdaChannel.sendMessage(content), deniedMentions)
+    fun sendTypingAsync() {
+        jdaChannel.sendTyping().queue()
     }
     
-    suspend fun sendMessage(content: MessageEmbed,
-                            deniedMentions: List<Message.MentionType> = listOf(Message.MentionType.EVERYONE,
-                                                                               Message.MentionType.HERE)): PolyMessage {
-        return sendMessage(jdaChannel.sendMessageEmbeds(content), deniedMentions)
+    suspend fun sendMessage(
+            content: String,
+            deniedMentions: List<Message.MentionType> = listOf(Message.MentionType.EVERYONE, Message.MentionType.HERE),
+                           ): PolyMessage {
+        return sendMessageImpl(jdaChannel.sendMessage(content), deniedMentions).await()
     }
     
-    private suspend fun sendMessage(action: MessageAction, deniedMentions: List<Message.MentionType>): PolyMessage {
-        return action.allowedMentions(EnumSet.complementOf(EnumSet.copyOf(deniedMentions)))
-                .await()
-                .poly(bot)
+    suspend fun sendMessage(
+            embed: MessageEmbed,
+            deniedMentions: List<Message.MentionType> = listOf(Message.MentionType.EVERYONE, Message.MentionType.HERE),
+                           ): PolyMessage {
+        return sendMessageImpl(jdaChannel.sendMessageEmbeds(embed), deniedMentions).await()
+    }
+    
+    fun sendMessageAsync(
+            content: String,
+            deniedMentions: List<Message.MentionType> = listOf(Message.MentionType.EVERYONE, Message.MentionType.HERE),
+                        ) {
+        sendMessageImpl(jdaChannel.sendMessage(content), deniedMentions).queue()
+    }
+    
+    fun sendMessageAsync(
+            embed: MessageEmbed,
+            deniedMentions: List<Message.MentionType> = listOf(Message.MentionType.EVERYONE, Message.MentionType.HERE),
+                        ) {
+        sendMessageImpl(jdaChannel.sendMessageEmbeds(embed), deniedMentions).queue()
+    }
+    
+    private fun sendMessageImpl(action: MessageAction, deniedMentions: List<Message.MentionType>): RestAction<PolyMessage> {
+        return action.allowedMentions(EnumSet.complementOf(EnumSet.copyOf(deniedMentions))).map { it.poly(bot) }
     }
 }

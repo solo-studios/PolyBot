@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuild.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 12-10-2021 07:34 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,8 @@ package ca.solostudios.polybot.entities
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.data.PolyTagData
+import ca.solostudios.polybot.util.poly
+import java.util.Locale
 import net.dv8tion.jda.api.entities.Guild
 
 class PolyGuild(val bot: PolyBot, val jdaGuild: Guild) {
@@ -39,6 +41,54 @@ class PolyGuild(val bot: PolyBot, val jdaGuild: Guild) {
     
     val name: String
         get() = jdaGuild.name
+    
+    val members: Int
+        get() = jdaGuild.memberCount
+    
+    val iconUrl: String
+        get() = jdaGuild.iconUrl ?: ""
+    
+    val splashUrl: String
+        get() = jdaGuild.splashUrl ?: ""
+    
+    val bannerUrl: String
+        get() = jdaGuild.splashUrl ?: ""
+    
+    val vanityUrl: String?
+        get() = jdaGuild.vanityUrl
+    
+    val description: String
+        get() = jdaGuild.description ?: ""
+    
+    val locale: Locale
+        get() = jdaGuild.locale
+    
+    val boostTier: Guild.BoostTier
+        get() = jdaGuild.boostTier
+    
+    val boosts: Int
+        get() = jdaGuild.boostCount
+    
+    val owner: PolyMember?
+        get() = jdaGuild.owner?.poly(bot)
+    
+    val selfMember: PolyMember
+        get() = jdaGuild.selfMember.poly(bot)
+    
+    val textChannels: List<PolyTextChannel>
+        get() = jdaGuild.textChannels.map { it.poly(bot) }
+    
+    val voiceChannels: List<PolyVoiceChannel>
+        get() = jdaGuild.voiceChannels.map { it.poly(bot) }
+    
+    val roles: List<PolyRole>
+        get() = jdaGuild.roles.map { it.poly(bot) }
+    
+    val boostRole: PolyRole?
+        get() = jdaGuild.boostRole?.poly(bot)
+    
+    val emotes: List<PolyEmote>
+        get() = jdaGuild.emotes.map { it.poly(bot) }
     
     val data by lazy { bot.entityManager.getGuild(this) }
     
