@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:17 p.m.
+ * Last modified on 12-10-2021 07:54 p.m.
  *
  * MIT License
  *
@@ -35,7 +35,6 @@ import ca.solostudios.polybot.event.moderation.PolyBanEvent
 import ca.solostudios.polybot.event.moderation.PolyKickEvent
 import dev.minn.jda.ktx.await
 import java.time.LocalDateTime
-import kotlinx.coroutines.launch
 import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
@@ -44,121 +43,115 @@ import org.slf4j.kotlin.*
 class ModerationManager(val bot: PolyBot) {
     private val logger by getLogger()
     
-    fun banMember(member: PolyMember,
-                  moderator: PolyMember,
-                  reason: String,
-                  daysToDelete: Int,
-                  replyAction: suspend (String) -> Unit) {
-        bot.scope.launch {
-            when (member.id) {
-                moderator.id -> {
-                    replyAction("You cannot ban yourself!")
-                }
+    suspend fun banMember(member: PolyMember,
+                          moderator: PolyMember,
+                          reason: String,
+                          daysToDelete: Int,
+                          replyAction: suspend (String) -> Unit) {
+        when (member.id) {
+            moderator.id -> {
+                replyAction("You cannot ban yourself!")
+            }
+            
+            bot.id       -> {
+                replyAction("You cannot ban the bot!")
+            }
+            
+            else         -> {
+                val event = PolyBanEvent(member, reason, moderator)
                 
-                bot.id       -> {
-                    replyAction("You cannot ban the bot!")
-                }
+                bot.eventManager.dispatch(event)
                 
-                else         -> {
-                    val event = PolyBanEvent(member, reason, moderator)
-                    
-                    bot.eventManager.dispatch(event)
-                    
-                    member.jdaMember.ban(daysToDelete, reason)
-                            .await()
-                    
-                    replyAction("User ${member.name}#${member.discriminator} has been banned from the server, " +
-                                        "and $daysToDelete days of messages have been deleted, $reason")
-                    
-                    logger.debug(member.name, member.discriminator, member.guild.name, daysToDelete, reason) {
-                        "User {}#{} has been banned from the server {}, and {} days of messages have been deleted. {}"
-                    }
+                member.jdaMember.ban(daysToDelete, reason)
+                        .await()
+                
+                replyAction("User ${member.name}#${member.discriminator} has been banned from the server, " +
+                                    "and $daysToDelete days of messages have been deleted, $reason")
+                
+                logger.debug(member.name, member.discriminator, member.guild.name, daysToDelete, reason) {
+                    "User {}#{} has been banned from the server {}, and {} days of messages have been deleted. {}"
                 }
             }
         }
     }
     
-    fun kickMember(member: PolyMember,
-                   moderator: PolyMember,
-                   reason: String,
-                   replyAction: suspend (String) -> Unit) {
-        bot.scope.launch {
-            when (member.id) {
-                moderator.id -> {
-                    replyAction("You cannot kick yourself!")
-                }
+    suspend fun kickMember(member: PolyMember,
+                           moderator: PolyMember,
+                           reason: String,
+                           replyAction: suspend (String) -> Unit) {
+        when (member.id) {
+            moderator.id -> {
+                replyAction("You cannot kick yourself!")
+            }
+            
+            bot.id       -> {
+                replyAction("You cannot kick the bot!")
+            }
+            
+            else         -> {
+                member.jdaMember.kick(reason)
+                        .submit()
+                        .await()
                 
-                bot.id       -> {
-                    replyAction("You cannot kick the bot!")
-                }
+                val event = PolyKickEvent(member, reason, moderator)
                 
-                else         -> {
-                    member.jdaMember.kick(reason)
-                            .submit()
-                            .await()
-                    
-                    val event = PolyKickEvent(member, reason, moderator)
-                    
-                    bot.eventManager.dispatch(event)
-                    
-                    replyAction("User ${member.name}#${member.discriminator} has been kicked from the server, $reason")
-                    
-                    // log to console
-                    logger.debug(member.name, member.discriminator, member.id, member.guild.name, reason) {
-                        "User {}#{} <@{}> has been kicked from the server {}, {}."
-                    }
+                bot.eventManager.dispatch(event)
+                
+                replyAction("User ${member.name}#${member.discriminator} has been kicked from the server, $reason")
+                
+                // log to console
+                logger.debug(member.name, member.discriminator, member.id, member.guild.name, reason) {
+                    "User {}#{} <@{}> has been kicked from the server {}, {}."
                 }
             }
         }
     }
     
-    fun warnMember(
+    suspend fun warnMember(
             guild: PolyGuild,
             member: PolyMember,
             moderator: PolyMember,
             reason: String,
             time: LocalDateTime,
             replyAction: suspend (String) -> Unit,
-                  ) {
-        bot.scope.launch {
-            when {
-                member.id == moderator.id -> {
-                    replyAction("You cannot warn yourself!")
+                          ) {
+        when {
+            member.id == moderator.id -> {
+                replyAction("You cannot warn yourself!")
+            }
+            
+            member.id == bot.id       -> {
+                replyAction("You cannot warn the bot!")
+            }
+            
+            member.isBot              -> {
+                replyAction("You cannot warn another bot!")
+            }
+            
+            else                      -> {
+                val warnFailed = try {
+                    val channel = member.user.privateChannel()
+                    
+                    channel.sendMessage("You have been warned. blah blah blah")
+                    
+                    false
+                } catch (e: InsufficientPermissionException) {
+                    true
+                } catch (e: UnsupportedOperationException) {
+                    true
                 }
+                val warn = PolyWarnData(bot, UUID.generateUUID(bot.globalRandom), guild.id, member.id, moderator.id, time, reason)
                 
-                member.id == bot.id       -> {
-                    replyAction("You cannot warn the bot!")
-                }
+                bot.entityManager.saveWarn(warn)
                 
-                member.isBot              -> {
-                    replyAction("You cannot warn another bot!")
-                }
+                replyAction("${member.mention} has been warned for $reason.")
                 
-                else                      -> {
-                    val warnFailed = try {
-                        val channel = member.user.privateChannel()
-    
-                        channel.sendMessage("You have been warned. blah blah blah")
-    
-                        false
-                    } catch (e: InsufficientPermissionException) {
-                        true
-                    } catch (e: UnsupportedOperationException) {
-                        true
-                    }
-                    val warn = PolyWarnData(bot, UUID.generateUUID(bot.globalRandom), guild.id, member.id, moderator.id, time, reason)
-                    
-                    bot.entityManager.saveWarn(warn)
-                    
-                    replyAction("${member.mention} has been warned for $reason.")
-                    
-                    if (warnFailed)
-                        replyAction("Member ${member.name}#${member.discriminator} could not be messaged because they either don't share a server with this bot, or have dms off.")
-                    
-                    
-                    logger.debug(member.name, member.discriminator, member.id, member.guild.name, reason) {
-                        "User {}#{} <@{}> has been warned in the server {}, {}."
-                    }
+                if (warnFailed)
+                    replyAction("Member ${member.name}#${member.discriminator} could not be messaged because they either don't share a server with this bot, or have dms off.")
+                
+                
+                logger.debug(member.name, member.discriminator, member.id, member.guild.name, reason) {
+                    "User {}#{} <@{}> has been warned in the server {}, {}."
                 }
             }
         }

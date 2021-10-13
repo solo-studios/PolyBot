@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 12-10-2021 10:32 p.m.
  *
  * MIT License
  *
@@ -59,7 +59,6 @@ import ca.solostudios.polybot.search.SearchManager
 import ca.solostudios.polybot.util.AnnotationParser
 import ca.solostudios.polybot.util.BackedReference
 import ca.solostudios.polybot.util.ScheduledThreadPool
-import ca.solostudios.polybot.util.ShutdownService
 import ca.solostudios.polybot.util.currentThread
 import ca.solostudios.polybot.util.fixedRate
 import ca.solostudios.polybot.util.onlineStatus
@@ -100,8 +99,14 @@ import cloud.commandframework.jda.JDA4CommandManager as CommandManager
 
 @ExperimentalTime
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownService() {
+class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     private val logger by getLogger()
+    
+    var shutdown = false
+        private set
+    
+    val running
+        get() = !shutdown
     
     val botConfig = config.botConfig
     
@@ -227,27 +232,38 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) : ShutdownServi
                                                               { jda.getGuildById(it.first)?.getMemberById(it.second) },
                                                               { it?.let { it.idLong to it.guild.idLong } ?: (0L to 0L) })
     
-    override fun serviceShutdown() {
-        jda.presence.apply {
-            onlineStatus = OnlineStatus.DO_NOT_DISTURB
-            activity = Activity.watching("Shutting down PolyBot...")
+    fun shutdown(exitCode: Int): Int {
+        if (shutdown)
+            return exitCode
+        shutdown = true
+        
+        try {
+            jda.presence.apply {
+                onlineStatus = OnlineStatus.DO_NOT_DISTURB
+                activity = Activity.watching("Shutting down PolyBot...")
+            }
+            
+            jda.shutdownNow()
+            
+            entityManager.shutdown()
+            // databaseManager.shutdown()
+            cacheManager.shutdown()
+            searchManager.shutdown()
+            
+            scheduledThreadPool.shutdown()
+            coroutineDispatcher.close()
+            
+            scope.cancel("Shutdown")
+            
+            logger.info { "Shutdown of PolyBot finished" }
+        } catch (e: Exception) {
+            logger.error(e) { "Exception occurred while shutting down." }
+            removeShutdownThread()
+            exitProcess(ExitCodes.EXIT_CODE_ERROR)
         }
         
-        jda.shutdownNow()
-    
-        entityManager.shutdown()
-        // databaseManager.shutdown()
-        cacheManager.shutdown()
-        searchManager.shutdown()
-        
-        scheduledThreadPool.shutdown()
-        coroutineDispatcher.close()
-        
-        scope.cancel("Shutdown")
-        
-        logger.info { "Shutdown of PolyBot finished" }
-        
-        exitProcess(0)
+        removeShutdownThread()
+        exitProcess(exitCode)
     }
     
     object PolyThreadFactory : ThreadFactory {

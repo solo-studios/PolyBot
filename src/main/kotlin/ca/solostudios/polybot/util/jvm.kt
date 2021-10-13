@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file jvm.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:20 p.m.
+ * Last modified on 12-10-2021 10:30 p.m.
  *
  * MIT License
  *
@@ -34,12 +34,14 @@ import java.lang.management.ManagementFactory
 import java.lang.management.RuntimeMXBean
 import kotlin.concurrent.thread
 
-fun onJvmShutdown(block: () -> Unit) = onJvmShutdown("JVM-Shutdown-Thread", block)
+fun onJvmShutdown(block: () -> Unit): Thread = onJvmShutdown("JVM-Shutdown-Thread", block)
 
 
-fun onJvmShutdown(name: String, block: () -> Unit) {
-    Runtime.getRuntime().addShutdownHook(thread(start = false, isDaemon = false, name = name, block = block))
+fun onJvmShutdown(name: String, block: () -> Unit): Thread = thread(start = false, isDaemon = false, name = name, block = block).also {
+    Runtime.getRuntime().addShutdownHook(it)
 }
+
+fun removeJvmShutdownThread(thread: Thread) = Runtime.getRuntime().removeShutdownHook(thread)
 
 val runtime: Runtime
     get() = Runtime.getRuntime()

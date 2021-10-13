@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:14 p.m.
+ * Last modified on 12-10-2021 10:30 p.m.
  *
  * MIT License
  *
@@ -32,6 +32,7 @@ package ca.solostudios.polybot
 
 import ca.solostudios.polybot.config.PolyConfig
 import ca.solostudios.polybot.util.onJvmShutdown
+import ca.solostudios.polybot.util.removeJvmShutdownThread
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -58,53 +59,66 @@ import kotlin.system.exitProcess
 
 private val logger by getLogger()
 
+lateinit var shutdownThread: Thread
+
+fun removeShutdownThread() {
+    removeJvmShutdownThread(shutdownThread)
+}
+
 fun main() {
-    logger.info { "Starting polybot version ${Version.version}." }
-    TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
-    
-    val config = readConfig(Constants.configFile)
-    
-    val jda = DefaultJDABuilder(config.botConfig.token) {
-        disableCache = listOf(CacheFlag.ACTIVITY,
-                              CacheFlag.VOICE_STATE,
-                              CacheFlag.EMOTE,
-                              CacheFlag.CLIENT_STATUS,
-                              CacheFlag.MEMBER_OVERRIDES,
-                              CacheFlag.ROLE_TAGS)
+    try {
+        logger.info { "Starting polybot version ${Version.version}." }
+        TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         
-        disableIntents = listOf(GatewayIntent.DIRECT_MESSAGE_TYPING,
-                                GatewayIntent.GUILD_MESSAGE_TYPING,
-                                GatewayIntent.GUILD_VOICE_STATES,
-                                GatewayIntent.GUILD_PRESENCES)
+        val config = readConfig(Constants.configFile)
         
-        enableIntents = listOf(GatewayIntent.GUILD_MEMBERS,
-                               GatewayIntent.GUILD_BANS,
-                               GatewayIntent.GUILD_EMOJIS,
-                               GatewayIntent.GUILD_WEBHOOKS,
-                               GatewayIntent.GUILD_INVITES,
-                               GatewayIntent.GUILD_MESSAGES,
-                               GatewayIntent.GUILD_MESSAGE_REACTIONS,
-                               GatewayIntent.DIRECT_MESSAGES,
-                               GatewayIntent.DIRECT_MESSAGE_REACTIONS)
-    
-        memberCachePolicy = MemberCachePolicy.ONLINE or MemberCachePolicy.VOICE or MemberCachePolicy.OWNER
-        chunkingFilter = ChunkingFilter.NONE
-        gatewayEncoding = GatewayEncoding.ETF
-    
-        status = OnlineStatus.DO_NOT_DISTURB
-        activity = Activity.watching("Starting up PolyBot...")
-    
-    
-        enableShutdownHook = true
-        bulkDeleteSplitting = false
-    
-        injectKtx = true
-    }
-    
-    val polybot = PolyBot(config, jda)
-    
-    onJvmShutdown("PolyBot-Shutdown") {
-        polybot.shutdown()
+        val jda = DefaultJDABuilder(config.botConfig.token) {
+            disableCache = listOf(CacheFlag.ACTIVITY,
+                                  CacheFlag.VOICE_STATE,
+                                  CacheFlag.EMOTE,
+                                  CacheFlag.CLIENT_STATUS,
+                                  CacheFlag.MEMBER_OVERRIDES,
+                                  CacheFlag.ROLE_TAGS)
+            
+            disableIntents = listOf(GatewayIntent.DIRECT_MESSAGE_TYPING,
+                                    GatewayIntent.GUILD_MESSAGE_TYPING,
+                                    GatewayIntent.GUILD_VOICE_STATES,
+                                    GatewayIntent.GUILD_PRESENCES)
+            
+            enableIntents = listOf(GatewayIntent.GUILD_MEMBERS,
+                                   GatewayIntent.GUILD_BANS,
+                                   GatewayIntent.GUILD_EMOJIS,
+                                   GatewayIntent.GUILD_WEBHOOKS,
+                                   GatewayIntent.GUILD_INVITES,
+                                   GatewayIntent.GUILD_MESSAGES,
+                                   GatewayIntent.GUILD_MESSAGE_REACTIONS,
+                                   GatewayIntent.DIRECT_MESSAGES,
+                                   GatewayIntent.DIRECT_MESSAGE_REACTIONS)
+            
+            memberCachePolicy = MemberCachePolicy.ONLINE or MemberCachePolicy.VOICE or MemberCachePolicy.OWNER
+            chunkingFilter = ChunkingFilter.NONE
+            gatewayEncoding = GatewayEncoding.ETF
+            
+            status = OnlineStatus.DO_NOT_DISTURB
+            activity = Activity.watching("Starting up PolyBot...")
+            
+            
+            enableShutdownHook = true
+            bulkDeleteSplitting = false
+            
+            injectKtx = true
+        }
+        
+        val polybot = PolyBot(config, jda)
+        
+        shutdownThread = onJvmShutdown("PolyBot-Shutdown") {
+            if (polybot.shutdown)
+                return@onJvmShutdown
+            polybot.shutdown(ExitCodes.EXIT_CODE_ERROR)
+        }
+    } catch (e: Throwable) {
+        logger.error(e) { "Exception occurred while running PolyBot." }
+        exitProcess(ExitCodes.EXIT_CODE_ERROR)
     }
 }
 
@@ -140,10 +154,10 @@ private fun createConfigFileAndExit(file: File) {
         stream.transferTo(file.outputStream())
     } else {
         logger.error { "Cannot write default config. Could not find the default config file at resource location: '${Constants.defaultConfig}'." }
-        exitProcess(-2)
+        exitProcess(ExitCodes.EXIT_CODE_ERROR)
     }
     
     logger.info { "Wrote default config to '${file.name}'. Please modify this file with your token and other settings before running." }
     
-    exitProcess(1)
+    exitProcess(ExitCodes.EXIT_CODE_NORMAL)
 }

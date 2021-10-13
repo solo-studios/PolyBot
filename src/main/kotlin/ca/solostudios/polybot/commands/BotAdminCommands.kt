@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotAdminCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 12-10-2021 10:30 p.m.
  *
  * MIT License
  *
@@ -28,12 +28,14 @@
 
 package ca.solostudios.polybot.commands
 
+import ca.solostudios.polybot.ExitCodes
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.entities.PolyMessage
+import ca.solostudios.polybot.entities.PolyUser
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Hidden
 import org.slf4j.kotlin.*
@@ -47,9 +49,27 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     @Hidden
     @JDAUserPermission(ownerOnly = true)
     @CommandMethod("shutdown")
-    suspend fun shutdown(message: PolyMessage) {
+    suspend fun shutdown(message: PolyMessage, author: PolyUser) {
         message.reply("Shutting down PolyBot")
-        logger.info { "Shutting down PolyBot" }
-        bot.shutdown()
+        logger.info { "Shutdown request was triggered by ${author.tag} (${author.id})" }
+        bot.shutdown(ExitCodes.EXIT_CODE_SHUTDOWN)
+    }
+    
+    @Hidden
+    @JDAUserPermission(ownerOnly = true)
+    @CommandMethod("restart")
+    suspend fun restart(message: PolyMessage, author: PolyUser) {
+        message.reply("Restarting PolyBot")
+        logger.info { "Restart request was triggered by ${author.tag} (${author.id})" }
+        bot.shutdown(ExitCodes.EXIT_CODE_RESTART)
+    }
+    
+    @Hidden
+    @JDAUserPermission(ownerOnly = true)
+    @CommandMethod("update")
+    suspend fun update(message: PolyMessage, author: PolyUser) {
+        message.reply("Updating PolyBot")
+        logger.info { "Update request was triggered by ${author.tag} (${author.id})" }
+        bot.shutdown(ExitCodes.EXIT_CODE_UPDATE)
     }
 }
