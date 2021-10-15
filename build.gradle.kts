@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 12-10-2021 06:15 p.m.
+ * Last modified on 14-10-2021 11:20 p.m.
  *
  * MIT License
  *
@@ -300,6 +300,7 @@ tasks.withType<Jar> {
                 "Built-Jdk" to System.getProperty("java.version"),
                 "Implementation-Title" to project.name,
                 "Implementation-Version" to project.version.toString(),
+                "Add-Opens" to "java.base/java.nio=ALL-UNNAMED",
                   )
     }
 }
