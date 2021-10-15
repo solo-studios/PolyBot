@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 14-10-2021 11:20 p.m.
+ * Last modified on 14-10-2021 11:29 p.m.
  *
  * MIT License
  *
@@ -300,7 +300,7 @@ tasks.withType<Jar> {
                 "Built-Jdk" to System.getProperty("java.version"),
                 "Implementation-Title" to project.name,
                 "Implementation-Version" to project.version.toString(),
-                "Add-Opens" to "java.base/java.nio=ALL-UNNAMED",
+                "Add-Opens" to "java.base/java.nio java.base/sun.nio.ch",
                   )
     }
 }
@@ -326,7 +326,7 @@ class Version(val major: String, val minor: String, val patch: String) {
         return if (localBuild) // Only use git hash if it's a local build.
             "$major.$minor.$patch-local+${getGitHash()}"
         else
-            "$major.$minor.$patch+${buildNumber}"
+            "$major.$minor.$patch+$buildNumber"
     }
 }
 
