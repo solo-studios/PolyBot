@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 14-10-2021 11:29 p.m.
+ * Last modified on 15-10-2021 05:06 p.m.
  *
  * MIT License
  *
@@ -239,10 +239,15 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-params")
 }
 
+application {
+    applicationDefaultJvmArgs = listOf("--add-opens", "java.base/java.nio=ALL-UNNAMED", "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED")
+}
+
 noArg {
     invokeInitializers = true
     annotation("kotlinx.serialization.Serializable")
 }
+
 tasks {
     getByName<Test>("test") {
         useJUnitPlatform()
@@ -269,40 +274,40 @@ tasks {
             freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
         }
     }
+    
+    withType<ShadowJar> {
+        mergeServiceFiles()
+        minimize {
+            exclude {
+                it.moduleGroup == "org.mariadb.jdbc" || it.moduleGroup == "ch.qos.logback" || it.moduleGroup == "org.jetbrains.kotlinx" ||
+                        it.moduleGroup == "org.ehcache" || it.moduleGroup == "org.jetbrains.exposed"
+            }
+            exclude {
+                it.moduleName == "kotlin-reflect"
+            }
+            exclude {
+                it.moduleGroup == "org.apache.lucene" && (it.moduleName == "lucene-core" || it.moduleName == "lucene-sandbox")
+            }
+        }
+    }
+    
+    withType<Jar> {
+        manifest {
+            attributes(
+                    "Main-Class" to mainClassName,
+                    "Built-By" to System.getProperty("user.name"),
+                    "Built-Jdk" to System.getProperty("java.version"),
+                    "Implementation-Title" to project.name,
+                    "Implementation-Version" to project.version.toString(),
+                    "Add-Opens" to "java.base/java.nio java.base/sun.nio.ch",
+                      )
+        }
+    }
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
-}
-
-tasks.withType<ShadowJar> {
-    mergeServiceFiles()
-    minimize {
-        exclude {
-            it.moduleGroup == "org.mariadb.jdbc" || it.moduleGroup == "ch.qos.logback" || it.moduleGroup == "org.jetbrains.kotlinx" ||
-                    it.moduleGroup == "org.ehcache" || it.moduleGroup == "org.jetbrains.exposed"
-        }
-        exclude {
-            it.moduleName == "kotlin-reflect"
-        }
-        exclude {
-            it.moduleGroup == "org.apache.lucene" && (it.moduleName == "lucene-core" || it.moduleName == "lucene-sandbox")
-        }
-    }
-}
-
-tasks.withType<Jar> {
-    manifest {
-        attributes(
-                "Main-Class" to mainClassName,
-                "Built-By" to System.getProperty("user.name"),
-                "Built-Jdk" to System.getProperty("java.version"),
-                "Implementation-Title" to project.name,
-                "Implementation-Version" to project.version.toString(),
-                "Add-Opens" to "java.base/java.nio java.base/sun.nio.ch",
-                  )
-    }
 }
 
 /**
