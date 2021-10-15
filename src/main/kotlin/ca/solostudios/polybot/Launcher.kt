@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 10:30 p.m.
+ * Last modified on 15-10-2021 05:09 p.m.
  *
  * MIT License
  *
@@ -114,7 +114,8 @@ fun main() {
         shutdownThread = onJvmShutdown("PolyBot-Shutdown") {
             if (polybot.shutdown)
                 return@onJvmShutdown
-            polybot.shutdown(ExitCodes.EXIT_CODE_ERROR)
+    
+            polybot.shutdown(isShutdownHook = true)
         }
     } catch (e: Throwable) {
         logger.error(e) { "Exception occurred while running PolyBot." }

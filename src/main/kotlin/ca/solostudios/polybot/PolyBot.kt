@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 10:32 p.m.
+ * Last modified on 15-10-2021 05:09 p.m.
  *
  * MIT License
  *
@@ -232,16 +232,15 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
                                                               { jda.getGuildById(it.first)?.getMemberById(it.second) },
                                                               { it?.let { it.idLong to it.guild.idLong } ?: (0L to 0L) })
     
-    fun shutdown(exitCode: Int): Int {
-        if (shutdown)
-            return exitCode
+    fun shutdown(exitCode: Int = ExitCodes.EXIT_CODE_NORMAL, isShutdownHook: Boolean = false) {
         shutdown = true
         
-        try {
-            jda.presence.apply {
-                onlineStatus = OnlineStatus.DO_NOT_DISTURB
-                activity = Activity.watching("Shutting down PolyBot...")
-            }
+        jda.presence.apply {
+            onlineStatus = OnlineStatus.DO_NOT_DISTURB
+            activity = Activity.watching("Shutting down PolyBot...")
+        }
+        
+        val exitStatus = try {
             
             jda.shutdownNow()
             
@@ -256,14 +255,18 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
             scope.cancel("Shutdown")
             
             logger.info { "Shutdown of PolyBot finished" }
+            
+            exitCode
         } catch (e: Exception) {
             logger.error(e) { "Exception occurred while shutting down." }
-            removeShutdownThread()
-            exitProcess(ExitCodes.EXIT_CODE_ERROR)
+            
+            ExitCodes.EXIT_CODE_ERROR
         }
         
-        removeShutdownThread()
-        exitProcess(exitCode)
+        if (!isShutdownHook) {
+            removeShutdownThread()
+            exitProcess(exitStatus)
+        }
     }
     
     object PolyThreadFactory : ThreadFactory {
