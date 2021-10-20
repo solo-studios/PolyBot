@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 15-10-2021 05:06 p.m.
+ * Last modified on 20-10-2021 11:54 a.m.
  *
  * MIT License
  *
@@ -240,7 +240,11 @@ dependencies {
 }
 
 application {
-    applicationDefaultJvmArgs = listOf("--add-opens", "java.base/java.nio=ALL-UNNAMED", "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED")
+    applicationDefaultJvmArgs = listOf(
+            "--add-opens", "java.base/java.nio=ALL-UNNAMED", // kryo
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED", // kryo
+            "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED", // reflectasm
+                                      )
 }
 
 noArg {
@@ -299,7 +303,7 @@ tasks {
                     "Built-Jdk" to System.getProperty("java.version"),
                     "Implementation-Title" to project.name,
                     "Implementation-Version" to project.version.toString(),
-                    "Add-Opens" to "java.base/java.nio java.base/sun.nio.ch",
+                    "Add-Opens" to "java.base/java.nio java.base/sun.nio.ch java.base/java.lang",
                       )
         }
     }
