@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 10:32 p.m.
+ * Last modified on 20-10-2021 11:59 a.m.
  *
  * MIT License
  *
@@ -35,9 +35,10 @@ import ca.solostudios.polybot.cloud.commands.annotations.JDABotPermission
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.entities.PolyGuild
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
-import ca.solostudios.polybot.entities.PolyMessageChannel
+import ca.solostudios.polybot.entities.PolyTextChannel
 import ca.solostudios.polybot.event.moderation.PolyClearEvent
 import ca.solostudios.polybot.util.poly
 import cloud.commandframework.annotations.Argument
@@ -52,6 +53,21 @@ import org.slf4j.kotlin.*
 @PolyCommandContainer
 class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
+    
+    @JDAGuildCommand
+    @JDAUserPermission(Permission.MANAGE_SERVER)
+    @CommandMethod("logging|logs [channel]")
+    suspend fun loggingChannel(message: PolyMessage,
+                               guild: PolyGuild,
+                               @Argument("channel")
+                               loggingChannel: PolyTextChannel? = null) {
+        val oldLoggingChannel = guild.data.loggingChannel?.poly(bot)
+        
+        guild.data.loggingChannelId = loggingChannel?.id ?: -1L
+        
+        
+        message.reply("Updated the logging channel from $oldLoggingChannel to $loggingChannel")
+    }
     
     @JDAGuildCommand
     @JDABotPermission(Permission.BAN_MEMBERS)
@@ -97,32 +113,32 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
                               @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
                               amount: Int,
                               @Flag("user", aliases = ["u"], description = "Delete only messages from this user.")
-                                  member: PolyMember?,
+                              member: PolyMember?,
                               @Flag("message-regex", aliases = ["e"], description = "Delete only messages that match this regex.")
-                                  messageRegex: String?,
+                              messageRegex: String?,
                               @Flag("starts-with", description = "Delete only messages that start with this string.")
-                                  startsWith: String?,
+                              startsWith: String?,
                               @Flag("ends-with", description = "Delete only messages that end with this string.")
-                                  endsWith: String?,
+                              endsWith: String?,
                               @Flag("bot-only", aliases = ["b"], description = "Delete only messages from bots.")
-                                  botOnly: Boolean = false,
+                              botOnly: Boolean = false,
                               @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
-                                  caseInsensitive: Boolean = false) {
+                              caseInsensitive: Boolean = false) {
         logger.info { "Running clear command" }
-        
+    
         val event = PolyClearEvent(message.textChannel, message.member)
         bot.eventManager.dispatch(event)
-        
+    
         logger.info { "Dispatched clear event" }
-        
+    
         val regex =
                 if (caseInsensitive)
                     messageRegex?.toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
                 else
                     messageRegex?.toRegex(RegexOption.MULTILINE)
-        
-        
-        val messages = PastMessageSequence(message.channel).take(500).filter {
+    
+    
+        val messages = PastMessageSequence(message.textChannel).take(500).filter {
             it.id != message.id
         }.filter {
             if (member != null) it.member == member else true
@@ -162,7 +178,7 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     private class PastMessageSequence(
-            val channel: PolyMessageChannel,
+            val channel: PolyTextChannel,
             private val bulkQuery: Int = 24,
                                      ) : Sequence<PolyMessage> {
         private val history = channel.jdaChannel.history
