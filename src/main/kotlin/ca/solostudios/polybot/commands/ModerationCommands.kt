@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 11:59 a.m.
+ * Last modified on 20-10-2021 12:14 p.m.
  *
  * MIT License
  *
@@ -61,7 +61,7 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
                                guild: PolyGuild,
                                @Argument("channel")
                                loggingChannel: PolyTextChannel? = null) {
-        val oldLoggingChannel = guild.data.loggingChannel?.poly(bot)
+        val oldLoggingChannel = guild.data.loggingChannel
         
         guild.data.loggingChannelId = loggingChannel?.id ?: -1L
         

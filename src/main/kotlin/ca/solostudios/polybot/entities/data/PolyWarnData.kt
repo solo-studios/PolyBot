@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyWarnData.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 20-10-2021 12:14 p.m.
  *
  * MIT License
  *
@@ -41,9 +41,9 @@ class PolyWarnData(
         val time: LocalDateTime,
         var reason: String,
                   ) {
-    val guild by bot.guild(guildId)
+    val guild by bot.polyGuildReference(guildId)
     
-    val member by bot.member(guildId, memberId)
+    val member by bot.polyMemberReference(guildId, memberId)
     
-    val moderator by bot.member(guildId, moderatorId)
+    val moderator by bot.polyMemberReference(guildId, moderatorId)
 }

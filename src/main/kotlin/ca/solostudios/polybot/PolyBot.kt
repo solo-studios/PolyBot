@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 11:59 a.m.
+ * Last modified on 20-10-2021 12:20 p.m.
  *
  * MIT License
  *
@@ -52,6 +52,12 @@ import ca.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
 import ca.solostudios.polybot.cloud.preprocessor.JDAMessagePreprocessor
 import ca.solostudios.polybot.config.PolyConfig
 import ca.solostudios.polybot.entities.EntityManager
+import ca.solostudios.polybot.entities.PolyGuild
+import ca.solostudios.polybot.entities.PolyMember
+import ca.solostudios.polybot.entities.PolyRole
+import ca.solostudios.polybot.entities.PolyTextChannel
+import ca.solostudios.polybot.entities.PolyUser
+import ca.solostudios.polybot.entities.PolyVoiceChannel
 import ca.solostudios.polybot.event.EventManager
 import ca.solostudios.polybot.listener.AutoQuoteListener
 import ca.solostudios.polybot.listener.LoggingListener
@@ -64,6 +70,7 @@ import ca.solostudios.polybot.util.currentThread
 import ca.solostudios.polybot.util.fixedRate
 import ca.solostudios.polybot.util.onlineStatus
 import ca.solostudios.polybot.util.parseCommands
+import ca.solostudios.polybot.util.poly
 import ca.solostudios.polybot.util.processors
 import ca.solostudios.polybot.util.registerCommandPostProcessors
 import ca.solostudios.polybot.util.registerCommandPreProcessors
@@ -85,7 +92,13 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.Role
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 import org.reflections.Reflections
 import org.slf4j.kotlin.*
@@ -220,19 +233,105 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     @Suppress("UNUSED_PARAMETER")
     private fun botPrefix(event: MessageEvent) = botConfig.prefix
     
-    fun guild(guildId: Long) = BackedReference(guildId, { jda.getGuildById(it) }, { it?.idLong ?: 0 })
+    fun guildReference(guildId: Long): BackedReference<Guild?, Long> {
+        return BackedReference(guildId, { jda.getGuildById(it) }, { it?.idLong ?: 0 })
+    }
     
-    fun textChannel(channelId: Long) = BackedReference(channelId, { jda.getTextChannelById(it) }, { it?.idLong ?: 0 })
+    fun polyGuildReference(guildId: Long): BackedReference<PolyGuild?, Long> {
+        return BackedReference(guildId, { jda.getGuildById(it)?.poly(this) }, { it?.id ?: 0 })
+    }
     
-    fun voiceChannel(channelId: Long) = BackedReference(channelId, { jda.getVoiceChannelById(it) }, { it?.idLong ?: 0 })
+    fun guild(guildId: Long): Guild? {
+        return jda.getGuildById(guildId)
+    }
     
-    fun role(roleId: Long) = BackedReference(roleId, { jda.getRoleById(it) }, { it?.idLong ?: 0 })
+    fun polyGuild(guildId: Long): PolyGuild? {
+        return jda.getGuildById(guildId)?.poly(this)
+    }
     
-    fun user(userId: Long) = BackedReference(userId, { jda.getUserById(it) }, { it?.idLong ?: 0 })
+    fun textChannelReference(channelId: Long): BackedReference<TextChannel?, Long> {
+        return BackedReference(channelId, { jda.getTextChannelById(it) }, { it?.idLong ?: 0 })
+    }
     
-    fun member(guildId: Long, userId: Long) = BackedReference(guildId to userId,
-                                                              { jda.getGuildById(it.first)?.getMemberById(it.second) },
-                                                              { it?.let { it.idLong to it.guild.idLong } ?: (0L to 0L) })
+    fun polyTextChannelReference(channelId: Long): BackedReference<PolyTextChannel?, Long> {
+        return BackedReference(channelId, { jda.getTextChannelById(it)?.poly(this) }, { it?.id ?: 0 })
+    }
+    
+    fun textChannel(channelId: Long): TextChannel? {
+        return jda.getTextChannelById(channelId)
+    }
+    
+    fun polyTextChannel(channelId: Long): PolyTextChannel? {
+        return jda.getTextChannelById(channelId)?.poly(this)
+    }
+    
+    fun voiceChannelReference(channelId: Long): BackedReference<VoiceChannel?, Long> {
+        return BackedReference(channelId, { jda.getVoiceChannelById(it) }, { it?.idLong ?: 0 })
+    }
+    
+    fun polyVoiceChannelReference(channelId: Long): BackedReference<PolyVoiceChannel?, Long> {
+        return BackedReference(channelId, { jda.getVoiceChannelById(it)?.poly(this) }, { it?.id ?: 0 })
+    }
+    
+    fun voiceChannel(channelId: Long): VoiceChannel? {
+        return jda.getVoiceChannelById(channelId)
+    }
+    
+    fun polyVoiceChannel(channelId: Long): PolyVoiceChannel? {
+        return jda.getVoiceChannelById(channelId)?.poly(this)
+    }
+    
+    fun roleReference(roleId: Long): BackedReference<Role?, Long> {
+        return BackedReference(roleId, { jda.getRoleById(it) }, { it?.idLong ?: 0 })
+    }
+    
+    fun polyRoleReference(roleId: Long): BackedReference<PolyRole?, Long> {
+        return BackedReference(roleId, { jda.getRoleById(it)?.poly(this) }, { it?.id ?: 0 })
+    }
+    
+    fun role(roleId: Long): Role? {
+        return jda.getRoleById(roleId)
+    }
+    
+    fun polyRole(roleId: Long): PolyRole? {
+        return jda.getRoleById(roleId)?.poly(this)
+    }
+    
+    fun userReference(userId: Long): BackedReference<User?, Long> {
+        return BackedReference(userId, { jda.getUserById(it) }, { it?.idLong ?: 0 })
+    }
+    
+    fun polyUserReference(userId: Long): BackedReference<PolyUser?, Long> {
+        return BackedReference(userId, { jda.getUserById(it)?.poly(this) }, { it?.id ?: 0 })
+    }
+    
+    fun user(userId: Long): User? {
+        return jda.getUserById(userId)
+    }
+    
+    fun polyUser(userId: Long): PolyUser? {
+        return jda.getUserById(userId)?.poly(this)
+    }
+    
+    fun memberReference(guildId: Long, userId: Long): BackedReference<Member?, Pair<Long, Long>> {
+        return BackedReference(guildId to userId,
+                               { jda.getGuildById(it.first)?.getMemberById(it.second) },
+                               { it?.let { it.idLong to it.guild.idLong } ?: (0L to 0L) })
+    }
+    
+    fun polyMemberReference(guildId: Long, userId: Long): BackedReference<PolyMember?, Pair<Long, Long>> {
+        return BackedReference(guildId to userId,
+                               { jda.getGuildById(it.first)?.getMemberById(it.second)?.poly(this) },
+                               { it?.let { it.id to it.guild.id } ?: (0L to 0L) })
+    }
+    
+    fun member(guildId: Long, userId: Long): Member? {
+        return jda.getGuildById(guildId)?.getMemberById(userId)
+    }
+    
+    fun polyMember(guildId: Long, userId: Long): PolyMember? {
+        return jda.getGuildById(guildId)?.getMemberById(userId)?.poly(this)
+    }
     
     fun shutdown(exitCode: Int = ExitCodes.EXIT_CODE_NORMAL, isShutdownHook: Boolean = false) {
         shutdown = true

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:20 p.m.
+ * Last modified on 20-10-2021 12:20 p.m.
  *
  * MIT License
  *
@@ -546,19 +546,22 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                                  block: InlineEmbed.() -> Unit) {
         val polyGuild = guild.poly(bot)
         val loggingChannel = polyGuild.data.loggingChannel ?: return
+    
+        bot.scope.launch {
         
-        val embed = Embed {
-            color = logEmbedColour
-            author {
-                name = eventName
-                iconUrl = eventIcon
-            }
-            block(this)
+            val embed = Embed {
+                color = logEmbedColour
+                author {
+                    name = eventName
+                    iconUrl = eventIcon
+                }
+                block(this)
             
-            idFooter(time, guild.idLong, channel?.idLong, user?.idLong, message?.idLong)
-        }
+                idFooter(time, guild.idLong, channel?.idLong, user?.idLong, message?.idLong)
+            }
         
-        loggingChannel.sendMessageEmbeds(embed).queue()
+            loggingChannel.sendMessage(embed)
+        }
     }
     
     private fun Any?.humanString(): String {

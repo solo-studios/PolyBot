@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuildData.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:19 p.m.
+ * Last modified on 20-10-2021 12:14 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package ca.solostudios.polybot.entities.data
 
 import ca.solostudios.polybot.PolyBot
+import ca.solostudios.polybot.entities.PolyTextChannel
 
 @Suppress("unused")
 data class PolyGuildData(
@@ -48,9 +49,12 @@ data class PolyGuildData(
     val hasPrefix: Boolean
         get() = prefix != null
     
-    val loggingChannel by bot.textChannel(loggingChannelId)
+    val loggingChannel: PolyTextChannel?
+        get() = bot.polyTextChannel(loggingChannelId)
     
-    val mutedRole by bot.role(mutedRoleId)
+    val mutedRole
+        get() = bot.polyRole(mutedRoleId)
     
-    val autoRole by bot.role(autoRoleId)
+    val autoRole
+        get() = bot.polyRole(autoRoleId)
 }

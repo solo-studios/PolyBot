@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMemberData.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 20-10-2021 12:14 p.m.
  *
  * MIT License
  *
@@ -39,9 +39,9 @@ data class PolyMemberData(
         val userId: Long,
                          ) {
     
-    val member by bot.member(guildId, userId)
+    val member by bot.polyMemberReference(guildId, userId)
     
-    val user by bot.user(userId)
+    val user by bot.polyUserReference(userId)
     
-    val guild by bot.guild(guildId)
+    val guild by bot.polyGuildReference(guildId)
 }
