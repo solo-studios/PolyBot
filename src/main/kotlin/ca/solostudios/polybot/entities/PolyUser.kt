@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyUser.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 09:41 p.m.
+ * Last modified on 20-10-2021 11:59 a.m.
  *
  * MIT License
  *
@@ -90,15 +90,17 @@ open class PolyUser(open val bot: PolyBot, val jdaUser: User) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        
+    
         other as PolyUser
-        
+    
         return jdaUser != other.jdaUser
     }
     
     override fun hashCode(): Int {
         return jdaUser.hashCode()
     }
+    
+    override fun toString(): String = jdaUser.asMention
     
     // val data by lazy { bot.databaseManager }
     

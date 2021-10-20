@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEmote.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 07:42 p.m.
+ * Last modified on 20-10-2021 11:49 a.m.
  *
  * MIT License
  *
@@ -45,4 +45,7 @@ class PolyEmote(val bot: PolyBot, val jdaEmote: Emote) {
     
     val asMention: String
         get() = jdaEmote.asMention
+    
+    override fun toString(): String = jdaEmote.asMention
+    
 }

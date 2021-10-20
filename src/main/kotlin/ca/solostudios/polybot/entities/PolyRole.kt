@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyRole.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 09:28 p.m.
+ * Last modified on 20-10-2021 11:49 a.m.
  *
  * MIT License
  *
@@ -67,5 +67,7 @@ class PolyRole(val bot: PolyBot, val jdaRole: Role) {
     
     val integrationId: Long?
         get() = if (jdaRole.tags.integrationIdLong == 0L) null else jdaRole.tags.integrationIdLong
+    
+    override fun toString(): String = jdaRole.asMention
     
 }

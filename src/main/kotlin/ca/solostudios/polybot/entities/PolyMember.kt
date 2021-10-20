@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMember.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 07:57 p.m.
+ * Last modified on 20-10-2021 11:59 a.m.
  *
  * MIT License
  *
@@ -102,13 +102,15 @@ class PolyMember(override val bot: PolyBot, val jdaMember: Member) : PolyUser(bo
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        
+    
         other as PolyMember
-        
+    
         return jdaMember != other.jdaMember
     }
     
     override fun hashCode(): Int {
         return jdaMember.hashCode()
     }
+    
+    override fun toString(): String = jdaMember.asMention
 }
