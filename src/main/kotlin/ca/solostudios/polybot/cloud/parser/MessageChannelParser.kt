@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageChannelParser.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 11:51 a.m.
+ * Last modified on 20-10-2021 12:23 p.m.
  *
  * MIT License
  *
@@ -38,11 +38,8 @@ import cloud.commandframework.exceptions.parsing.NoInputProvidedException
 import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
-import org.slf4j.kotlin.*
 
 class MessageChannelParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMessageChannel> {
-    private val logger by getLogger()
-    
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyMessageChannel> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
@@ -65,8 +62,6 @@ class MessageChannelParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMe
         
         try {
             val id = stringId.toULong().toLong()
-            
-            logger.info { "here's the id: $id" }
             
             val channel = event.jda.getTextChannelById(id)
             if (channel != null) {

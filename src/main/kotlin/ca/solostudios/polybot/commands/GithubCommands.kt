@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:23 p.m.
+ * Last modified on 20-10-2021 12:24 p.m.
  *
  * MIT License
  *
@@ -52,7 +52,7 @@ class GithubCommands(bot: PolyBot) : PolyCommands(bot) {
     private val github: GitHub = GitHub.connectAnonymously()
     
     // @CommandMethod("ghstatus|gh-status|gh status")
-    @Suppress("unused")
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun ghStatus(message: PolyMessage) {
         val now = LocalDate.now()
         

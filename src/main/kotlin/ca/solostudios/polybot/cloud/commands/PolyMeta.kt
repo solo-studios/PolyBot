@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMeta.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 20-10-2021 12:18 p.m.
  *
  * MIT License
  *
@@ -60,6 +60,7 @@ object PolyMeta {
                 .meta(CO_OWNER_ONLY, userPermission.coOwnerOnly)
     }
     
+    @Suppress("UNUSED_PARAMETER")
     fun <T> guildCommandModifier(guildCommand: JDAGuildCommand, builder: Command.Builder<T>): Command.Builder<T> {
         return builder.meta(GUILD_ONLY, true)
     }

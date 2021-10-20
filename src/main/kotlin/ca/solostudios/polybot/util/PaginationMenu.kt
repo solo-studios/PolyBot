@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PaginationMenu.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:12 p.m.
+ * Last modified on 20-10-2021 12:24 p.m.
  *
  * MIT License
  *
@@ -176,7 +176,7 @@ class PaginationMenu internal constructor(
             actualPageNum = pages
         
         val msg = renderPage(actualPageNum)
-        initialize(message.editMessage(msg), actualPageNum)
+        initialize(message.editMessageEmbeds(msg), actualPageNum)
     }
     
     private fun initialize(action: RestAction<Message>, pageNum: Int) {
@@ -305,8 +305,8 @@ class PaginationMenu internal constructor(
                     targetPage = rawContent.toInt()
                 }
             }
-            
-            message.editMessage(renderPage(targetPage)).queue { m -> pagination(m, targetPage) }
+    
+            message.editMessageEmbeds(renderPage(targetPage)).queue { m -> pagination(m, targetPage) }
             mre.message.delete().queue() // delete the calling message so it doesn't get spammy
         }
     }

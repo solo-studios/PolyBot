@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:27 p.m.
+ * Last modified on 20-10-2021 12:24 p.m.
  *
  * MIT License
  *
@@ -137,6 +137,7 @@ class EntityManager(val bot: PolyBot) : ShutdownService() {
     
     private fun saveMemberData(memberData: PolyMemberData) {
         transaction(db) {
+            @Suppress("UNUSED_VARIABLE")
             val entity = getMemberEntity(memberData.guildId, memberData.userId)
         }
     }

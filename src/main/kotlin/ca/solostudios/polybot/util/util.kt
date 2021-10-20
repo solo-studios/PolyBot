@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file util.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:27 p.m.
+ * Last modified on 20-10-2021 12:23 p.m.
  *
  * MIT License
  *
@@ -103,8 +103,6 @@ fun InlineEmbed.idFooter(time: OffsetDateTime = OffsetDateTime.now(),
             
             append("Guild: ")
             append(guild)
-    
-            println(this.toString())
     
             footerDate(time)
     
