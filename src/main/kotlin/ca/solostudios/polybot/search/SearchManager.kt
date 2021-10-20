@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:21 p.m.
+ * Last modified on 20-10-2021 11:58 a.m.
  *
  * MIT License
  *
@@ -31,8 +31,12 @@ package ca.solostudios.polybot.search
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.config.search.GithubWikiSearchLocation
 import ca.solostudios.polybot.util.ShutdownService
+import ca.solostudios.polybot.util.fixedRate
+import kotlinx.coroutines.launch
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.store.NRTCachingDirectory
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -57,6 +61,8 @@ class SearchManager(val bot: PolyBot) : ShutdownService() {
     
                     if (location.name == searchConfig.default)
                         default = index
+    
+                    bot.scheduledThreadPool.fixedRate(seconds(10), days(1)) { bot.scope.launch { index.updateIndex() } }
                 }
             }
         }
