@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ChannelParser.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * The file MessageChannelParser.kt is part of PolyhedralBot
+ * Last modified on 20-10-2021 11:51 a.m.
  *
  * MIT License
  *
@@ -40,7 +40,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import org.slf4j.kotlin.*
 
-class ChannelParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMessageChannel> {
+class MessageChannelParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMessageChannel> {
     private val logger by getLogger()
     
     @Suppress("DuplicatedCode")

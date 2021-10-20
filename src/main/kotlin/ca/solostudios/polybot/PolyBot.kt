@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 15-10-2021 05:09 p.m.
+ * Last modified on 20-10-2021 11:59 a.m.
  *
  * MIT License
  *
@@ -41,10 +41,11 @@ import ca.solostudios.polybot.cloud.commands.permission.GuildCommandPostProcesso
 import ca.solostudios.polybot.cloud.commands.permission.UserPermissionPostprocessor
 import ca.solostudios.polybot.cloud.event.EventMapper
 import ca.solostudios.polybot.cloud.event.MessageEvent
-import ca.solostudios.polybot.cloud.parser.ChannelParser
 import ca.solostudios.polybot.cloud.parser.MemberParser
+import ca.solostudios.polybot.cloud.parser.MessageChannelParser
 import ca.solostudios.polybot.cloud.parser.RoleParser
 import ca.solostudios.polybot.cloud.parser.TagParser
+import ca.solostudios.polybot.cloud.parser.TextChannelParser
 import ca.solostudios.polybot.cloud.parser.UserParser
 import ca.solostudios.polybot.cloud.preprocessor.AntiBotPreProcessor
 import ca.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
@@ -150,12 +151,13 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
                                                                       eventMapper::messageEventToSender).apply {
         parserRegistry.registerParserSupplier(MemberParser(this@PolyBot))
         parserRegistry.registerParserSupplier(UserParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(ChannelParser(this@PolyBot))
+        parserRegistry.registerParserSupplier(MessageChannelParser(this@PolyBot))
+        parserRegistry.registerParserSupplier(TextChannelParser(this@PolyBot))
         parserRegistry.registerParserSupplier(RoleParser(this@PolyBot))
         parserRegistry.registerParserSupplier(TagParser(this@PolyBot))
     
         registerCommandPreProcessors(JDAMessagePreprocessor(this), AntiWebhookPreProcessor(this), AntiBotPreProcessor(this))
-        
+    
         registerCommandPostProcessors(GuildCommandPostProcessor(this@PolyBot),
                                       UserPermissionPostprocessor(this@PolyBot),
                                       BotPermissionPostprocessor(this@PolyBot))
