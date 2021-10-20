@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PaginationMenu.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:24 p.m.
+ * Last modified on 20-10-2021 12:29 p.m.
  *
  * MIT License
  *
@@ -340,13 +340,18 @@ class PaginationMenu internal constructor(
     
     // Private method that handles MessageReactionAddEvents
     private fun handleMessageReactionAddAction(event: MessageReactionAddEvent, message: Message, pageNum: Int) {
+        try {
+            event.reaction.removeReaction(event.user!!).queue()
+        } catch (ignored: PermissionException) {
+        }
+    
         var newPageNum = pageNum
         when (event.reaction.reactionEmote.name) {
             LEFT      -> {
                 if (newPageNum == 1 && wrapPageEnds) newPageNum = pages + 1
                 if (newPageNum > 1) newPageNum--
             }
-            
+        
             RIGHT     -> {
                 if (newPageNum == pages && wrapPageEnds) newPageNum = 0
                 if (newPageNum < pages) newPageNum++
@@ -368,16 +373,15 @@ class PaginationMenu internal constructor(
                     i++
                 }
             }
-            
+        
             STOP      -> {
                 finalAction.accept(message)
                 return
             }
-        }
         
-        try {
-            event.reaction.removeReaction(event.user!!).queue()
-        } catch (ignored: PermissionException) {
+            else      -> {
+                return
+            }
         }
         
         val n = newPageNum
