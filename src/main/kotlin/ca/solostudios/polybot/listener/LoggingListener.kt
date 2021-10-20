@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:34 p.m.
+ * Last modified on 20-10-2021 12:50 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 package ca.solostudios.polybot.listener
 
-import ca.solostudios.polybot.Constants.logEmbedColourCode
+import ca.solostudios.polybot.Constants
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.util.idFooter
 import ca.solostudios.polybot.util.poly
@@ -519,8 +519,8 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                              message: Message? = null,
                              time: OffsetDateTime = OffsetDateTime.now(),
                              block: (InlineEmbed).() -> Unit) {
-        val author = user?.asTag ?: ca.solostudios.polybot.Constants.defaultUsername
-        val icon = user?.effectiveAvatarUrl ?: ca.solostudios.polybot.Constants.defaultAvatarUrl
+        val author = user?.asTag ?: Constants.defaultUsername
+        val icon = user?.effectiveAvatarUrl ?: Constants.defaultAvatarUrl
     
         loggingEmbedImpl(author, icon, guild, channel ?: message?.textChannel, user, message, time, block)
     }
@@ -550,13 +550,14 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         bot.scope.launch {
         
             val embed = Embed {
-                color = logEmbedColourCode
+                color = message?.member?.colorRaw ?: Constants.logEmbedColourCode
+    
                 author {
                     name = eventName
                     iconUrl = eventIcon
                 }
                 block(this)
-            
+    
                 idFooter(time = time, guild = guild.idLong, channel = channel?.idLong, message = message?.idLong, user = user?.idLong)
             }
         
