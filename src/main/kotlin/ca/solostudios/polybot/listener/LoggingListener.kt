@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:20 p.m.
+ * Last modified on 20-10-2021 12:23 p.m.
  *
  * MIT License
  *
@@ -557,7 +557,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                 }
                 block(this)
             
-                idFooter(time, guild.idLong, channel?.idLong, user?.idLong, message?.idLong)
+                idFooter(time = time, guild = guild.idLong, channel = channel?.idLong, message = message?.idLong, user = user?.idLong)
             }
         
             loggingChannel.sendMessage(embed)
