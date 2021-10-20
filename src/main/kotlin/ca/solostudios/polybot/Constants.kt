@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Constants.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:27 p.m.
+ * Last modified on 20-10-2021 12:34 p.m.
  *
  * MIT License
  *
@@ -26,20 +26,25 @@
  * SOFTWARE.
  */
 
-@file:Suppress("unused")
-
 package ca.solostudios.polybot
 
 import ca.solostudios.polybot.Constants.InternalConstants.allInviteRegexString
 import ca.solostudios.polybot.Constants.InternalConstants.inviteRegexString
 import ca.solostudios.polybot.Constants.InternalConstants.messageLinkRegexString
+import java.awt.Color
 import org.intellij.lang.annotations.Language
 
-@Suppress("RegExpUnnecessaryNonCapturingGroup", "RegExpRedundantEscape")
+@Suppress("RegExpUnnecessaryNonCapturingGroup", "RegExpRedundantEscape", "MemberVisibilityCanBePrivate", "unused")
 object Constants {
     const val quoteWebhookName = "PolyBot Message Quoter"
     
-    const val logEmbedColour = 0x00FF00
+    const val logEmbedColourCode = 0x00FF00
+    
+    val logEmbedColour = Color(logEmbedColourCode)
+    
+    const val polyhedralDevColourCode = 0x8fd032
+    
+    val polyhedralDevColour = Color(polyhedralDevColourCode)
     
     const val defaultUsername = "Unknown User#0000"
     

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:20 p.m.
+ * Last modified on 20-10-2021 12:34 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,7 @@
 
 package ca.solostudios.polybot.commands
 
+import ca.solostudios.polybot.Constants
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.CategoryHelpTopic
 import ca.solostudios.polybot.cloud.commands.HelpCommandHandler
@@ -46,7 +47,6 @@ import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.specifier.Greedy
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import dev.minn.jda.ktx.Embed
-import java.awt.Color
 
 @Suppress("RedundantSuspendModifier")
 @PolyCommandContainer
@@ -182,7 +182,7 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
         title = helpTitle
         eventWaiter = this@HelpCommands.eventWaiter
         users = listOf(user.jdaUser)
-        color = { _, _ -> Color.GREEN }
+        color = { _, _ -> Constants.polyhedralDevColour }
         text = { _, _ -> query?.let { noResultsDescription.replace("{search}", query) } ?: allCommands }
         
         finalAction = { msg -> msg.clearReactions().queue() }

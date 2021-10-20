@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:23 p.m.
+ * Last modified on 20-10-2021 12:34 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 package ca.solostudios.polybot.listener
 
-import ca.solostudios.polybot.Constants.logEmbedColour
+import ca.solostudios.polybot.Constants.logEmbedColourCode
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.util.idFooter
 import ca.solostudios.polybot.util.poly
@@ -550,7 +550,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         bot.scope.launch {
         
             val embed = Embed {
-                color = logEmbedColour
+                color = logEmbedColourCode
                 author {
                     name = eventName
                     iconUrl = eventIcon
