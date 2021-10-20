@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:20 p.m.
+ * Last modified on 20-10-2021 12:51 p.m.
  *
  * MIT License
  *
@@ -52,6 +52,7 @@ import ca.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
 import ca.solostudios.polybot.cloud.preprocessor.JDAMessagePreprocessor
 import ca.solostudios.polybot.config.PolyConfig
 import ca.solostudios.polybot.entities.EntityManager
+import ca.solostudios.polybot.entities.PolyEmote
 import ca.solostudios.polybot.entities.PolyGuild
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyRole
@@ -92,6 +93,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.entities.Emote
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
@@ -331,6 +333,22 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     
     fun polyMember(guildId: Long, userId: Long): PolyMember? {
         return jda.getGuildById(guildId)?.getMemberById(userId)?.poly(this)
+    }
+    
+    fun emoteReference(emoteId: Long): BackedReference<Emote?, Long> {
+        return BackedReference(emoteId, { jda.getEmoteById(it) }, { it?.idLong ?: 0 })
+    }
+    
+    fun polyEmoteReference(emoteId: Long): BackedReference<PolyEmote?, Long> {
+        return BackedReference(emoteId, { jda.getEmoteById(it)?.poly(this) }, { it?.id ?: 0 })
+    }
+    
+    fun emote(emoteId: Long): Emote? {
+        return jda.getEmoteById(emoteId)
+    }
+    
+    fun polyEmote(emoteId: Long): PolyEmote? {
+        return jda.getEmoteById(emoteId)?.poly(this)
     }
     
     fun shutdown(exitCode: Int = ExitCodes.EXIT_CODE_NORMAL, isShutdownHook: Boolean = false) {

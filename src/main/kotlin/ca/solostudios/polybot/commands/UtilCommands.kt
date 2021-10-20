@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:23 p.m.
+ * Last modified on 20-10-2021 12:50 p.m.
  *
  * MIT License
  *
@@ -56,6 +56,68 @@ import kotlin.time.Duration.Companion.milliseconds
 @PolyCategory(UTIL_CATEGORY)
 @PolyCommandContainer
 class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
+    
+    private val polydevEmoji by bot.polyEmoteReference(853123841038352384L)
+    
+    private val rulesChannel by bot.polyTextChannelReference(715684015989981304L)
+    
+    private val fabricSupportChannel by bot.polyTextChannelReference(814334748222160907L)
+    
+    private val bukkitSupportChannel by bot.polyTextChannelReference(765260067812540416L)
+    
+    private val forgeSupportChannel by bot.polyTextChannelReference(838226038751232010L)
+    
+    @Language("Markdown")
+    private val supportDescription = """
+            **Asking for help**
+            When asking for help, do not expect someone to always answer you instantly. You must wait for people to be available to answer.
+            Do not ping admins, developers, or other users without valid reason. We will see your message without a ping.
+            **Before asking**
+            Before asking for help, make sure you have the following:
+            - Game logs
+            - Steps to cause the issue
+            - A list of any mods/plugins you have installed
+        """.trimIndent() + buildString {
+        if (fabricSupportChannel != null || bukkitSupportChannel != null || forgeSupportChannel != null)
+            appendLine("**What channel to use**")
+        
+        if (fabricSupportChannel != null)
+            appendLine("- For Fabric use $fabricSupportChannel")
+        
+        if (bukkitSupportChannel != null)
+            appendLine("- For Bukkit/Spigot/Paper use $bukkitSupportChannel")
+        
+        if (forgeSupportChannel != null)
+            appendLine("- For Forge use $forgeSupportChannel")
+    }
+    
+    @Language("Markdown")
+    private val rulesDescription = """
+            You will find a list of rules in $rulesChannel (shocking, I know)
+        """.trimIndent()
+    
+    @Language("Markdown")
+    private val githubImage = "https://github.com/PolyhedralDev.png"
+    
+    @Language("Markdown")
+    private val serverDescription = "Welcome to the **Polyhedral Development** Discord server!"
+    
+    @Language("Markdown")
+    private val whoWeAreDescription = """
+                    Polyhedral Development is an open source initiative aimed at creating awesome projects to benefit everyone.
+                    We focus entirely on developing things for the community, rather than building software to profit.
+                    Our current primary focus is on the Terra World Generator, and any minor projects surrounding it.
+                    We are working to create the *best* open source generator to benefit *everyone*!
+                """.trimIndent()
+    
+    @Language("Markdown")
+    private val usefulLinks = """
+            [Discord Invite Link](https://discord.gg/PXUEbbF)
+            [Polyhedral Development GitHub Organization](https://github.com/PolyhedralDev/)
+            [Terra Generator Main Repository](https://github.com/PolyhedralDev/Terra)
+            [dfsek's Patreon](https://www.patreon.com/dfsek)
+        """.trimIndent()
+    
     @CommandMethod("ping|pong")
     suspend fun ping(message: PolyMessage) {
         bot.scope.launch {
@@ -169,43 +231,5 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
             
             message.reply(embed)
         }
-    }
-    
-    companion object {
-        const val polydevEmoji = "<:polydev:853123841038352384>"
-        const val githubImage = "https://github.com/PolyhedralDev.png"
-        const val serverDescription = "Welcome to the **Polyhedral Development** Discord server!"
-        const val whoWeAreDescription = "Polyhedral Development is an open source initiative aimed at creating awesome projects " +
-                "to benefit everyone. We focus entirely on developing things for the community, rather than building software to profit.\n" +
-                "Currently our main focus is on the Terra World Generator, and minor projects surrounding it."
-        
-        @Language("Markdown")
-        val usefulLinks = """
-            [Discord Invite Link](https://discord.gg/PXUEbbF)
-            [Polyhedral Development GitHub Organization](https://github.com/PolyhedralDev/)
-            [Terra Generator Main Repository](https://github.com/PolyhedralDev/Terra)
-            [dfsek's Patreon](https://www.patreon.com/dfsek)
-        """.trimIndent()
-        
-        @Language("Markdown")
-        val supportDescription = """
-            **Asking for help**
-            When asking for help, do not expect someone to always answer you instantly. You must wait for people to be available to answer.
-            Do not ping admins, developers, or other users without valid reason. We will see your message without a ping.
-            **Before asking**
-            Before asking for help, make sure you have the following:
-            - Game logs
-            - Steps to cause the issue
-            - A list of any mods/plugins you have installed
-            **What channel to use**
-            - For Fabric use <#814334748222160907>
-            - For Bukkit/Spigot/Paper use <#765260067812540416>
-            - For Forge use <#838226038751232010>
-        """.trimIndent()
-        
-        @Language("Markdown")
-        val rulesDescription = """
-            You will find a list of rules in <#715684015989981304> (shocking, I know)
-        """.trimIndent()
     }
 }

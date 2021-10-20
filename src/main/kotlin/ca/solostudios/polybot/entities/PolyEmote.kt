@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEmote.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 11:49 a.m.
+ * Last modified on 20-10-2021 12:49 p.m.
  *
  * MIT License
  *
@@ -34,6 +34,9 @@ import net.dv8tion.jda.api.entities.Emote
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class PolyEmote(val bot: PolyBot, val jdaEmote: Emote) {
+    val id: Long
+        get() = jdaEmote.idLong
+    
     val guild: PolyGuild?
         get() = jdaEmote.guild?.poly(bot)
     
