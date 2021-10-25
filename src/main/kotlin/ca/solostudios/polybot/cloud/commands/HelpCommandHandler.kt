@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommandHandler.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:20 p.m.
+ * Last modified on 25-10-2021 05:05 p.m.
  *
  * MIT License
  *
@@ -38,12 +38,14 @@ import cloud.commandframework.Command
 import cloud.commandframework.arguments.StaticArgument
 import cloud.commandframework.meta.CommandMeta
 import net.dv8tion.jda.api.Permission
+import org.slf4j.kotlin.*
 
 @Suppress("CanBeParameter")
 class HelpCommandHandler(private val bot: PolyBot) {
     private val commandManager = bot.commandManager
-    
     private val commandFilters = mutableListOf<(PolyMember, CommandEntry) -> Boolean>()
+    
+    private val logger by getLogger()
     
     fun addCommandFilter(filter: (PolyMember, CommandEntry) -> Boolean) {
         commandFilters += filter
@@ -110,28 +112,32 @@ class HelpCommandHandler(private val bot: PolyBot) {
     }
     
     private fun getEntry(command: Command<MessageEvent>): CommandEntry {
+        val name = command.commandMeta.get(PolyMeta.COMMAND_NAME).orNull()
         val category = command.commandMeta.get(PolyMeta.CATEGORY).orNull()
         val description = command.commandMeta.get(CommandMeta.DESCRIPTION).orNull()
-        val hidden = command.isHidden
+        val longDescription = command.commandMeta.get(CommandMeta.LONG_DESCRIPTION).orNull()
+        val hidden = command.commandMeta.get(CommandMeta.HIDDEN).or(false)
         val ownerOnly = command.commandMeta.get(PolyMeta.OWNER_ONLY).or(false)
         val coOwnerOnly = command.commandMeta.get(PolyMeta.CO_OWNER_ONLY).or(false)
         val userPermissions = command.commandMeta.get(PolyMeta.USER_PERMISSIONS).or(listOf())
         val botPermissions = command.commandMeta.get(PolyMeta.BOT_PERMISSIONS).or(listOf())
         val guildOnly = command.commandMeta.get(PolyMeta.GUILD_ONLY).or(false)
-        
+    
         val literals = command.arguments.filter {
             it is StaticArgument<*>
         }.map {
             it as StaticArgument<*>
         }.map {
-            CommandLiteral(it.name, it.alternativeAliases)
+            CommandLiteral(it.name, it.alternativeAliases.distinct().filter { alias -> alias != it.name })
         }
-        
-        return CommandEntry(command,
+    
+        return CommandEntry(name,
+                            command,
                             literals,
                             commandManager.commandSyntaxFormatter.apply(command.arguments, null),
                             category,
                             description,
+                            longDescription,
                             hidden,
                             ownerOnly,
                             coOwnerOnly,
@@ -151,11 +157,13 @@ data class SingleCommandHelpTopic(val command: CommandEntry) : HelpTopic
 data class CategoryHelpTopic(val categoryName: String, val commands: List<CommandEntry>) : HelpTopic
 
 data class CommandEntry(
+        val name: String?,
         val command: Command<MessageEvent>,
         val literals: List<CommandLiteral>,
         val syntax: String,
         val category: Category?,
         val description: String?,
+        val longDescription: String?,
         val hidden: Boolean,
         val ownerOnly: Boolean,
         val coOwnerOnly: Boolean,

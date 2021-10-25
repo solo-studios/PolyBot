@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 03:44 p.m.
+ * Last modified on 25-10-2021 05:05 p.m.
  *
  * MIT License
  *
@@ -31,6 +31,8 @@ package ca.solostudios.polybot.commands
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
+import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
+import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.entities.PolyMessage
@@ -57,6 +59,7 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
     @Hidden
+    @CommandName("Lucene Markdown")
     @JDAUserPermission(ownerOnly = true)
     @CommandMethod("lucene markdown <markdown>")
     @CommandDescription("Internal command for Apache lucene bullshit.")
@@ -68,20 +71,22 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
         val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(markdown)
         
         val visitor = MarkdownHeaderVisitor()
-    
+        
         visitor.visitNode(parsedTree)
-    
+        
         visitor.headers.forEach {
             logger.info { "Header: ${markdown[it.first, it.last].trim()}" }
             message.reply("Header: ${markdown[it.first, it.last].trim()}")
         }
-    
+        
         // message.reply(writer.writeValueAsString(parsedTree)).mentionRepliedUser(false).queue()
     }
     
+    @CommandName("Search Docs")
     // @CommandMethod("lucene search <query>")
     @CommandMethod("search|s <query>")
     @CommandDescription("Searches the Terra documentation.")
+    @CommandLongDescription("Searches through the Terra documentation and returns a list of links (or a single link) of possible results to your query.")
     suspend fun search(message: PolyMessage,
                        user: PolyUser,
                        @Greedy
@@ -122,6 +127,7 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @Hidden
+    @CommandName("Lucene Update")
     @CommandMethod("lucene update")
     @JDAUserPermission(ownerOnly = true)
     suspend fun update(message: PolyMessage) {

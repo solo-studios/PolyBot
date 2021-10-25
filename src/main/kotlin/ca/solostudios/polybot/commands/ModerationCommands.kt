@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 24-10-2021 09:28 p.m.
+ * Last modified on 25-10-2021 05:05 p.m.
  *
  * MIT License
  *
@@ -31,6 +31,8 @@ package ca.solostudios.polybot.commands
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
+import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
+import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDABotPermission
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
@@ -55,10 +57,12 @@ import org.slf4j.kotlin.*
 class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
+    @CommandName("Set Logging Channel")
     @JDAGuildCommand
     @JDAUserPermission(Permission.MANAGE_SERVER)
     @CommandMethod("logging|logs [channel]")
     @CommandDescription("Sets the channel to use for logging in this server.")
+    @CommandLongDescription("Sets the channel used for the mod log in this server.\nWhatever channel this is set to will have any moderation events sent to it, such as:\n- edited messages\n- deleted messages\n- banned members\n- member joins/leaves\netc.\n")
     suspend fun loggingChannel(message: PolyMessage,
                                guild: PolyGuild,
                                @Argument(value = "channel", description = "The channel to send logs to.")
@@ -72,10 +76,12 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Ban")
     @JDABotPermission(Permission.BAN_MEMBERS)
     @JDAUserPermission(Permission.BAN_MEMBERS)
     @CommandMethod("ban|banish|begone <member> [reason]")
     @CommandDescription("Bans a member from this server deleting the last few days of messages.")
+    @CommandLongDescription("Permanently bans the mentioned user from this server with a reason, if provided.\nThis will also delete the last specified days of messages, defaulting to 3.\n\nThis action will also be reported to the moderation log channel, if any exists.")
     suspend fun banUser(message: PolyMessage,
                         @Argument(value = "member", description = "The member to ban from the server.")
                         member: PolyMember,
@@ -92,10 +98,12 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Kick")
     @JDABotPermission(Permission.KICK_MEMBERS)
     @JDAUserPermission(Permission.KICK_MEMBERS)
     @CommandMethod("kick|yeet <member> [reason]")
     @CommandDescription("Kicks a member from this server.")
+    @CommandLongDescription("Kicks the mentioned user from this server with a reason, if provided.\n\nThis action will also be reported to the moderation log channel, if any exists.")
     suspend fun kickMember(message: PolyMessage,
                            @Argument(value = "member", description = "The member to kick from the server.")
                            member: PolyMember,
@@ -109,10 +117,12 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Clear")
     @JDABotPermission(Permission.MESSAGE_MANAGE)
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    @CommandMethod("purge|clear|clean <amount>")
+    @CommandMethod("clear|clean|purge <amount>")
     @CommandDescription("Clears a number of messages from chat.")
+    @CommandLongDescription("Removes up to 100 messages from the chat. You can provide a user if you only want to delete messages from a certain user.\n\nThis action will also be reported in the moderation log channel, if any exists.")
     suspend fun purgeMessages(message: PolyMessage,
                               @Range(min = "1", max = "100")
                               @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
@@ -130,19 +140,19 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
                               @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
                               caseInsensitive: Boolean = false) {
         logger.info { "Running clear command" }
-    
+        
         val event = PolyClearEvent(message.textChannel, message.member)
         bot.eventManager.dispatch(event)
-    
+        
         logger.info { "Dispatched clear event" }
-    
+        
         val regex =
                 if (caseInsensitive)
                     messageRegex?.toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
                 else
                     messageRegex?.toRegex(RegexOption.MULTILINE)
-    
-    
+        
+        
         val messages = PastMessageSequence(message.textChannel).take(500).filter {
             it.id != message.id
         }.filter {
@@ -156,21 +166,23 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
         }.filter {
             if (botOnly) it.isFromBot else true
         }.take(amount).toList()
-    
+        
         message.delete()
-    
+        
         if (messages.size == 1)
             messages.first().delete()
         else
             message.textChannel.deleteMessages(messages)
-    
+        
         message.channel.sendMessage("Deleted ${messages.size} messages.")
     }
     
     @JDAGuildCommand
+    @CommandName("Warn")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("warn|warning <member> <reason>")
-    @CommandDescription("Warns a member in the server for bad behavior.")
+    @CommandDescription("Warns a member in the server with a given reason.")
+    @CommandLongDescription("Warns a user in this server with a reason, if provided.\n\nThis action will also be reported to the moderation log channel, if any exists.")
     suspend fun warnMember(message: PolyMessage,
                            @Argument(value = "member", description = "The member to warn.")
                            member: PolyMember,

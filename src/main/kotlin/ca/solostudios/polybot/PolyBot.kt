@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:51 p.m.
+ * Last modified on 25-10-2021 05:05 p.m.
  *
  * MIT License
  *
@@ -32,6 +32,8 @@ import ca.solostudios.polybot.cache.CacheManager
 import ca.solostudios.polybot.cloud.CloudInjectorService
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.PolyMeta
+import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
+import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDABotPermission
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
@@ -79,6 +81,7 @@ import ca.solostudios.polybot.util.registerParserSupplier
 import ca.solostudios.polybot.util.runtime
 import ca.solostudios.polybot.util.subTypesOf
 import cloud.commandframework.annotations.AnnotationParser
+import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.kotlin.coroutines.installCoroutineSupport
 import cloud.commandframework.meta.SimpleCommandMeta
 import dev.minn.jda.ktx.InlineJDABuilder
@@ -187,6 +190,9 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
         registerBuilderModifier(JDAUserPermission::class.java, PolyMeta::userPermissionModifier)
         registerBuilderModifier(JDAGuildCommand::class.java, PolyMeta::guildCommandModifier)
         registerBuilderModifier(PolyCategory::class.java, PolyMeta::categoryCommandModifier)
+        registerBuilderModifier(CommandDescription::class.java, PolyMeta::descriptionCommandModifier)
+        registerBuilderModifier(CommandLongDescription::class.java, PolyMeta::longDescriptionCommandModifier)
+        registerBuilderModifier(CommandName::class.java, PolyMeta::nameCommandModifier)
     }
     
     val exceptionHandler = PolyExceptionHandler(this@PolyBot, commandManager)

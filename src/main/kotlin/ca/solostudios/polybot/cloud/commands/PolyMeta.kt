@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMeta.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:18 p.m.
+ * Last modified on 25-10-2021 05:05 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,8 @@
 
 package ca.solostudios.polybot.cloud.commands
 
+import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
+import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDABotPermission
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
@@ -35,6 +37,7 @@ import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.commands.Category
 import ca.solostudios.polybot.commands.getCategory
 import cloud.commandframework.Command
+import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.meta.CommandMeta
 import io.leangen.geantyref.TypeToken
 import net.dv8tion.jda.api.Permission
@@ -49,6 +52,8 @@ object PolyMeta {
     val CO_OWNER_ONLY = CommandMeta.Key.of(Boolean::class.javaObjectType, "co-owner-only") { false }
     
     val GUILD_ONLY = CommandMeta.Key.of(Boolean::class.javaObjectType, "guild-only") { false }
+    
+    val COMMAND_NAME = CommandMeta.Key.of(String::class.java, "command-name")
     
     fun <T> botPermissionModifier(botPermission: JDABotPermission, builder: Command.Builder<T>): Command.Builder<T> {
         return builder.meta(BOT_PERMISSIONS, botPermission.permissions.asList())
@@ -67,5 +72,18 @@ object PolyMeta {
     
     fun <T> categoryCommandModifier(polyCategory: PolyCategory, builder: Command.Builder<T>): Command.Builder<T> {
         return builder.meta(CATEGORY, getCategory(polyCategory.category))
+    }
+    
+    fun <T> descriptionCommandModifier(commandDescription: CommandDescription, builder: Command.Builder<T>): Command.Builder<T> {
+        return builder.meta(CommandMeta.DESCRIPTION, commandDescription.value)
+    }
+    
+    fun <T> longDescriptionCommandModifier(commandLongDescription: CommandLongDescription,
+                                           builder: Command.Builder<T>): Command.Builder<T> {
+        return builder.meta(CommandMeta.LONG_DESCRIPTION, commandLongDescription.longDescription)
+    }
+    
+    fun <T> nameCommandModifier(commandName: CommandName, builder: Command.Builder<T>): Command.Builder<T> {
+        return builder.meta(COMMAND_NAME, commandName.name)
     }
 }

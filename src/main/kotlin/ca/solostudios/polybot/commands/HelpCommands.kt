@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommands.kt is part of PolyhedralBot
- * Last modified on 24-10-2021 09:29 p.m.
+ * Last modified on 25-10-2021 05:06 p.m.
  *
  * MIT License
  *
@@ -36,6 +36,8 @@ import ca.solostudios.polybot.cloud.commands.IndexHelpTopic
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.SingleCommandHelpTopic
+import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
+import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
@@ -64,8 +66,10 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     private val eventWaiter = EventWaiter(bot.scheduledThreadPool, false).apply { bot.jda.addEventListener(this) }
     
+    @CommandName("Help")
     @CommandMethod("help [query]")
     @CommandDescription("Display help information about PolyBot commands.")
+    @CommandLongDescription("Displays all help information about PolyBot commands.\nThis can be used to search for commands, check what permissions are required for commands, or to figure out what arguments are required for commands.")
     suspend fun help(message: PolyMessage,
                      member: PolyMember,
                      @Greedy
@@ -88,19 +92,18 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
             }
             
             is SingleCommandHelpTopic -> {
-                printSingleCommandHelpTopic(helpMessage, member.user, query, helpTopic)
+                printSingleCommandHelpTopic(helpMessage, helpTopic)
             }
         }
     }
     
-    private suspend fun printIndexHelpTopic(helpMessage: PolyMessage,
-                                            user: PolyUser,
-                                            query: String?,
-                                            helpTopic: IndexHelpTopic) {
-        
+    private fun printIndexHelpTopic(helpMessage: PolyMessage,
+                                    user: PolyUser,
+                                    query: String?,
+                                    helpTopic: IndexHelpTopic) {
         val commands = helpTopic.commands
-    
-        val pagination = helpPaginationBuilder(user, query).apply {
+        
+        val pagination = helpPaginationBuilder(user, query) {
             items = commands.map { cmd ->
                 (cmd.key?.name ?: noCategory) to cmd.value.joinToString(separator = "`, `",
                                                                         prefix = "`",
@@ -109,25 +112,24 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
                 }
             }
         }.build()
-    
+        
         pagination.display(helpMessage.jdaMessage)
-    
     }
     
-    private suspend fun printCategoryHelpTopic(helpMessage: PolyMessage,
-                                               user: PolyUser,
-                                               query: String?,
-                                               helpTopic: CategoryHelpTopic) {
+    private fun printCategoryHelpTopic(helpMessage: PolyMessage,
+                                       user: PolyUser,
+                                       query: String?,
+                                       helpTopic: CategoryHelpTopic) {
         val commands = helpTopic.commands
         
-        val pagination = helpPaginationBuilder(user, query).apply {
+        val pagination = helpPaginationBuilder(user, query) {
             items = commands.map { cmd ->
                 cmd.literals.joinToString(separator = " ", prefix = "**", postfix = "**") { literal -> literal.name } to buildString {
                     
                     if (cmd.literals.last().aliases.isNotEmpty())
                         append("**").append(aliases).append("**: ").appendLine(cmd.literals.last().aliases.joinToString())
                     
-                    append("**").append(syntax).append("**: ")
+                    append("**").append(usage).append("**: ")
                     appendLine(cmd.syntax)
                     
                     append("**").append(description).append("**: ")
@@ -145,46 +147,90 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
                     appendLine(cmd.userPermissions.takeIf { it.isNotEmpty() }
                                        ?.joinToString(separator = "`, `", prefix = "`", postfix = "`") { it.getName() }
                                    ?: none)
-    
+                    
                     if (cmd.guildOnly)
                         append("**").append(guildOnly).appendLine("**: true")
-    
+                    
                     appendLine()
                 }
             }
         }.build()
-    
-    
+        
+        
         pagination.display(helpMessage.jdaMessage)
     }
     
-    @Suppress("UNUSED_PARAMETER")
     private suspend fun printSingleCommandHelpTopic(helpMessage: PolyMessage,
-                                                    user: PolyUser,
-                                                    query: String?,
                                                     helpTopic: SingleCommandHelpTopic) {
-        val pagination = helpPaginationBuilder(user, query).apply {
+        val cmd = helpTopic.command
+    
+    
+        val embed = Embed {
+            title = cmd.name?.let { "$it $command" } ?: helpTitle
+        
+            description = cmd.longDescription ?: cmd.description
+        
+            color = Constants.polyhedralDevColourCode
+            field {
+                name = command
+                value = cmd.literals.joinToString(separator = " ", prefix = "`", postfix = "`") {
+                    if (it.aliases.isEmpty()) it.name else it.name + it.aliases.joinToString(separator = "|", prefix = "|")
+                }
+                inline = false
+            }
+        
+            field {
+                name = usage
+                value = if (cmd.description != null)
+                    "`${cmd.syntax}` - ${cmd.description}"
+                else
+                    cmd.syntax
+                inline = false
+            }
+        
+            if (cmd.literals.last().aliases.isNotEmpty())
+                field {
+                    name = aliases
+                    value = cmd.literals.last().aliases.joinToString(separator = "`, `", prefix = "`", postfix = "`")
+                    inline = false
+                }
+        
+            if (cmd.userPermissions.isNotEmpty())
+                field {
+                    name = requiredPermissions
+                    value = cmd.userPermissions.joinToString(separator = "`, `", prefix = "`", postfix = "`") { it.getName() }
+                    inline = false
+                }
         
         }
-        // TODO: 2021-10-03 Finish this
+    
+    
+        helpMessage.edit(embed)
     }
     
-    private suspend fun helpPaginationBuilder(user: PolyUser, query: String?): PaginationMenu.Builder = PaginationMenu.Builder().apply {
-        title = helpTitle
-        eventWaiter = this@HelpCommands.eventWaiter
-        users = listOf(user.jdaUser)
-        color = { _, _ -> Constants.polyhedralDevColour }
-        text = { _, _ -> query?.let { noResultsDescription.replace("{search}", query) } ?: allCommands }
-        
-        finalAction = { msg -> msg.clearReactions().queue() }
-        
-        itemsPerPage = maxResultsPerPage
-        showPageNumbers = true
-        numberItems = false
-        waitOnSinglePage = false
-        bulkSkipNumber = 5
-        wrapPageEnds = false
-        allowTextInput = false
+    private fun helpPaginationBuilder(
+            user: PolyUser,
+            query: String?,
+            builder: PaginationMenu.Builder.() -> Unit = {},
+                                     ): PaginationMenu.Builder {
+        return PaginationMenu.Builder().also {
+            it.title = helpTitle
+            it.eventWaiter = this@HelpCommands.eventWaiter
+            it.users = listOf(user.jdaUser)
+            it.color = { _, _ -> Constants.polyhedralDevColour }
+            it.text = { _, _ -> query?.let { resultsForDescription.replace("{search}", query) } ?: allCommands }
+            
+            it.finalAction = { msg -> msg.clearReactions().queue() }
+            
+            it.itemsPerPage = maxResultsPerPage
+            it.showPageNumbers = true
+            it.numberItems = false
+            it.waitOnSinglePage = false
+            it.bulkSkipNumber = 5
+            it.wrapPageEnds = false
+            it.allowTextInput = false
+            it.builder()
+        }
     }
     
     @Suppress("unused")
@@ -192,7 +238,7 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
         const val maxResultsPerPage = 6
         const val header = ""
         const val footer = ""
-        const val helpTitle = "Help"
+        const val helpTitle = "Help Results"
         const val command = "Command"
         const val description = "Description"
         const val noDescription = "No description provided."
@@ -205,7 +251,7 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
         const val guildOnly = "GuildOnly"
         const val hidden = "Hidden"
         const val none = "None"
-        const val syntax = "Syntax"
+        const val usage = "Usage"
         const val aliases = "Aliases"
         
         const val allCommands = "List of all commands."
@@ -216,6 +262,7 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
         
         const val noResults = "No Results Found"
         const val noResultsDescription = "Could not find any results for the search {search}."
+        const val resultsForDescription = "Results for the search {search}."
         
         const val nextPage = "➡: Next page."
         const val previousPage = "⬅: Previous page."

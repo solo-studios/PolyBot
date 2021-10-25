@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 24-10-2021 09:31 p.m.
+ * Last modified on 25-10-2021 05:05 p.m.
  *
  * MIT License
  *
@@ -31,6 +31,8 @@ package ca.solostudios.polybot.commands
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
+import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
+import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
@@ -56,8 +58,10 @@ import ca.solostudios.polybot.entities.data.PolyTagData as PolyTag
 class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @ProxiedBy("tag")
+    @CommandName("View Tag")
     @CommandMethod("tag|t view|v <tag>")
     @CommandDescription("Sends the specified tag in the current channel.")
+    @CommandLongDescription("Displays a tag in the current channel.\nThis is the main functionality of tags, allowing you to specify reusable messages, to later send them in chat.")
     suspend fun tag(message: PolyMessage,
                     @Argument(value = "tag", description = "The tag to send.")
                     tag: PolyTag) {
@@ -67,9 +71,11 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Create Tag")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t create|c <name> <content>")
     @CommandDescription("Creates a new tag for this server.")
+    @CommandLongDescription("Creates a new tag to be used in this server. Tags can later be displayed with `\$tag view [tag name]`, which will send the content you specified.")
     suspend fun createTag(message: PolyMessage,
                           guild: PolyGuild,
                           @Argument(value = "name", description = "The name of the new tag.")
@@ -101,9 +107,11 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Rename Tag")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t rename|ren <tag> <new-name>")
     @CommandDescription("Changes the name of an existing tag.")
+    @CommandLongDescription("Replaces the name of an already existing tag with a new one.")
     suspend fun renameTag(message: PolyMessage,
                           guild: PolyGuild,
                           @Argument(value = "tag", description = "The current name of the tag.")
@@ -133,9 +141,11 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Edit Tag")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t edit|ed|e <tag> <content>")
     @CommandDescription("Edits the contents of an existing tag.")
+    @CommandLongDescription("Alters the contents of an existing tag, replacing it. Tags can later be displayed with `\$tag view [tag name]`, which will send the content you specified.")
     suspend fun editTag(message: PolyMessage,
                         @Argument(value = "tag", description = "The tag to edit.")
                         tag: PolyTag,
@@ -148,9 +158,11 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Add Tag Alias")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t alias|a add|a <tag> <alias>")
     @CommandDescription("Adds an alias to a tag.")
+    @CommandLongDescription("Adds a new alias to the specified tag. Tags can be referenced either with their name, or with an alias.")
     suspend fun addTagAlias(message: PolyMessage,
                             guild: PolyGuild,
                             @Argument(value = "tag", description = "The tag to add an alias to.")
@@ -184,9 +196,11 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Remove Tag Alias")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
-    @CommandMethod("tag|t alias|a delete|d <tag> <alias>")
+    @CommandMethod("tag|t alias|a delete|d|remove|rm|r <tag> <alias>")
     @CommandDescription("Removes an alias from a tag.")
+    @CommandLongDescription("Removes an alias from the specified tag. Tags can be referenced either with their name, or with an alias.")
     suspend fun deleteTagAlias(message: PolyMessage,
                                @Argument(value = "tag", description = "The tag to remove an alias from.")
                                tag: PolyTag,
@@ -200,9 +214,11 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Delete Tag")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t delete|del|d|remove|rm <tag>")
     @CommandDescription("Deletes a tag from this guild.")
+    @CommandLongDescription("Permanently deletes a tag. This will remove the tag from the guild.\n\n**This operation is non-reversible!! Be careful!**")
     suspend fun deleteTag(message: PolyMessage,
                           guild: PolyGuild,
                           @Argument(value = "tag", description = "The tag to permanently delete from this guild.")
@@ -214,8 +230,10 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Tag Info")
     @CommandMethod("tag|t info|i <tag>")
     @CommandDescription("Queries the info of the specified tag.")
+    @CommandLongDescription("Queries the info of the specified tag.\nThis will return a list of aliases the tag has, when the tag was created, how many times the tag has been used, and the UUID of the tag.")
     suspend fun tagInfo(message: PolyMessage,
                         @Argument(value = "tag", description = "The tag to query the info for.")
                         tag: PolyTag) {
@@ -263,8 +281,10 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     
     @JDAGuildCommand
     @ProxiedBy("tags")
+    @CommandName("Tag List")
     @CommandMethod("tag|t list|l")
     @CommandDescription("Lists all the tags existing in this guild.")
+    @CommandLongDescription("Prints out a list of all the tags that exist in this guild. Useful if you forget the name of a tag.")
     suspend fun listTags(message: PolyMessage,
                          guild: PolyGuild) {
         val chunkedTags = guild.tags.chunkedBy(1800) { this.name.length + 4 /* 2 to include ", ". */ }
@@ -295,8 +315,10 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
+    @CommandName("Raw Tag")
     @CommandMethod("tag|t raw|r <tag>")
-    @CommandDescription("Returns the raw (unformatted) value of this tag.")
+    @CommandDescription("Returns the raw value of this tag.")
+    @CommandLongDescription("Returns the raw (unformatted) contents of a tag.\nThis will give you the tag *without any* markdown formatting.")
     suspend fun rawTag(message: PolyMessage,
                        @Argument(value = "tag", description = "The tag to get the raw value of.")
                        tag: PolyTag) {

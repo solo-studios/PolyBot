@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 24-10-2021 09:31 p.m.
+ * Last modified on 25-10-2021 05:05 p.m.
  *
  * MIT License
  *
@@ -32,6 +32,8 @@ import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.Version
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
+import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
+import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.entities.PolyMember
@@ -119,6 +121,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
             [dfsek's Patreon](https://www.patreon.com/dfsek)
         """.trimIndent()
     
+    @CommandName("Ping")
     @CommandMethod("ping|pong")
     @CommandDescription("Checks the ping of the bot.")
     suspend fun ping(message: PolyMessage) {
@@ -133,8 +136,10 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
         }
     }
     
+    @CommandName("Info")
     @CommandMethod("info|polybot|bot|botinfo")
     @CommandDescription("Returns information about the bot.")
+    @CommandLongDescription("Returns any information regarding the bot, as well as the source code for the bot.")
     suspend fun info(message: PolyMessage) {
         bot.scope.launch {
             val embed = Embed {
@@ -192,8 +197,10 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
-    @CommandMethod("serverinfo|server")
+    @CommandName("Server Info")
+    @CommandMethod("serverinfo|server|polydev|polyhedral|p")
     @CommandDescription("Returns information about the Polyhedral Development discord server.")
+    @CommandLongDescription("Returns information about the Polyhedral Development discord server, any projects we're working on, as well as where to get support. ")
     suspend fun serverInfo(message: PolyMessage,
                            member: PolyMember) {
         bot.scope.launch {
