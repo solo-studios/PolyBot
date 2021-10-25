@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 25-10-2021 05:51 p.m.
+ * Last modified on 25-10-2021 05:59 p.m.
  *
  * MIT License
  *
@@ -288,8 +288,9 @@ tasks {
         mergeServiceFiles()
         minimize {
             exclude {
-                it.moduleGroup == "org.mariadb.jdbc" || it.moduleGroup == "ch.qos.logback" || it.moduleGroup == "org.jetbrains.kotlinx" ||
-                        it.moduleGroup == "org.ehcache" || it.moduleGroup == "org.jetbrains.exposed"
+                it.moduleGroup == "org.mariadb.jdbc" || it.moduleGroup == "org.postgresql" || it.moduleGroup == "ch.qos.logback" ||
+                        it.moduleGroup == "org.jetbrains.kotlinx" || it.moduleGroup == "org.ehcache" ||
+                        it.moduleGroup == "org.jetbrains.exposed"
             }
             exclude {
                 it.moduleName == "kotlin-reflect"
