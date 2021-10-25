@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 20-10-2021 11:54 a.m.
+ * Last modified on 24-10-2021 08:59 p.m.
  *
  * MIT License
  *
@@ -54,6 +54,7 @@ val EHCACHE_VERSION: String by project
 val GUAVA_VERSION: String by project
 val HIKARI_VERSION: String by project
 val MARIADB_VERSION: String by project
+val POSTGRESQL_VERSION: String by project
 // val SQLITE_VERSION: String by project
 val EXPOSED_VERSION: String by project
 val EXPOSED_MIGRATIONS_VERSION: String by project
@@ -69,6 +70,7 @@ val COMMONS_IO_VERSION: String by project
 plugins {
     java
     application
+    distribution
     kotlin("jvm")
     kotlin("plugin.noarg")
     kotlin("plugin.serialization")
@@ -198,6 +200,7 @@ dependencies {
     // implementation("org.xerial:sqlite-jdbc:$SQLITE_VERSION")
     // MariaDB
     implementation("org.mariadb.jdbc:mariadb-java-client:$MARIADB_VERSION")
+    implementation("org.postgresql:postgresql:$POSTGRESQL_VERSION")
     // Make using SQL not the most excrutiating shit ever and actually bearable to use
     implementation("org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION")
@@ -307,6 +310,13 @@ tasks {
                       )
         }
     }
+    
+    getByName<Tar>("distTar") {
+        compression = Compression.GZIP
+        archiveFileName.set("PolyhedralBot-dist.tar.gz")
+    }
+    
+    
 }
 
 java {
