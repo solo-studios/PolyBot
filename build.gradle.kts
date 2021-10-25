@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 24-10-2021 08:59 p.m.
+ * Last modified on 25-10-2021 05:45 p.m.
  *
  * MIT License
  *
@@ -161,6 +161,7 @@ dependencies {
     implementation("cloud.commandframework:cloud-annotations:$CLOUD_VERSION") { isChanging = true } // Annotation parser
     implementation("cloud.commandframework:cloud-jda:$CLOUD_VERSION") { isChanging = true } // JDA impl
     implementation("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_VERSION") { isChanging = true } // Kotlin extensions
+    implementation("cloud.commandframework:cloud-services:$CLOUD_VERSION") { isChanging = true } // Kotlin extensions
     
     // Kryo fast object serialization
     implementation("com.esotericsoftware:kryo:$KRYO_VERSION")
