@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 24-10-2021 09:28 p.m.
+ * Last modified on 25-10-2021 03:44 p.m.
  *
  * MIT License
  *
@@ -80,7 +80,7 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     // @CommandMethod("lucene search <query>")
-    @CommandMethod("search|s")
+    @CommandMethod("search|s <query>")
     @CommandDescription("Searches the Terra documentation.")
     suspend fun search(message: PolyMessage,
                        user: PolyUser,
