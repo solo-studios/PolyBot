@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommands.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:34 p.m.
+ * Last modified on 24-10-2021 09:29 p.m.
  *
  * MIT License
  *
@@ -48,7 +48,6 @@ import cloud.commandframework.annotations.specifier.Greedy
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import dev.minn.jda.ktx.Embed
 
-@Suppress("RedundantSuspendModifier")
 @PolyCommandContainer
 @PolyCategory(UTIL_CATEGORY)
 class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
@@ -65,15 +64,13 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     private val eventWaiter = EventWaiter(bot.scheduledThreadPool, false).apply { bot.jda.addEventListener(this) }
     
-    @CommandMethod("help [query] [page]")
-    @CommandDescription("Help command")
+    @CommandMethod("help [query]")
+    @CommandDescription("Display help information about PolyBot commands.")
     suspend fun help(message: PolyMessage,
                      member: PolyMember,
                      @Greedy
-                     @Argument("query")
-                     query: String?,
-                     @Argument("page")
-                     page: Int?) {
+                     @Argument(value = "query", description = "Name of the command to search for.")
+                     query: String?) {
         val embed = Embed {
             title = "Help"
             description = "Searching for results..."
@@ -83,27 +80,26 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
         
         when (val helpTopic = helpHandler.queryHelp(member, query)) {
             is IndexHelpTopic         -> {
-                printIndexHelpTopic(helpMessage, member.user, page, query, helpTopic)
+                printIndexHelpTopic(helpMessage, member.user, query, helpTopic)
             }
             
             is CategoryHelpTopic      -> {
-                printCategoryHelpTopic(helpMessage, member.user, page, query, helpTopic)
+                printCategoryHelpTopic(helpMessage, member.user, query, helpTopic)
             }
             
             is SingleCommandHelpTopic -> {
-                printSingleCommandHelpTopic(helpMessage, member.user, page, query, helpTopic)
+                printSingleCommandHelpTopic(helpMessage, member.user, query, helpTopic)
             }
         }
     }
     
     private suspend fun printIndexHelpTopic(helpMessage: PolyMessage,
                                             user: PolyUser,
-                                            page: Int?,
                                             query: String?,
                                             helpTopic: IndexHelpTopic) {
         
         val commands = helpTopic.commands
-        
+    
         val pagination = helpPaginationBuilder(user, query).apply {
             items = commands.map { cmd ->
                 (cmd.key?.name ?: noCategory) to cmd.value.joinToString(separator = "`, `",
@@ -113,17 +109,13 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
                 }
             }
         }.build()
-        
-        if (page != null)
-            pagination.paginate(helpMessage.jdaMessage, page)
-        else
-            pagination.display(helpMessage.jdaMessage)
-        
+    
+        pagination.display(helpMessage.jdaMessage)
+    
     }
     
     private suspend fun printCategoryHelpTopic(helpMessage: PolyMessage,
                                                user: PolyUser,
-                                               page: Int?,
                                                query: String?,
                                                helpTopic: CategoryHelpTopic) {
         val commands = helpTopic.commands
@@ -153,28 +145,27 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
                     appendLine(cmd.userPermissions.takeIf { it.isNotEmpty() }
                                        ?.joinToString(separator = "`, `", prefix = "`", postfix = "`") { it.getName() }
                                    ?: none)
-                    
+    
                     if (cmd.guildOnly)
                         append("**").append(guildOnly).appendLine("**: true")
-                    
+    
                     appendLine()
                 }
             }
         }.build()
-        
-        if (page != null)
-            pagination.paginate(helpMessage.jdaMessage, page)
-        else {
-            pagination.display(helpMessage.jdaMessage)
-        }
+    
+    
+        pagination.display(helpMessage.jdaMessage)
     }
     
     @Suppress("UNUSED_PARAMETER")
     private suspend fun printSingleCommandHelpTopic(helpMessage: PolyMessage,
                                                     user: PolyUser,
-                                                    page: Int?,
                                                     query: String?,
                                                     helpTopic: SingleCommandHelpTopic) {
+        val pagination = helpPaginationBuilder(user, query).apply {
+        
+        }
         // TODO: 2021-10-03 Finish this
     }
     

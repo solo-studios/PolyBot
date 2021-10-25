@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotAdminCommands.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 10:30 p.m.
+ * Last modified on 24-10-2021 09:31 p.m.
  *
  * MIT License
  *
@@ -36,6 +36,7 @@ import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyUser
+import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Hidden
 import org.slf4j.kotlin.*
@@ -46,27 +47,27 @@ import org.slf4j.kotlin.*
 class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
-    @Hidden
-    @JDAUserPermission(ownerOnly = true)
     @CommandMethod("shutdown")
+    @JDAUserPermission(ownerOnly = true)
+    @CommandDescription("Shutdown PolyBot from within discord. NOTE: This will **NOT** restart the bot afterwards.")
     suspend fun shutdown(message: PolyMessage, author: PolyUser) {
         message.reply("Shutting down PolyBot")
         logger.info { "Shutdown request was triggered by ${author.tag} (${author.id})" }
         bot.shutdown(ExitCodes.EXIT_CODE_SHUTDOWN)
     }
     
-    @Hidden
-    @JDAUserPermission(ownerOnly = true)
     @CommandMethod("restart")
+    @JDAUserPermission(ownerOnly = true)
+    @CommandDescription("Restart PolyBot from within discord. The bot process will exit then start up again.")
     suspend fun restart(message: PolyMessage, author: PolyUser) {
         message.reply("Restarting PolyBot")
         logger.info { "Restart request was triggered by ${author.tag} (${author.id})" }
         bot.shutdown(ExitCodes.EXIT_CODE_RESTART)
     }
     
-    @Hidden
-    @JDAUserPermission(ownerOnly = true)
     @CommandMethod("update")
+    @JDAUserPermission(ownerOnly = true)
+    @CommandDescription("Update PolyBot from within discord. The bot process will exit, a new jar will be downloaded, and then the bot will start again.")
     suspend fun update(message: PolyMessage, author: PolyUser) {
         message.reply("Updating PolyBot")
         logger.info { "Update request was triggered by ${author.tag} (${author.id})" }

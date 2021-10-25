@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:21 p.m.
+ * Last modified on 24-10-2021 09:31 p.m.
  *
  * MIT License
  *
@@ -40,6 +40,7 @@ import ca.solostudios.polybot.entities.data.Tag
 import ca.solostudios.polybot.util.chunkedBy
 import ca.solostudios.polybot.util.toDiscordTimestamp
 import cloud.commandframework.annotations.Argument
+import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.ProxiedBy
 import cloud.commandframework.annotations.specifier.Greedy
@@ -56,8 +57,9 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @ProxiedBy("tag")
     @CommandMethod("tag|t view|v <tag>")
+    @CommandDescription("Sends the specified tag in the current channel.")
     suspend fun tag(message: PolyMessage,
-                    @Argument("tag")
+                    @Argument(value = "tag", description = "The tag to send.")
                     tag: PolyTag) {
         tag.usages++
         
@@ -67,12 +69,13 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t create|c <name> <content>")
+    @CommandDescription("Creates a new tag for this server.")
     suspend fun createTag(message: PolyMessage,
                           guild: PolyGuild,
-                          @Argument("name")
+                          @Argument(value = "name", description = "The name of the new tag.")
                           name: String,
                           @Greedy
-                          @Argument("content")
+                          @Argument(value = "content", description = "The contents of the tag.")
                           content: String) {
         if (!isValidTagNameAlias(name)) {
             message.reply(invalidTag(name))
@@ -100,11 +103,12 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t rename|ren <tag> <new-name>")
+    @CommandDescription("Changes the name of an existing tag.")
     suspend fun renameTag(message: PolyMessage,
                           guild: PolyGuild,
-                          @Argument("tag")
+                          @Argument(value = "tag", description = "The current name of the tag.")
                           tag: PolyTag,
-                          @Argument("new-name")
+                          @Argument(value = "new-name", description = "The new name of the tag.")
                           newName: String) {
         if (!isValidTagNameAlias(newName)) {
             message.reply(invalidTag(newName))
@@ -131,11 +135,12 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t edit|ed|e <tag> <content>")
+    @CommandDescription("Edits the contents of an existing tag.")
     suspend fun editTag(message: PolyMessage,
-                        @Argument("tag")
+                        @Argument(value = "tag", description = "The tag to edit.")
                         tag: PolyTag,
                         @Greedy
-                        @Argument("content")
+                        @Argument(value = "content", description = "The new content of the tag.")
                         content: String) {
         tag.content = content
         
@@ -145,11 +150,12 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t alias|a add|a <tag> <alias>")
+    @CommandDescription("Adds an alias to a tag.")
     suspend fun addTagAlias(message: PolyMessage,
                             guild: PolyGuild,
-                            @Argument("tag")
+                            @Argument(value = "tag", description = "The tag to add an alias to.")
                             tag: PolyTag,
-                            @Argument("alias")
+                            @Argument(value = "alias", description = "The alias to add to the tag.")
                             alias: String) {
         if (!isValidTagNameAlias(alias)) {
             message.reply(invalidTag(alias))
@@ -180,10 +186,11 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("tag|t alias|a delete|d <tag> <alias>")
+    @CommandDescription("Removes an alias from a tag.")
     suspend fun deleteTagAlias(message: PolyMessage,
-                               @Argument("tag")
+                               @Argument(value = "tag", description = "The tag to remove an alias from.")
                                tag: PolyTag,
-                               @Argument("alias")
+                               @Argument(value = "alias", description = "The alias to remove from the tag.")
                                alias: String) {
         if (tag.aliases.remove(alias))
             message.reply("Deleted alias '${alias}' from tag '${tag.name}' with UUID `${tag.uuid}`.")
@@ -193,11 +200,12 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @JDAGuildCommand
-    @CommandMethod("tag|t delete|del|d|remove|rm <tag>")
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
+    @CommandMethod("tag|t delete|del|d|remove|rm <tag>")
+    @CommandDescription("Deletes a tag from this guild.")
     suspend fun deleteTag(message: PolyMessage,
                           guild: PolyGuild,
-                          @Argument("tag")
+                          @Argument(value = "tag", description = "The tag to permanently delete from this guild.")
                           tag: PolyTag) {
         if (guild.tags.remove(tag))
             message.reply("Deleted tag '${tag.name}'.")
@@ -207,8 +215,9 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     
     @JDAGuildCommand
     @CommandMethod("tag|t info|i <tag>")
+    @CommandDescription("Queries the info of the specified tag.")
     suspend fun tagInfo(message: PolyMessage,
-                        @Argument("tag")
+                        @Argument(value = "tag", description = "The tag to query the info for.")
                         tag: PolyTag) {
         val tagEmbed = Embed {
             title = "Info for Tag ${tag.name}."
@@ -255,6 +264,7 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @ProxiedBy("tags")
     @CommandMethod("tag|t list|l")
+    @CommandDescription("Lists all the tags existing in this guild.")
     suspend fun listTags(message: PolyMessage,
                          guild: PolyGuild) {
         val chunkedTags = guild.tags.chunkedBy(1800) { this.name.length + 4 /* 2 to include ", ". */ }
@@ -286,8 +296,9 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     
     @JDAGuildCommand
     @CommandMethod("tag|t raw|r <tag>")
+    @CommandDescription("Returns the raw (unformatted) value of this tag.")
     suspend fun rawTag(message: PolyMessage,
-                       @Argument("tag")
+                       @Argument(value = "tag", description = "The tag to get the raw value of.")
                        tag: PolyTag) {
         val escapedTag = MarkdownSanitizer.sanitize(tag.content, MarkdownSanitizer.SanitizationStrategy.ESCAPE)
         

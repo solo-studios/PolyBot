@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:50 p.m.
+ * Last modified on 24-10-2021 09:31 p.m.
  *
  * MIT License
  *
@@ -43,6 +43,7 @@ import ca.solostudios.polybot.util.runtime
 import ca.solostudios.polybot.util.runtimeMXBean
 import ca.solostudios.polybot.util.shortFormat
 import ca.solostudios.polybot.util.totalMemory
+import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import dev.minn.jda.ktx.Embed
 import dev.minn.jda.ktx.await
@@ -119,6 +120,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
         """.trimIndent()
     
     @CommandMethod("ping|pong")
+    @CommandDescription("Checks the ping of the bot.")
     suspend fun ping(message: PolyMessage) {
         bot.scope.launch {
             message.textChannel.sendTyping()
@@ -132,6 +134,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @CommandMethod("info|polybot|bot|botinfo")
+    @CommandDescription("Returns information about the bot.")
     suspend fun info(message: PolyMessage) {
         bot.scope.launch {
             val embed = Embed {
@@ -190,6 +193,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
     
     @JDAGuildCommand
     @CommandMethod("serverinfo|server")
+    @CommandDescription("Returns information about the Polyhedral Development discord server.")
     suspend fun serverInfo(message: PolyMessage,
                            member: PolyMember) {
         bot.scope.launch {

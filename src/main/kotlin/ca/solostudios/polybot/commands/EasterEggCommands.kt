@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EasterEggCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 24-10-2021 09:31 p.m.
  *
  * MIT License
  *
@@ -34,6 +34,7 @@ import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.entities.PolyMessage
 import cloud.commandframework.annotations.Argument
+import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Hidden
 import cloud.commandframework.annotations.specifier.Greedy
@@ -49,6 +50,7 @@ class EasterEggCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     
     @CommandMethod("gay|crimes")
+    @CommandDescription("Be gay :)")
     fun crimes(message: PolyMessage) {
         bot.scope.launch {
             message.reply("Be gay, do crimes.")
@@ -56,9 +58,10 @@ class EasterEggCommands(bot: PolyBot) : PolyCommands(bot) {
     }
     
     @CommandMethod("uwu|uwuify|owo|owoify <text>")
+    @CommandDescription("Uwuifies your text for you!")
     fun uwuify(message: PolyMessage,
                @Greedy
-               @Argument("text")
+               @Argument(value = "text", description = "Text to uwuify.")
                text: String) {
         bot.scope.launch {
             val uwuText = UwU.transformTextToUwU(text)

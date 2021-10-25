@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:32 p.m.
+ * Last modified on 24-10-2021 09:28 p.m.
  *
  * MIT License
  *
@@ -35,11 +35,11 @@ import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyUser
-import ca.solostudios.polybot.search.GithubWikiIndex
 import ca.solostudios.polybot.util.MarkdownHeaderVisitor
 import ca.solostudios.polybot.util.PaginationMenu
 import ca.solostudios.polybot.util.get
 import cloud.commandframework.annotations.Argument
+import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.Hidden
@@ -54,12 +54,12 @@ import org.slf4j.kotlin.*
 @PolyCategory(UTIL_CATEGORY)
 class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     private val eventWaiter = EventWaiter(bot.scheduledThreadPool, false).apply { bot.jda.addEventListener(this) }
-    
     private val logger by getLogger()
     
     @Hidden
     @JDAUserPermission(ownerOnly = true)
     @CommandMethod("lucene markdown <markdown>")
+    @CommandDescription("Internal command for Apache lucene bullshit.")
     suspend fun lucene(message: PolyMessage,
                        @Greedy
                        @Argument("markdown")
@@ -68,27 +68,29 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
         val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(markdown)
         
         val visitor = MarkdownHeaderVisitor()
-        
+    
         visitor.visitNode(parsedTree)
-        
+    
         visitor.headers.forEach {
             logger.info { "Header: ${markdown[it.first, it.last].trim()}" }
             message.reply("Header: ${markdown[it.first, it.last].trim()}")
         }
-        
+    
         // message.reply(writer.writeValueAsString(parsedTree)).mentionRepliedUser(false).queue()
     }
     
-    @CommandMethod("lucene search <query>")
+    // @CommandMethod("lucene search <query>")
+    @CommandMethod("search|s")
+    @CommandDescription("Searches the Terra documentation.")
     suspend fun search(message: PolyMessage,
                        user: PolyUser,
                        @Greedy
-                       @Argument("query")
+                       @Argument(value = "query", description = "The string to search for.")
                        query: String,
-                       @Flag(value = "quick", aliases = ["q"])
+                       @Flag(value = "quick", aliases = ["q"], description = "Return only a single result.")
                        quick: Boolean = false) {
         try {
-            val results = (bot.searchManager.defaultIndex as GithubWikiIndex).search(query, maxResults = 50)
+            val results = bot.searchManager.defaultIndex.search(query, maxResults = 50)
             
             if (quick) {
                 message.reply(results.first().simple)
@@ -119,7 +121,9 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
         }
     }
     
+    @Hidden
     @CommandMethod("lucene update")
+    @JDAUserPermission(ownerOnly = true)
     suspend fun update(message: PolyMessage) {
         try {
             bot.searchManager.defaultIndex.updateIndex()

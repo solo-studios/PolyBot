@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:14 p.m.
+ * Last modified on 24-10-2021 09:28 p.m.
  *
  * MIT License
  *
@@ -42,6 +42,7 @@ import ca.solostudios.polybot.entities.PolyTextChannel
 import ca.solostudios.polybot.event.moderation.PolyClearEvent
 import ca.solostudios.polybot.util.poly
 import cloud.commandframework.annotations.Argument
+import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.specifier.Greedy
@@ -57,9 +58,10 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @JDAUserPermission(Permission.MANAGE_SERVER)
     @CommandMethod("logging|logs [channel]")
+    @CommandDescription("Sets the channel to use for logging in this server.")
     suspend fun loggingChannel(message: PolyMessage,
                                guild: PolyGuild,
-                               @Argument("channel")
+                               @Argument(value = "channel", description = "The channel to send logs to.")
                                loggingChannel: PolyTextChannel? = null) {
         val oldLoggingChannel = guild.data.loggingChannel
         
@@ -73,10 +75,11 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDABotPermission(Permission.BAN_MEMBERS)
     @JDAUserPermission(Permission.BAN_MEMBERS)
     @CommandMethod("ban|banish|begone <member> [reason]")
+    @CommandDescription("Bans a member from this server deleting the last few days of messages.")
     suspend fun banUser(message: PolyMessage,
-                        @Argument("member")
+                        @Argument(value = "member", description = "The member to ban from the server.")
                         member: PolyMember,
-                        @Argument("reason")
+                        @Argument(value = "reason", description = "The reason this member was banned.")
                         @Greedy
                         reason: String?,
                         @Flag("days", aliases = ["d"], description = "The amount of days to delete when banning the user. Defaults to 3.")
@@ -92,8 +95,9 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDABotPermission(Permission.KICK_MEMBERS)
     @JDAUserPermission(Permission.KICK_MEMBERS)
     @CommandMethod("kick|yeet <member> [reason]")
+    @CommandDescription("Kicks a member from this server.")
     suspend fun kickMember(message: PolyMessage,
-                           @Argument("member")
+                           @Argument(value = "member", description = "The member to kick from the server.")
                            member: PolyMember,
                            @Argument("reason", description = "The reason the member was kicked.")
                            reason: String?) {
@@ -108,6 +112,7 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDABotPermission(Permission.MESSAGE_MANAGE)
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("purge|clear|clean <amount>")
+    @CommandDescription("Clears a number of messages from chat.")
     suspend fun purgeMessages(message: PolyMessage,
                               @Range(min = "1", max = "100")
                               @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
@@ -165,10 +170,11 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAGuildCommand
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("warn|warning <member> <reason>")
+    @CommandDescription("Warns a member in the server for bad behavior.")
     suspend fun warnMember(message: PolyMessage,
-                           @Argument("member")
+                           @Argument(value = "member", description = "The member to warn.")
                            member: PolyMember,
-                           @Argument("reason")
+                           @Argument(value = "reason", description = "The reason the member was warned.")
                            reason: String?) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
         
