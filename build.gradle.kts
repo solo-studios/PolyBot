@@ -82,7 +82,7 @@ plugins {
 var mainClassName: String by application.mainClass
 mainClassName = "ca.solostudios.polybot.Launcher"
 group = "ca.solostudios.polybot"
-val versionObj = Version("0", "0", "0")
+val versionObj = Version("0", "1", "0")
 version = versionObj
 
 repositories {
