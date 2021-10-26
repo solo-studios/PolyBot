@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 25-10-2021 05:59 p.m.
+ * Last modified on 25-10-2021 08:19 p.m.
  *
  * MIT License
  *
@@ -127,8 +127,10 @@ dependencies {
     // Kotlin
     implementation(kotlin("stdlib", KOTLIN_VERSION))
     implementation(kotlin("reflect", KOTLIN_VERSION)) // Reflection stuff
-    implementation(kotlin("script-runtime", KOTLIN_VERSION)) // For executing scripts at runtime
-    implementation(kotlin("script-util", KOTLIN_VERSION))
+    implementation(kotlin("script-util", KOTLIN_VERSION)) // For executing scripts at runtime
+    implementation(kotlin("script-runtime", KOTLIN_VERSION))
+    implementation(kotlin("scripting-jsr223", KOTLIN_VERSION))
+    implementation(kotlin("scripting-jvm-host", KOTLIN_VERSION))
     implementation(kotlin("compiler-embeddable", KOTLIN_VERSION))
     implementation(kotlin("scripting-compiler-embeddable", KOTLIN_VERSION))
     // Kotlin Serialization
@@ -293,7 +295,7 @@ tasks {
                         it.moduleGroup == "org.jetbrains.exposed"
             }
             exclude {
-                it.moduleName == "kotlin-reflect"
+                it.moduleName == "kotlin-reflect" || it.moduleName.startsWith("kotlin-script")
             }
             exclude {
                 it.moduleGroup == "org.apache.lucene" && (it.moduleName == "lucene-core" || it.moduleName == "lucene-sandbox")
