@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotAdminCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 10:16 p.m.
+ * Last modified on 28-10-2021 07:58 p.m.
  *
  * MIT License
  *
@@ -42,15 +42,31 @@ import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Hidden
 import cloud.commandframework.annotations.specifier.Greedy
-import java.io.StringWriter
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import java.time.Duration
-import javax.script.ScriptContext
 import javax.script.ScriptEngineManager
-import javax.script.SimpleScriptContext
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.withTimeout
+import net.dv8tion.jda.api.JDA
 import org.slf4j.kotlin.*
+import kotlin.script.experimental.annotations.KotlinScript
+import kotlin.script.experimental.api.EvaluationResult
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.ScriptAcceptedLocation
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.ScriptEvaluationConfiguration
+import kotlin.script.experimental.api.acceptedLocations
+import kotlin.script.experimental.api.defaultImports
+import kotlin.script.experimental.api.ide
+import kotlin.script.experimental.api.providedProperties
+import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.dependenciesFromClassContext
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.updateClasspath
+import kotlin.script.experimental.jvm.util.classpathFromClass
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 
 @Hidden
 @PolyCommandContainer
@@ -58,6 +74,7 @@ import org.slf4j.kotlin.*
 class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     private val logger by getLogger()
     private val engine = ScriptEngineManager().getEngineByName("kotlin")
+    private val scriptingHost = BasicJvmScriptingHost()
     
     @CommandName("Shutdown Bot")
     @CommandMethod("shutdown")
@@ -100,61 +117,44 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
         assert(author.isOwner) // sanity check
         assert(author.id in bot.config.botConfig.ownerIds)
         
-        val outputWriter = StringWriter()
-        val errorWriter = StringWriter()
-        
-        bot.scope.launch { }
-        
         try {
             val result = withTimeout(Duration.ofSeconds(10)) {
-                val context = SimpleScriptContext()
-                
-                
-                context.reader = "".reader()
-                context.writer = outputWriter
-                context.errorWriter = errorWriter
-                
-                
-                val scope = engine.createBindings().also { context.setBindings(it, ScriptContext.ENGINE_SCOPE) }
-                
-                
-                scope["user"] = author
-                scope["message"] = message
-                scope["logger"] = logger
-                scope["bot"] = bot
-                scope["jda"] = bot.jda
-                
-                if (message.fromGuild) {
-                    scope["guild"] = message.guild
-                    scope["author"] = message.member
-                } else {
-                    scope["author"] = author
-                }
-                
-                val source = "@file:kotlin.OptIn(kotlin.time.ExperimentalTime::class)\n" +
-                        imports.joinToString(separator = "\n", postfix = "\n") { "import $it" } + code
-                
-                logger.info { source }
-                
-                val output: String? = engine.eval(source, scope)?.toString()
-                val out = outputWriter.toString()
-                val err = errorWriter.toString()
-                
-                return@withTimeout buildString {
-                    if (!output.isNullOrEmpty()) {
-                        appendLine("\nReturn value:")
-                        appendLine("```")
-                        appendLine(output)
-                        appendLine("```")
+                val (err, out, result) = captureOutAndErr {
+                    evalString<KotlinAdminScript>(code) {
+                        providedProperties(
+                                "user" to author,
+                                "message" to message,
+                                "logger" to logger,
+                                "bot" to bot,
+                                "jda" to bot.jda,
+                                          )
                     }
-                    
+                }
+    
+                // result as ResultWithDiagnostics.Success
+    
+    
+                return@withTimeout buildString {
+                    append(result)
+        
+                    // if (!output.isNullOrEmpty()) {
+                    //     val returnValue = result.value.returnValue
+                    //     returnValue as ResultValue.Value
+                    //    
+                    //     returnValue.toString()
+                    //     appendLine("\nReturn value:")
+                    //     appendLine("```")
+                    //     appendLine(output)
+                    //     appendLine("```")
+                    // }
+        
                     if (out.isNotEmpty()) {
                         appendLine("\nConsole output:")
                         appendLine("```")
                         appendLine(out)
                         appendLine("```")
                     }
-                    
+        
                     if (err.isNotEmpty()) {
                         appendLine("\nErr output:")
                         appendLine("```")
@@ -165,26 +165,104 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
             }
             
             logger.info { "Result of eval: $result" }
-            
+    
             message.reply("Evaluation completed successfully.")
-            
+    
             if (result.isNotEmpty())
                 message.reply(result.takeIf { it.length <= 4000 } ?: result.substring(0, 4000))
         } catch (e: TimeoutCancellationException) {
+    
+        }
+    }
+    
+    /**
+     * From [Jetbrains/kotlin](https://github.com/JetBrains/kotlin/blob/master/libraries/scripting/jvm-host-test/test/kotlin/script/experimental/jvmhost/test/TestScriptDefinitions.kt#L62).
+     *
+     * @param T
+     * @param source
+     * @param configure
+     * @receiver
+     * @return
+     */
+    private inline fun <reified T : Any> evalString(
+            source: String,
+            noinline configure: ScriptEvaluationConfiguration.Builder.() -> Unit
+                                                   ): ResultWithDiagnostics<EvaluationResult> {
+        val actualConfiguration = createJvmCompilationConfigurationFromTemplate<T>()
+        return scriptingHost.eval(source.toScriptSource(), actualConfiguration, ScriptEvaluationConfiguration(configure))
+    }
+    
+    @KotlinScript(
+            displayName = "PolyScript",
+            compilationConfiguration = KotlinAdminScriptCompilationConfiguration::class,
+                 )
+    abstract class KotlinAdminScript
+    
+    class KotlinAdminScriptCompilationConfiguration : ScriptCompilationConfiguration(
+            {
+                defaultImports(DEFAULT_EVAL_IMPORTS)
+                
+                updateClasspath(classpathFromClass<PolyBot>())
+                
+                providedProperties(
+                        "bot" to PolyBot::class,
+                        "logger" to KLogger::class,
+                        "jda" to JDA::class,
+                        // "guild" to PolyGuild::class,
+                        // "member" to PolyMember::class,
+                        "user" to PolyUser::class,
+                        "message" to PolyMessage::class
+                                  )
+                
+                jvm {
+                    dependenciesFromClassContext(contextClass = PolyBot::class, wholeClasspath = true)
+                }
+                ide {
+                    acceptedLocations(ScriptAcceptedLocation.Everywhere)
+                }
+            }
+                                                                                    ) {
+        companion object {
+            val DEFAULT_EVAL_IMPORTS = listOf(
+                    "kotlin.*",
+                    "kotlinx.*",
+                    "kotlinx.coroutines.*",
+                    "ca.solostudios.polybot.*",
+                    "ca.solostudios.polybot.util.*",
+                    "ca.solostudios.polybot.entities.*",
+                    "net.dv8tion.jda.api.*",
+                    "org.slf4j.kotlin.*",
+                                             )
             
         }
     }
     
-    companion object {
-        val imports = listOf(
-                "kotlin.*",
-                "kotlinx.*",
-                "kotlinx.coroutines.*",
-                "ca.solostudios.polybot.*",
-                "ca.solostudios.polybot.util.*",
-                "ca.solostudios.polybot.entities.*",
-                "net.dv8tion.jda.api.*",
-                "org.slf4j.kotlin.*",
-                            )
+    /**
+     * Taken from [Jetbrains/kotlin](https://github.com/JetBrains/kotlin/blob/master/libraries/scripting/jvm-host-test/test/kotlin/script/experimental/jvmhost/test/ScriptingHostTest.kt#L519).
+     *
+     * @param body
+     * @receiver
+     * @return
+     */
+    private fun captureOutAndErr(body: () -> ResultWithDiagnostics<EvaluationResult>): Triple<String, String, ResultWithDiagnostics<EvaluationResult>> {
+        val outStream = ByteArrayOutputStream()
+        val errStream = ByteArrayOutputStream()
+        
+        val prevOut = System.out
+        val prevErr = System.err
+        System.setOut(PrintStream(outStream))
+        System.setErr(PrintStream(errStream))
+        lateinit var res: ResultWithDiagnostics<EvaluationResult>
+        try {
+            res = body()
+        } finally {
+            System.out.flush()
+            System.err.flush()
+            System.setOut(prevOut)
+            System.setErr(prevErr)
+        }
+        
+        
+        return Triple(outStream.toString().trim(), errStream.toString().trim(), res)
     }
 }
