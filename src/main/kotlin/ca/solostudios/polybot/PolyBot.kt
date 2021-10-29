@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 25-10-2021 10:16 p.m.
  *
  * MIT License
  *
@@ -306,11 +306,11 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     }
     
     fun userReference(userId: Long): BackedReference<User?, Long> {
-        return BackedReference(userId, { jda.getUserById(it) }, { it?.idLong ?: 0 })
+        return BackedReference(userId, { jda.retrieveUserById(it).complete() }, { it?.idLong ?: 0 })
     }
     
     fun polyUserReference(userId: Long): BackedReference<PolyUser?, Long> {
-        return BackedReference(userId, { jda.getUserById(it)?.poly(this) }, { it?.id ?: 0 })
+        return BackedReference(userId, { jda.retrieveUserById(it).complete()?.poly(this) }, { it?.id ?: 0 })
     }
     
     fun user(userId: Long): User? {
@@ -323,22 +323,22 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     
     fun memberReference(guildId: Long, userId: Long): BackedReference<Member?, Pair<Long, Long>> {
         return BackedReference(guildId to userId,
-                               { jda.getGuildById(it.first)?.getMemberById(it.second) },
+                               { jda.getGuildById(it.first)?.retrieveMemberById(it.second)?.complete() },
                                { it?.let { it.idLong to it.guild.idLong } ?: (0L to 0L) })
     }
     
     fun polyMemberReference(guildId: Long, userId: Long): BackedReference<PolyMember?, Pair<Long, Long>> {
         return BackedReference(guildId to userId,
-                               { jda.getGuildById(it.first)?.getMemberById(it.second)?.poly(this) },
+                               { jda.getGuildById(it.first)?.retrieveMemberById(it.second)?.complete()?.poly(this) },
                                { it?.let { it.id to it.guild.id } ?: (0L to 0L) })
     }
     
     fun member(guildId: Long, userId: Long): Member? {
-        return jda.getGuildById(guildId)?.getMemberById(userId)
+        return jda.getGuildById(guildId)?.retrieveMemberById(userId)?.complete()
     }
     
     fun polyMember(guildId: Long, userId: Long): PolyMember? {
-        return jda.getGuildById(guildId)?.getMemberById(userId)?.poly(this)
+        return jda.getGuildById(guildId)?.retrieveMemberById(userId)?.complete()?.poly(this)
     }
     
     fun emoteReference(emoteId: Long): BackedReference<Emote?, Long> {
