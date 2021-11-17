@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 25-10-2021 05:59 p.m.
+ * Last modified on 17-11-2021 04:08 p.m.
  *
  * MIT License
  *
@@ -179,6 +179,7 @@ dependencies {
     implementation("com.github.kittinunf.fuel:fuel:$FUEL_VERSION")
     implementation("com.github.kittinunf.fuel:fuel-coroutines:$FUEL_VERSION")
     implementation("com.github.kittinunf.fuel:fuel-jackson:$FUEL_VERSION")
+    implementation("com.github.kittinunf.fuel:fuel-kotlinx-serialization:$FUEL_VERSION")
     // implementation("com.github.kittinunf.fuel:fuel-reactor:$FUEL_VERSION") // Use Reactor??
     
     // Jackson (JSON object serialization/deserialization)
