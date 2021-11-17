@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessage.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 08:31 p.m.
+ * Last modified on 17-11-2021 03:51 p.m.
  *
  * MIT License
  *
@@ -128,6 +128,9 @@ class PolyMessage(val bot: PolyBot, val jdaMessage: Message) {
     
     val isPinned: Boolean
         get() = jdaMessage.isPinned
+    
+    val hasAttachments: Boolean
+        get() = jdaMessage.attachments.isNotEmpty()
     
     fun matches(regex: Regex) = content.matches(regex)
     
