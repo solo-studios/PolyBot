@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 25-10-2021 05:59 p.m.
+ * Last modified on 17-11-2021 01:43 p.m.
  *
  * MIT License
  *
@@ -35,6 +35,7 @@ val KOTLIN_VERSION: String by project
 val KOTLINX_SERIALIZATION_VERSION: String by project
 val KOTLINX_COROUTINES_VERSION: String by project
 val KOTLINX_UUID_VERSION: String by project
+val KODEIN_DI_VERSION: String by project
 val JETBRAINS_ANNOTATIONS_VERSION: String by project
 val JDA_VERSION: String by project
 val DISCORD_WEBHOOKS_VERSION: String by project
@@ -141,6 +142,9 @@ dependencies {
     
     implementation("app.softwork:kotlinx-uuid-core:$KOTLINX_UUID_VERSION")
     implementation("app.softwork:kotlinx-uuid-exposed:$KOTLINX_UUID_VERSION")
+    
+    // Kodein Dependency Injection
+    implementation("org.kodein.di:kodein-di:$KODEIN_DI_VERSION")
     
     // Utility annotations
     implementation("org.jetbrains:annotations:$JETBRAINS_ANNOTATIONS_VERSION")
