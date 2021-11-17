@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file GitRepositoryManager.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:18 p.m.
+ * The file PolySearchConfig.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -26,24 +26,14 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot
+package ca.solostudios.polybot.config
 
-import ca.solostudios.polybot.util.ShutdownService
-import java.nio.file.Path
+import ca.solostudios.polybot.config.search.PolySearchLocation
+import com.fasterxml.jackson.annotation.JsonProperty
 
-@Suppress("unused", "UNUSED_PARAMETER")
-class GitRepositoryManager : ShutdownService() {
-    private val gitRepos = mapOf<String, Path>()
-    
-    fun addRepo(name: String, uri: String) {
-    
-    }
-    
-    fun updateRepo(name: String) {
-    
-    }
-    
-    override fun serviceShutdown() {
-    
-    }
-}
+data class PolySearchConfig(
+        @JsonProperty("default")
+        val default: String,
+        @JsonProperty("locations")
+        val polySearchLocations: List<PolySearchLocation>,
+                           )

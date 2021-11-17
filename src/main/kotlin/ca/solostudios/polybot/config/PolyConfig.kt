@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyConfig.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * Last modified on 17-11-2021 02:32 p.m.
  *
  * MIT License
  *
@@ -28,15 +28,38 @@
 
 package ca.solostudios.polybot.config
 
+import ca.solostudios.polybot.PolyBot
+import ca.solostudios.polybot.config.automod.PolyAutomodConfig
+import ca.solostudios.polybot.config.automod.PolyAutomodDomainConfig
+import ca.solostudios.polybot.config.automod.PolyAutomodMessages
+import ca.solostudios.polybot.config.automod.PolyBadWordsConfig
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.kodein.di.DI
+import org.kodein.di.bindInstance
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class PolyConfig(
         @JsonProperty("bot")
-        val botConfig: BotConfig,
+        val polybotConfig: PolyBotConfig,
         @JsonProperty("search")
-        val searchConfig: SearchConfig,
+        val polySearchConfig: PolySearchConfig,
         @JsonProperty("database")
-        val databaseConfig: DatabaseConfig,
+        val polyDatabaseConfig: PolyDatabaseConfig,
                      )
+
+@Suppress("RemoveExplicitTypeArguments")
+val PolyBot.polybotConfigModule: DI.Module
+    get() = DI.Module(name = "") {
+        bindInstance<PolyConfig> { config }
+        
+        bindInstance<PolyBotConfig> { config.polybotConfig }
+        bindInstance<PolyAutomodConfig> { config.polybotConfig.polyAutomodConfig }
+        bindInstance<PolyAutomodDomainConfig> { config.polybotConfig.polyAutomodConfig.polyAutomodDomainConfig }
+        bindInstance<PolyAutomodMessages> { config.polybotConfig.polyAutomodConfig.messages }
+        bindInstance<PolyBadWordsConfig> { config.polybotConfig.polyAutomodConfig.polyBadWordsConfig }
+        
+        bindInstance<PolySearchConfig> { config.polySearchConfig }
+        
+        bindInstance<PolyDatabaseConfig> { config.polyDatabaseConfig }
+    }

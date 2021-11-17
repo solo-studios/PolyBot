@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EasterEggCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 17-11-2021 02:41 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,6 @@
 
 package ca.solostudios.polybot.commands
 
-import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
@@ -39,40 +38,36 @@ import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Hidden
 import cloud.commandframework.annotations.specifier.Greedy
-import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
+import org.kodein.di.DI
 import org.slf4j.kotlin.*
 import kotlin.random.Random
 
 @Hidden
 @PolyCommandContainer
 @PolyCategory(EASTER_EGG_CATEGORY)
-class EasterEggCommands(bot: PolyBot) : PolyCommands(bot) {
+class EasterEggCommands(di: DI) : PolyCommands(di) {
     private val logger by getLogger()
     
     @CommandName("Gay")
     @CommandMethod("gay|crimes")
     @CommandDescription("Be gay :)")
-    fun crimes(message: PolyMessage) {
-        bot.scope.launch {
-            message.reply("Be gay, do crimes.")
-        }
+    suspend fun crimes(message: PolyMessage) {
+        message.reply("Be gay, do crimes.")
     }
     
     @CommandName("UwUify Text")
     @CommandMethod("uwu|uwuify|owo|owoify <text>")
     @CommandDescription("Uwuifies your text for you!")
-    fun uwuify(message: PolyMessage,
-               @Greedy
-               @Argument(value = "text", description = "Text to uwuify.")
-               text: String) {
-        bot.scope.launch {
-            val uwuText = UwU.transformTextToUwU(text)
-            
-            logger.info(uwuText.trim())
-            
-            message.reply(uwuText.takeIf { it.length <= 4000 } ?: uwuText.substring(0, 4000))
-        }
+    suspend fun uwuify(message: PolyMessage,
+                       @Greedy
+                       @Argument(value = "text", description = "Text to uwuify.")
+                       text: String) {
+        val uwuText = UwU.transformTextToUwU(text)
+        
+        logger.info(uwuText.trim())
+        
+        message.reply(uwuText.takeIf { it.length <= 4000 } ?: uwuText.substring(0, 4000))
     }
     
     /**

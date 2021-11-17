@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 17-11-2021 03:15 p.m.
  *
  * MIT License
  *
@@ -52,7 +52,9 @@ import ca.solostudios.polybot.cloud.parser.UserParser
 import ca.solostudios.polybot.cloud.preprocessor.AntiBotPreProcessor
 import ca.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
 import ca.solostudios.polybot.cloud.preprocessor.JDAMessagePreprocessor
+import ca.solostudios.polybot.config.PolyBotConfig
 import ca.solostudios.polybot.config.PolyConfig
+import ca.solostudios.polybot.config.polybotConfigModule
 import ca.solostudios.polybot.entities.EntityManager
 import ca.solostudios.polybot.entities.PolyEmote
 import ca.solostudios.polybot.entities.PolyGuild
@@ -80,7 +82,6 @@ import ca.solostudios.polybot.util.registerCommandPreProcessors
 import ca.solostudios.polybot.util.registerParserSupplier
 import ca.solostudios.polybot.util.runtime
 import ca.solostudios.polybot.util.subTypesOf
-import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.kotlin.coroutines.installCoroutineSupport
 import cloud.commandframework.meta.SimpleCommandMeta
@@ -89,11 +90,13 @@ import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
 import java.util.EnumSet
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ThreadFactory
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
+import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Emote
@@ -105,9 +108,13 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.requests.restaction.MessageAction
+import org.kodein.di.DI
+import org.kodein.di.bindInstance
+import org.kodein.di.bindProvider
 import org.reflections.Reflections
 import org.slf4j.kotlin.*
 import kotlin.io.path.Path
+import kotlin.random.Random
 import kotlin.random.asKotlinRandom
 import kotlin.system.exitProcess
 import kotlin.time.Duration
@@ -127,37 +134,59 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     val running
         get() = !shutdown
     
-    val botConfig = config.botConfig
-    
     val globalRandom = XoShiRo256PlusPlusRandom().asKotlinRandom()
     
     val scheduledThreadPool: ScheduledExecutorService = ScheduledThreadPool((runtime.processors - 1).coerceAtLeast(1), PolyThreadFactory)
     
     val coroutineDispatcher: ExecutorCoroutineDispatcher = scheduledThreadPool.asCoroutineDispatcher()
     
-    val scope = CoroutineScope(SupervisorJob() + coroutineDispatcher)
+    val scope: CoroutineScope = CoroutineScope(SupervisorJob() + coroutineDispatcher)
     
-    val cacheManager = CacheManager(this@PolyBot)
+    @Suppress("RemoveExplicitTypeArguments")
+    val kodein = DI {
+        import(polybotConfigModule)
+        
+        bindInstance<PolyBot> { this@PolyBot }
+        
+        bindProvider<Random> { XoShiRo256PlusPlusRandom().asKotlinRandom() }
+        
+        bindInstance<ScheduledExecutorService> { this@PolyBot.scheduledThreadPool }
+        bindInstance<CoroutineDispatcher> { this@PolyBot.coroutineDispatcher }
+        bindInstance<CoroutineScope> { this@PolyBot.scope }
+        
+        bindProvider<JDA> { this@PolyBot.jda }
+        
+        bindProvider<CacheManager> { this@PolyBot.cacheManager }
+        bindProvider<EventManager> { this@PolyBot.eventManager }
+        bindProvider<ModerationManager> { this@PolyBot.moderationManager }
+        bindProvider<SearchManager> { this@PolyBot.searchManager }
+        bindProvider<EntityManager> { this@PolyBot.entityManager }
+        bindProvider<PermissionManager> { this@PolyBot.permissionManager }
+        bindProvider<CommandManager<MessageEvent>> { this@PolyBot.commandManager }
+        bindProvider<PolyExceptionHandler> { this@PolyBot.exceptionHandler }
+    }
     
-    val eventManager = EventManager(this@PolyBot)
-    
-    val moderationManager = ModerationManager(this@PolyBot)
-    
-    val searchManager = SearchManager(this@PolyBot)
-    
-    val jda = builder.apply {
-        eventListeners += LoggingListener(this@PolyBot)
-        eventListeners += PolyBotListener(this@PolyBot)
-        eventListeners += AutoQuoteListener(this@PolyBot)
+    val jda: JDA = builder.apply {
+        eventListeners += LoggingListener(kodein)
+        eventListeners += PolyBotListener(kodein)
+        eventListeners += AutoQuoteListener(kodein)
     }.build()
+    
+    val cacheManager: CacheManager = CacheManager(kodein)
+    
+    val eventManager: EventManager = EventManager(kodein)
+    
+    val moderationManager: ModerationManager = ModerationManager(kodein)
+    
+    val searchManager: SearchManager = SearchManager(kodein)
     
     // val databaseManager = DatabaseManager(this@PolyBot)
     
-    val entityManager = EntityManager(this@PolyBot)
+    val entityManager: EntityManager = EntityManager(kodein)
     
-    val permissionManager = PermissionManager(this@PolyBot)
+    val permissionManager: PermissionManager = PermissionManager(kodein)
     
-    val eventMapper = EventMapper(this@PolyBot)
+    val eventMapper: EventMapper = EventMapper(kodein)
     
     val commandManager: CommandManager<MessageEvent> = CommandManager(jda,
                                                                       this::botPrefix,
@@ -167,52 +196,60 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
                                                                               .build(),
                                                                       eventMapper::senderToMessageEvent,
                                                                       eventMapper::messageEventToSender).apply {
-        parserRegistry.registerParserSupplier(MemberParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(UserParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(MessageChannelParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(TextChannelParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(RoleParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(TagParser(this@PolyBot))
-    
-        registerCommandPreProcessors(JDAMessagePreprocessor(this), AntiWebhookPreProcessor(this), AntiBotPreProcessor(this))
-    
-        registerCommandPostProcessors(GuildCommandPostProcessor(this@PolyBot),
-                                      UserPermissionPostprocessor(this@PolyBot),
-                                      BotPermissionPostprocessor(this@PolyBot))
+        parserRegistry.registerParserSupplier(MemberParser(kodein))
+        parserRegistry.registerParserSupplier(UserParser(kodein))
+        parserRegistry.registerParserSupplier(MessageChannelParser(kodein))
+        parserRegistry.registerParserSupplier(TextChannelParser(kodein))
+        parserRegistry.registerParserSupplier(RoleParser(kodein))
+        parserRegistry.registerParserSupplier(TagParser(kodein))
+        
+        registerCommandPreProcessors(
+                JDAMessagePreprocessor(kodein),
+                AntiWebhookPreProcessor(kodein),
+                AntiBotPreProcessor(kodein),
+                                    )
+        
+        registerCommandPostProcessors(
+                GuildCommandPostProcessor(kodein),
+                UserPermissionPostprocessor(kodein),
+                BotPermissionPostprocessor(kodein),
+                                     )
     }
     
-    val annotationParser: AnnotationParser<MessageEvent> = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
-        parameterInjectorRegistry.registerInjectionService(CloudInjectorService(this@PolyBot))
+    val exceptionHandler: PolyExceptionHandler = PolyExceptionHandler(kodein)
     
-        installCoroutineSupport(this@PolyBot.scope)
-    
-        registerBuilderModifier(JDABotPermission::class.java, PolyMeta::botPermissionModifier)
-        registerBuilderModifier(JDAUserPermission::class.java, PolyMeta::userPermissionModifier)
-        registerBuilderModifier(JDAGuildCommand::class.java, PolyMeta::guildCommandModifier)
-        registerBuilderModifier(PolyCategory::class.java, PolyMeta::categoryCommandModifier)
-        registerBuilderModifier(CommandDescription::class.java, PolyMeta::descriptionCommandModifier)
-        registerBuilderModifier(CommandLongDescription::class.java, PolyMeta::longDescriptionCommandModifier)
-        registerBuilderModifier(CommandName::class.java, PolyMeta::nameCommandModifier)
-    }
-    
-    val exceptionHandler = PolyExceptionHandler(this@PolyBot, commandManager)
+    private val polybotConfig: PolyBotConfig = config.polybotConfig
     
     init {
         scheduledThreadPool.fixedRate(Duration.milliseconds(100), Duration.minutes(5)) {
             jda.presence.apply {
-                val botActivity = botConfig.activities.random()
+                val botActivity = polybotConfig.activities.random()
                 onlineStatus = OnlineStatus.ONLINE
                 activity = botActivity.getActivity()
             }
         }
     
+        val annotationParser = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
+            parameterInjectorRegistry.registerInjectionService(CloudInjectorService(kodein))
+        
+            installCoroutineSupport(this@PolyBot.scope)
+        
+            registerBuilderModifier(JDABotPermission::class.java, PolyMeta::botPermissionModifier)
+            registerBuilderModifier(JDAUserPermission::class.java, PolyMeta::userPermissionModifier)
+            registerBuilderModifier(JDAGuildCommand::class.java, PolyMeta::guildCommandModifier)
+            registerBuilderModifier(PolyCategory::class.java, PolyMeta::categoryCommandModifier)
+            registerBuilderModifier(CommandDescription::class.java, PolyMeta::descriptionCommandModifier)
+            registerBuilderModifier(CommandLongDescription::class.java, PolyMeta::longDescriptionCommandModifier)
+            registerBuilderModifier(CommandName::class.java, PolyMeta::nameCommandModifier)
+        }
+    
         val reflections = Reflections("ca.solostudios.polybot.commands")
-        
-        
+    
+    
         val commands = reflections.subTypesOf<PolyCommands>().map { klass ->
             val constructor = klass.constructors.single()
-    
-            return@map constructor.call(this@PolyBot)
+        
+            return@map constructor.call(kodein)
         }
     
         annotationParser.parseCommands(commands)
@@ -239,7 +276,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     fun getCacheDirectory(vararg name: String) = Path(".cache", *name)
     
     @Suppress("UNUSED_PARAMETER")
-    private fun botPrefix(event: MessageEvent) = botConfig.prefix
+    private fun botPrefix(event: MessageEvent) = polybotConfig.prefix
     
     fun guildReference(guildId: Long): BackedReference<Guild?, Long> {
         return BackedReference(guildId, { jda.getGuildById(it) }, { it?.idLong ?: 0 })

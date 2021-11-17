@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file SearchConfig.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * The file PolyDefaultActivity.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -26,14 +26,16 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config
+package ca.solostudios.polybot.config.impl
 
-import ca.solostudios.polybot.config.search.SearchLocation
-import com.fasterxml.jackson.annotation.JsonProperty
+import ca.solostudios.polybot.config.PolyBotActivity
+import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.internal.entities.EntityBuilder
 
-data class SearchConfig(
-        @JsonProperty("default")
-        val default: String,
-        @JsonProperty("locations")
-        val searchLocations: List<SearchLocation>,
-                       )
+class PolyDefaultActivity(name: String, url: String?) : PolyBotActivity(name, url) {
+    override fun getActivity(): Activity = EntityBuilder.createActivity(name, url, Activity.ActivityType.DEFAULT)
+    
+    override fun toString(): String {
+        return "DefaultActivity(name=$name, url=$url)"
+    }
+}

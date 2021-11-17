@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 17-11-2021 03:15 p.m.
  *
  * MIT License
  *
@@ -38,11 +38,15 @@ import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import org.kodein.di.DI
+import org.kodein.di.instance
 import org.slf4j.kotlin.*
 import kotlin.time.Duration.Companion.hours
 
-class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
-    private val logger by org.slf4j.kotlin.getLogger()
+class AutoQuoteListener(di: DI) : ListenerAdapter() {
+    private val logger by getLogger()
+    
+    private val bot: PolyBot by di.instance()
     
     /**
      * Webhook cache.

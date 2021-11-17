@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file RoleParser.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 17-11-2021 03:04 p.m.
  *
  * MIT License
  *
@@ -39,10 +39,14 @@ import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
+import org.kodein.di.DI
+import org.kodein.di.instance
 import org.slf4j.kotlin.*
 
-class RoleParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyRole> {
+class RoleParser<C : Any>(di: DI) : ArgumentParser<C, PolyRole> {
     private val logger by getLogger()
+    
+    private val bot: PolyBot by di.instance()
     
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyRole> {

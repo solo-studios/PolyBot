@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CloudInjectorService.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 17-11-2021 03:09 p.m.
  *
  * MIT License
  *
@@ -42,8 +42,13 @@ import cloud.commandframework.annotations.injection.InjectionService
 import cloud.commandframework.context.CommandContext
 import cloud.commandframework.types.tuples.Triplet
 import net.dv8tion.jda.api.entities.Message
+import org.kodein.di.DI
+import org.kodein.di.instance
 
-class CloudInjectorService<C>(val bot: PolyBot) : InjectionService<C> {
+class CloudInjectorService<C>(di: DI) : InjectionService<C> {
+    
+    private val bot: PolyBot by di.instance()
+    
     override fun handle(triplet: Triplet<CommandContext<C>, Class<*>, AnnotationAccessor>): Any? {
         val (context, clazz) = triplet
         

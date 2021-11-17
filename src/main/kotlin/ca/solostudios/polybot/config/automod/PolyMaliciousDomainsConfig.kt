@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file BadWords.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * The file PolyMaliciousDomainsConfig.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:32 p.m.
  *
  * MIT License
  *
@@ -30,9 +30,15 @@ package ca.solostudios.polybot.config.automod
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class BadWords(
-        @JsonProperty("slurs")
-        val slurs: List<Regex>,
-        @JsonProperty("generalProfanity")
-        val generalProfanity: List<Regex>,
-                   )
+data class PolyMaliciousDomainsConfig(
+        @JsonProperty("ipLoggers")
+        val ipLoggers: List<String>,
+        @JsonProperty("adReferrals")
+        val adReferrals: List<String>,
+        @JsonProperty("referrals")
+        val referrals: List<String>,
+        @JsonProperty("cryptoMiners")
+        val cryptoMiners: List<String>,
+        @JsonProperty("scamSites")
+        val scamSites: List<String>,
+                                     )

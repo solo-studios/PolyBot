@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommandHandler.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 17-11-2021 03:15 p.m.
  *
  * MIT License
  *
@@ -28,24 +28,22 @@
 
 package ca.solostudios.polybot.cloud.commands
 
-import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.event.MessageEvent
 import ca.solostudios.polybot.commands.Category
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.util.or
 import ca.solostudios.polybot.util.orNull
 import cloud.commandframework.Command
+import cloud.commandframework.CommandManager
 import cloud.commandframework.arguments.StaticArgument
 import cloud.commandframework.meta.CommandMeta
 import net.dv8tion.jda.api.Permission
-import org.slf4j.kotlin.*
+import org.kodein.di.DI
+import org.kodein.di.instance
 
-@Suppress("CanBeParameter")
-class HelpCommandHandler(private val bot: PolyBot) {
-    private val commandManager = bot.commandManager
+class HelpCommandHandler(di: DI) {
+    private val commandManager: CommandManager<MessageEvent> by di.instance()
     private val commandFilters = mutableListOf<(PolyMember, CommandEntry) -> Boolean>()
-    
-    private val logger by getLogger()
     
     fun addCommandFilter(filter: (PolyMember, CommandEntry) -> Boolean) {
         commandFilters += filter

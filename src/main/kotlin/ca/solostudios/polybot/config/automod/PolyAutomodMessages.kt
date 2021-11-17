@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AutomodMessages.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * The file PolyAutomodMessages.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package ca.solostudios.polybot.config.automod
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class AutomodMessages(
+data class PolyAutomodMessages(
         @JsonProperty("warn")
         val warn: String,
         @JsonProperty("mute")
@@ -39,4 +39,4 @@ data class AutomodMessages(
         val kick: String,
         @JsonProperty("ban")
         val ban: String,
-                          )
+                              )

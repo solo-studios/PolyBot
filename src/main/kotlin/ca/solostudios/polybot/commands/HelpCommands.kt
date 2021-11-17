@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:06 p.m.
+ * Last modified on 17-11-2021 03:15 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,6 @@
 package ca.solostudios.polybot.commands
 
 import ca.solostudios.polybot.Constants
-import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.CategoryHelpTopic
 import ca.solostudios.polybot.cloud.commands.HelpCommandHandler
 import ca.solostudios.polybot.cloud.commands.IndexHelpTopic
@@ -49,11 +48,16 @@ import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.specifier.Greedy
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import dev.minn.jda.ktx.Embed
+import net.dv8tion.jda.api.JDA
+import org.kodein.di.DI
+import org.kodein.di.direct
+import org.kodein.di.instance
 
 @PolyCommandContainer
 @PolyCategory(UTIL_CATEGORY)
-class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
-    private val helpHandler = HelpCommandHandler(bot).apply {
+class HelpCommands(di: DI) : PolyCommands(di) {
+    
+    private val helpHandler = HelpCommandHandler(di).apply {
         addCommandFilter { _, command -> command.hidden }
         addCommandFilter { member, command -> if (command.ownerOnly) !member.isOwner else false }
         addCommandFilter { member, command -> if (command.coOwnerOnly) !member.isCoOwner else false }
@@ -64,7 +68,8 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
                 false
         }
     }
-    private val eventWaiter = EventWaiter(bot.scheduledThreadPool, false).apply { bot.jda.addEventListener(this) }
+    
+    private val eventWaiter = EventWaiter(direct.instance(), false).apply { direct.instance<JDA>().addEventListener(this) }
     
     @CommandName("Help")
     @CommandMethod("help [query]")

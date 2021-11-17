@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 11:58 a.m.
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -29,39 +29,43 @@
 package ca.solostudios.polybot.search
 
 import ca.solostudios.polybot.PolyBot
-import ca.solostudios.polybot.config.search.GithubWikiSearchLocation
+import ca.solostudios.polybot.config.search.PolyGithubWikiSearchLocation
 import ca.solostudios.polybot.util.ShutdownService
 import ca.solostudios.polybot.util.fixedRate
 import kotlinx.coroutines.launch
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.store.NRTCachingDirectory
+import org.kodein.di.DI
+import org.kodein.di.instance
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 
 
 @Suppress("MemberVisibilityCanBePrivate")
-class SearchManager(val bot: PolyBot) : ShutdownService() {
+class SearchManager(di: DI) : ShutdownService() {
+    private val bot: PolyBot by di.instance()
+    
     val searchIndexes: Map<String, Index<*>>
     
     val defaultIndex: Index<*>
     
     init {
-        val searchConfig = bot.config.searchConfig
+        val searchConfig = bot.config.polySearchConfig
         val indexes = mutableMapOf<String, Index<*>>()
         var default: Index<*>? = null
-    
-        for (location in searchConfig.searchLocations) {
+        
+        for (location in searchConfig.polySearchLocations) {
             when (location) {
-                is GithubWikiSearchLocation -> {
+                is PolyGithubWikiSearchLocation -> {
                     val diskCache = FSDirectory.open(bot.getCacheDirectory("search", location.name))
                     val diskRamCache = NRTCachingDirectory(diskCache, 5.0, 60.0)
-    
+                    
                     val index = GithubWikiIndex(bot, location, diskRamCache)
                     indexes[location.name] = index
-    
+                    
                     if (location.name == searchConfig.default)
                         default = index
-    
+                    
                     bot.scheduledThreadPool.fixedRate(seconds(10), days(1)) { bot.scope.launch { index.updateIndex() } }
                 }
             }

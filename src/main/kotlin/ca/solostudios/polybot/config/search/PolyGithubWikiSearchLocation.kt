@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file CompetingActivity.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * The file PolyGithubWikiSearchLocation.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -26,16 +26,17 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config.impl
+package ca.solostudios.polybot.config.search
 
-import ca.solostudios.polybot.config.BotActivity
-import net.dv8tion.jda.api.entities.Activity
-import net.dv8tion.jda.internal.entities.EntityBuilder
+import com.fasterxml.jackson.annotation.JsonProperty
 
-class CompetingActivity(name: String, url: String?) : BotActivity(name, url) {
-    override fun getActivity(): Activity = EntityBuilder.createActivity(name, url, Activity.ActivityType.COMPETING)
-    
-    override fun toString(): String {
-        return "CompetingActivity(name=$name, url=$url)"
-    }
-}
+class PolyGithubWikiSearchLocation(
+        @JsonProperty("repo")
+        val repoName: String,
+        @JsonProperty("wiki")
+        val wikiRepo: String = repoName,
+        @JsonProperty("owner")
+        val repoOwner: String,
+        @JsonProperty("name")
+        name: String,
+                                  ) : PolySearchLocation(name)

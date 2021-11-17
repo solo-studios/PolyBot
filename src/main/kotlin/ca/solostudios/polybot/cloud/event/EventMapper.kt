@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EventMapper.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:24 p.m.
+ * Last modified on 17-11-2021 03:04 p.m.
  *
  * MIT License
  *
@@ -32,8 +32,12 @@ import ca.solostudios.polybot.PolyBot
 import cloud.commandframework.jda.JDACommandSender
 import cloud.commandframework.jda.JDAGuildSender
 import cloud.commandframework.jda.JDAPrivateSender
+import org.kodein.di.DI
+import org.kodein.di.instance
 
-class EventMapper(val bot: PolyBot) {
+class EventMapper(di: DI) {
+    private val bot: PolyBot by di.instance()
+    
     fun senderToMessageEvent(sender: JDACommandSender): MessageEvent {
         return when (sender::class) {
             JDAGuildSender::class   -> GuildMessageEvent(bot, sender)

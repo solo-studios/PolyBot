@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:21 p.m.
+ * Last modified on 17-11-2021 03:15 p.m.
  *
  * MIT License
  *
@@ -28,30 +28,34 @@
 
 package ca.solostudios.polybot.cloud.commands.permission
 
-import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyMeta
+import ca.solostudios.polybot.config.PolyBotConfig
 import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext
 import cloud.commandframework.execution.postprocessor.CommandPostprocessor
 import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import org.kodein.di.DI
+import org.kodein.di.instance
 
-class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T> {
+class UserPermissionPostprocessor<T>(di: DI) : CommandPostprocessor<T> {
+    private val botConfig: PolyBotConfig by di.instance()
+    
     @Suppress("DuplicatedCode")
     override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
         val context = postprocessingContext.commandContext
         val commandMeta = postprocessingContext.command.commandMeta
         val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")
-    
+        
         if (commandMeta.getOrDefault(PolyMeta.CO_OWNER_ONLY, false)) {
-            if (event.author.idLong !in bot.botConfig.ownerIds && event.author.idLong !in bot.botConfig.coOwnerIds) {
+            if (event.author.idLong !in botConfig.ownerIds && event.author.idLong !in botConfig.coOwnerIds) {
                 event.message.replyFormat("This command can only be performed by co-owners and owners of the bot.")
                         .mentionRepliedUser(false)
                         .queue()
                 ConsumerService.interrupt()
             }
         } else if (commandMeta.getOrDefault(PolyMeta.OWNER_ONLY, false)) {
-            if (event.author.idLong !in bot.botConfig.ownerIds) {
+            if (event.author.idLong !in botConfig.ownerIds) {
                 event.message.replyFormat("This command can only be performed by owners of the bot.")
                         .mentionRepliedUser(false)
                         .queue()
@@ -59,7 +63,7 @@ class UserPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T>
             }
         }
         
-        if (event.author.idLong in bot.botConfig.ownerIds)
+        if (event.author.idLong in botConfig.ownerIds)
             return
         
         if (context.contains("Guild")) {

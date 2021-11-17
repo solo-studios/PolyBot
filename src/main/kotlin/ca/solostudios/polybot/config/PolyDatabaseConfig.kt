@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file SafeDomains.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * The file PolyDatabaseConfig.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:28 p.m.
  *
  * MIT License
  *
@@ -26,29 +26,17 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config.automod
+package ca.solostudios.polybot.config
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class SafeDomains(
-        @JsonProperty("discord")
-        val discord: List<String>,
-        @JsonProperty("video")
-        val video: List<String>,
-        @JsonProperty("audio")
-        val audio: List<String>,
-        @JsonProperty("image")
-        val image: List<String>,
-        @JsonProperty("development")
-        val development: List<String>,
-        @JsonProperty("socialMedia")
-        val socialMedia: List<String>,
-        @JsonProperty("wiki")
-        val wiki: List<String>,
-        @JsonProperty("shopping")
-        val shopping: List<String>,
-        @JsonProperty("game")
-        val game: List<String>,
-        @JsonProperty("misc")
-        val misc: List<String>,
-                      )
+data class PolyDatabaseConfig(
+        @JsonProperty("url")
+        val url: String,
+        @JsonProperty("driver")
+        val driver: String,
+        @JsonProperty("username")
+        val username: String,
+        @JsonProperty("password")
+        val password: String,
+                             ) 

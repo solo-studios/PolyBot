@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:50 p.m.
+ * Last modified on 17-11-2021 03:15 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,7 @@ package ca.solostudios.polybot.listener
 
 import ca.solostudios.polybot.Constants
 import ca.solostudios.polybot.PolyBot
+import ca.solostudios.polybot.cache.CacheManager
 import ca.solostudios.polybot.util.idFooter
 import ca.solostudios.polybot.util.poly
 import dev.minn.jda.ktx.Embed
@@ -97,34 +98,37 @@ import net.dv8tion.jda.api.events.role.update.RoleUpdateColorEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePositionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import org.kodein.di.DI
+import org.kodein.di.instance
 
-@Suppress("RedundantOverride")
-class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
-    private val messageCache = bot.cacheManager.messageCache
+class LoggingListener(di: DI) : ListenerAdapter() {
+    private val bot: PolyBot by di.instance()
+    
+    private val cacheManager: CacheManager by di.instance()
     
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         if (!event.message.isFromGuild || event.message.author.isSystem || event.isWebhookMessage || event.message.author.isBot)
             return
-    
-        messageCache.putMessage(event.message)
+        
+        cacheManager.messageCache.putMessage(event.message)
     }
     
     override fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
         if (!event.message.isFromGuild || event.message.author.isSystem || event.message.author.isBot)
             return
-    
-        bot.scope.launch {
-            val oldMessage = messageCache.getMessage(event.messageIdLong)
-            val message = event.message
         
+        bot.scope.launch {
+            val oldMessage = cacheManager.messageCache.getMessage(event.messageIdLong)
+            val message = event.message
+            
             if (!message.isEdited)
                 return@launch
-        
-            messageCache.putMessage(message)
-        
+            
+            cacheManager.messageCache.putMessage(message)
+            
             loggingEmbed(event.guild, event.author, event.channel, message, message.timeEdited!!) {
                 description = "**${message.author.asMention} edited a message in ${message.textChannel.asMention}.**"
-            
+                
                 field {
                     name = "Before"
                     value = oldMessage?.content?.takeIf { it.length < 1024 } ?: oldMessage?.content?.substring(0, 1020)?.plus("\n...")
@@ -142,7 +146,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
     
     override fun onGuildMessageDelete(event: GuildMessageDeleteEvent) {
         bot.scope.launch {
-            val message = messageCache.getMessage(event.messageIdLong)
+            val message = cacheManager.messageCache.getMessage(event.messageIdLong)
     
             if (message != null) {
                 val user: User? = bot.jda.retrieveUserById(message.author)
@@ -156,7 +160,7 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
                         append("'s message in ")
                         append("<#").append(message.channel).append('>')
                         append(" was deleted.**\n")
-    
+                
                         if (message.content.length > 1024 - this.length)
                             append(message.content.substring(0, 1020 - this.length)).append("\n...")
                         else
@@ -551,13 +555,13 @@ class LoggingListener(val bot: PolyBot) : ListenerAdapter() {
         
             val embed = Embed {
                 color = message?.member?.colorRaw ?: Constants.logEmbedColourCode
-    
+            
                 author {
                     name = eventName
                     iconUrl = eventIcon
                 }
                 block(this)
-    
+            
                 idFooter(time = time, guild = guild.idLong, channel = channel?.idLong, message = message?.idLong, user = user?.idLong)
             }
         

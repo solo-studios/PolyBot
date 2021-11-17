@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagParser.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:21 p.m.
+ * Last modified on 17-11-2021 03:04 p.m.
  *
  * MIT License
  *
@@ -38,8 +38,13 @@ import cloud.commandframework.exceptions.parsing.NoInputProvidedException
 import java.util.Queue
 import kotlinx.uuid.toUUID
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import org.kodein.di.DI
+import org.kodein.di.instance
 
-class TagParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyTagData> {
+class TagParser<C : Any>(di: DI) : ArgumentParser<C, PolyTagData> {
+    
+    private val bot: PolyBot by di.instance()
+    
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyTagData> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))

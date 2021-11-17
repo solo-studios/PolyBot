@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file BotActivity.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * The file PolyBotActivity.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -28,11 +28,11 @@
 
 package ca.solostudios.polybot.config
 
-import ca.solostudios.polybot.config.impl.CompetingActivity
-import ca.solostudios.polybot.config.impl.DefaultActivity
-import ca.solostudios.polybot.config.impl.ListeningActivity
-import ca.solostudios.polybot.config.impl.StreamingActivity
-import ca.solostudios.polybot.config.impl.WatchingActivity
+import ca.solostudios.polybot.config.impl.PolyCompetingActivity
+import ca.solostudios.polybot.config.impl.PolyDefaultActivity
+import ca.solostudios.polybot.config.impl.PolyListeningActivity
+import ca.solostudios.polybot.config.impl.PolyStreamingActivity
+import ca.solostudios.polybot.config.impl.PolyWatchingActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -44,18 +44,18 @@ import net.dv8tion.jda.api.entities.Activity
         property = "type"
              )
 @JsonSubTypes(
-        JsonSubTypes.Type(value = DefaultActivity::class, names = ["default", "playing"]),
-        JsonSubTypes.Type(value = WatchingActivity::class, name = "watching"),
-        JsonSubTypes.Type(value = ListeningActivity::class, name = "listening"),
-        JsonSubTypes.Type(value = StreamingActivity::class, name = "streaming"),
-        JsonSubTypes.Type(value = CompetingActivity::class, name = "competing"),
+        JsonSubTypes.Type(value = PolyDefaultActivity::class, names = ["default", "playing"]),
+        JsonSubTypes.Type(value = PolyWatchingActivity::class, name = "watching"),
+        JsonSubTypes.Type(value = PolyListeningActivity::class, name = "listening"),
+        JsonSubTypes.Type(value = PolyStreamingActivity::class, name = "streaming"),
+        JsonSubTypes.Type(value = PolyCompetingActivity::class, name = "competing"),
              )
-abstract class BotActivity(
+abstract class PolyBotActivity(
         @JsonProperty("name")
         val name: String,
         @JsonProperty("url")
         val url: String? = null,
-                          ) {
+                              ) {
     
     abstract fun getActivity(): Activity
 }

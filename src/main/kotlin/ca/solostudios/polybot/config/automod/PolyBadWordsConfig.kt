@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file DatabaseConfig.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * The file PolyBadWordsConfig.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:32 p.m.
  *
  * MIT License
  *
@@ -26,17 +26,13 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config
+package ca.solostudios.polybot.config.automod
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class DatabaseConfig(
-        @JsonProperty("url")
-        val url: String,
-        @JsonProperty("driver")
-        val driver: String,
-        @JsonProperty("username")
-        val username: String,
-        @JsonProperty("password")
-        val password: String,
-                         ) 
+data class PolyBadWordsConfig(
+        @JsonProperty("slurs")
+        val slurs: List<Regex>,
+        @JsonProperty("generalProfanity")
+        val generalProfanity: List<Regex>,
+                             )

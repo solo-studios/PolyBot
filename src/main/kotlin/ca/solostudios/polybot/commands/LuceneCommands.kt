@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 17-11-2021 02:51 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,6 @@
 
 package ca.solostudios.polybot.commands
 
-import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
@@ -37,6 +36,7 @@ import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyUser
+import ca.solostudios.polybot.search.SearchManager
 import ca.solostudios.polybot.util.MarkdownHeaderVisitor
 import ca.solostudios.polybot.util.PaginationMenu
 import ca.solostudios.polybot.util.get
@@ -48,15 +48,21 @@ import cloud.commandframework.annotations.Hidden
 import cloud.commandframework.annotations.specifier.Greedy
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import java.awt.Color
+import net.dv8tion.jda.api.JDA
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
+import org.kodein.di.DI
+import org.kodein.di.direct
+import org.kodein.di.instance
 import org.slf4j.kotlin.*
 
 @PolyCommandContainer
 @PolyCategory(UTIL_CATEGORY)
-class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
-    private val eventWaiter = EventWaiter(bot.scheduledThreadPool, false).apply { bot.jda.addEventListener(this) }
+class LuceneCommands(di: DI) : PolyCommands(di) {
     private val logger by getLogger()
+    
+    private val searchManager: SearchManager by instance()
+    private val eventWaiter = EventWaiter(direct.instance(), false).apply { direct.instance<JDA>().addEventListener(this) }
     
     @Hidden
     @CommandName("Lucene Markdown")
@@ -95,7 +101,7 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
                        @Flag(value = "quick", aliases = ["q"], description = "Return only a single result.")
                        quick: Boolean = false) {
         try {
-            val results = bot.searchManager.defaultIndex.search(query, maxResults = 50)
+            val results = searchManager.defaultIndex.search(query, maxResults = 50)
             
             if (quick) {
                 message.reply(results.first().simple)
@@ -132,7 +138,7 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAUserPermission(ownerOnly = true)
     suspend fun update(message: PolyMessage) {
         try {
-            bot.searchManager.defaultIndex.updateIndex()
+            searchManager.defaultIndex.updateIndex()
             
             message.reply("Updated index")
         } catch (e: Exception) {

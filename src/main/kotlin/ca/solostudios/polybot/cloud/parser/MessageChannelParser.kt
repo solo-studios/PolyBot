@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageChannelParser.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:23 p.m.
+ * Last modified on 17-11-2021 03:04 p.m.
  *
  * MIT License
  *
@@ -38,8 +38,13 @@ import cloud.commandframework.exceptions.parsing.NoInputProvidedException
 import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
+import org.kodein.di.DI
+import org.kodein.di.instance
 
-class MessageChannelParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMessageChannel> {
+class MessageChannelParser<C : Any>(di: DI) : ArgumentParser<C, PolyMessageChannel> {
+    
+    private val bot: PolyBot by di.instance()
+    
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyMessageChannel> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))

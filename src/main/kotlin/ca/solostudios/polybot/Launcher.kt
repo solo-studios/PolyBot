@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Launcher.kt is part of PolyhedralBot
- * Last modified on 15-10-2021 05:09 p.m.
+ * Last modified on 17-11-2021 03:15 p.m.
  *
  * MIT License
  *
@@ -72,14 +72,14 @@ fun main() {
         
         val config = readConfig(Constants.configFile)
         
-        val jda = DefaultJDABuilder(config.botConfig.token) {
+        val jda = DefaultJDABuilder(config.polybotConfig.token) {
             disableCache = listOf(CacheFlag.ACTIVITY,
                                   CacheFlag.VOICE_STATE,
                                   CacheFlag.EMOTE,
                                   CacheFlag.CLIENT_STATUS,
                                   CacheFlag.MEMBER_OVERRIDES,
                                   CacheFlag.ROLE_TAGS)
-            
+    
             disableIntents = listOf(GatewayIntent.DIRECT_MESSAGE_TYPING,
                                     GatewayIntent.GUILD_MESSAGE_TYPING,
                                     GatewayIntent.GUILD_VOICE_STATES,

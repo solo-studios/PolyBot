@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EventManager.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:16 p.m.
+ * Last modified on 17-11-2021 02:41 p.m.
  *
  * MIT License
  *
@@ -28,8 +28,10 @@
 
 package ca.solostudios.polybot.event
 
-import ca.solostudios.polybot.PolyBot
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.kodein.di.DI
+import org.kodein.di.instance
 import kotlin.reflect.KClass
 
 open class Event
@@ -47,7 +49,9 @@ interface EventListener<T : Event> {
  * @constructor Create empty Event manager
  */
 @Suppress("unused")
-class EventManager(val bot: PolyBot) {
+class EventManager(di: DI) {
+    val scope: CoroutineScope by di.instance()
+    
     val listeners: MutableList<InternalEventListener<out Event>> = mutableListOf()
     
     inline fun <reified T : Event> register(listener: EventListener<T>) {
@@ -63,7 +67,7 @@ class EventManager(val bot: PolyBot) {
     }
     
     fun <T : Event> dispatch(event: T) {
-        bot.scope.launch {
+        scope.launch {
             listeners.forEach {
                 if (it.clazz.java.isAssignableFrom(event::class.java)) {
                     @Suppress("UNCHECKED_CAST")

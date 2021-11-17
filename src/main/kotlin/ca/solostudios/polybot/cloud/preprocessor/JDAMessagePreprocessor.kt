@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file JDAMessagePreprocessor.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:19 p.m.
+ * Last modified on 17-11-2021 03:07 p.m.
  *
  * MIT License
  *
@@ -32,13 +32,17 @@ import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
 import cloud.commandframework.execution.preprocessor.CommandPreprocessor
 import cloud.commandframework.jda.JDA4CommandManager
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import org.kodein.di.DI
+import org.kodein.di.instance
 
 /**
  * The JDA Command Preprocessor for storing JDA-specific contexts in the command contexts
  *
  * @param mgr The JDACommandManager
  */
-class JDAMessagePreprocessor<C>(private val mgr: JDA4CommandManager<C>) : CommandPreprocessor<C> {
+class JDAMessagePreprocessor<C>(di: DI) : CommandPreprocessor<C> {
+    private val manager: JDA4CommandManager<Any> by di.instance()
+    
     /**
      * Stores the [net.dv8tion.jda.api.JDA] in the context with the key "JDA",
      * the [net.dv8tion.jda.api.events.message.MessageReceivedEvent] with the key "MessageReceivedEvent", and
@@ -53,7 +57,7 @@ class JDAMessagePreprocessor<C>(private val mgr: JDA4CommandManager<C>) : Comman
      */
     override fun accept(context: CommandPreprocessingContext<C>) {
         val event: MessageReceivedEvent = try {
-            mgr.backwardsCommandSenderMapper.apply(context.commandContext.sender!!)
+            manager.backwardsCommandSenderMapper.apply(context.commandContext.sender!!)
         } catch (e: IllegalStateException) {
             return
         }

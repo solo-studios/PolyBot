@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MemberParser.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 17-11-2021 03:14 p.m.
  *
  * MIT License
  *
@@ -39,10 +39,14 @@ import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
+import org.kodein.di.DI
+import org.kodein.di.instance
 import org.slf4j.kotlin.*
 
-class MemberParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMember> {
+class MemberParser<C : Any>(di: DI) : ArgumentParser<C, PolyMember> {
     private val logger by getLogger()
+    
+    private val bot: PolyBot by di.instance()
     
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyMember> {
@@ -55,8 +59,8 @@ class MemberParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMember> {
         if (!event.isFromGuild) {
             return ArgumentParseResult.failure(MemberParseException("This command may only be run in a guild."))
         }
-    
-    
+        
+        
         if ("^" == input.trim()) {
             val messageReference = message.messageReference
             if (messageReference != null) {
@@ -70,7 +74,7 @@ class MemberParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMember> {
                 }
             }
         }
-    
+        
         val stringId = if (input.startsWith("<@") && input.endsWith(">")) {
             if (input.startsWith("<@!"))
                 input.substring(3, input.length - 1)

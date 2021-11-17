@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ListeningActivity.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * The file PolySearchLocation.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -26,16 +26,23 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config.impl
+package ca.solostudios.polybot.config.search
 
-import ca.solostudios.polybot.config.BotActivity
-import net.dv8tion.jda.api.entities.Activity
-import net.dv8tion.jda.internal.entities.EntityBuilder
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 
-class ListeningActivity(name: String, url: String?) : BotActivity(name, url) {
-    override fun getActivity(): Activity = EntityBuilder.createActivity(name, url, Activity.ActivityType.LISTENING)
-    
-    override fun toString(): String {
-        return "ListeningActivity(name=$name, url=$url)"
-    }
-}
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+             )
+@JsonSubTypes(
+        JsonSubTypes.Type(value = PolyGithubWikiSearchLocation::class, names = ["github-wiki"]),
+        JsonSubTypes.Type(value = PolyGithubWikiSearchLocation::class, names = ["github-wiki"]),
+             )
+sealed class PolySearchLocation @JsonCreator constructor(
+        @JsonProperty("name")
+        val name: String,
+                                                        )

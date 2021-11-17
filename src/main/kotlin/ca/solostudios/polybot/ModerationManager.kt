@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationManager.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 07:54 p.m.
+ * Last modified on 17-11-2021 03:15 p.m.
  *
  * MIT License
  *
@@ -28,9 +28,11 @@
 
 package ca.solostudios.polybot
 
+import ca.solostudios.polybot.entities.EntityManager
 import ca.solostudios.polybot.entities.PolyGuild
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.data.PolyWarnData
+import ca.solostudios.polybot.event.EventManager
 import ca.solostudios.polybot.event.moderation.PolyBanEvent
 import ca.solostudios.polybot.event.moderation.PolyKickEvent
 import dev.minn.jda.ktx.await
@@ -38,10 +40,18 @@ import java.time.LocalDateTime
 import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
+import org.kodein.di.DI
+import org.kodein.di.instance
 import org.slf4j.kotlin.*
+import kotlin.random.Random
 
-class ModerationManager(val bot: PolyBot) {
+class ModerationManager(di: DI) {
     private val logger by getLogger()
+    
+    private val bot: PolyBot by di.instance()
+    private val eventManager: EventManager by di.instance()
+    private val entityManager: EntityManager by di.instance()
+    private val random: Random by di.instance()
     
     suspend fun banMember(member: PolyMember,
                           moderator: PolyMember,
@@ -59,8 +69,8 @@ class ModerationManager(val bot: PolyBot) {
             
             else         -> {
                 val event = PolyBanEvent(member, reason, moderator)
-                
-                bot.eventManager.dispatch(event)
+    
+                eventManager.dispatch(event)
                 
                 member.jdaMember.ban(daysToDelete, reason)
                         .await()
@@ -94,8 +104,8 @@ class ModerationManager(val bot: PolyBot) {
                         .await()
                 
                 val event = PolyKickEvent(member, reason, moderator)
-                
-                bot.eventManager.dispatch(event)
+    
+                eventManager.dispatch(event)
                 
                 replyAction("User ${member.name}#${member.discriminator} has been kicked from the server, $reason")
                 
@@ -131,18 +141,18 @@ class ModerationManager(val bot: PolyBot) {
             else                      -> {
                 val warnFailed = try {
                     val channel = member.user.privateChannel()
-                    
+    
                     channel.sendMessage("You have been warned. blah blah blah")
-                    
+    
                     false
                 } catch (e: InsufficientPermissionException) {
                     true
                 } catch (e: UnsupportedOperationException) {
                     true
                 }
-                val warn = PolyWarnData(bot, UUID.generateUUID(bot.globalRandom), guild.id, member.id, moderator.id, time, reason)
-                
-                bot.entityManager.saveWarn(warn)
+                val warn = PolyWarnData(bot, UUID.generateUUID(random), guild.id, member.id, moderator.id, time, reason)
+    
+                entityManager.saveWarn(warn)
                 
                 replyAction("${member.mention} has been warned for $reason.")
                 

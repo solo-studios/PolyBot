@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubWikiIndex.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:27 p.m.
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,7 @@
 package ca.solostudios.polybot.search
 
 import ca.solostudios.polybot.PolyBot
-import ca.solostudios.polybot.config.search.GithubWikiSearchLocation
+import ca.solostudios.polybot.config.search.PolyGithubWikiSearchLocation
 import ca.solostudios.polybot.util.MarkdownHeaderVisitor
 import ca.solostudios.polybot.util.get
 import com.github.kittinunf.fuel.core.FuelManager
@@ -59,7 +59,7 @@ import org.slf4j.kotlin.*
 
 class GithubWikiIndex(
         val bot: PolyBot,
-        override val searchLocation: GithubWikiSearchLocation,
+        override val polySearchLocation: PolyGithubWikiSearchLocation,
         cacheDirectory: Directory,
                      ) : Index<GithubWikiResult>(EnglishAnalyzer(),
                                                  cacheDirectory,
@@ -71,8 +71,8 @@ class GithubWikiIndex(
     private val logger by getLogger()
     private val fuel = FuelManager()
     
-    private val githubWiki = "https://github.com/${searchLocation.repoOwner}/${searchLocation.repoName}/wiki"
-    private val githubWikiRepo = "https://github.com/${searchLocation.repoOwner}/${searchLocation.wikiRepo}/archive/master"
+    private val githubWiki = "https://github.com/${polySearchLocation.repoOwner}/${polySearchLocation.repoName}/wiki"
+    private val githubWikiRepo = "https://github.com/${polySearchLocation.repoOwner}/${polySearchLocation.wikiRepo}/archive/master"
     private val githubWikiTarball = "$githubWikiRepo.tar.gz"
     
     @Suppress("unused")

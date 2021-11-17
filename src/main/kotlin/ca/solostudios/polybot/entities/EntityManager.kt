@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:24 p.m.
+ * Last modified on 17-11-2021 02:28 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package ca.solostudios.polybot.entities
 
 import ca.solostudios.polybot.PolyBot
+import ca.solostudios.polybot.config.PolyDatabaseConfig
 import ca.solostudios.polybot.entities.data.PolyGuildData
 import ca.solostudios.polybot.entities.data.PolyMemberData
 import ca.solostudios.polybot.entities.data.PolyTagData
@@ -52,18 +53,21 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.kodein.di.DI
+import org.kodein.di.instance
 import org.slf4j.kotlin.*
 
 @Suppress("unused")
-class EntityManager(val bot: PolyBot) : ShutdownService() {
+class EntityManager(di: DI) : ShutdownService() {
     private val logger by getLogger()
+    
+    private val bot: PolyBot by di.instance()
+    private val config: PolyDatabaseConfig by di.instance()
     
     private val db: Database
     private val hikari: HikariDataSource
     
     init {
-        val config = bot.config.databaseConfig
-        
         logger.info { "Connecting to bot database" }
         
         val hikariConfig = HikariConfig().apply {

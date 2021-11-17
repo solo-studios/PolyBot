@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 package ca.solostudios.polybot.search
 
-import ca.solostudios.polybot.config.search.SearchLocation
+import ca.solostudios.polybot.config.search.PolySearchLocation
 import ca.solostudios.polybot.util.ShutdownService
 import ca.solostudios.polybot.util.shortFormat
 import java.time.ZoneId
@@ -109,10 +109,10 @@ abstract class Index<T : Result>(analyzer: Analyzer, cacheDirectory: Directory, 
             indexWriter.commit()
         }
     
-        logger.info { "Took ${duration.shortFormat()} to update the ${searchLocation.name} index." }
+        logger.info { "Took ${duration.shortFormat()} to update the ${polySearchLocation.name} index." }
     }
     
-    protected abstract val searchLocation: SearchLocation
+    protected abstract val polySearchLocation: PolySearchLocation
     
     abstract suspend fun updateIndex(writer: IndexWriter)
     

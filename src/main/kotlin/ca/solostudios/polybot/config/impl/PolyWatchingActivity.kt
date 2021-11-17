@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AutomodDomainConfig.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * The file PolyWatchingActivity.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -26,14 +26,17 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config.automod
+package ca.solostudios.polybot.config.impl
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import ca.solostudios.polybot.config.PolyBotActivity
+import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.internal.entities.EntityBuilder
 
-data class AutomodDomainConfig(
-        @JsonProperty("malicious")
-        val maliciousDomains: MaliciousDomains,
-        @JsonProperty("safe")
-        val safeDomains: SafeDomains,
-
-        )
+@Suppress("MemberVisibilityCanBePrivate")
+class PolyWatchingActivity(name: String, url: String?) : PolyBotActivity(name, url) {
+    override fun getActivity(): Activity = EntityBuilder.createActivity(name, url, Activity.ActivityType.WATCHING)
+    
+    override fun toString(): String {
+        return "WatchingActivity(name=$name, url=$url)"
+    }
+}

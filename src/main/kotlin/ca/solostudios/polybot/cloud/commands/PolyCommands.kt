@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCommands.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 17-11-2021 02:51 p.m.
  *
  * MIT License
  *
@@ -28,9 +28,10 @@
 
 package ca.solostudios.polybot.cloud.commands
 
-import ca.solostudios.polybot.PolyBot
+import org.kodein.di.DI
+import org.kodein.di.DIAware
 
-abstract class PolyCommands(val bot: PolyBot)
+abstract class PolyCommands(final override val di: DI) : DIAware
 
 
 @MustBeDocumented

@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file MaliciousDomains.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * The file PolyListeningActivity.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -26,19 +26,16 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config.automod
+package ca.solostudios.polybot.config.impl
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import ca.solostudios.polybot.config.PolyBotActivity
+import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.internal.entities.EntityBuilder
 
-data class MaliciousDomains(
-        @JsonProperty("ipLoggers")
-        val ipLoggers: List<String>,
-        @JsonProperty("adReferrals")
-        val adReferrals: List<String>,
-        @JsonProperty("referrals")
-        val referrals: List<String>,
-        @JsonProperty("cryptoMiners")
-        val cryptoMiners: List<String>,
-        @JsonProperty("scamSites")
-        val scamSites: List<String>,
-                           )
+class PolyListeningActivity(name: String, url: String?) : PolyBotActivity(name, url) {
+    override fun getActivity(): Activity = EntityBuilder.createActivity(name, url, Activity.ActivityType.LISTENING)
+    
+    override fun toString(): String {
+        return "ListeningActivity(name=$name, url=$url)"
+    }
+}

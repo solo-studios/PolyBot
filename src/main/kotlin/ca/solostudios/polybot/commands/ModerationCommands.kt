@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 17-11-2021 02:51 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,6 @@
 
 package ca.solostudios.polybot.commands
 
-import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
@@ -41,6 +40,7 @@ import ca.solostudios.polybot.entities.PolyGuild
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyTextChannel
+import ca.solostudios.polybot.event.EventManager
 import ca.solostudios.polybot.event.moderation.PolyClearEvent
 import ca.solostudios.polybot.util.poly
 import cloud.commandframework.annotations.Argument
@@ -50,12 +50,16 @@ import cloud.commandframework.annotations.Flag
 import cloud.commandframework.annotations.specifier.Greedy
 import cloud.commandframework.annotations.specifier.Range
 import net.dv8tion.jda.api.Permission
+import org.kodein.di.DI
+import org.kodein.di.instance
 import org.slf4j.kotlin.*
 
 @PolyCategory(MOD_CATEGORY)
 @PolyCommandContainer
-class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
+class ModerationCommands(di: DI) : PolyCommands(di) {
     private val logger by getLogger()
+    
+    private val eventManager: EventManager by instance()
     
     @CommandName("Set Logging Channel")
     @JDAGuildCommand
@@ -142,7 +146,7 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
         logger.info { "Running clear command" }
         
         val event = PolyClearEvent(message.textChannel, message.member)
-        bot.eventManager.dispatch(event)
+        eventManager.dispatch(event)
         
         logger.info { "Dispatched clear event" }
         

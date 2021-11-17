@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 17-11-2021 03:14 p.m.
  *
  * MIT License
  *
@@ -45,29 +45,30 @@ import ca.solostudios.polybot.util.runtime
 import ca.solostudios.polybot.util.runtimeMXBean
 import ca.solostudios.polybot.util.shortFormat
 import ca.solostudios.polybot.util.totalMemory
+import cloud.commandframework.CommandManager
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import dev.minn.jda.ktx.Embed
 import dev.minn.jda.ktx.await
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDAInfo
 import org.intellij.lang.annotations.Language
+import org.kodein.di.DI
+import org.kodein.di.instance
 import kotlin.time.Duration.Companion.milliseconds
 
 @PolyCategory(UTIL_CATEGORY)
 @PolyCommandContainer
-class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
+class UtilCommands(di: DI) : PolyCommands(di) {
+    
+    private val bot: PolyBot by instance()
+    private val commandManager: CommandManager<*> by instance()
     
     private val polydevEmoji by bot.polyEmoteReference(853123841038352384L)
-    
     private val rulesChannel by bot.polyTextChannelReference(715684015989981304L)
-    
     private val fabricSupportChannel by bot.polyTextChannelReference(814334748222160907L)
-    
     private val bukkitSupportChannel by bot.polyTextChannelReference(765260067812540416L)
-    
     private val forgeSupportChannel by bot.polyTextChannelReference(838226038751232010L)
     
     @Language("Markdown")
@@ -125,15 +126,13 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("ping|pong")
     @CommandDescription("Checks the ping of the bot.")
     suspend fun ping(message: PolyMessage) {
-        bot.scope.launch {
-            message.textChannel.sendTyping()
-            val restPing = bot.jda.restPing.await()
-            
-            val msg = message.reply("Checking ping...")
-            
-            val ping = message.timeCreated.until(msg.timeCreated, ChronoUnit.MILLIS)
-            msg.edit("Ping: ${ping / 3}ms | Heartbeat: ${bot.jda.gatewayPing}ms | Rest: ${restPing}ms")
-        }
+        message.textChannel.sendTyping()
+        val restPing = bot.jda.restPing.await()
+    
+        val msg = message.reply("Checking ping...")
+    
+        val ping = message.timeCreated.until(msg.timeCreated, ChronoUnit.MILLIS)
+        msg.edit("Ping: ${ping / 3}ms | Heartbeat: ${bot.jda.gatewayPing}ms | Rest: ${restPing}ms")
     }
     
     @CommandName("Info")
@@ -141,59 +140,57 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandDescription("Returns information about the bot.")
     @CommandLongDescription("Returns any information regarding the bot, as well as the source code for the bot.")
     suspend fun info(message: PolyMessage) {
-        bot.scope.launch {
-            val embed = Embed {
-                author {
-                    name = "Polybot"
-                    iconUrl = bot.avatarUrl
-                }
-                title = "PolyBot Info"
-                
-                field("Description", inline = false) {
-                    value = """
+        val embed = Embed {
+            author {
+                name = "Polybot"
+                iconUrl = bot.avatarUrl
+            }
+            title = "PolyBot Info"
+        
+            field("Description", inline = false) {
+                value = """
                     PolyBot is a multipurpose bot designed for the Polyhedral Development discord server.
                     It is created to help manage the server and perform various tasks automatically to aid the moderators.
                     
                     The goal of this bot was to create a FOSS discord bot for managing servers centered around Open Source projects.
                 """.trimIndent()
-                }
-                
-                field("Author", "solonovamax#6983")
-                field("Repository", "[PolyBot](https://github.com/solonovamax/PolyBot)")
-                field("Library", "[JDA](https://github.com/DV8FromTheWorld/JDA)")
-                
-                field("Version") {
-                    value = Version.version
-                }
-                field("Uptime", milliseconds(runtimeMXBean.uptime).shortFormat())
-                field("Members") {
-                    value = "%,d".format(bot.totalMembers)
-                }
-                
-                field("JDA Version") {
-                    value = JDAInfo.VERSION
-                }
-                field("Memory Usage") {
-                    val free = runtime.freeMemory
-                    val total = runtime.totalMemory
-                    val max = runtime.maxMemory
-                    val used = total - free
-                    
-                    value = "%.2f MB/%.2f MB".format(used.toFloat() / (1 shl 20), max.toFloat() / (1 shl 20))
-                }
-                field("JVM Version") {
-                    value = System.getProperty("java.runtime.name") + "\n" + System.getProperty("java.runtime.version")
-                }
-                
-                field("Commands") {
-                    value = bot.commandManager.commandCount.toString()
-                }
-                
-                timestamp = Instant.now()
             }
+        
+            field("Author", "solonovamax#6983")
+            field("Repository", "[PolyBot](https://github.com/solonovamax/PolyBot)")
+            field("Library", "[JDA](https://github.com/DV8FromTheWorld/JDA)")
+        
+            field("Version") {
+                value = Version.version
+            }
+            field("Uptime", milliseconds(runtimeMXBean.uptime).shortFormat())
+            field("Members") {
+                value = "%,d".format(bot.totalMembers)
+            }
+        
+            field("JDA Version") {
+                value = JDAInfo.VERSION
+            }
+            field("Memory Usage") {
+                val free = runtime.freeMemory
+                val total = runtime.totalMemory
+                val max = runtime.maxMemory
+                val used = total - free
             
-            message.reply(embed)
+                value = "%.2f MB/%.2f MB".format(used.toFloat() / (1 shl 20), max.toFloat() / (1 shl 20))
+            }
+            field("JVM Version") {
+                value = System.getProperty("java.runtime.name") + "\n" + System.getProperty("java.runtime.version")
+            }
+        
+            field("Commands") {
+                value = commandManager.commandCount.toString()
+            }
+        
+            timestamp = Instant.now()
         }
+    
+        message.reply(embed)
     }
     
     @JDAGuildCommand
@@ -203,44 +200,42 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandLongDescription("Returns information about the Polyhedral Development discord server, any projects we're working on, as well as where to get support. ")
     suspend fun serverInfo(message: PolyMessage,
                            member: PolyMember) {
-        bot.scope.launch {
-            val embed = Embed {
-                title = "$polydevEmoji Polyhedral Development Discord Server"
-                color = 0x8fd032
-                description = serverDescription
-                thumbnail = githubImage
-                
-                field {
-                    name = "Who We Are"
-                    value = whoWeAreDescription
-                    inline = false
-                }
-                
-                field {
-                    name = "Rules"
-                    value = rulesDescription
-                    inline = false
-                }
-                
-                field {
-                    name = "Useful Links"
-                    value = usefulLinks
-                    inline = false
-                }
-                
-                field {
-                    name = "Getting Support"
-                    value = supportDescription
-                    inline = false
-                }
-                
-                footer {
-                    name = "Requested by ${member.effectiveName} (${member.name}#${member.discriminator})"
-                    iconUrl = member.avatarUrl
-                }
+        val embed = Embed {
+            title = "$polydevEmoji Polyhedral Development Discord Server"
+            color = 0x8fd032
+            description = serverDescription
+            thumbnail = githubImage
+        
+            field {
+                name = "Who We Are"
+                value = whoWeAreDescription
+                inline = false
             }
-            
-            message.reply(embed)
+        
+            field {
+                name = "Rules"
+                value = rulesDescription
+                inline = false
+            }
+        
+            field {
+                name = "Useful Links"
+                value = usefulLinks
+                inline = false
+            }
+        
+            field {
+                name = "Getting Support"
+                value = supportDescription
+                inline = false
+            }
+        
+            footer {
+                name = "Requested by ${member.effectiveName} (${member.name}#${member.discriminator})"
+                iconUrl = member.avatarUrl
+            }
         }
+    
+        message.reply(embed)
     }
 }

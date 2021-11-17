@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyUser.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 11:59 a.m.
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -78,10 +78,10 @@ open class PolyUser(open val bot: PolyBot, val jdaUser: User) {
         get() = jdaUser.effectiveAvatarUrl
     
     val isOwner: Boolean
-        get() = id in bot.botConfig.ownerIds
+        get() = id in bot.config.polybotConfig.ownerIds
     
     val isCoOwner: Boolean
-        get() = id in bot.botConfig.ownerIds || id in bot.botConfig.coOwnerIds
+        get() = id in bot.config.polybotConfig.ownerIds || id in bot.config.polybotConfig.coOwnerIds
     
     suspend fun privateChannel(): PolyMessageChannel {
         return jdaUser.openPrivateChannel().await().poly(bot)

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:27 p.m.
+ * Last modified on 17-11-2021 02:59 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,6 @@
 
 package ca.solostudios.polybot.cloud.commands.permission
 
-import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyMeta
 import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext
 import cloud.commandframework.execution.postprocessor.CommandPostprocessor
@@ -36,8 +35,9 @@ import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import org.kodein.di.DI
 
-class BotPermissionPostprocessor<T>(val bot: PolyBot) : CommandPostprocessor<T> {
+class BotPermissionPostprocessor<T>(di: DI) : CommandPostprocessor<T> {
     @Suppress("DuplicatedCode")
     override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
         val context = postprocessingContext.commandContext

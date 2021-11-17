@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file WatchingActivity.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * The file PolyStreamingActivity.kt is part of PolyhedralBot
+ * Last modified on 17-11-2021 02:30 p.m.
  *
  * MIT License
  *
@@ -28,15 +28,15 @@
 
 package ca.solostudios.polybot.config.impl
 
-import ca.solostudios.polybot.config.BotActivity
+import ca.solostudios.polybot.config.PolyBotActivity
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.internal.entities.EntityBuilder
 
 @Suppress("MemberVisibilityCanBePrivate")
-class WatchingActivity(name: String, url: String?) : BotActivity(name, url) {
-    override fun getActivity(): Activity = EntityBuilder.createActivity(name, url, Activity.ActivityType.WATCHING)
+class PolyStreamingActivity(name: String, url: String?) : PolyBotActivity(name, url) {
+    override fun getActivity(): Activity = EntityBuilder.createActivity(name, url, Activity.ActivityType.STREAMING)
     
     override fun toString(): String {
-        return "WatchingActivity(name=$name, url=$url)"
+        return "StreamingActivity(name=$name, url=$url)"
     }
 }
