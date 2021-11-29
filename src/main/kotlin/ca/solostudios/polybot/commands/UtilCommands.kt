@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 29-11-2021 12:56 p.m.
  *
  * MIT License
  *
@@ -165,7 +165,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
                 field("Version") {
                     value = Version.version
                 }
-                field("Uptime", milliseconds(runtimeMXBean.uptime).shortFormat())
+                field("Uptime", runtimeMXBean.uptime.milliseconds.shortFormat())
                 field("Members") {
                     value = "%,d".format(bot.totalMembers)
                 }

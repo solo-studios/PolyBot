@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 29-11-2021 12:56 p.m.
  *
  * MIT License
  *
@@ -110,13 +110,12 @@ import org.slf4j.kotlin.*
 import kotlin.io.path.Path
 import kotlin.random.asKotlinRandom
 import kotlin.system.exitProcess
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator as CommandCoordinator
 import cloud.commandframework.jda.JDA4CommandManager as CommandManager
 
 
-@ExperimentalTime
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     private val logger by getLogger()
@@ -198,7 +197,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     val exceptionHandler = PolyExceptionHandler(this@PolyBot, commandManager)
     
     init {
-        scheduledThreadPool.fixedRate(Duration.milliseconds(100), Duration.minutes(5)) {
+        scheduledThreadPool.fixedRate(100.milliseconds, 5.minutes) {
             jda.presence.apply {
                 val botActivity = botConfig.activities.random()
                 onlineStatus = OnlineStatus.ONLINE

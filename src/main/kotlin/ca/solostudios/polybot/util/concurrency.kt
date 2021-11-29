@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file concurrency.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 12:50 p.m.
+ * Last modified on 29-11-2021 12:52 p.m.
  *
  * MIT License
  *
@@ -37,7 +37,6 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Suppress("FunctionName")
 fun ScheduledThreadPool(
@@ -62,7 +61,6 @@ fun ScheduledExecutorService.schedule(
     return schedule(command, delay, unit)
 }
 
-@ExperimentalTime
 fun ScheduledExecutorService.schedule(
         delay: Duration,
         command: () -> Unit,
@@ -78,7 +76,6 @@ fun <V : Any> ScheduledExecutorService.schedule(
     return schedule(callable, delay, unit)
 }
 
-@ExperimentalTime
 fun <V : Any> ScheduledExecutorService.schedule(
         delay: Duration,
         callable: Callable<V>,
@@ -95,7 +92,6 @@ fun ScheduledExecutorService.scheduleAtFixedRate(
     return scheduleAtFixedRate(command, initialDelay, period, unit)
 }
 
-@ExperimentalTime
 fun ScheduledExecutorService.scheduleAtFixedRate(
         initialDelay: Duration,
         period: Duration,
@@ -113,7 +109,6 @@ fun ScheduledExecutorService.fixedRate(
     return scheduleAtFixedRate(initialDelay, period, unit, command)
 }
 
-@ExperimentalTime
 fun ScheduledExecutorService.fixedRate(
         initialDelay: Duration,
         period: Duration,
@@ -131,7 +126,6 @@ fun ScheduledExecutorService.scheduleWithFixedDelay(
     return scheduleWithFixedDelay(command, initialDelay, delay, unit)
 }
 
-@ExperimentalTime
 fun ScheduledExecutorService.scheduleWithFixedDelay(
         initialDelay: Duration,
         delay: Duration,
@@ -149,7 +143,6 @@ fun ScheduledExecutorService.fixedDelay(
     return scheduleWithFixedDelay(initialDelay, delay, unit, command)
 }
 
-@ExperimentalTime
 fun ScheduledExecutorService.fixedDelay(
         initialDelay: Duration,
         delay: Duration,

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 29-11-2021 12:56 p.m.
  *
  * MIT License
  *
@@ -52,7 +52,7 @@ class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
      * Returns a [JDAWebhookClient], or null.
      */
     private val webhookCache: Cache<Pair<Long, String>, JDAWebhookClient> = Cache.Builder()
-            .expireAfterAccess(hours(4))
+            .expireAfterAccess(4.hours)
             .maximumCacheSize(40)
             .build()
     

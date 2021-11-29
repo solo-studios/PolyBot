@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 11:58 a.m.
+ * Last modified on 29-11-2021 12:56 p.m.
  *
  * MIT License
  *
@@ -62,7 +62,7 @@ class SearchManager(val bot: PolyBot) : ShutdownService() {
                     if (location.name == searchConfig.default)
                         default = index
     
-                    bot.scheduledThreadPool.fixedRate(seconds(10), days(1)) { bot.scope.launch { index.updateIndex() } }
+                    bot.scheduledThreadPool.fixedRate(10.seconds, 1.days) { bot.scope.launch { index.updateIndex() } }
                 }
             }
         }
