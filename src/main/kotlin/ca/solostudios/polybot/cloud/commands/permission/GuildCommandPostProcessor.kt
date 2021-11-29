@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GuildCommandPostProcessor.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:59 p.m.
+ * Last modified on 29-11-2021 03:51 p.m.
  *
  * MIT License
  *
@@ -34,10 +34,12 @@ import cloud.commandframework.execution.postprocessor.CommandPostprocessor
 import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 
-class GuildCommandPostProcessor<C>(di: DI) : CommandPostprocessor<C> {
+class GuildCommandPostProcessor<T>(override val di: DI) : CommandPostprocessor<T>,
+                                                          DIAware {
     @Suppress("DuplicatedCode")
-    override fun accept(postprocessingContext: CommandPostprocessingContext<C>) {
+    override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
         val context = postprocessingContext.commandContext
         val commandMeta = postprocessingContext.command.commandMeta
         val event = context.get<MessageReceivedEvent>("MessageReceivedEvent")

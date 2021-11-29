@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AntiBotPreProcessor.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:08 p.m.
+ * Last modified on 29-11-2021 03:51 p.m.
  *
  * MIT License
  *
@@ -34,10 +34,12 @@ import cloud.commandframework.jda.JDA4CommandManager
 import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 
-class AntiBotPreProcessor<C>(di: DI) : CommandPreprocessor<C> {
-    private val manager: JDA4CommandManager<Any> by di.instance()
+class AntiBotPreProcessor<C>(override val di: DI) : CommandPreprocessor<C>,
+                                                    DIAware {
+    private val manager: JDA4CommandManager<Any> by instance()
     
     override fun accept(context: CommandPreprocessingContext<C>) {
         val event: MessageReceivedEvent = try {

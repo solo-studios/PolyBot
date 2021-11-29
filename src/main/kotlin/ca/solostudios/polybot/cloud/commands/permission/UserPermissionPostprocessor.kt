@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:15 p.m.
+ * Last modified on 29-11-2021 03:51 p.m.
  *
  * MIT License
  *
@@ -36,10 +36,12 @@ import cloud.commandframework.services.types.ConsumerService
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 
-class UserPermissionPostprocessor<T>(di: DI) : CommandPostprocessor<T> {
-    private val botConfig: PolyBotConfig by di.instance()
+class UserPermissionPostprocessor<T>(override val di: DI) : CommandPostprocessor<T>,
+                                                            DIAware {
+    private val botConfig: PolyBotConfig by instance()
     
     @Suppress("DuplicatedCode")
     override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {

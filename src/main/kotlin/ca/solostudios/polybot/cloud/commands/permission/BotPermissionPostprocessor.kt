@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotPermissionPostprocessor.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:59 p.m.
+ * Last modified on 29-11-2021 03:51 p.m.
  *
  * MIT License
  *
@@ -36,8 +36,10 @@ import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 
-class BotPermissionPostprocessor<T>(di: DI) : CommandPostprocessor<T> {
+class BotPermissionPostprocessor<T>(override val di: DI) : CommandPostprocessor<T>,
+                                                           DIAware {
     @Suppress("DuplicatedCode")
     override fun accept(postprocessingContext: CommandPostprocessingContext<T>) {
         val context = postprocessingContext.commandContext
@@ -53,7 +55,7 @@ class BotPermissionPostprocessor<T>(di: DI) : CommandPostprocessor<T> {
                         context.get<TextChannel>("TextChannel").getPermissionOverride(bot)?.allowed ?: bot.permissions
                     else
                         bot.permissions
-    
+            
             val neededPermissions = commandMeta.getOrDefault(PolyMeta.BOT_PERMISSIONS, emptyList())
             if (!permissions.containsAll(neededPermissions)) {
                 event.message.replyFormat("Cannot execute command due to insufficient permission. The bot requires the following permission(s) to execute this command: %s.",

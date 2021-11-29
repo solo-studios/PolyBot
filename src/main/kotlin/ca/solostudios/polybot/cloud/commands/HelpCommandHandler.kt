@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommandHandler.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:15 p.m.
+ * Last modified on 29-11-2021 03:51 p.m.
  *
  * MIT License
  *
@@ -39,10 +39,11 @@ import cloud.commandframework.arguments.StaticArgument
 import cloud.commandframework.meta.CommandMeta
 import net.dv8tion.jda.api.Permission
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 
-class HelpCommandHandler(di: DI) {
-    private val commandManager: CommandManager<MessageEvent> by di.instance()
+class HelpCommandHandler(override val di: DI) : DIAware {
+    private val commandManager: CommandManager<MessageEvent> by instance()
     private val commandFilters = mutableListOf<(PolyMember, CommandEntry) -> Boolean>()
     
     fun addCommandFilter(filter: (PolyMember, CommandEntry) -> Boolean) {
