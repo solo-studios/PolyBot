@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagParser.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:04 p.m.
+ * Last modified on 29-11-2021 03:31 p.m.
  *
  * MIT License
  *
@@ -39,11 +39,12 @@ import java.util.Queue
 import kotlinx.uuid.toUUID
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 
-class TagParser<C : Any>(di: DI) : ArgumentParser<C, PolyTagData> {
-    
-    private val bot: PolyBot by di.instance()
+class TagParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyTagData>,
+                                                DIAware {
+    private val bot: PolyBot by instance()
     
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyTagData> {
@@ -94,11 +95,9 @@ class TagParser<C : Any>(di: DI) : ArgumentParser<C, PolyTagData> {
         }
     }
     
-    override fun isContextFree(): Boolean {
-        return true
-    }
+    override fun isContextFree(): Boolean = true
     
-    open class TagParseException(val input: String) : IllegalArgumentException()
+    open class TagParseException(val input: String) : IllegalArgumentException(input)
     
     class TooManyTagsFoundParseException(input: String) : TagParseException(input) {
         override val message: String

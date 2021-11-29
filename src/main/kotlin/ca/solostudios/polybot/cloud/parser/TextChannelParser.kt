@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TextChannelParser.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:04 p.m.
+ * Last modified on 29-11-2021 03:31 p.m.
  *
  * MIT License
  *
@@ -39,11 +39,12 @@ import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 
-class TextChannelParser<C : Any>(di: DI) : ArgumentParser<C, PolyTextChannel> {
-    
-    private val bot: PolyBot by di.instance()
+class TextChannelParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyTextChannel>,
+                                                        DIAware {
+    private val bot: PolyBot by instance()
     
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyTextChannel> {

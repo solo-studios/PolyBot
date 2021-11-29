@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageChannelParser.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:04 p.m.
+ * Last modified on 29-11-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -39,11 +39,13 @@ import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 
-class MessageChannelParser<C : Any>(di: DI) : ArgumentParser<C, PolyMessageChannel> {
+class MessageChannelParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyMessageChannel>,
+                                                           DIAware {
     
-    private val bot: PolyBot by di.instance()
+    private val bot: PolyBot by instance()
     
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyMessageChannel> {
@@ -92,11 +94,9 @@ class MessageChannelParser<C : Any>(di: DI) : ArgumentParser<C, PolyMessageChann
         }
     }
     
-    override fun isContextFree(): Boolean {
-        return true
-    }
+    override fun isContextFree(): Boolean = true
     
-    open class ChannelParseException(val input: String) : IllegalArgumentException()
+    abstract class ChannelParseException(val input: String) : IllegalArgumentException(input)
     
     class TooManyChannelsFoundParseException(input: String) : ChannelParseException(input) {
         override val message: String

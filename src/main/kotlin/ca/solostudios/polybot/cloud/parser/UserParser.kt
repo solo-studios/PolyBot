@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserParser.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:04 p.m.
+ * Last modified on 29-11-2021 03:34 p.m.
  *
  * MIT License
  *
@@ -40,13 +40,12 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
-import org.slf4j.kotlin.*
 
-class UserParser<C : Any>(di: DI) : ArgumentParser<C, PolyUser> {
-    private val logger by getLogger()
-    
-    private val bot: PolyBot by di.instance()
+class UserParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyUser>,
+                                                 DIAware {
+    private val bot: PolyBot by instance()
     
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyUser> {
@@ -82,8 +81,6 @@ class UserParser<C : Any>(di: DI) : ArgumentParser<C, PolyUser> {
         try {
             val id = stringId.toULong().toLong()
             
-            logger.info { "here's the id: $id" }
-            
             val user = event.jda.retrieveUserById(id).complete()
             if (user != null) {
                 inputQueue.remove()
@@ -109,9 +106,7 @@ class UserParser<C : Any>(di: DI) : ArgumentParser<C, PolyUser> {
         }
     }
     
-    override fun isContextFree(): Boolean {
-        return true
-    }
+    override fun isContextFree(): Boolean = true
     
     open class UserParseException(val input: String) : IllegalArgumentException()
     

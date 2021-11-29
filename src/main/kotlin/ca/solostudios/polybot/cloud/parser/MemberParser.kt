@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MemberParser.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:14 p.m.
+ * Last modified on 29-11-2021 03:34 p.m.
  *
  * MIT License
  *
@@ -40,13 +40,12 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
-import org.slf4j.kotlin.*
 
-class MemberParser<C : Any>(di: DI) : ArgumentParser<C, PolyMember> {
-    private val logger by getLogger()
-    
-    private val bot: PolyBot by di.instance()
+class MemberParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyMember>,
+                                                   DIAware {
+    private val bot: PolyBot by instance()
     
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyMember> {
@@ -87,10 +86,7 @@ class MemberParser<C : Any>(di: DI) : ArgumentParser<C, PolyMember> {
         try {
             val id = stringId.toULong().toLong()
             
-            logger.info { "here's the id: $id" }
-            
             val member = event.guild.retrieveMemberById(id).complete()
-            logger.info { "member is ${member == null}" }
             if (member != null) {
                 inputQueue.remove()
                 return ArgumentParseResult.success(member.poly(bot))
@@ -104,7 +100,7 @@ class MemberParser<C : Any>(di: DI) : ArgumentParser<C, PolyMember> {
                 else                         -> {
                 }
             }
-        } // $ban @solo#7313 yess
+        }
         
         val members = event.guild.getMembersByEffectiveName(input, true)
         
@@ -115,11 +111,9 @@ class MemberParser<C : Any>(di: DI) : ArgumentParser<C, PolyMember> {
         }
     }
     
-    override fun isContextFree(): Boolean {
-        return true
-    }
+    override fun isContextFree(): Boolean = true
     
-    open class MemberParseException(val input: String) : IllegalArgumentException()
+    open class MemberParseException(val input: String) : IllegalArgumentException(input)
     
     class TooManyMembersFoundParseException(input: String) : MemberParseException(input) {
         override val message: String
