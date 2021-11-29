@@ -66,7 +66,7 @@ class SearchManager(di: DI) : ShutdownService() {
                     if (location.name == searchConfig.default)
                         default = index
                     
-                    bot.scheduledThreadPool.fixedRate(seconds(10), days(1)) { bot.scope.launch { index.updateIndex() } }
+                    bot.scheduledThreadPool.fixedRate(10.seconds, 1.days) { bot.scope.launch { index.updateIndex() } }
                 }
             }
         }

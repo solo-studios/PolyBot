@@ -282,9 +282,9 @@ tasks {
     withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_11.toString()
-            apiVersion = "1.5"
-            languageVersion = "1.5"
-            freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+            apiVersion = "1.6"
+            languageVersion = "1.6"
+            // freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
         }
     }
     

@@ -56,7 +56,7 @@ class AutoQuoteListener(di: DI) : ListenerAdapter() {
      * Returns a [JDAWebhookClient], or null.
      */
     private val webhookCache: Cache<Pair<Long, String>, JDAWebhookClient> = Cache.Builder()
-            .expireAfterAccess(hours(4))
+            .expireAfterAccess(4.hours)
             .maximumCacheSize(40)
             .build()
     

@@ -76,11 +76,12 @@ class PolyBotListener(di: DI) : ListenerAdapter() {
     override fun onStatusChange(event: StatusChangeEvent) {
         logger.debug { "Status changed from ${event.oldStatus} -> ${event.newStatus}" }
         
-        @Suppress("NON_EXHAUSTIVE_WHEN")
         when (event.newStatus) {
             JDA.Status.SHUTTING_DOWN   -> logger.warn { "Shutdown process initiated" }
             JDA.Status.FAILED_TO_LOGIN -> logger.error { "Failed to login" }
             JDA.Status.CONNECTED       -> logger.info { "PolyBot connected successfully" }
+    
+            else                       -> {}
         }
     }
     

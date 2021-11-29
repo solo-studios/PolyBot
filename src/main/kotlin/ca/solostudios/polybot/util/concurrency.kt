@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file concurrency.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:16 p.m.
+ * Last modified on 29-11-2021 12:52 p.m.
  *
  * MIT License
  *
@@ -37,77 +37,121 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Suppress("FunctionName")
-fun ScheduledThreadPool(corePoolSize: Int): ScheduledExecutorService = Executors.newScheduledThreadPool(corePoolSize)
+fun ScheduledThreadPool(
+        corePoolSize: Int,
+                       ): ScheduledExecutorService {
+    return Executors.newScheduledThreadPool(corePoolSize)
+}
 
 @Suppress("FunctionName")
-fun ScheduledThreadPool(corePoolSize: Int, threadFactory: ThreadFactory): ScheduledExecutorService =
-        Executors.newScheduledThreadPool(corePoolSize, threadFactory)
+fun ScheduledThreadPool(
+        corePoolSize: Int,
+        threadFactory: ThreadFactory,
+                       ): ScheduledExecutorService {
+    return Executors.newScheduledThreadPool(corePoolSize, threadFactory)
+}
 
-fun ScheduledExecutorService.schedule(delay: Long,
-                                      unit: TimeUnit = TimeUnit.MILLISECONDS,
-                                      command: () -> Unit): ScheduledFuture<*> = schedule(command, delay, unit)
+fun ScheduledExecutorService.schedule(
+        delay: Long,
+        unit: TimeUnit = TimeUnit.MILLISECONDS,
+        command: () -> Unit,
+                                     ): ScheduledFuture<*> {
+    return schedule(command, delay, unit)
+}
 
-@ExperimentalTime
-fun ScheduledExecutorService.schedule(delay: Duration, command: () -> Unit): ScheduledFuture<*> =
-        schedule(delay.inWholeMilliseconds, TimeUnit.MILLISECONDS, command)
+fun ScheduledExecutorService.schedule(
+        delay: Duration,
+        command: () -> Unit,
+                                     ): ScheduledFuture<*> {
+    return schedule(delay.inWholeMilliseconds, TimeUnit.MILLISECONDS, command)
+}
 
-fun <V : Any> ScheduledExecutorService.schedule(delay: Long,
-                                                unit: TimeUnit = TimeUnit.MILLISECONDS,
-                                                callable: Callable<V>): ScheduledFuture<V> = schedule(callable, delay, unit)
+fun <V : Any> ScheduledExecutorService.schedule(
+        delay: Long,
+        unit: TimeUnit = TimeUnit.MILLISECONDS,
+        callable: Callable<V>,
+                                               ): ScheduledFuture<V> {
+    return schedule(callable, delay, unit)
+}
 
-@ExperimentalTime
-fun <V : Any> ScheduledExecutorService.schedule(delay: Duration, callable: Callable<V>): ScheduledFuture<*> =
-        schedule(delay.inWholeMilliseconds, TimeUnit.MILLISECONDS, callable)
+fun <V : Any> ScheduledExecutorService.schedule(
+        delay: Duration,
+        callable: Callable<V>,
+                                               ): ScheduledFuture<V> {
+    return schedule(delay.inWholeMilliseconds, TimeUnit.MILLISECONDS, callable)
+}
 
-fun ScheduledExecutorService.scheduleAtFixedRate(initialDelay: Long,
-                                                 period: Long,
-                                                 unit: TimeUnit = TimeUnit.MILLISECONDS,
-                                                 command: () -> Unit): ScheduledFuture<*> =
-        scheduleAtFixedRate(command, initialDelay, period, unit)
+fun ScheduledExecutorService.scheduleAtFixedRate(
+        initialDelay: Long,
+        period: Long,
+        unit: TimeUnit = TimeUnit.MILLISECONDS,
+        command: () -> Unit,
+                                                ): ScheduledFuture<*> {
+    return scheduleAtFixedRate(command, initialDelay, period, unit)
+}
 
-@ExperimentalTime
-fun ScheduledExecutorService.scheduleAtFixedRate(initialDelay: Duration, period: Duration, command: () -> Unit): ScheduledFuture<*> {
+fun ScheduledExecutorService.scheduleAtFixedRate(
+        initialDelay: Duration,
+        period: Duration,
+        command: () -> Unit,
+                                                ): ScheduledFuture<*> {
     return scheduleAtFixedRate(initialDelay.inWholeMilliseconds, period.inWholeMilliseconds, TimeUnit.MILLISECONDS, command)
 }
 
-fun ScheduledExecutorService.fixedRate(initialDelay: Long,
-                                       period: Long,
-                                       unit: TimeUnit = TimeUnit.MILLISECONDS,
-                                       command: () -> Unit) = scheduleAtFixedRate(initialDelay, period, unit, command)
+fun ScheduledExecutorService.fixedRate(
+        initialDelay: Long,
+        period: Long,
+        unit: TimeUnit = TimeUnit.MILLISECONDS,
+        command: () -> Unit,
+                                      ): ScheduledFuture<*> {
+    return scheduleAtFixedRate(initialDelay, period, unit, command)
+}
 
-@ExperimentalTime
-fun ScheduledExecutorService.fixedRate(initialDelay: Duration, period: Duration, command: () -> Unit): ScheduledFuture<*> {
+fun ScheduledExecutorService.fixedRate(
+        initialDelay: Duration,
+        period: Duration,
+        command: () -> Unit,
+                                      ): ScheduledFuture<*> {
     return fixedRate(initialDelay.inWholeMilliseconds, period.inWholeMilliseconds, TimeUnit.MILLISECONDS, command)
 }
 
-fun ScheduledExecutorService.scheduleWithFixedDelay(initialDelay: Long,
-                                                    delay: Long,
-                                                    unit: TimeUnit = TimeUnit.MILLISECONDS,
-                                                    command: () -> Unit): ScheduledFuture<*> =
-        scheduleWithFixedDelay(command, initialDelay, delay, unit)
-
-@ExperimentalTime
-fun ScheduledExecutorService.scheduleWithFixedDelay(initialDelay: Duration, delay: Duration, command: () -> Unit): ScheduledFuture<*> {
-    return scheduleWithFixedDelay(initialDelay.inWholeMilliseconds,
-                                  delay.inWholeMilliseconds,
-                                  TimeUnit.MILLISECONDS,
-                                  command)
+fun ScheduledExecutorService.scheduleWithFixedDelay(
+        initialDelay: Long,
+        delay: Long,
+        unit: TimeUnit = TimeUnit.MILLISECONDS,
+        command: () -> Unit,
+                                                   ): ScheduledFuture<*> {
+    return scheduleWithFixedDelay(command, initialDelay, delay, unit)
 }
 
-fun ScheduledExecutorService.fixedDelay(initialDelay: Long,
-                                        delay: Long,
-                                        unit: TimeUnit = TimeUnit.MILLISECONDS,
-                                        command: () -> Unit) = scheduleWithFixedDelay(initialDelay, delay, unit, command)
+fun ScheduledExecutorService.scheduleWithFixedDelay(
+        initialDelay: Duration,
+        delay: Duration,
+        command: () -> Unit,
+                                                   ): ScheduledFuture<*> {
+    return scheduleWithFixedDelay(initialDelay.inWholeMilliseconds, delay.inWholeMilliseconds, TimeUnit.MILLISECONDS, command)
+}
 
-@ExperimentalTime
-fun ScheduledExecutorService.fixedDelay(initialDelay: Duration, delay: Duration, command: () -> Unit): ScheduledFuture<*> {
+fun ScheduledExecutorService.fixedDelay(
+        initialDelay: Long,
+        delay: Long,
+        unit: TimeUnit = TimeUnit.MILLISECONDS,
+        command: () -> Unit,
+                                       ): ScheduledFuture<*> {
+    return scheduleWithFixedDelay(initialDelay, delay, unit, command)
+}
+
+fun ScheduledExecutorService.fixedDelay(
+        initialDelay: Duration,
+        delay: Duration,
+        command: () -> Unit,
+                                       ): ScheduledFuture<*> {
     return fixedDelay(initialDelay.inWholeMilliseconds, delay.inWholeMilliseconds, TimeUnit.MILLISECONDS, command)
 }
 
-operator fun Runnable.invoke() = run()
+operator fun Runnable.invoke(): Unit = run()
 
 inline val currentThread: Thread
     get() = Thread.currentThread()
