@@ -45,9 +45,11 @@ import org.apache.lucene.search.Query
 import org.apache.lucene.store.Directory
 import org.slf4j.kotlin.*
 import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
+@OptIn(ExperimentalTime::class)
 abstract class Index<T : Result>(analyzer: Analyzer, cacheDirectory: Directory, boosts: Map<String, Float>) : ShutdownService() {
     private val logger by getLogger()
     
@@ -108,7 +110,7 @@ abstract class Index<T : Result>(analyzer: Analyzer, cacheDirectory: Directory, 
             updateIndex(indexWriter)
             indexWriter.commit()
         }
-    
+        
         logger.info { "Took ${duration.shortFormat()} to update the ${polySearchLocation.name} index." }
     }
     
