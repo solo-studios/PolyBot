@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Index.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 29-11-2021 03:45 p.m.
  *
  * MIT License
  *
@@ -45,9 +45,11 @@ import org.apache.lucene.search.Query
 import org.apache.lucene.store.Directory
 import org.slf4j.kotlin.*
 import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
+@OptIn(ExperimentalTime::class)
 abstract class Index<T : Result>(analyzer: Analyzer, cacheDirectory: Directory, boosts: Map<String, Float>) : ShutdownService() {
     private val logger by getLogger()
     
@@ -108,7 +110,7 @@ abstract class Index<T : Result>(analyzer: Analyzer, cacheDirectory: Directory, 
             updateIndex(indexWriter)
             indexWriter.commit()
         }
-    
+        
         logger.info { "Took ${duration.shortFormat()} to update the ${searchLocation.name} index." }
     }
     
