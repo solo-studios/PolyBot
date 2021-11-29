@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:15 p.m.
+ * Last modified on 29-11-2021 04:04 p.m.
  *
  * MIT License
  *
@@ -99,12 +99,13 @@ import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePositionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 
-class LoggingListener(di: DI) : ListenerAdapter() {
-    private val bot: PolyBot by di.instance()
-    
-    private val cacheManager: CacheManager by di.instance()
+class LoggingListener(override val di: DI) : ListenerAdapter(),
+                                             DIAware {
+    private val bot: PolyBot by instance()
+    private val cacheManager: CacheManager by instance()
     
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         if (!event.message.isFromGuild || event.message.author.isSystem || event.isWebhookMessage || event.message.author.isBot)
@@ -160,7 +161,7 @@ class LoggingListener(di: DI) : ListenerAdapter() {
                         append("'s message in ")
                         append("<#").append(message.channel).append('>')
                         append(" was deleted.**\n")
-                
+    
                         if (message.content.length > 1024 - this.length)
                             append(message.content.substring(0, 1020 - this.length)).append("\n...")
                         else

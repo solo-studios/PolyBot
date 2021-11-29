@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotListener.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:09 p.m.
+ * Last modified on 29-11-2021 04:04 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,6 @@
 
 package ca.solostudios.polybot.listener
 
-import ca.solostudios.polybot.PolyBot
 import java.time.format.DateTimeFormatter
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.DisconnectEvent
@@ -45,12 +44,11 @@ import net.dv8tion.jda.api.events.guild.UnavailableGuildJoinedEvent
 import net.dv8tion.jda.api.events.guild.UnavailableGuildLeaveEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.kodein.di.DI
-import org.kodein.di.instance
+import org.kodein.di.DIAware
 import org.slf4j.kotlin.*
 
-class PolyBotListener(di: DI) : ListenerAdapter() {
-    private val bot: PolyBot by di.instance()
-    
+class PolyBotListener(override val di: DI) : ListenerAdapter(),
+                                             DIAware {
     private val logger by getLogger()
     
     override fun onReady(event: ReadyEvent) {

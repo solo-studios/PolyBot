@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EventManager.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:41 p.m.
+ * Last modified on 29-11-2021 04:04 p.m.
  *
  * MIT License
  *
@@ -31,6 +31,7 @@ package ca.solostudios.polybot.event
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 import kotlin.reflect.KClass
 
@@ -45,12 +46,10 @@ interface EventListener<T : Event> {
  *
  * Negative priority = higher
  *
- * @property bot
  * @constructor Create empty Event manager
  */
-@Suppress("unused")
-class EventManager(di: DI) {
-    val scope: CoroutineScope by di.instance()
+class EventManager(override val di: DI) : DIAware {
+    private val scope: CoroutineScope by instance()
     
     val listeners: MutableList<InternalEventListener<out Event>> = mutableListOf()
     

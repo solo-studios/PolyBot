@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PermissionManager.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:41 p.m.
+ * Last modified on 29-11-2021 04:04 p.m.
  *
  * MIT License
  *
@@ -30,12 +30,9 @@ package ca.solostudios.polybot
 
 import ca.solostudios.polybot.cloud.event.MessageEvent
 import org.kodein.di.DI
-import org.kodein.di.instance
+import org.kodein.di.DIAware
 
-class PermissionManager(di: DI) {
-    @Suppress("unused")
-    private val bot: PolyBot by di.instance()
-    
+class PermissionManager(override val di: DI) : DIAware {
     @Suppress("UNUSED_PARAMETER")
     fun permissionCheck(event: MessageEvent, permission: String): Boolean {
         return true

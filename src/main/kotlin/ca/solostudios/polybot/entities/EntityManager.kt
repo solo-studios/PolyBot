@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:28 p.m.
+ * Last modified on 29-11-2021 04:04 p.m.
  *
  * MIT License
  *
@@ -54,15 +54,17 @@ import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 import org.slf4j.kotlin.*
 
 @Suppress("unused")
-class EntityManager(di: DI) : ShutdownService() {
+class EntityManager(override val di: DI) : ShutdownService(),
+                                           DIAware {
     private val logger by getLogger()
     
-    private val bot: PolyBot by di.instance()
-    private val config: PolyDatabaseConfig by di.instance()
+    private val bot: PolyBot by instance()
+    private val config: PolyDatabaseConfig by instance()
     
     private val db: Database
     private val hikari: HikariDataSource
@@ -287,10 +289,10 @@ class EntityManager(di: DI) : ShutdownService() {
         
         hikari.close()
     }
-}
-
-private inline fun <T, U> CacheBuilder<T, U>.build(crossinline function: (T) -> U): LoadingCache<T, U> {
-    return this.build(object : CacheLoader<T, U>() {
-        override fun load(key: T): U = function(key)
-    })
+    
+    private inline fun <T, U> CacheBuilder<T, U>.build(crossinline function: (T) -> U): LoadingCache<T, U> {
+        return this.build(object : CacheLoader<T, U>() {
+            override fun load(key: T): U = function(key)
+        })
+    }
 }

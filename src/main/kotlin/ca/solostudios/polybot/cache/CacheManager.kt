@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CacheManager.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:56 p.m.
+ * Last modified on 29-11-2021 03:52 p.m.
  *
  * MIT License
  *
@@ -39,10 +39,12 @@ import org.ehcache.config.builders.ResourcePoolsBuilder
 import org.ehcache.config.units.EntryUnit
 import org.ehcache.config.units.MemoryUnit
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 
 @Suppress("MemberVisibilityCanBePrivate")
-class CacheManager(di: DI) : ShutdownService() {
+class CacheManager(override val di: DI) : ShutdownService(),
+                                          DIAware {
     private val bot: PolyBot by di.instance()
     
     val cacheManager: PersistentCacheManager = CacheManagerBuilder.newCacheManagerBuilder()
@@ -54,10 +56,6 @@ class CacheManager(di: DI) : ShutdownService() {
                     // .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofDays(56L)))
                     .withKotlinValueSerializer())
             .build(true)
-    
-    // init {
-    //     cacheManager.init()
-    // }
     
     val messageCache = MessageCache(this, cacheManager.getCache("messages"))
     

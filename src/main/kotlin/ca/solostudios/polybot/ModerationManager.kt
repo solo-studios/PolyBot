@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationManager.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:15 p.m.
+ * Last modified on 29-11-2021 04:04 p.m.
  *
  * MIT License
  *
@@ -41,17 +41,18 @@ import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 import org.slf4j.kotlin.*
 import kotlin.random.Random
 
-class ModerationManager(di: DI) {
+class ModerationManager(override val di: DI) : DIAware {
     private val logger by getLogger()
     
-    private val bot: PolyBot by di.instance()
-    private val eventManager: EventManager by di.instance()
-    private val entityManager: EntityManager by di.instance()
-    private val random: Random by di.instance()
+    private val bot: PolyBot by instance()
+    private val eventManager: EventManager by instance()
+    private val entityManager: EntityManager by instance()
+    private val random: Random by instance()
     
     suspend fun banMember(member: PolyMember,
                           moderator: PolyMember,

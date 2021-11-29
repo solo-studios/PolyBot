@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:15 p.m.
+ * Last modified on 29-11-2021 04:04 p.m.
  *
  * MIT License
  *
@@ -28,25 +28,30 @@
 
 package ca.solostudios.polybot.listener
 
-import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.util.WebhookMessage
 import club.minnced.discord.webhook.WebhookClientBuilder
 import club.minnced.discord.webhook.external.JDAWebhookClient
 import club.minnced.discord.webhook.send.AllowedMentions
 import dev.minn.jda.ktx.await
 import io.github.reactivecircus.cache4k.Cache
+import java.util.concurrent.ScheduledExecutorService
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 import org.slf4j.kotlin.*
 import kotlin.time.Duration.Companion.hours
 
-class AutoQuoteListener(di: DI) : ListenerAdapter() {
+class AutoQuoteListener(override val di: DI) : ListenerAdapter(),
+                                               DIAware {
     private val logger by getLogger()
     
-    private val bot: PolyBot by di.instance()
+    private val scope: CoroutineScope by instance()
+    private val scheduledThreadPool: ScheduledExecutorService by instance()
+    
     
     /**
      * Webhook cache.
@@ -65,13 +70,13 @@ class AutoQuoteListener(di: DI) : ListenerAdapter() {
             event.isWebhookMessage -> return
             event.author.isBot     -> return
         }
-        
-        bot.scope.launch {
+    
+        scope.launch {
             val jda = event.jda
             val textChannel = event.channel
             val messageContentRaw = event.message.contentRaw
             val matcher = ca.solostudios.polybot.Constants.messageLinkRegex.find(messageContentRaw)
-            
+        
             try {
                 if (matcher != null) {
                     logger.info { "Found match with msg '$messageContentRaw'" }
@@ -91,7 +96,7 @@ class AutoQuoteListener(di: DI) : ListenerAdapter() {
                     val webhookClient = webhookCache.get(webhook.idLong to webhook.token!!) {
                         WebhookClientBuilder.fromJDA(webhook)
                                 .setHttpClient(jda.httpClient)
-                                .setExecutorService(bot.scheduledThreadPool)
+                                .setExecutorService(scheduledThreadPool)
                                 .setAllowedMentions(AllowedMentions.none())
                                 .buildJDA()
                     }
