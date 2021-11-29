@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotListener.kt is part of PolyhedralBot
- * Last modified on 11-10-2021 10:08 p.m.
+ * Last modified on 29-11-2021 12:57 p.m.
  *
  * MIT License
  *
@@ -77,6 +77,8 @@ class PolyBotListener(val bot: PolyBot) : ListenerAdapter() {
             JDA.Status.SHUTTING_DOWN   -> logger.warn { "Shutdown process initiated" }
             JDA.Status.FAILED_TO_LOGIN -> logger.error { "Failed to login" }
             JDA.Status.CONNECTED       -> logger.info { "PolyBot connected successfully" }
+    
+            else                       -> {}
         }
     }
     
