@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotAdminCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -32,9 +32,11 @@ import ca.solostudios.polybot.ExitCodes
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
+import ca.solostudios.polybot.cloud.commands.annotations.Author
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyUser
 import cloud.commandframework.annotations.CommandDescription
@@ -52,7 +54,7 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("shutdown")
     @JDAUserPermission(ownerOnly = true)
     @CommandDescription("Shutdown PolyBot from within discord.\nNOTE: This will **NOT** restart the bot afterwards.")
-    suspend fun shutdown(message: PolyMessage, author: PolyUser) {
+    suspend fun shutdown(@SourceMessage message: PolyMessage, @Author author: PolyUser) {
         message.reply("Shutting down PolyBot")
         logger.info { "Shutdown request was triggered by ${author.tag} (${author.id})" }
         bot.shutdown(ExitCodes.EXIT_CODE_SHUTDOWN)
@@ -62,7 +64,7 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("restart")
     @JDAUserPermission(ownerOnly = true)
     @CommandDescription("Restart PolyBot from within discord.\nThe bot process will exit then start up again.")
-    suspend fun restart(message: PolyMessage, author: PolyUser) {
+    suspend fun restart(@SourceMessage message: PolyMessage, @Author author: PolyUser) {
         message.reply("Restarting PolyBot")
         logger.info { "Restart request was triggered by ${author.tag} (${author.id})" }
         bot.shutdown(ExitCodes.EXIT_CODE_RESTART)
@@ -72,7 +74,7 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("update")
     @JDAUserPermission(ownerOnly = true)
     @CommandDescription("Update PolyBot from within discord.\nThe bot process will exit, a new jar will be downloaded, and then the bot will start again.")
-    suspend fun update(message: PolyMessage, author: PolyUser) {
+    suspend fun update(@SourceMessage message: PolyMessage, @Author author: PolyUser) {
         message.reply("Updating PolyBot")
         logger.info { "Update request was triggered by ${author.tag} (${author.id})" }
         bot.shutdown(ExitCodes.EXIT_CODE_UPDATE)

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -31,10 +31,12 @@ package ca.solostudios.polybot.commands
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
+import ca.solostudios.polybot.cloud.commands.annotations.Author
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyUser
 import ca.solostudios.polybot.util.MarkdownHeaderVisitor
@@ -63,10 +65,13 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAUserPermission(ownerOnly = true)
     @CommandMethod("lucene markdown <markdown>")
     @CommandDescription("Internal command for Apache lucene bullshit.")
-    suspend fun lucene(message: PolyMessage,
-                       @Greedy
-                       @Argument("markdown")
-                       markdown: String) {
+    suspend fun lucene(
+            @SourceMessage
+            message: PolyMessage,
+            @Greedy
+            @Argument("markdown")
+            markdown: String,
+                      ) {
         val flavour = CommonMarkFlavourDescriptor()
         val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(markdown)
         
@@ -87,13 +92,17 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("search|s <query>")
     @CommandDescription("Searches the Terra documentation.")
     @CommandLongDescription("Searches through the Terra documentation and returns a list of links (or a single link) of possible results to your query.")
-    suspend fun search(message: PolyMessage,
-                       user: PolyUser,
-                       @Greedy
-                       @Argument(value = "query", description = "The string to search for.")
-                       query: String,
-                       @Flag(value = "quick", aliases = ["q"], description = "Return only a single result.")
-                       quick: Boolean = false) {
+    suspend fun search(
+            @SourceMessage
+            message: PolyMessage,
+            @Author
+            user: PolyUser,
+            @Greedy
+            @Argument(value = "query", description = "The string to search for.")
+            query: String,
+            @Flag(value = "quick", aliases = ["q"], description = "Return only a single result.")
+            quick: Boolean = false,
+                      ) {
         try {
             val results = bot.searchManager.defaultIndex.search(query, maxResults = 50)
             
@@ -130,7 +139,7 @@ class LuceneCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandName("Lucene Update")
     @CommandMethod("lucene update")
     @JDAUserPermission(ownerOnly = true)
-    suspend fun update(message: PolyMessage) {
+    suspend fun update(@SourceMessage message: PolyMessage) {
         try {
             bot.searchManager.defaultIndex.updateIndex()
             

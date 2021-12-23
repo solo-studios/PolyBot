@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:06 p.m.
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -36,9 +36,11 @@ import ca.solostudios.polybot.cloud.commands.IndexHelpTopic
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.SingleCommandHelpTopic
+import ca.solostudios.polybot.cloud.commands.annotations.Author
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyUser
@@ -70,11 +72,15 @@ class HelpCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("help [query]")
     @CommandDescription("Display help information about PolyBot commands.")
     @CommandLongDescription("Displays all help information about PolyBot commands.\nThis can be used to search for commands, check what permissions are required for commands, or to figure out what arguments are required for commands.")
-    suspend fun help(message: PolyMessage,
-                     member: PolyMember,
-                     @Greedy
-                     @Argument(value = "query", description = "Name of the command to search for.")
-                     query: String?) {
+    suspend fun help(
+            @SourceMessage
+            message: PolyMessage,
+            @Author
+            member: PolyMember,
+            @Greedy
+            @Argument(value = "query", description = "Name of the command to search for.")
+            query: String?,
+                    ) {
         val embed = Embed {
             title = "Help"
             description = "Searching for results..."

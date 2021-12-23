@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -33,10 +33,12 @@ import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
+import ca.solostudios.polybot.cloud.commands.annotations.CurrentGuild
 import ca.solostudios.polybot.cloud.commands.annotations.JDABotPermission
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyGuild
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
@@ -63,10 +65,14 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("logging|logs [channel]")
     @CommandDescription("Sets the channel to use for logging in this server.")
     @CommandLongDescription("Sets the channel used for the mod log in this server.\nWhatever channel this is set to will have any moderation events sent to it, such as:\n- edited messages\n- deleted messages\n- banned members\n- member joins/leaves\netc.\n")
-    suspend fun loggingChannel(message: PolyMessage,
-                               guild: PolyGuild,
-                               @Argument(value = "channel", description = "The channel to send logs to.")
-                               loggingChannel: PolyTextChannel? = null) {
+    suspend fun loggingChannel(
+            @SourceMessage
+            message: PolyMessage,
+            @CurrentGuild
+            guild: PolyGuild,
+            @Argument(value = "channel", description = "The channel to send logs to.")
+            loggingChannel: PolyTextChannel? = null,
+                              ) {
         val oldLoggingChannel = guild.data.loggingChannel
         
         guild.data.loggingChannelId = loggingChannel?.id ?: -1L
@@ -82,14 +88,17 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("ban|banish|begone <member> [reason]")
     @CommandDescription("Bans a member from this server deleting the last few days of messages.")
     @CommandLongDescription("Permanently bans the mentioned user from this server with a reason, if provided.\nThis will also delete the last specified days of messages, defaulting to 3.\n\nThis action will also be reported to the moderation log channel, if any exists.")
-    suspend fun banUser(message: PolyMessage,
-                        @Argument(value = "member", description = "The member to ban from the server.")
-                        member: PolyMember,
-                        @Argument(value = "reason", description = "The reason this member was banned.")
-                        @Greedy
-                        reason: String?,
-                        @Flag("days", aliases = ["d"], description = "The amount of days to delete when banning the user. Defaults to 3.")
-                        days: Int?) {
+    suspend fun banUser(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "member", description = "The member to ban from the server.")
+            member: PolyMember,
+            @Argument(value = "reason", description = "The reason this member was banned.")
+            @Greedy
+            reason: String?,
+            @Flag("days", aliases = ["d"], description = "The amount of days to delete when banning the user. Defaults to 3.")
+            days: Int?,
+                       ) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
         
         member.ban(realReason, days ?: 3, message.member) {
@@ -104,11 +113,14 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("kick|yeet <member> [reason]")
     @CommandDescription("Kicks a member from this server.")
     @CommandLongDescription("Kicks the mentioned user from this server with a reason, if provided.\n\nThis action will also be reported to the moderation log channel, if any exists.")
-    suspend fun kickMember(message: PolyMessage,
-                           @Argument(value = "member", description = "The member to kick from the server.")
-                           member: PolyMember,
-                           @Argument("reason", description = "The reason the member was kicked.")
-                           reason: String?) {
+    suspend fun kickMember(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "member", description = "The member to kick from the server.")
+            member: PolyMember,
+            @Argument("reason", description = "The reason the member was kicked.")
+            reason: String?,
+                          ) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
         
         member.kick(realReason, message.member) {
@@ -123,22 +135,25 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("clear|clean|purge <amount>")
     @CommandDescription("Clears a number of messages from chat.")
     @CommandLongDescription("Removes up to 100 messages from the chat. You can provide a user if you only want to delete messages from a certain user.\n\nThis action will also be reported in the moderation log channel, if any exists.")
-    suspend fun purgeMessages(message: PolyMessage,
-                              @Range(min = "1", max = "100")
-                              @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
-                              amount: Int,
-                              @Flag("user", aliases = ["u"], description = "Delete only messages from this user.")
-                              member: PolyMember?,
-                              @Flag("message-regex", aliases = ["e"], description = "Delete only messages that match this regex.")
-                              messageRegex: String?,
-                              @Flag("starts-with", description = "Delete only messages that start with this string.")
-                              startsWith: String?,
-                              @Flag("ends-with", description = "Delete only messages that end with this string.")
-                              endsWith: String?,
-                              @Flag("bot-only", aliases = ["b"], description = "Delete only messages from bots.")
-                              botOnly: Boolean = false,
-                              @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
-                              caseInsensitive: Boolean = false) {
+    suspend fun purgeMessages(
+            @SourceMessage
+            message: PolyMessage,
+            @Range(min = "1", max = "100")
+            @Argument("amount", description = "Amount of messages to filter through and attempt to delete.")
+            amount: Int,
+            @Flag("user", aliases = ["u"], description = "Delete only messages from this user.")
+            member: PolyMember?,
+            @Flag("message-regex", aliases = ["e"], description = "Delete only messages that match this regex.")
+            messageRegex: String?,
+            @Flag("starts-with", description = "Delete only messages that start with this string.")
+            startsWith: String?,
+            @Flag("ends-with", description = "Delete only messages that end with this string.")
+            endsWith: String?,
+            @Flag("bot-only", aliases = ["b"], description = "Delete only messages from bots.")
+            botOnly: Boolean = false,
+            @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
+            caseInsensitive: Boolean = false,
+                             ) {
         logger.info { "Running clear command" }
         
         val event = PolyClearEvent(message.textChannel, message.member)
@@ -183,11 +198,14 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("warn|warning <member> <reason>")
     @CommandDescription("Warns a member in the server with a given reason.")
     @CommandLongDescription("Warns a user in this server with a reason, if provided.\n\nThis action will also be reported to the moderation log channel, if any exists.")
-    suspend fun warnMember(message: PolyMessage,
-                           @Argument(value = "member", description = "The member to warn.")
-                           member: PolyMember,
-                           @Argument(value = "reason", description = "The reason the member was warned.")
-                           reason: String?) {
+    suspend fun warnMember(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "member", description = "The member to warn.")
+            member: PolyMember,
+            @Argument(value = "reason", description = "The reason the member was warned.")
+            reason: String?,
+                          ) {
         val realReason = if (reason != null) "for \"${reason.removeSuffix(".")}\"." else "with no reason provided."
         
         member.warn(realReason, message.member) {

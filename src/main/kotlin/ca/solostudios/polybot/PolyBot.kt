@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 22-12-2021 11:39 p.m.
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,7 @@
 package ca.solostudios.polybot
 
 import ca.solostudios.polybot.cache.CacheManager
-import ca.solostudios.polybot.cloud.CloudInjectorService
+import ca.solostudios.polybot.cloud.CloudInjectionService
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.PolyMeta
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
@@ -145,7 +145,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     val commandManager = PolyCloudCommandManager(this)
     
     val annotationParser: AnnotationParser<MessageEvent> = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
-        parameterInjectorRegistry.registerInjectionService(CloudInjectorService(this@PolyBot))
+        parameterInjectorRegistry.registerInjectionService(CloudInjectionService(this@PolyBot))
     
         installCoroutineSupport(this@PolyBot.scope)
     

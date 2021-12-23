@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -34,6 +34,7 @@ import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.util.idFooter
 import cloud.commandframework.annotations.Argument
@@ -55,9 +56,12 @@ class MessageCacheCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAUserPermission(ownerOnly = true)
     @CommandMethod("cache|msg-cache <id>")
     @CommandDescription("Returns a message from the message cache/")
-    fun messageFromCache(message: PolyMessage,
-                         @Argument(value = "id", description = "The ID of the message to get from the cache.")
-                         id: Long) {
+    fun messageFromCache(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "id", description = "The ID of the message to get from the cache.")
+            id: Long,
+                        ) {
         bot.scope.launch {
             val cachedMessage = bot.cacheManager.messageCache.getMessage(id)
             

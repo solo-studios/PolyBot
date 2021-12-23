@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EasterEggCommands.kt is part of PolyhedralBot
- * Last modified on 25-10-2021 05:05 p.m.
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -33,6 +33,7 @@ import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMessage
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandDescription
@@ -53,7 +54,7 @@ class EasterEggCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandName("Gay")
     @CommandMethod("gay|crimes")
     @CommandDescription("Be gay :)")
-    fun crimes(message: PolyMessage) {
+    fun crimes(@SourceMessage message: PolyMessage) {
         bot.scope.launch {
             message.reply("Be gay, do crimes.")
         }
@@ -62,10 +63,13 @@ class EasterEggCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandName("UwUify Text")
     @CommandMethod("uwu|uwuify|owo|owoify <text>")
     @CommandDescription("Uwuifies your text for you!")
-    fun uwuify(message: PolyMessage,
-               @Greedy
-               @Argument(value = "text", description = "Text to uwuify.")
-               text: String) {
+    fun uwuify(
+            @SourceMessage
+            message: PolyMessage,
+            @Greedy
+            @Argument(value = "text", description = "Text to uwuify.")
+            text: String,
+              ) {
         bot.scope.launch {
             val uwuText = UwU.transformTextToUwU(text)
             
