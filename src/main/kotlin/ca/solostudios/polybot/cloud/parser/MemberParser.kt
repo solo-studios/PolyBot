@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MemberParser.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:57 p.m.
+ * Last modified on 23-12-2021 03:37 p.m.
  *
  * MIT License
  *
@@ -39,16 +39,14 @@ import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
-import org.slf4j.kotlin.*
 
 class MemberParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMember> {
-    private val logger by getLogger()
-    
-    @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyMember> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
+    
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
+    
         val event = commandContext.get<MessageReceivedEvent>("MessageReceivedEvent")
         val message = event.message
         
@@ -79,28 +77,25 @@ class MemberParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMember> {
         } else {
             input
         }
-        
+    
         try {
             val id = stringId.toULong().toLong()
-            
-            logger.info { "here's the id: $id" }
-            
+        
             val member = event.guild.retrieveMemberById(id).complete()
-            logger.info { "member is ${member == null}" }
             if (member != null) {
                 inputQueue.remove()
                 return ArgumentParseResult.success(member.poly(bot))
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
         } catch (e: ErrorResponseException) {
             when (e.errorResponse) {
                 ErrorResponse.UNKNOWN_MEMBER -> return ArgumentParseResult.failure(MemberNotFoundParseException(input))
                 ErrorResponse.UNKNOWN_USER   -> return ArgumentParseResult.failure(MemberNotFoundParseException(input))
-                
+            
                 else                         -> {
                 }
             }
-        } // $ban @solo#7313 yess
+        }
         
         val members = event.guild.getMembersByEffectiveName(input, true)
         
@@ -115,15 +110,27 @@ class MemberParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyMember> {
         return true
     }
     
-    open class MemberParseException(val input: String) : IllegalArgumentException()
+    open class MemberParseException(val input: String) : IllegalArgumentException() {
+        companion object {
+            private const val serialVersionUID: Long = -3436169107052162523L
+        }
+    }
     
     class TooManyMembersFoundParseException(input: String) : MemberParseException(input) {
         override val message: String
             get() = "Too many members found for '$input'."
+        
+        companion object {
+            private const val serialVersionUID: Long = -4088134494098649568L
+        }
     }
     
     class MemberNotFoundParseException(input: String) : MemberParseException(input) {
         override val message: String
             get() = "Member not found for '$input'."
+    
+        companion object {
+            private const val serialVersionUID: Long = -3156310678963192075L
+        }
     }
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagParser.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:21 p.m.
+ * Last modified on 23-12-2021 03:37 p.m.
  *
  * MIT License
  *
@@ -40,7 +40,6 @@ import kotlinx.uuid.toUUID
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 class TagParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyTagData> {
-    @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyTagData> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
         
@@ -77,14 +76,13 @@ class TagParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyTagData> {
             filteredTags.isEmpty() -> ArgumentParseResult.failure(TagNotFoundParseException(input))
             
             else                   -> {
-                @Suppress("NAME_SHADOWING")
-                val filteredTags = filteredTags.filter { input == it.name } // if found too many tags, prioritize by name
-                
-                if (filteredTags.size == 1)
-                    ArgumentParseResult.success(filteredTags.first())
+                val reFilteredTags = filteredTags.filter { input == it.name } // if found too many tags, prioritize by name
+    
+                if (reFilteredTags.size == 1)
+                    ArgumentParseResult.success(reFilteredTags.first())
                 else
                     ArgumentParseResult.failure(TooManyTagsFoundParseException(input))
-                
+    
             }
         }
     }
@@ -93,15 +91,27 @@ class TagParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyTagData> {
         return true
     }
     
-    open class TagParseException(val input: String) : IllegalArgumentException()
+    open class TagParseException(val input: String) : IllegalArgumentException() {
+        companion object {
+            private const val serialVersionUID: Long = 6609600520848966746L
+        }
+    }
     
     class TooManyTagsFoundParseException(input: String) : TagParseException(input) {
         override val message: String
             get() = "Too many tags found for '$input'."
+        
+        companion object {
+            private const val serialVersionUID: Long = 2871108544911135195L
+        }
     }
     
     class TagNotFoundParseException(input: String) : TagParseException(input) {
         override val message: String
             get() = "Tag not found for '$input'."
+    
+        companion object {
+            private const val serialVersionUID: Long = -1160192389683812730L
+        }
     }
 }
