@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 23-12-2021 03:28 p.m.
+ * Last modified on 30-12-2021 04:11 p.m.
  *
  * MIT License
  *
@@ -68,7 +68,7 @@ import ca.solostudios.polybot.util.runtime
 import ca.solostudios.polybot.util.subTypesOf
 import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.annotations.CommandDescription
-import cloud.commandframework.kotlin.coroutines.installCoroutineSupport
+import cloud.commandframework.kotlin.coroutines.annotations.installCoroutineSupport
 import cloud.commandframework.meta.SimpleCommandMeta
 import dev.minn.jda.ktx.InlineJDABuilder
 import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
