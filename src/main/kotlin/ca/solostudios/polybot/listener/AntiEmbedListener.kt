@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AntiEmbedListener.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 05:28 p.m.
+ * Last modified on 30-12-2021 05:51 p.m.
  *
  * MIT License
  *
@@ -40,24 +40,30 @@ import org.slf4j.kotlin.*
 class AntiEmbedListener(val bot: PolyBot) : ListenerAdapter() {
     private val logger by getLogger()
     
+    private val suppressionConfigs = bot.config.botConfig.embedSuppression
+    
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         bot.scope.launch {
             val message = event.message
             val messageContentRaw = message.contentRaw
             
-            if (message.embeds.isNotEmpty()) {
+            if (message.embeds.isNotEmpty()) { // Only run if the message has embeds
                 val suppress = Constants.urlRegex.findAll(messageContentRaw)
                         .any {
                             runCatching {
                                 val url = URL(it.value)
-                                url.host.contains("github")
+                                
+                                
+                                suppressionConfigs.any { suppressionConfig ->
+                                    val matches: Boolean = suppressionConfig.matches(url)
+                                    logger.debug { "Evaluating config $suppressionConfig on url $url. Matches: $matches" }
+                                    matches
+                                }
                             }.getOrElse { false }
                         }
                 
-                logger.info { "suppress=$suppress" }
-                
                 if (suppress) {
-                    logger.debug { "Should suppress embed for message ${message.idLong}." }
+                    logger.debug { "Should suppress the embed for message ${message.idLong}." }
                     message.suppressEmbeds(true)
                             .await()
                 }

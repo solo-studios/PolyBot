@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file BotConfig.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 05:44 p.m.
+ * The file EmbedSuppression.kt is part of PolyhedralBot
+ * Last modified on 30-12-2021 05:35 p.m.
  *
  * MIT License
  *
@@ -28,25 +28,31 @@
 
 package ca.solostudios.polybot.config
 
-import ca.solostudios.polybot.config.automod.AutomodConfig
+import ca.solostudios.polybot.config.impl.FullMatchEmbedSuppression
+import ca.solostudios.polybot.config.impl.PartialMatchEmbedSuppression
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import java.net.URL
 
-@Suppress("MemberVisibilityCanBePrivate")
-data class BotConfig(
-        @JsonProperty("token")
-        val token: String,
-        @JsonProperty("prefix")
-        val prefix: String,
-        @JsonProperty("prefixes")
-        val prefixes: List<String>,
-        @JsonProperty("ownerIds")
-        val ownerIds: List<Long>,
-        @JsonProperty("coOwnerIds")
-        val coOwnerIds: List<Long>,
-        @JsonProperty("activities")
-        val activities: List<BotActivity>,
-        @JsonProperty("automod")
-        val automodConfig: AutomodConfig,
-        @JsonProperty("embedSuppression")
-        val embedSuppression: List<EmbedSuppression>
-                    )
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+             )
+@JsonSubTypes(
+        JsonSubTypes.Type(value = FullMatchEmbedSuppression::class, name = "full"),
+        JsonSubTypes.Type(value = PartialMatchEmbedSuppression::class, name = "partial"),
+             )
+abstract class EmbedSuppression(
+        @JsonProperty("query")
+        val query: String? = null,
+        @JsonProperty("host")
+        val host: String? = null,
+        @JsonProperty("path")
+        val path: String? = null,
+        @JsonProperty("protocol")
+        val protocol: String? = null,
+                               ) {
+    abstract fun matches(url: URL): Boolean
+}
