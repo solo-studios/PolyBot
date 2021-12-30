@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AntiWebhookPreProcessor.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 11:14 p.m.
+ * The file CloudCommandPreprocessor.kt is part of PolyhedralBot
+ * Last modified on 22-12-2021 11:41 p.m.
  *
  * MIT License
  *
@@ -26,23 +26,33 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.cloud.preprocessor
+package ca.solostudios.polybot.cloud.manager
 
+import ca.solostudios.polybot.cloud.event.MessageEvent
 import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
 import cloud.commandframework.execution.preprocessor.CommandPreprocessor
-import cloud.commandframework.jda.JDA4CommandManager
-import cloud.commandframework.services.types.ConsumerService
+import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.entities.ChannelType
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-class AntiWebhookPreProcessor<C>(private val mgr: JDA4CommandManager<C>) : CommandPreprocessor<C> {
-    override fun accept(context: CommandPreprocessingContext<C>) {
-        val event: MessageReceivedEvent = try {
-            mgr.backwardsCommandSenderMapper.apply(context.commandContext.sender!!)
-        } catch (e: IllegalStateException) {
-            return
-        }
+class CloudCommandPreprocessor : CommandPreprocessor<MessageEvent> {
+    override fun accept(context: CommandPreprocessingContext<MessageEvent>) {
         
-        if (event.isWebhookMessage)
-            ConsumerService.interrupt()
+        val event: MessageReceivedEvent = context.commandContext.sender.event
+        
+        context.commandContext.store<JDA>("JDA", event.jda)
+        context.commandContext.store("MessageReceivedEvent", event)
+        context.commandContext.store("MessageChannel", event.channel)
+        context.commandContext.store("Message", event.message)
+        
+        if (event.isFromGuild) {
+            val guild = event.guild
+            context.commandContext.store("Guild", guild)
+            if (event.isFromType(ChannelType.TEXT)) {
+                context.commandContext.store("TextChannel", event.textChannel)
+            }
+        } else if (event.isFromType(ChannelType.PRIVATE)) {
+            context.commandContext.store("PrivateChannel", event.privateChannel)
+        }
     }
 }

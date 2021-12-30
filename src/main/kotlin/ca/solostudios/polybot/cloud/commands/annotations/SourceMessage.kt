@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file CommandLongDescription.kt is part of PolyhedralBot
+ * The file SourceMessage.kt is part of PolyhedralBot
  * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
@@ -28,11 +28,7 @@
 
 package ca.solostudios.polybot.cloud.commands.annotations
 
-import org.intellij.lang.annotations.Language
-
 @MustBeDocumented
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class CommandLongDescription(
-        @Language("Markdown")
-        val longDescription: String)
+annotation class SourceMessage

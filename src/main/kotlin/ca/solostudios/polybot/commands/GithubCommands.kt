@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GithubCommands.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:24 p.m.
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -32,6 +32,7 @@ import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.util.dayMonthYearFormatter
 import java.io.PipedInputStream
@@ -53,7 +54,7 @@ class GithubCommands(bot: PolyBot) : PolyCommands(bot) {
     
     // @CommandMethod("ghstatus|gh-status|gh status")
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun ghStatus(message: PolyMessage) {
+    fun ghStatus(@SourceMessage message: PolyMessage) {
         val now = LocalDate.now()
         
         val sixMonths = now.minus(Period.ofMonths(6))

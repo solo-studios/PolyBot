@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 12:56 p.m.
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,7 @@
 package ca.solostudios.polybot
 
 import ca.solostudios.polybot.cache.CacheManager
-import ca.solostudios.polybot.cloud.CloudInjectorService
+import ca.solostudios.polybot.cloud.CloudInjectionService
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.PolyMeta
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
@@ -38,20 +38,9 @@ import ca.solostudios.polybot.cloud.commands.annotations.JDABotPermission
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
-import ca.solostudios.polybot.cloud.commands.permission.BotPermissionPostprocessor
-import ca.solostudios.polybot.cloud.commands.permission.GuildCommandPostProcessor
-import ca.solostudios.polybot.cloud.commands.permission.UserPermissionPostprocessor
 import ca.solostudios.polybot.cloud.event.EventMapper
 import ca.solostudios.polybot.cloud.event.MessageEvent
-import ca.solostudios.polybot.cloud.parser.MemberParser
-import ca.solostudios.polybot.cloud.parser.MessageChannelParser
-import ca.solostudios.polybot.cloud.parser.RoleParser
-import ca.solostudios.polybot.cloud.parser.TagParser
-import ca.solostudios.polybot.cloud.parser.TextChannelParser
-import ca.solostudios.polybot.cloud.parser.UserParser
-import ca.solostudios.polybot.cloud.preprocessor.AntiBotPreProcessor
-import ca.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
-import ca.solostudios.polybot.cloud.preprocessor.JDAMessagePreprocessor
+import ca.solostudios.polybot.cloud.manager.PolyCloudCommandManager
 import ca.solostudios.polybot.config.PolyConfig
 import ca.solostudios.polybot.entities.EntityManager
 import ca.solostudios.polybot.entities.PolyEmote
@@ -75,9 +64,6 @@ import ca.solostudios.polybot.util.onlineStatus
 import ca.solostudios.polybot.util.parseCommands
 import ca.solostudios.polybot.util.poly
 import ca.solostudios.polybot.util.processors
-import ca.solostudios.polybot.util.registerCommandPostProcessors
-import ca.solostudios.polybot.util.registerCommandPreProcessors
-import ca.solostudios.polybot.util.registerParserSupplier
 import ca.solostudios.polybot.util.runtime
 import ca.solostudios.polybot.util.subTypesOf
 import cloud.commandframework.annotations.AnnotationParser
@@ -112,8 +98,6 @@ import kotlin.random.asKotlinRandom
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
-import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator as CommandCoordinator
-import cloud.commandframework.jda.JDA4CommandManager as CommandManager
 
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -158,30 +142,10 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     
     val eventMapper = EventMapper(this@PolyBot)
     
-    val commandManager: CommandManager<MessageEvent> = CommandManager(jda,
-                                                                      this::botPrefix,
-                                                                      permissionManager::permissionCheck,
-                                                                      CommandCoordinator.newBuilder<MessageEvent>()
-                                                                              .withAsynchronousParsing()
-                                                                              .build(),
-                                                                      eventMapper::senderToMessageEvent,
-                                                                      eventMapper::messageEventToSender).apply {
-        parserRegistry.registerParserSupplier(MemberParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(UserParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(MessageChannelParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(TextChannelParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(RoleParser(this@PolyBot))
-        parserRegistry.registerParserSupplier(TagParser(this@PolyBot))
-    
-        registerCommandPreProcessors(JDAMessagePreprocessor(this), AntiWebhookPreProcessor(this), AntiBotPreProcessor(this))
-    
-        registerCommandPostProcessors(GuildCommandPostProcessor(this@PolyBot),
-                                      UserPermissionPostprocessor(this@PolyBot),
-                                      BotPermissionPostprocessor(this@PolyBot))
-    }
+    val commandManager = PolyCloudCommandManager(this)
     
     val annotationParser: AnnotationParser<MessageEvent> = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
-        parameterInjectorRegistry.registerInjectionService(CloudInjectorService(this@PolyBot))
+        parameterInjectorRegistry.registerInjectionService(CloudInjectionService(this@PolyBot))
     
         installCoroutineSupport(this@PolyBot.scope)
     

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GuildMessageEvent.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 22-12-2021 11:41 p.m.
  *
  * MIT License
  *
@@ -32,12 +32,12 @@ import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyTextChannel
 import ca.solostudios.polybot.util.poly
-import cloud.commandframework.jda.JDACommandSender
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 data class GuildMessageEvent(
         override val bot: PolyBot,
-        override val sender: JDACommandSender,
-                            ) : MessageEvent(bot, sender) {
+        override val event: MessageReceivedEvent,
+                            ) : MessageEvent(bot, event) {
     override val channel: PolyTextChannel
         get() = event.textChannel.poly(bot)
     

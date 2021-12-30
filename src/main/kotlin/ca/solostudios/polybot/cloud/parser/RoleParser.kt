@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file RoleParser.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:30 p.m.
+ * Last modified on 23-12-2021 03:37 p.m.
  *
  * MIT License
  *
@@ -39,11 +39,8 @@ import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
-import org.slf4j.kotlin.*
 
 class RoleParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyRole> {
-    private val logger by getLogger()
-    
     @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyRole> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
@@ -63,22 +60,20 @@ class RoleParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyRole> {
         } else {
             input
         }
-        
+    
         try {
             val id = stringId.toULong().toLong()
-            
-            logger.info { "here's the id: $id" }
-            
+        
             val role = event.jda.getRoleById(id)
             if (role != null) {
                 inputQueue.remove()
                 return ArgumentParseResult.success(role.poly(bot))
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
         } catch (e: ErrorResponseException) {
             when (e.errorResponse) {
                 ErrorResponse.UNKNOWN_ROLE -> return ArgumentParseResult.failure(RoleNotFoundParseException(input))
-                
+            
                 else                       -> {
                 }
             }
@@ -97,15 +92,27 @@ class RoleParser<C : Any>(val bot: PolyBot) : ArgumentParser<C, PolyRole> {
         return true
     }
     
-    open class RoleParseException(val input: String) : IllegalArgumentException()
+    open class RoleParseException(val input: String) : IllegalArgumentException() {
+        companion object {
+            private const val serialVersionUID: Long = 639388168580009352L
+        }
+    }
     
     class TooManyRolesFoundParseException(input: String) : RoleParseException(input) {
         override val message: String
             get() = "Too many roles found for '$input'."
+        
+        companion object {
+            private const val serialVersionUID: Long = -2540591927167319772L
+        }
     }
     
     class RoleNotFoundParseException(input: String) : RoleParseException(input) {
         override val message: String
             get() = "Role not found for '$input'."
+    
+        companion object {
+            private const val serialVersionUID: Long = -1843528356813695942L
+        }
     }
 }
