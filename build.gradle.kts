@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 29-11-2021 04:09 p.m.
+ * Last modified on 30-12-2021 04:14 p.m.
  *
  * MIT License
  *
@@ -41,7 +41,6 @@ val DISCORD_WEBHOOKS_VERSION: String by project
 val JDA_KTX_VERSION: String by project
 val JDA_UTILITIES_VERSION: String by project
 val CLOUD_VERSION: String by project
-val CLOUD_KT_EXTENSIONS_VERSION: String by project
 val KRYO_VERSION: String by project
 val REFLECTIONS_VERSION: String by project
 val SLF4J_VERSION: String by project
@@ -83,7 +82,7 @@ plugins {
 var mainClassName: String by application.mainClass
 mainClassName = "ca.solostudios.polybot.Launcher"
 group = "ca.solostudios.polybot"
-val versionObj = Version("0", "1", "2")
+val versionObj = Version("0", "2", "1")
 version = versionObj
 
 repositories {
@@ -131,6 +130,7 @@ dependencies {
     implementation(kotlin("script-util", KOTLIN_VERSION))
     implementation(kotlin("compiler-embeddable", KOTLIN_VERSION))
     implementation(kotlin("scripting-compiler-embeddable", KOTLIN_VERSION))
+    
     // Kotlin Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$KOTLINX_SERIALIZATION_VERSION")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_VERSION")
@@ -158,11 +158,13 @@ dependencies {
     implementation("com.jagrosh:jda-utilities-menu:$JDA_UTILITIES_VERSION")
     
     // Cloud (Command handler)
-    implementation("cloud.commandframework:cloud-core:$CLOUD_VERSION") { isChanging = true }
-    implementation("cloud.commandframework:cloud-annotations:$CLOUD_VERSION") { isChanging = true } // Annotation parser
-    implementation("cloud.commandframework:cloud-jda:$CLOUD_VERSION") { isChanging = true } // JDA impl
-    implementation("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_KT_EXTENSIONS_VERSION") { isChanging = true } // Kotlin extensions
-    implementation("cloud.commandframework:cloud-services:$CLOUD_VERSION") { isChanging = true } // Kotlin extensions
+    implementation("cloud.commandframework:cloud-core:$CLOUD_VERSION")
+    implementation("cloud.commandframework:cloud-annotations:$CLOUD_VERSION") // Annotation parser
+    implementation("cloud.commandframework:cloud-jda:$CLOUD_VERSION") // JDA impl
+    implementation("cloud.commandframework:cloud-kotlin-extensions:$CLOUD_VERSION") // Kotlin extensions
+    implementation("cloud.commandframework:cloud-kotlin-coroutines:$CLOUD_VERSION") // Kotlin extensions (coroutines)
+    implementation("cloud.commandframework:cloud-kotlin-coroutines-annotations:$CLOUD_VERSION") // Kotlin extensions (coroutine annotations)
+    implementation("cloud.commandframework:cloud-services:$CLOUD_VERSION") // Kotlin extensions
     
     // Kryo fast object serialization
     implementation("com.esotericsoftware:kryo:$KRYO_VERSION")
@@ -216,7 +218,7 @@ dependencies {
     // implementation("org.apache.lucene:lucene-memory:$LUCENE_VERSION")
     // implementation("org.apache.lucene:lucene-suggest:$LUCENE_VERSION")
     implementation("org.apache.lucene:lucene-queryparser:$LUCENE_VERSION")
-    implementation("org.apache.lucene:lucene-analyzers-common:$LUCENE_VERSION")
+    implementation("org.apache.lucene:lucene-analysis-common:$LUCENE_VERSION")
     
     // Markdown library
     implementation("org.jetbrains:markdown:$INTELLIJ_MARKDOWN_VERSION")
@@ -237,7 +239,7 @@ dependencies {
     implementation("org.apache.commons:commons-io:$COMMONS_IO_VERSION")
     
     // Testing (JUnit 5)
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     @Suppress("GradlePackageUpdate")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     @Suppress("GradlePackageUpdate")
@@ -328,7 +330,7 @@ java {
 }
 
 /**
- * Version class that does version stuff.
+ * Version class, which does version stuff.
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class Version(val major: String, val minor: String, val patch: String) {

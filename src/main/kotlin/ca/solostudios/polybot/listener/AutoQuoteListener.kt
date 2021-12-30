@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 12:56 p.m.
+ * Last modified on 30-12-2021 03:58 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,7 @@
 
 package ca.solostudios.polybot.listener
 
+import ca.solostudios.polybot.Constants
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.util.WebhookMessage
 import club.minnced.discord.webhook.WebhookClientBuilder
@@ -42,7 +43,7 @@ import org.slf4j.kotlin.*
 import kotlin.time.Duration.Companion.hours
 
 class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
-    private val logger by org.slf4j.kotlin.getLogger()
+    private val logger by getLogger()
     
     /**
      * Webhook cache.
@@ -66,7 +67,7 @@ class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
             val jda = event.jda
             val textChannel = event.channel
             val messageContentRaw = event.message.contentRaw
-            val matcher = ca.solostudios.polybot.Constants.messageLinkRegex.find(messageContentRaw)
+            val matcher = Constants.messageLinkRegex.find(messageContentRaw)
             
             try {
                 if (matcher != null) {
