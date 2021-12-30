@@ -40,10 +40,12 @@ object Constants {
     
     const val logEmbedColourCode = 0x00FF00
     
+    @JvmField
     val logEmbedColour = Color(logEmbedColourCode)
     
     const val polyhedralDevColourCode = 0x8fd032
     
+    @JvmField
     val polyhedralDevColour = Color(polyhedralDevColourCode)
     
     const val defaultUsername = "Unknown User#0000"
@@ -65,35 +67,34 @@ object Constants {
     @JvmField
     val allInviteRegex = allInviteRegexString.toRegex()
     
+    
     private object InternalConstants {
         @Language("RegExp")
         const val protocol = "(?:https?:\\/\\/)"
-    
+        
         @Language("RegExp")
         const val domainPrefix = "$protocol?(?:[^\\s]*\\.)?"
-    
+        
         /**
          * Why are there so many discord domains... bruh.
          */
         @Language("RegExp")
-        const val discordDomainRegex =
-                """$domainPrefix?(?:discord(?:\.com|\.gg|\.co|app\.com)|watchanimeattheoffice\.com|dis\.gd)"""
-    
+        const val discordDomainRegex = """$domainPrefix?(?:discord(?:\.com|\.gg|\.co|app\.com)|watchanimeattheoffice\.com|dis\.gd)"""
+        
         @Language("RegExp")
         const val messageLinkRegexString = "$discordDomainRegex\\/channels\\/" +
                 "(?<guild>\\d+)\\/" +   // Guild ID
                 "(?<channel>\\d+)\\/" + // Channel ID
                 "(?<message>\\d+)\\/" + // Message ID
                 "?(?:\\?\\S*|#\\S*)?"   // Useless bullshit
-    
+        
         @Language("RegExp")
-        const val inviteRegexString =
-                "$discordDomainRegex(?:\\/invite)?\\/(?<invite>[a-z0-9-]+)(?:\\?\\S*)?(?:#\\S*)?"
-    
+        const val inviteRegexString = "$discordDomainRegex(?:\\/invite)?\\/(?<invite>[a-z0-9-]+)(?:\\?\\S*)?(?:#\\S*)?"
+        
         @Language("RegExp")
         const val discordVanityDomainRegex =
                 """$domainPrefix(?:dsc\.gg|invite\.gg|discordvanity\.com|discord\.(?:plus|link|io|me|li|st))"""
-    
+        
         @Language("RegExp")
         const val allInviteRegexString =
                 """(?:$inviteRegexString|$discordVanityDomainRegex\/[a-zA-Z\d.~:/?#@!$&'()*+,;%=\[\]\-]+)"""
