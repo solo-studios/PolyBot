@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 30-12-2021 06:37 p.m.
+ * Last modified on 30-12-2021 06:42 p.m.
  *
  * MIT License
  *
@@ -232,7 +232,7 @@ dependencies {
     // Chart drawing ??
     implementation("org.knowm.xchart:xchart:$XCHART_VERSION")
     
-    // Xo
+    // Used for fast random number generators
     implementation("it.unimi.dsi:dsiutils:2.6.17")
     
     implementation("org.apache.commons:commons-compress:$COMMONS_COMPRESS_VERSION")
