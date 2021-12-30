@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyVoiceChannel.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 10:16 p.m.
+ * Last modified on 30-12-2021 03:35 p.m.
  *
  * MIT License
  *
@@ -25,6 +25,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package ca.solostudios.polybot.entities
 

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EntityManager.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:24 p.m.
+ * Last modified on 30-12-2021 03:35 p.m.
  *
  * MIT License
  *
@@ -25,6 +25,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+@file:Suppress("unused")
 
 package ca.solostudios.polybot.entities
 
@@ -54,7 +56,6 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.kotlin.*
 
-@Suppress("unused")
 class EntityManager(val bot: PolyBot) : ShutdownService() {
     private val logger by getLogger()
     

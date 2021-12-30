@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 23-12-2021 03:28 p.m.
+ * Last modified on 30-12-2021 03:19 p.m.
  *
  * MIT License
  *
@@ -133,7 +133,7 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDABotPermission(Permission.MESSAGE_MANAGE)
     @JDAUserPermission(Permission.MESSAGE_MANAGE)
     @CommandMethod("clear|clean|purge <amount>")
-    @CommandDescription("Clears a number of messages from chat.")
+    @CommandDescription("Clears a number of messages from the chat.")
     @CommandLongDescription("Removes up to 100 messages from the chat. You can provide a user if you only want to delete messages from a certain user.\n\nThis action will also be reported in the moderation log channel, if any exists.")
     suspend fun purgeMessages(
             @SourceMessage
@@ -151,7 +151,7 @@ class ModerationCommands(bot: PolyBot) : PolyCommands(bot) {
             endsWith: String?,
             @Flag("bot-only", aliases = ["b"], description = "Delete only messages from bots.")
             botOnly: Boolean = false,
-            @Flag("ignore-case", aliases = ["i"], description = "Case insensitive matching.")
+            @Flag("ignore-case", aliases = ["i"], description = "Case-insensitive matching.")
             caseInsensitive: Boolean = false,
                              ) {
         logger.info { "Running clear command" }

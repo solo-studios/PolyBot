@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 30-12-2021 03:55 p.m.
+ * Last modified on 30-12-2021 03:56 p.m.
  *
  * MIT License
  *
@@ -41,7 +41,6 @@ val DISCORD_WEBHOOKS_VERSION: String by project
 val JDA_KTX_VERSION: String by project
 val JDA_UTILITIES_VERSION: String by project
 val CLOUD_VERSION: String by project
-val CLOUD_KT_EXTENSIONS_VERSION: String by project
 val KRYO_VERSION: String by project
 val REFLECTIONS_VERSION: String by project
 val SLF4J_VERSION: String by project
@@ -329,7 +328,7 @@ java {
 }
 
 /**
- * Version class that does version stuff.
+ * Version class, which does version stuff.
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class Version(val major: String, val minor: String, val patch: String) {

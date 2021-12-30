@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationManager.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 07:54 p.m.
+ * Last modified on 30-12-2021 03:58 p.m.
  *
  * MIT License
  *
@@ -59,17 +59,18 @@ class ModerationManager(val bot: PolyBot) {
             
             else         -> {
                 val event = PolyBanEvent(member, reason, moderator)
-                
+    
                 bot.eventManager.dispatch(event)
-                
+    
                 member.jdaMember.ban(daysToDelete, reason)
                         .await()
-                
+    
                 replyAction("User ${member.name}#${member.discriminator} has been banned from the server, " +
                                     "and $daysToDelete days of messages have been deleted, $reason")
-                
-                logger.debug(member.name, member.discriminator, member.guild.name, daysToDelete, reason) {
-                    "User {}#{} has been banned from the server {}, and {} days of messages have been deleted. {}"
+    
+                logger.debug {
+                    "User ${member.name}#${member.discriminator} has been banned from the server ${member.guild.name}," +
+                            " and $daysToDelete days of messages have been deleted. $reason"
                 }
             }
         }
@@ -92,16 +93,16 @@ class ModerationManager(val bot: PolyBot) {
                 member.jdaMember.kick(reason)
                         .submit()
                         .await()
-                
+    
                 val event = PolyKickEvent(member, reason, moderator)
-                
+    
                 bot.eventManager.dispatch(event)
-                
+    
                 replyAction("User ${member.name}#${member.discriminator} has been kicked from the server, $reason")
-                
+    
                 // log to console
-                logger.debug(member.name, member.discriminator, member.id, member.guild.name, reason) {
-                    "User {}#{} <@{}> has been kicked from the server {}, {}."
+                logger.debug {
+                    "User ${member.name}#${member.discriminator} <@${member.id}> has been kicked from the server ${member.guild.name}, $reason."
                 }
             }
         }
@@ -141,17 +142,17 @@ class ModerationManager(val bot: PolyBot) {
                     true
                 }
                 val warn = PolyWarnData(bot, UUID.generateUUID(bot.globalRandom), guild.id, member.id, moderator.id, time, reason)
-                
+    
                 bot.entityManager.saveWarn(warn)
-                
+    
                 replyAction("${member.mention} has been warned for $reason.")
-                
+    
                 if (warnFailed)
                     replyAction("Member ${member.name}#${member.discriminator} could not be messaged because they either don't share a server with this bot, or have dms off.")
-                
-                
-                logger.debug(member.name, member.discriminator, member.id, member.guild.name, reason) {
-                    "User {}#{} <@{}> has been warned in the server {}, {}."
+    
+    
+                logger.debug {
+                    "User ${member.name}#${member.discriminator} <@${member.id}> has been warned in the server ${member.guild.name}, $reason."
                 }
             }
         }

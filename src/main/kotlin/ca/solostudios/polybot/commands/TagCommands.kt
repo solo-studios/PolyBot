@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 23-12-2021 03:28 p.m.
+ * Last modified on 30-12-2021 03:26 p.m.
  *
  * MIT License
  *
@@ -63,7 +63,7 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandName("View Tag")
     @CommandMethod("tag|t view|v <tag>")
     @CommandDescription("Sends the specified tag in the current channel.")
-    @CommandLongDescription("Displays a tag in the current channel.\nThis is the main functionality of tags, allowing you to specify reusable messages, to later send them in chat.")
+    @CommandLongDescription("Displays a tag in the current channel.\nThis is the main functionality of tags, allowing you to specify reusable messages, to later send them in the chat.")
     suspend fun tag(
             @SourceMessage
             message: PolyMessage,
@@ -195,7 +195,7 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
         }
         
         if (tag.aliases.size > 8) {
-            message.reply("Tags cannot have more than 8 aliases. What are you doing with more than 8 aliases, anyways?")
+            message.reply("Tags cannot have more than 8 aliases. What are you doing with more than 8 aliases, anyway?")
             return
         }
         
@@ -352,7 +352,7 @@ class TagCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandName("Raw Tag")
     @CommandMethod("tag|t raw|r <tag>")
     @CommandDescription("Returns the raw value of this tag.")
-    @CommandLongDescription("Returns the raw (unformatted) contents of a tag.\nThis will give you the tag *without any* markdown formatting.")
+    @CommandLongDescription("Returns the raw (unformatted) contents of a tag.\nThis will give you the tag *without any* Markdown formatting.")
     suspend fun rawTag(
             @SourceMessage
             message: PolyMessage,
