@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 30-12-2021 08:23 p.m.
+ * Last modified on 30-12-2021 08:25 p.m.
  *
  * MIT License
  *
@@ -74,7 +74,6 @@ plugins {
     kotlin("plugin.serialization")
     id("org.ajoberstar.grgit") version "4.1.1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    //    id("ca.cutterslade.analyze")
 }
 
 var mainClassName: String by application.mainClass
