@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file BotConfig.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 05:44 p.m.
+ * The file FullMatchEmbedSuppression.kt is part of PolyhedralBot
+ * Last modified on 30-12-2021 05:42 p.m.
  *
  * MIT License
  *
@@ -26,27 +26,39 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config
+package ca.solostudios.polybot.config.impl
 
-import ca.solostudios.polybot.config.automod.AutomodConfig
+import ca.solostudios.polybot.config.EmbedSuppression
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.net.URL
 
-@Suppress("MemberVisibilityCanBePrivate")
-data class BotConfig(
-        @JsonProperty("token")
-        val token: String,
-        @JsonProperty("prefix")
-        val prefix: String,
-        @JsonProperty("prefixes")
-        val prefixes: List<String>,
-        @JsonProperty("ownerIds")
-        val ownerIds: List<Long>,
-        @JsonProperty("coOwnerIds")
-        val coOwnerIds: List<Long>,
-        @JsonProperty("activities")
-        val activities: List<BotActivity>,
-        @JsonProperty("automod")
-        val automodConfig: AutomodConfig,
-        @JsonProperty("embedSuppression")
-        val embedSuppression: List<EmbedSuppression>
-                    )
+class FullMatchEmbedSuppression(
+        @JsonProperty("ignoreCase")
+        val ignoreCase: Boolean = true,
+        query: String? = null,
+        host: String? = null,
+        path: String? = null,
+        protocol: String? = null,
+                               ) : EmbedSuppression(query, host, path, protocol) {
+    override fun matches(url: URL): Boolean {
+        if (query != null) {
+            if (url.query.equals(query, ignoreCase))
+                return true
+        }
+        if (host != null) {
+            if (url.host.equals(host, ignoreCase))
+                return true
+        }
+        if (path != null) {
+            if (url.path.equals(path, ignoreCase))
+                return true
+        }
+        
+        if (protocol != null) {
+            if (url.protocol.equals(protocol, ignoreCase))
+                return true
+        }
+        
+        return false
+    }
+}

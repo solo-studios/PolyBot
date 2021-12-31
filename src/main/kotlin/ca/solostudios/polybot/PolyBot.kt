@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 04:11 p.m.
+ * Last modified on 30-12-2021 05:28 p.m.
  *
  * MIT License
  *
@@ -51,6 +51,7 @@ import ca.solostudios.polybot.entities.PolyTextChannel
 import ca.solostudios.polybot.entities.PolyUser
 import ca.solostudios.polybot.entities.PolyVoiceChannel
 import ca.solostudios.polybot.event.EventManager
+import ca.solostudios.polybot.listener.AntiEmbedListener
 import ca.solostudios.polybot.listener.AutoQuoteListener
 import ca.solostudios.polybot.listener.LoggingListener
 import ca.solostudios.polybot.listener.PolyBotListener
@@ -132,6 +133,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
         eventListeners += LoggingListener(this@PolyBot)
         eventListeners += PolyBotListener(this@PolyBot)
         eventListeners += AutoQuoteListener(this@PolyBot)
+        eventListeners += AntiEmbedListener(this@PolyBot)
     }.build()
     
     // val databaseManager = DatabaseManager(this@PolyBot)

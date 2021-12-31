@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Constants.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:34 p.m.
+ * Last modified on 30-12-2021 03:03 p.m.
  *
  * MIT License
  *
@@ -31,11 +31,15 @@ package ca.solostudios.polybot
 import ca.solostudios.polybot.Constants.InternalConstants.allInviteRegexString
 import ca.solostudios.polybot.Constants.InternalConstants.inviteRegexString
 import ca.solostudios.polybot.Constants.InternalConstants.messageLinkRegexString
+import ca.solostudios.polybot.Constants.InternalConstants.urlRegexString
 import java.awt.Color
 import org.intellij.lang.annotations.Language
 
 @Suppress("RegExpUnnecessaryNonCapturingGroup", "RegExpRedundantEscape", "MemberVisibilityCanBePrivate", "unused")
 object Constants {
+    @JvmField
+    val urlRegex = urlRegexString.toRegex()
+    
     const val quoteWebhookName = "PolyBot Message Quoter"
     
     const val logEmbedColourCode = 0x00FF00
@@ -70,11 +74,20 @@ object Constants {
     
     private object InternalConstants {
         @Language("RegExp")
+        const val urlRegexString = (
+                "(^|\\b)" +
+                        "(https?:\\/\\/)" + // Match url prefix
+                        "(([a-zA-Z0-9\\\$_\\-\\.\\+!*'(),;?&=]+)(?::([a-zA-Z0-9\\\$_\\-\\.\\+!*'(),;?&=]+))?@)?" + // match url user & password
+                        "(([\\w\\-\\\\\\%~]+\\.)*([\\[\\]\\%~\\w\\-]+))\\/?" + // Match url host
+                        "([\\w.,%=?&#\\-+()\\[\\]\\*${'$'}~@!:/{};'\\\\]*)" // Match url path
+                )
+    
+        @Language("RegExp")
         const val protocol = "(?:https?:\\/\\/)"
-        
+    
         @Language("RegExp")
         const val domainPrefix = "$protocol?(?:[^\\s]*\\.)?"
-        
+    
         /**
          * Why are there so many discord domains... bruh.
          */
