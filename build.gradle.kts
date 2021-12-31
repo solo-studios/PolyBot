@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 30-12-2021 06:42 p.m.
+ * Last modified on 30-12-2021 08:21 p.m.
  *
  * MIT License
  *
@@ -61,8 +61,6 @@ val EXPOSED_MIGRATIONS_VERSION: String by project
 val LUCENE_VERSION: String by project
 val INTELLIJ_MARKDOWN_VERSION: String by project
 val JGIT_VERSION: String by project
-val GITHUB_API_VERSION: String by project
-val XCHART_VERSION: String by project
 val COMMONS_COMPRESS_VERSION: String by project
 val COMMONS_IO_VERSION: String by project
 
@@ -139,8 +137,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$KOTLINX_COROUTINES_VERSION")
     // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$KOTLINX_COROUTINES_VERSION")
     
+    // Kotlin UUID support
     implementation("app.softwork:kotlinx-uuid-core:$KOTLINX_UUID_VERSION")
-    implementation("app.softwork:kotlinx-uuid-exposed:$KOTLINX_UUID_VERSION")
     
     // Utility annotations
     implementation("org.jetbrains:annotations:$JETBRAINS_ANNOTATIONS_VERSION")
@@ -212,6 +210,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$EXPOSED_VERSION")
     // Exposed Migrations
     implementation("gay.solonovamax:exposed-migrations:$EXPOSED_MIGRATIONS_VERSION")
+    // Exposed UUID support
+    implementation("app.softwork:kotlinx-uuid-exposed:$KOTLINX_UUID_VERSION")
     
     // Apache Lucene search engine
     implementation("org.apache.lucene:lucene-core:$LUCENE_VERSION")
@@ -225,12 +225,6 @@ dependencies {
     
     // Git
     implementation("org.eclipse.jgit:org.eclipse.jgit:$JGIT_VERSION")
-    
-    // Github API
-    implementation("org.kohsuke:github-api:$GITHUB_API_VERSION")
-    
-    // Chart drawing ??
-    implementation("org.knowm.xchart:xchart:$XCHART_VERSION")
     
     // Used for fast random number generators
     implementation("it.unimi.dsi:dsiutils:2.6.17")
