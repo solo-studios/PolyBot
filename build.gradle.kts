@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 30-12-2021 08:21 p.m.
+ * Last modified on 30-12-2021 08:23 p.m.
  *
  * MIT License
  *
@@ -72,8 +72,8 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.noarg")
     kotlin("plugin.serialization")
-    id("org.ajoberstar.grgit") version "4.0.2"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("org.ajoberstar.grgit") version "4.1.1"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     //    id("ca.cutterslade.analyze")
 }
 
@@ -99,11 +99,6 @@ repositories {
     maven {
         name = "jitpack"
         url = uri("https://jitpack.io/")
-    }
-    
-    maven {
-        name = "ajoberstar-backup"
-        url = uri("https://ajoberstar.org/bintray-backup/")
     }
     
     @Suppress("DEPRECATION")
