@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 30-12-2021 08:25 p.m.
+ * Last modified on 30-12-2021 08:43 p.m.
  *
  * MIT License
  *
@@ -194,6 +194,7 @@ dependencies {
     // MariaDB
     implementation("org.mariadb.jdbc:mariadb-java-client:$MARIADB_VERSION")
     implementation("org.postgresql:postgresql:$POSTGRESQL_VERSION")
+    
     // Make using SQL not the most excrutiating shit ever and actually bearable to use
     implementation("org.jetbrains.exposed:exposed-core:$EXPOSED_VERSION")
     implementation("org.jetbrains.exposed:exposed-dao:$EXPOSED_VERSION")
@@ -223,12 +224,12 @@ dependencies {
     implementation("org.apache.commons:commons-compress:$COMMONS_COMPRESS_VERSION")
     implementation("org.apache.commons:commons-io:$COMMONS_IO_VERSION")
     
+    val jUnitVersion = "5.8.2"
+    
     // Testing (JUnit 5)
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    @Suppress("GradlePackageUpdate")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    @Suppress("GradlePackageUpdate")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-params")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$jUnitVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jUnitVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:$jUnitVersion")
 }
 
 application {
