@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 30-12-2021 08:50 p.m.
+ * Last modified on 31-12-2021 01:35 p.m.
  *
  * MIT License
  *
@@ -143,7 +143,7 @@ dependencies {
     // Discord webhooks
     implementation("club.minnced:discord-webhooks:$DISCORD_WEBHOOKS_VERSION")
     // JDA Kotlin extensions
-    implementation("com.github.solonovamax:jda-ktx:$JDA_KTX_VERSION")
+    implementation("com.github.minndevelopment:jda-ktx:$JDA_KTX_VERSION")
     // JDA utilities
     implementation("com.jagrosh:jda-utilities-commons:$JDA_UTILITIES_VERSION")
     implementation("com.jagrosh:jda-utilities-menu:$JDA_UTILITIES_VERSION")
