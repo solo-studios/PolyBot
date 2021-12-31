@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LoggingListener.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:50 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,7 @@ package ca.solostudios.polybot.listener
 import ca.solostudios.polybot.Constants
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.util.idFooter
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import dev.minn.jda.ktx.Embed
 import dev.minn.jda.ktx.InlineEmbed
 import dev.minn.jda.ktx.await

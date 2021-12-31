@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 05:28 p.m.
+ * Last modified on 31-12-2021 01:38 p.m.
  *
  * MIT License
  *
@@ -57,13 +57,14 @@ import ca.solostudios.polybot.listener.LoggingListener
 import ca.solostudios.polybot.listener.PolyBotListener
 import ca.solostudios.polybot.search.SearchManager
 import ca.solostudios.polybot.util.AnnotationParser
-import ca.solostudios.polybot.util.BackedReference
 import ca.solostudios.polybot.util.ScheduledThreadPool
 import ca.solostudios.polybot.util.currentThread
+import ca.solostudios.polybot.util.datastructures.BackedReference
 import ca.solostudios.polybot.util.fixedRate
-import ca.solostudios.polybot.util.onlineStatus
+import ca.solostudios.polybot.util.jda.InlineJDABuilder
+import ca.solostudios.polybot.util.jda.onlineStatus
+import ca.solostudios.polybot.util.jda.poly
 import ca.solostudios.polybot.util.parseCommands
-import ca.solostudios.polybot.util.poly
 import ca.solostudios.polybot.util.processors
 import ca.solostudios.polybot.util.runtime
 import ca.solostudios.polybot.util.subTypesOf
@@ -71,7 +72,6 @@ import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.kotlin.coroutines.annotations.installCoroutineSupport
 import cloud.commandframework.meta.SimpleCommandMeta
-import dev.minn.jda.ktx.InlineJDABuilder
 import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
 import java.util.EnumSet
 import java.util.concurrent.ScheduledExecutorService

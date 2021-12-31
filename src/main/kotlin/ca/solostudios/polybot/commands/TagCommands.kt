@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 03:26 p.m.
+ * Last modified on 31-12-2021 01:31 p.m.
  *
  * MIT License
  *
@@ -42,7 +42,7 @@ import ca.solostudios.polybot.entities.PolyGuild
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.data.Tag
 import ca.solostudios.polybot.util.chunkedBy
-import ca.solostudios.polybot.util.toDiscordTimestamp
+import ca.solostudios.polybot.util.jda.toDiscordTimestamp
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TextChannelParser.kt is part of PolyhedralBot
- * Last modified on 23-12-2021 03:37 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package ca.solostudios.polybot.cloud.parser
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.PolyTextChannel
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import cloud.commandframework.arguments.parser.ArgumentParseResult
 import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.context.CommandContext

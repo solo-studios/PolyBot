@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CloudInjectionService.kt is part of PolyhedralBot
- * Last modified on 23-12-2021 03:28 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -42,7 +42,7 @@ import ca.solostudios.polybot.entities.PolyUser
 import ca.solostudios.polybot.util.component1
 import ca.solostudios.polybot.util.component2
 import ca.solostudios.polybot.util.component3
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import cloud.commandframework.annotations.AnnotationAccessor
 import cloud.commandframework.annotations.injection.InjectionService
 import cloud.commandframework.context.CommandContext

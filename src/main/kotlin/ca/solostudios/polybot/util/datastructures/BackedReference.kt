@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BackedReference.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * Last modified on 31-12-2021 01:38 p.m.
  *
  * MIT License
  *
@@ -26,7 +26,7 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.util
+package ca.solostudios.polybot.util.datastructures
 
 import java.lang.ref.WeakReference
 import kotlin.reflect.KProperty

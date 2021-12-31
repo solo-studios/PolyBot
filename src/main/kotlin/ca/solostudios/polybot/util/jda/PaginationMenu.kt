@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PaginationMenu.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 03:26 p.m.
+ * Last modified on 31-12-2021 01:26 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package ca.solostudios.polybot.util
+package ca.solostudios.polybot.util.jda
 
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Menu

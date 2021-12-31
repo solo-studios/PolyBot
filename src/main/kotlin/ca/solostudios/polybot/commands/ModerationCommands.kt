@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ModerationCommands.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 03:19 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -44,7 +44,7 @@ import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyTextChannel
 import ca.solostudios.polybot.event.moderation.PolyClearEvent
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod

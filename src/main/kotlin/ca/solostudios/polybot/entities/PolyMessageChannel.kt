@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageChannel.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 03:35 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,7 @@
 package ca.solostudios.polybot.entities
 
 import ca.solostudios.polybot.PolyBot
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import dev.minn.jda.ktx.await
 import java.util.EnumSet
 import net.dv8tion.jda.api.entities.Message

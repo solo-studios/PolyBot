@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file jda.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 07:25 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 @file:Suppress("unused")
 
-package ca.solostudios.polybot.util
+package ca.solostudios.polybot.util.jda
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.PolyAbstractChannel
@@ -54,6 +54,51 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.Presence
+import net.dv8tion.jda.api.utils.MemberCachePolicy
+
+/**
+ *
+ * Convenience Infix function for [MemberCachePolicy.or] to concatenate another policy.
+ * This allows you to drop the brackets for cache policies declarations.
+ *
+ * This way you can do
+ * ```kotlin
+ * memberCachePolicy = MemberCachePolicy.ONLINE or MemberCachePolicy.VOICE
+ * ```
+ * instead of
+ * ```kotlin
+ * memberCachePolicy = MemberCachePolicy.ONLINE.or(MemberCachePolicy.VOICE)
+ * ```
+ *
+ * @param policy The policy to concat
+ * @return New policy which combines both using a logical OR
+ * @see InlineJDABuilder.memberCachePolicy
+ */
+infix fun MemberCachePolicy.or(policy: MemberCachePolicy): MemberCachePolicy {
+    return policy.or(policy)
+}
+
+/**
+ *
+ * Convenience Infix function for [MemberCachePolicy.or] to require another policy.
+ * This allows you to drop the brackets for cache policies declarations.
+ *
+ * This way you can do
+ * ```kotlin
+ * memberCachePolicy = MemberCachePolicy.ONLINE and MemberCachePolicy.VOICE
+ * ```
+ * instead of
+ * ```kotlin
+ * memberCachePolicy = MemberCachePolicy.ONLINE.and(MemberCachePolicy.VOICE)
+ * ```
+ *
+ * @param policy The policy to require in addition to this one
+ * @return New policy which combines both using a logical AND
+ * @see InlineJDABuilder.memberCachePolicy
+ */
+infix fun MemberCachePolicy.and(policy: MemberCachePolicy): MemberCachePolicy {
+    return policy.and(policy)
+}
 
 var Presence.onlineStatus: OnlineStatus
     set(value) {

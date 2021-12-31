@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GuildMessageEvent.kt is part of PolyhedralBot
- * Last modified on 22-12-2021 11:41 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,7 @@ package ca.solostudios.polybot.cloud.event
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyTextChannel
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 data class GuildMessageEvent(

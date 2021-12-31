@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 08:38 p.m.
+ * Last modified on 31-12-2021 01:32 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package ca.solostudios.polybot.listener
 
 import ca.solostudios.polybot.Constants
 import ca.solostudios.polybot.PolyBot
-import ca.solostudios.polybot.util.WebhookMessage
+import ca.solostudios.polybot.util.jda.WebhookMessage
 import club.minnced.discord.webhook.WebhookClientBuilder
 import club.minnced.discord.webhook.external.JDAWebhookClient
 import club.minnced.discord.webhook.send.AllowedMentions

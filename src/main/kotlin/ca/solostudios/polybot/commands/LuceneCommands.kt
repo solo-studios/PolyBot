@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file LuceneCommands.kt is part of PolyhedralBot
- * Last modified on 23-12-2021 03:28 p.m.
+ * Last modified on 31-12-2021 01:38 p.m.
  *
  * MIT License
  *
@@ -40,8 +40,8 @@ import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyUser
 import ca.solostudios.polybot.util.MarkdownHeaderVisitor
-import ca.solostudios.polybot.util.PaginationMenu
 import ca.solostudios.polybot.util.get
+import ca.solostudios.polybot.util.jda.PaginationMenu
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod

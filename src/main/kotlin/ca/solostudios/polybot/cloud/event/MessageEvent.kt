@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageEvent.kt is part of PolyhedralBot
- * Last modified on 22-12-2021 11:41 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -32,7 +32,7 @@ import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyMessageChannel
 import ca.solostudios.polybot.entities.PolyUser
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 open class MessageEvent(
