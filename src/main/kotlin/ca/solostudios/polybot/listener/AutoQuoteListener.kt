@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 03:58 p.m.
+ * Last modified on 30-12-2021 08:38 p.m.
  *
  * MIT License
  *
@@ -34,13 +34,14 @@ import ca.solostudios.polybot.util.WebhookMessage
 import club.minnced.discord.webhook.WebhookClientBuilder
 import club.minnced.discord.webhook.external.JDAWebhookClient
 import club.minnced.discord.webhook.send.AllowedMentions
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import dev.minn.jda.ktx.await
-import io.github.reactivecircus.cache4k.Cache
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.slf4j.kotlin.*
-import kotlin.time.Duration.Companion.hours
 
 class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
     private val logger by getLogger()
@@ -52,9 +53,9 @@ class AutoQuoteListener(val bot: PolyBot) : ListenerAdapter() {
      *
      * Returns a [JDAWebhookClient], or null.
      */
-    private val webhookCache: Cache<Pair<Long, String>, JDAWebhookClient> = Cache.Builder()
-            .expireAfterAccess(4.hours)
-            .maximumCacheSize(40)
+    private val webhookCache: Cache<Pair<Long, String>, JDAWebhookClient> = CacheBuilder.newBuilder()
+            .expireAfterAccess(4, TimeUnit.HOURS)
+            .maximumSize(40)
             .build()
     
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
