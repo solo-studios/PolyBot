@@ -49,7 +49,6 @@ val LOGBACK_VERSION: String by project
 val FUEL_VERSION: String by project
 val JACKSON_VERSION: String by project
 val JACKSON_HOCON_VERSION: String by project
-val CACHE_4K_VERSION: String by project
 val EHCACHE_VERSION: String by project
 val GUAVA_VERSION: String by project
 val HIKARI_VERSION: String by project
@@ -144,7 +143,7 @@ dependencies {
     // Discord webhooks
     implementation("club.minnced:discord-webhooks:$DISCORD_WEBHOOKS_VERSION")
     // JDA Kotlin extensions
-    implementation("com.github.solonovamax:jda-ktx:${JDA_KTX_VERSION}")
+    implementation("com.github.solonovamax:jda-ktx:$JDA_KTX_VERSION")
     // JDA utilities
     implementation("com.jagrosh:jda-utilities-commons:$JDA_UTILITIES_VERSION")
     implementation("com.jagrosh:jda-utilities-menu:$JDA_UTILITIES_VERSION")
@@ -182,8 +181,6 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION")
     implementation("org.honton.chas.hocon:jackson-dataformat-hocon:$JACKSON_HOCON_VERSION") // HOCON support for Jackson
     
-    // Kotlin Cache utility
-    implementation("io.github.reactivecircus.cache4k:cache4k:$CACHE_4K_VERSION")
     // Persistent cache
     implementation("org.ehcache:ehcache:$EHCACHE_VERSION")
     
