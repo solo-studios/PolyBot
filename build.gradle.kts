@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 31-12-2021 11:21 p.m.
+ * Last modified on 31-12-2021 11:46 p.m.
  *
  * MIT License
  *
@@ -44,6 +44,7 @@ val KOTLIN_VERSION: String by project
 val KOTLINX_SERIALIZATION_VERSION: String by project
 val KOTLINX_COROUTINES_VERSION: String by project
 val KOTLINX_UUID_VERSION: String by project
+val CLIKT_VERSION: String by project
 val JETBRAINS_ANNOTATIONS_VERSION: String by project
 val JDA_VERSION: String by project
 val DISCORD_WEBHOOKS_VERSION: String by project
@@ -87,7 +88,7 @@ plugins {
 }
 
 var mainClassName: String by application.mainClass
-mainClassName = "ca.solostudios.polybot.Launcher"
+mainClassName = "ca.solostudios.polybot.cli.Launcher"
 group = "ca.solostudios.polybot"
 val versionObj = Version("0", "3", "2")
 version = versionObj
@@ -143,6 +144,9 @@ dependencies {
     
     // Kotlin UUID support
     implementation("app.softwork:kotlinx-uuid-core:$KOTLINX_UUID_VERSION")
+    
+    // Kotlin CLI library
+    implementation("com.github.ajalt.clikt:clikt:$CLIKT_VERSION")
     
     // Utility annotations
     implementation("org.jetbrains:annotations:$JETBRAINS_ANNOTATIONS_VERSION")
@@ -257,6 +261,11 @@ noArg {
 }
 
 tasks {
+    getByName<JavaExec>("run") {
+        args = listOf(
+                // "run"
+                     )
+    }
     getByName<Test>("test") {
         useJUnitPlatform()
     }
@@ -317,8 +326,6 @@ tasks {
         compression = Compression.GZIP
         archiveFileName.set("PolyhedralBot-dist.tar.gz")
     }
-    
-    
 }
 
 java {
