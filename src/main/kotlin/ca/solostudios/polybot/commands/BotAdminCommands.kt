@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotAdminCommands.kt is part of PolyhedralBot
- * Last modified on 23-12-2021 03:28 p.m.
+ * Last modified on 31-12-2021 11:48 p.m.
  *
  * MIT License
  *
@@ -55,6 +55,13 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAUserPermission(ownerOnly = true)
     @CommandDescription("Shutdown PolyBot from within discord.\nNOTE: This will **NOT** restart the bot afterwards.")
     suspend fun shutdown(@SourceMessage message: PolyMessage, @Author author: PolyUser) {
+        if (!bot.runConfig.bootstrap) {
+            message.reply("Shutting down PolyBot. Because PolyBot is not running under the bootstrap process, it may or may not be restarted.")
+            logger.info { "Shutdown request was triggered by ${author.tag} (${author.id}). Because PolyBot is not running under the bootstrap process, it may or may not be restarted." }
+            bot.shutdown(ExitCodes.EXIT_CODE_NORMAL)
+            return
+        }
+    
         message.reply("Shutting down PolyBot")
         logger.info { "Shutdown request was triggered by ${author.tag} (${author.id})" }
         bot.shutdown(ExitCodes.EXIT_CODE_SHUTDOWN)
@@ -65,6 +72,12 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAUserPermission(ownerOnly = true)
     @CommandDescription("Restart PolyBot from within discord.\nThe bot process will exit then start up again.")
     suspend fun restart(@SourceMessage message: PolyMessage, @Author author: PolyUser) {
+        if (!bot.runConfig.bootstrap) {
+            message.reply("Cannot restart PolyBot because it is not running under the bootstrap process!")
+            logger.warn { "Restart request was triggered by ${author.tag} (${author.id}), but was cancelled because it is not running as bootstrap." }
+            return
+        }
+    
         message.reply("Restarting PolyBot")
         logger.info { "Restart request was triggered by ${author.tag} (${author.id})" }
         bot.shutdown(ExitCodes.EXIT_CODE_RESTART)
@@ -75,6 +88,12 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAUserPermission(ownerOnly = true)
     @CommandDescription("Update PolyBot from within discord.\nThe bot process will exit, a new jar will be downloaded, and then the bot will start again.")
     suspend fun update(@SourceMessage message: PolyMessage, @Author author: PolyUser) {
+        if (!bot.runConfig.bootstrap) {
+            message.reply("Cannot update PolyBot because it is not running under the bootstrap process!")
+            logger.warn { "Update request was triggered by ${author.tag} (${author.id}), but was cancelled because it is not running as bootstrap." }
+            return
+        }
+    
         message.reply("Updating PolyBot")
         logger.info { "Update request was triggered by ${author.tag} (${author.id})" }
         bot.shutdown(ExitCodes.EXIT_CODE_UPDATE)
