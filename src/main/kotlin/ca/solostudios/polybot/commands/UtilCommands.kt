@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 23-12-2021 03:28 p.m.
+ * Last modified on 31-12-2021 11:58 p.m.
  *
  * MIT License
  *
@@ -142,7 +142,7 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandMethod("info|polybot|bot|botinfo")
     @CommandDescription("Returns information about the bot.")
     @CommandLongDescription("Returns any information regarding the bot, as well as the source code for the bot.")
-    suspend fun info(message: PolyMessage) {
+    suspend fun info(@SourceMessage message: PolyMessage) {
         bot.scope.launch {
             val embed = Embed {
                 author {
@@ -168,6 +168,10 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
                     value = Version.version
                 }
                 field("Uptime", runtimeMXBean.uptime.milliseconds.shortFormat())
+                if (bot.runConfig.crashes != 0)
+                    field("Recent Crashes") {
+                        value = "${bot.runConfig.crashes} crashes within 30 seconds at the time of launch"
+                    }
                 field("Members") {
                     value = "%,d".format(bot.totalMembers)
                 }
@@ -186,6 +190,9 @@ class UtilCommands(bot: PolyBot) : PolyCommands(bot) {
                 field("JVM Version") {
                     value = System.getProperty("java.runtime.name") + "\n" + System.getProperty("java.runtime.version")
                 }
+                
+                if (bot.runConfig.crashes != 0)
+                    field() // for alignment
                 
                 field("Commands") {
                     value = bot.commandManager.commandCount.toString()
