@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 31-12-2021 01:35 p.m.
+ * Last modified on 31-12-2021 11:15 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,15 @@
 @file:Suppress("SuspiciousCollectionReassignment", "PropertyName")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.plugins.ide.idea.model.IdeaProject
+import org.jetbrains.gradle.ext.ActionDelegationConfig
+import org.jetbrains.gradle.ext.CodeStyleConfig
+import org.jetbrains.gradle.ext.CopyrightConfiguration
+import org.jetbrains.gradle.ext.EncodingConfiguration
+import org.jetbrains.gradle.ext.GroovyCompilerConfiguration
+import org.jetbrains.gradle.ext.IdeaCompilerConfiguration
+import org.jetbrains.gradle.ext.ProjectSettings
+import org.jetbrains.gradle.ext.RunConfiguration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val KOTLIN_VERSION: String by project
@@ -65,6 +74,7 @@ val COMMONS_IO_VERSION: String by project
 
 
 plugins {
+    idea
     java
     application
     distribution
@@ -73,12 +83,13 @@ plugins {
     kotlin("plugin.serialization")
     id("org.ajoberstar.grgit") version "4.1.1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.1"
 }
 
 var mainClassName: String by application.mainClass
 mainClassName = "ca.solostudios.polybot.Launcher"
 group = "ca.solostudios.polybot"
-val versionObj = Version("0", "3", "0")
+val versionObj = Version("0", "3", "1")
 version = versionObj
 
 repositories {
@@ -313,6 +324,132 @@ tasks {
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+}
+
+idea {
+    project {
+        settings {
+            withIDEADir {
+                val scope = resolve("scopes")
+                scope.mkdirs()
+                
+                val file = scope.resolve("PaginationMenu.xml")
+                file.writeText("<component/>")
+                
+                withIDEAFileXml(file.toRelativeString(this)) {
+                    val root = this.asNode()
+                    root.attributes()["name"] = "DependencyValidationManager"
+                    root.appendNode("scope", mapOf(
+                            "name" to "PaginationMenu",
+                            "pattern" to "src[PolyhedralBot.main]:com.solostudios.polybot.util.PaginationMenu"
+                                                  ))
+                }
+            }
+            
+            copyright {
+                profiles {
+                    val profileJDAUtilities = create("JDA Utilities") {
+                        notice = """
+                            Copyright 2016-2018 John Grosh (jagrosh) & Kaidan Gustave (TheMonitorLizard)
+
+                            Licensed under the Apache License, Version 2.0 (the "License");
+                            you may not use this file except in compliance with the License.
+                            You may obtain a copy of the License at
+
+                                https://www.apache.org/licenses/LICENSE-2.0
+
+                            Unless required by applicable law or agreed to in writing, software
+                            distributed under the License is distributed on an "AS IS" BASIS,
+                            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                            See the License for the specific language governing permissions and
+                            limitations under the License.
+                        """.trimIndent()
+                        keyword = "Copyright"
+                    }
+                    val profilePolyBot = create("PolyBot") {
+                        notice = """
+                            ${"$"}project.name - A Discord bot for the Polyhedral Development discord server
+                            Copyright (c) ${"$"}originalComment.match("Copyright \(c\) (\d+)", 1, "-")${"$"}today.year solonovamax <solonovamax@12oclockpoint.com>
+
+                            The file ${"$"}file.fileName is part of ${"$"}project.name
+                            Last modified on ${"$"}file.lastModified.format('dd-MM-yyyy hh:mm aaa')
+
+                            MIT License
+
+                            Permission is hereby granted, free of charge, to any person obtaining a copy
+                            of this software and associated documentation files (the "Software"), to deal
+                            in the Software without restriction, including without limitation the rights
+                            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                            copies of the Software, and to permit persons to whom the Software is
+                            furnished to do so, subject to the following conditions:
+
+                            The above copyright notice and this permission notice shall be included in all
+                            copies or substantial portions of the Software.
+
+                            ${"$"}project.name.toUpperCase() IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                            SOFTWARE.
+                        """.trimIndent()
+                        keyword = "Copyright"
+                        //language=RegExp
+                        allowReplaceRegexp = "20[0-9]{2}"
+                    }
+                    useDefault = profilePolyBot.name
+                    
+                    scopes = mapOf(
+                            "PaginationMenu" to profileJDAUtilities.name,
+                            "Project Files" to profilePolyBot.name
+                                  )
+                }
+            }
+        }
+    }
+    module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
+    }
+}
+
+fun IdeaProject.settings(configuration: ProjectSettings.() -> Unit) {
+    (this as ExtensionAware).configure(configuration)
+}
+
+fun ProjectSettings.delegateActions(configuration: ActionDelegationConfig.() -> Unit) {
+    (this as ExtensionAware).configure(configuration)
+}
+
+fun ProjectSettings.taskTriggers(configuration: IdeaCompilerConfiguration.() -> Unit) {
+    (this as ExtensionAware).configure(configuration)
+}
+
+fun ProjectSettings.compiler(configuration: IdeaCompilerConfiguration.() -> Unit) {
+    (this as ExtensionAware).configure(configuration)
+}
+
+fun ProjectSettings.groovyCompiler(configuration: GroovyCompilerConfiguration.() -> Unit) {
+    (this as ExtensionAware).configure(configuration)
+}
+
+fun ProjectSettings.codeStyle(configuration: CodeStyleConfig.() -> Unit) {
+    (this as ExtensionAware).configure(configuration)
+}
+
+fun ProjectSettings.copyright(configuration: CopyrightConfiguration.() -> Unit) {
+    (this as ExtensionAware).configure(configuration)
+}
+
+fun ProjectSettings.encodings(configuration: EncodingConfiguration.() -> Unit) {
+    (this as ExtensionAware).configure(configuration)
+}
+
+fun ProjectSettings.runConfigurations(configuration: PolymorphicDomainObjectContainer<RunConfiguration>.() -> Unit) {
+    (this as ExtensionAware).configure<NamedDomainObjectContainer<RunConfiguration>> {
+        (this as PolymorphicDomainObjectContainer<RunConfiguration>).apply(configuration)
+    }
 }
 
 /**
