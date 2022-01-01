@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 31-12-2021 11:46 p.m.
+ * Last modified on 31-12-2021 11:49 p.m.
  *
  * MIT License
  *
@@ -263,7 +263,7 @@ noArg {
 tasks {
     getByName<JavaExec>("run") {
         args = listOf(
-                // "run"
+                "run"
                      )
     }
     getByName<Test>("test") {
