@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EasterEggCommands.kt is part of PolyhedralBot
- * Last modified on 23-12-2021 03:28 p.m.
+ * Last modified on 01-01-2022 12:24 a.m.
  *
  * MIT License
  *
@@ -40,7 +40,6 @@ import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Hidden
 import cloud.commandframework.annotations.specifier.Greedy
-import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import org.slf4j.kotlin.*
 import kotlin.random.Random
@@ -54,29 +53,25 @@ class EasterEggCommands(bot: PolyBot) : PolyCommands(bot) {
     @CommandName("Gay")
     @CommandMethod("gay|crimes")
     @CommandDescription("Be gay :)")
-    fun crimes(@SourceMessage message: PolyMessage) {
-        bot.scope.launch {
-            message.reply("Be gay, do crimes.")
-        }
+    suspend fun crimes(@SourceMessage message: PolyMessage) {
+        message.reply("Be gay, do crimes.")
     }
     
     @CommandName("UwUify Text")
     @CommandMethod("uwu|uwuify|owo|owoify <text>")
     @CommandDescription("Uwuifies your text for you!")
-    fun uwuify(
+    suspend fun uwuify(
             @SourceMessage
             message: PolyMessage,
             @Greedy
             @Argument(value = "text", description = "Text to uwuify.")
             text: String,
-              ) {
-        bot.scope.launch {
-            val uwuText = UwU.transformTextToUwU(text)
-            
-            logger.info(uwuText.trim())
-            
-            message.reply(uwuText.takeIf { it.length <= 4000 } ?: uwuText.substring(0, 4000))
-        }
+                      ) {
+        val uwuText = UwU.transformTextToUwU(text)
+        
+        logger.info(uwuText.trim())
+        
+        message.reply(uwuText.takeIf { it.length <= 4000 } ?: uwuText.substring(0, 4000))
     }
     
     /**
@@ -90,19 +85,23 @@ class EasterEggCommands(bot: PolyBot) : PolyCommands(bot) {
         const val actionChance = 0.075
         const val stuttersChance = 0.1
         const val commonReplacementChance = 0.95
-        
+    
         val uwuRandom = Random(Random.nextLong())
-        val faces: List<String> = listOf("(・\\`ω´・)", ";;w;;", "OwO", "UwU", ">w<", "^w^", "ÚwÚ", "^-^", ":3", "x3", "owo", ">w<", ">.<",
-                                         ">.>", "^w^", "(^\\_^)", "^\\_^", ".-.", ".\\_.", "(>'-')>", "xD", ":P", "X\\_X", ">\\_<", "O\\_o",
-                                         "o\\_O", "(\\* ^ ω ^)", "(⌒ω⌒)", "ヽ(\\*・ω・)ﾉ", "(o´∀\\`o)", "(o･ω･o)", "＼(＾▽＾)／", "≧◡≦",
-                                         "(✿◠‿◠)")
+        val faces: List<String> = listOf(
+                "(・\\`ω´・)", ";;w;;", "OwO", "UwU", ">w<", "^w^", "ÚwÚ", "^-^", ":3", "x3", "owo", ">w<", ">.<",
+                ">.>", "^w^", "(^\\_^)", "^\\_^", ".-.", ".\\_.", "(>'-')>", "xD", ":P", "X\\_X", ">\\_<", "O\\_o",
+                "o\\_O", "(\\* ^ ω ^)", "(⌒ω⌒)", "ヽ(\\*・ω・)ﾉ", "(o´∀\\`o)", "(o･ω･o)", "＼(＾▽＾)／", "≧◡≦",
+                "(✿◠‿◠)"
+                                        )
         val exclamations: List<String> = listOf("!?", "?!!", "?!?1", "!!11", "?!?!")
-        val actions: List<String> = listOf("\\*blushes\\*", "\\*whispers to self\\*", "\\*cries\\*", "\\*screams\\*", "\\*sweats\\*",
-                                           "\\*twerks\\*", "\\*runs away\\*", "\\*screeches\\*", "\\*walks away\\*", "\\*sees bulge\\*",
-                                           "\\*looks at you\\*", "\\*notices buldge\\*", "\\*starts twerking\\*", "\\*huggles tightly\\*",
-                                           "\\*boops your nose\\*", "\\*hides behind chair\\*", "\\*looks around anxiously\\*",
-                                           "\\*jumps at you\\*")
-        
+        val actions: List<String> = listOf(
+                "\\*blushes\\*", "\\*whispers to self\\*", "\\*cries\\*", "\\*screams\\*", "\\*sweats\\*",
+                "\\*twerks\\*", "\\*runs away\\*", "\\*screeches\\*", "\\*walks away\\*", "\\*sees bulge\\*",
+                "\\*looks at you\\*", "\\*notices buldge\\*", "\\*starts twerking\\*", "\\*huggles tightly\\*",
+                "\\*boops your nose\\*", "\\*hides behind chair\\*", "\\*looks around anxiously\\*",
+                "\\*jumps at you\\*"
+                                          )
+    
         val uwuRegexes: Map<Regex, String> = mapOf(
                 "[rl]" to "w",
                 "[RL]" to "W",
@@ -132,7 +131,8 @@ class EasterEggCommands(bot: PolyBot) : PolyCommands(bot) {
                 "ew" to "uwu",
                 "([Hh])ey" to "\$1ay",
                 "[({<\\]]" to "｡･:\\\\*:･ﾟ★｡･:\\\\*:･ﾟ☆",
-                "[)}>\\]]" to "☆ﾟ･:\\\\*:･｡★ﾟ･:\\\\*:･｡").mapKeys { it.key.toRegex() }
+                "[)}>\\]]" to "☆ﾟ･:\\\\*:･｡★ﾟ･:\\\\*:･｡"
+                                                  ).mapKeys { it.key.toRegex() }
                 .mapValues {
                     MarkdownSanitizer.sanitize(it.value, MarkdownSanitizer.SanitizationStrategy.ESCAPE)
                 }

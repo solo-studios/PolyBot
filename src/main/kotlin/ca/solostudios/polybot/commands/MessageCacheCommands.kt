@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 03:26 p.m.
+ * Last modified on 01-01-2022 12:24 a.m.
  *
  * MIT License
  *
@@ -43,7 +43,6 @@ import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.Hidden
 import dev.minn.jda.ktx.Embed
 import dev.minn.jda.ktx.await
-import kotlinx.coroutines.launch
 import org.slf4j.kotlin.*
 
 @Hidden
@@ -56,36 +55,34 @@ class MessageCacheCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAUserPermission(ownerOnly = true)
     @CommandMethod("cache|msg-cache <id>")
     @CommandDescription("Returns a message from the message cache/")
-    fun messageFromCache(
+    suspend fun messageFromCache(
             @SourceMessage
             message: PolyMessage,
             @Argument(value = "id", description = "The ID of the message to get from the cache.")
             id: Long,
-                        ) {
-        bot.scope.launch {
-            val cachedMessage = bot.cacheManager.messageCache.getMessage(id)
+                                ) {
+        val cachedMessage = bot.cacheManager.messageCache.getMessage(id)
+        
+        if (cachedMessage != null) {
+            logger.info { "here is the message $cachedMessage" }
             
-            if (cachedMessage != null) {
-                logger.info { "here is the message $cachedMessage" }
-                
-                val embed = Embed {
-                    author {
-                        name = "${cachedMessage.username}#${cachedMessage.discriminator}"
-                        url = cachedMessage.url
-                        iconUrl = bot.jda.retrieveUserById(cachedMessage.author)
-                                .map { it.effectiveAvatarUrl }
-                                .onErrorMap { null }
-                                .await() ?: ca.solostudios.polybot.Constants.defaultAvatarUrl
-                    }
-                    color = 0x2ECC70
-                    
-                    description = "**<@${cachedMessage.author}> sent a message in <#${cachedMessage.channel}>.**\n${cachedMessage.content}"
-                    
-                    idFooter(message.timeCreated, message.guild, message.channel, message.member, message)
+            val embed = Embed {
+                author {
+                    name = "${cachedMessage.username}#${cachedMessage.discriminator}"
+                    url = cachedMessage.url
+                    iconUrl = bot.jda.retrieveUserById(cachedMessage.author)
+                            .map { it.effectiveAvatarUrl }
+                            .onErrorMap { null }
+                            .await() ?: ca.solostudios.polybot.Constants.defaultAvatarUrl
                 }
+                color = 0x2ECC70
                 
-                message.reply(embed)
+                description = "**<@${cachedMessage.author}> sent a message in <#${cachedMessage.channel}>.**\n${cachedMessage.content}"
+                
+                idFooter(message.timeCreated, message.guild, message.channel, message.member, message)
             }
+            
+            message.reply(embed)
         }
     }
 }
