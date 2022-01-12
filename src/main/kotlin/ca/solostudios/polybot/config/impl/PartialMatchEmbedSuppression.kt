@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AntiBotPreProcessor.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 03:51 p.m.
+ * The file PartialMatchEmbedSuppression.kt is part of PolyhedralBot
+ * Last modified on 30-12-2021 05:43 p.m.
  *
  * MIT License
  *
@@ -26,29 +26,39 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.cloud.preprocessor
+package ca.solostudios.polybot.config.impl
 
-import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
-import cloud.commandframework.execution.preprocessor.CommandPreprocessor
-import cloud.commandframework.jda.JDA4CommandManager
-import cloud.commandframework.services.types.ConsumerService
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
+import ca.solostudios.polybot.config.EmbedSuppression
+import com.fasterxml.jackson.annotation.JsonProperty
+import java.net.URL
 
-class AntiBotPreProcessor<C>(override val di: DI) : CommandPreprocessor<C>,
-                                                    DIAware {
-    private val manager: JDA4CommandManager<Any> by instance()
-    
-    override fun accept(context: CommandPreprocessingContext<C>) {
-        val event: MessageReceivedEvent = try {
-            manager.backwardsCommandSenderMapper.apply(context.commandContext.sender!!)
-        } catch (e: IllegalStateException) {
-            return
+class PartialMatchEmbedSuppression(
+        @JsonProperty("ignoreCase")
+        val ignoreCase: Boolean = true,
+        query: String? = null,
+        host: String? = null,
+        path: String? = null,
+        protocol: String? = null,
+                                  ) : EmbedSuppression(query, host, path, protocol) {
+    override fun matches(url: URL): Boolean {
+        if (query != null) {
+            if (url.query.contains(query, ignoreCase))
+                return true
+        }
+        if (host != null) {
+            if (url.host.contains(host, ignoreCase))
+                return true
+        }
+        if (path != null) {
+            if (url.path.contains(path, ignoreCase))
+                return true
         }
         
-        if (event.author.isBot || event.author.isSystem)
-            ConsumerService.interrupt()
+        if (protocol != null) {
+            if (url.protocol.contains(protocol, ignoreCase))
+                return true
+        }
+        
+        return false
     }
 }

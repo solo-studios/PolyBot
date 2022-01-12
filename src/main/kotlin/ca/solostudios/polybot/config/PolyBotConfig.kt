@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotConfig.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:30 p.m.
+ * Last modified on 30-12-2021 05:44 p.m.
  *
  * MIT License
  *
@@ -47,4 +47,6 @@ data class PolyBotConfig(
         val activities: List<PolyBotActivity>,
         @JsonProperty("automod")
         val polyAutomodConfig: PolyAutomodConfig,
+        @JsonProperty("embedSuppression")
+        val embedSuppression: List<EmbedSuppression>
                         )

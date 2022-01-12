@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:15 p.m.
+ * Last modified on 31-12-2021 11:45 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,9 @@
 package ca.solostudios.polybot
 
 import ca.solostudios.polybot.cache.CacheManager
-import ca.solostudios.polybot.cloud.CloudInjectorService
+import ca.solostudios.polybot.cli.PolybotRunConfig
+import ca.solostudios.polybot.cli.RunCommand
+import ca.solostudios.polybot.cloud.CloudInjectionService
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.PolyMeta
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
@@ -38,20 +40,9 @@ import ca.solostudios.polybot.cloud.commands.annotations.JDABotPermission
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
-import ca.solostudios.polybot.cloud.commands.permission.BotPermissionPostprocessor
-import ca.solostudios.polybot.cloud.commands.permission.GuildCommandPostProcessor
-import ca.solostudios.polybot.cloud.commands.permission.UserPermissionPostprocessor
 import ca.solostudios.polybot.cloud.event.EventMapper
 import ca.solostudios.polybot.cloud.event.MessageEvent
-import ca.solostudios.polybot.cloud.parser.MemberParser
-import ca.solostudios.polybot.cloud.parser.MessageChannelParser
-import ca.solostudios.polybot.cloud.parser.RoleParser
-import ca.solostudios.polybot.cloud.parser.TagParser
-import ca.solostudios.polybot.cloud.parser.TextChannelParser
-import ca.solostudios.polybot.cloud.parser.UserParser
-import ca.solostudios.polybot.cloud.preprocessor.AntiBotPreProcessor
-import ca.solostudios.polybot.cloud.preprocessor.AntiWebhookPreProcessor
-import ca.solostudios.polybot.cloud.preprocessor.JDAMessagePreprocessor
+import ca.solostudios.polybot.cloud.manager.PolyCloudCommandManager
 import ca.solostudios.polybot.config.PolyBotConfig
 import ca.solostudios.polybot.config.PolyConfig
 import ca.solostudios.polybot.config.polybotConfigModule
@@ -64,28 +55,26 @@ import ca.solostudios.polybot.entities.PolyTextChannel
 import ca.solostudios.polybot.entities.PolyUser
 import ca.solostudios.polybot.entities.PolyVoiceChannel
 import ca.solostudios.polybot.event.EventManager
+import ca.solostudios.polybot.listener.AntiEmbedListener
 import ca.solostudios.polybot.listener.AutoQuoteListener
 import ca.solostudios.polybot.listener.LoggingListener
 import ca.solostudios.polybot.listener.PolyBotListener
 import ca.solostudios.polybot.search.SearchManager
 import ca.solostudios.polybot.util.AnnotationParser
-import ca.solostudios.polybot.util.BackedReference
 import ca.solostudios.polybot.util.ScheduledThreadPool
 import ca.solostudios.polybot.util.currentThread
+import ca.solostudios.polybot.util.datastructures.BackedReference
 import ca.solostudios.polybot.util.fixedRate
-import ca.solostudios.polybot.util.onlineStatus
+import ca.solostudios.polybot.util.jda.InlineJDABuilder
+import ca.solostudios.polybot.util.jda.onlineStatus
+import ca.solostudios.polybot.util.jda.poly
 import ca.solostudios.polybot.util.parseCommands
-import ca.solostudios.polybot.util.poly
 import ca.solostudios.polybot.util.processors
-import ca.solostudios.polybot.util.registerCommandPostProcessors
-import ca.solostudios.polybot.util.registerCommandPreProcessors
-import ca.solostudios.polybot.util.registerParserSupplier
 import ca.solostudios.polybot.util.runtime
 import ca.solostudios.polybot.util.subTypesOf
 import cloud.commandframework.annotations.CommandDescription
-import cloud.commandframework.kotlin.coroutines.installCoroutineSupport
+import cloud.commandframework.kotlin.coroutines.annotations.installCoroutineSupport
 import cloud.commandframework.meta.SimpleCommandMeta
-import dev.minn.jda.ktx.InlineJDABuilder
 import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
 import java.util.EnumSet
 import java.util.concurrent.ScheduledExecutorService
@@ -119,12 +108,10 @@ import kotlin.random.asKotlinRandom
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
-import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator as CommandCoordinator
-import cloud.commandframework.jda.JDA4CommandManager as CommandManager
 
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
+class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: InlineJDABuilder) {
     private val logger by getLogger()
     
     var shutdown = false
@@ -169,6 +156,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
         eventListeners += LoggingListener(kodein)
         eventListeners += PolyBotListener(kodein)
         eventListeners += AutoQuoteListener(kodein)
+        eventListeners += AntiEmbedListener(kodein)
     }.build()
     
     val cacheManager: CacheManager = CacheManager(kodein)
@@ -187,37 +175,9 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
     
     val eventMapper: EventMapper = EventMapper(kodein)
     
-    val commandManager: CommandManager<MessageEvent> = CommandManager(jda,
-                                                                      this::botPrefix,
-                                                                      permissionManager::permissionCheck,
-                                                                      CommandCoordinator.newBuilder<MessageEvent>()
-                                                                              .withAsynchronousParsing()
-                                                                              .build(),
-                                                                      eventMapper::senderToMessageEvent,
-                                                                      eventMapper::messageEventToSender).apply {
-        parserRegistry.registerParserSupplier(MemberParser(kodein))
-        parserRegistry.registerParserSupplier(UserParser(kodein))
-        parserRegistry.registerParserSupplier(MessageChannelParser(kodein))
-        parserRegistry.registerParserSupplier(TextChannelParser(kodein))
-        parserRegistry.registerParserSupplier(RoleParser(kodein))
-        parserRegistry.registerParserSupplier(TagParser(kodein))
-        
-        registerCommandPreProcessors(
-                JDAMessagePreprocessor(kodein),
-                AntiWebhookPreProcessor(kodein),
-                AntiBotPreProcessor(kodein),
-                                    )
-        
-        registerCommandPostProcessors(
-                GuildCommandPostProcessor(kodein),
-                UserPermissionPostprocessor(kodein),
-                BotPermissionPostprocessor(kodein),
-                                     )
-    }
+    val commandManager = PolyCloudCommandManager(this)
     
-    val exceptionHandler: PolyExceptionHandler = PolyExceptionHandler(kodein)
-    
-    private val polybotConfig: PolyBotConfig = config.polybotConfig
+    val exceptionHandler = PolyExceptionHandler(this@PolyBot, commandManager)
     
     init {
         scheduledThreadPool.fixedRate(100.milliseconds, 5.minutes) {
@@ -227,12 +187,12 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
                 activity = botActivity.getActivity()
             }
         }
-    
+        
         val annotationParser = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
-            parameterInjectorRegistry.registerInjectionService(CloudInjectorService(kodein))
-        
+            parameterInjectorRegistry.registerInjectionService(CloudInjectorService(this@PolyBot))
+            
             installCoroutineSupport(this@PolyBot.scope)
-        
+            
             registerBuilderModifier(JDABotPermission::class.java, PolyMeta::botPermissionModifier)
             registerBuilderModifier(JDAUserPermission::class.java, PolyMeta::userPermissionModifier)
             registerBuilderModifier(JDAGuildCommand::class.java, PolyMeta::guildCommandModifier)
@@ -241,18 +201,18 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
             registerBuilderModifier(CommandLongDescription::class.java, PolyMeta::longDescriptionCommandModifier)
             registerBuilderModifier(CommandName::class.java, PolyMeta::nameCommandModifier)
         }
-    
+        
         val reflections = Reflections("ca.solostudios.polybot.commands")
-    
-    
+        
+        
         val commands = reflections.subTypesOf<PolyCommands>().map { klass ->
             val constructor = klass.constructors.single()
-        
+            
             return@map constructor.call(kodein)
         }
-    
+        
         annotationParser.parseCommands(commands)
-    
+        
         MessageAction.setDefaultMentionRepliedUser(true)
         MessageAction.setDefaultMentions(EnumSet.complementOf(EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE)))
     }
@@ -425,7 +385,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
         }
         
         if (!isShutdownHook) {
-            removeShutdownThread()
+            RunCommand.removeShutdownThread()
             exitProcess(exitStatus)
         }
     }

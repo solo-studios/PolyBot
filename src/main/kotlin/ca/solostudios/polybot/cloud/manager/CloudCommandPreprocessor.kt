@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file JDAMessagePreprocessor.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 03:51 p.m.
+ * The file CloudCommandPreprocessor.kt is part of PolyhedralBot
+ * Last modified on 22-12-2021 11:41 p.m.
  *
  * MIT License
  *
@@ -26,41 +26,36 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.cloud.preprocessor
+package ca.solostudios.polybot.cloud.manager
 
+import ca.solostudios.polybot.cloud.event.MessageEvent
 import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
 import cloud.commandframework.execution.preprocessor.CommandPreprocessor
-import cloud.commandframework.jda.JDA4CommandManager
+import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.entities.ChannelType
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
 
-/**
- * The JDA Command Preprocessor for storing JDA-specific contexts in the command contexts
- */
-class JDAMessagePreprocessor<C>(override val di: DI) : CommandPreprocessor<C>,
-                                                       DIAware {
-    private val manager: JDA4CommandManager<Any> by di.instance()
-    
-    /**
-     * Stores the [net.dv8tion.jda.api.JDA] in the context with the key "JDA",
-     * the [net.dv8tion.jda.api.events.message.MessageReceivedEvent] with the key "MessageReceivedEvent", and
-     * the [net.dv8tion.jda.api.entities.MessageChannel] with the key "MessageChannel".
-     *
-     * If the message was sent in a guild, the [net.dv8tion.jda.api.entities.Guild] will be stored in the context with the
-     * key "Guild". If the message was also sent in a text channel, the [net.dv8tion.jda.api.entities.TextChannel] will be
-     * stored in the context with the key "TextChannel".
-     *
-     * If the message was sent in a DM instead of in a guild, the [net.dv8tion.jda.api.entities.PrivateChannel] will be
-     * stored in the context with the key "PrivateChannel".
-     */
-    override fun accept(context: CommandPreprocessingContext<C>) {
-        val event: MessageReceivedEvent = try {
-            manager.backwardsCommandSenderMapper.apply(context.commandContext.sender!!)
-        } catch (e: IllegalStateException) {
-            return
-        }
+class CloudCommandPreprocessor(override val di: DI) : CommandPreprocessor<MessageEvent>, DIAware {
+    override fun accept(context: CommandPreprocessingContext<MessageEvent>) {
+        
+        val event: MessageReceivedEvent = context.commandContext.sender.event
+        
+        context.commandContext.store<JDA>("JDA", event.jda)
+        context.commandContext.store("MessageReceivedEvent", event)
+        context.commandContext.store("MessageChannel", event.channel)
         context.commandContext.store("Message", event.message)
+        
+        if (event.isFromGuild) {
+            val guild = event.guild
+            context.commandContext.store("Guild", guild)
+            if (event.isFromType(ChannelType.TEXT)) {
+                context.commandContext.store("TextChannel", event.textChannel)
+            }
+        } else if (event.isFromType(ChannelType.PRIVATE)) {
+            context.commandContext.store("PrivateChannel", event.privateChannel)
+        }
     }
 }

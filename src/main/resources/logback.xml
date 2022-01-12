@@ -3,7 +3,7 @@
   ~ Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
   ~
   ~ The file logback.xml is part of PolyhedralBot
-  ~ Last modified on 09-10-2021 10:56 p.m.
+  ~ Last modified on 30-12-2021 06:36 p.m.
   ~
   ~ MIT License
   ~
@@ -33,9 +33,6 @@
     </contextListener>
     <timestamp key="startTimestamp" datePattern="yyyyMMddHHmmssSSS"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
-        </filter>
         <withJansi>true</withJansi>
         <encoder>
             <pattern>%d %-24([%.-22(%thread)]) %highlight(%-5level) %-48logger{48} - %highlight(%msg){}%n{}%ex{full,DISPLAY_EX_EVAL}

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MemberParser.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 03:34 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package ca.solostudios.polybot.cloud.parser
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.PolyMember
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import cloud.commandframework.arguments.parser.ArgumentParseResult
 import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.context.CommandContext
@@ -46,12 +46,12 @@ import org.kodein.di.instance
 class MemberParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyMember>,
                                                    DIAware {
     private val bot: PolyBot by instance()
-    
-    @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyMember> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
+    
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
+    
         val event = commandContext.get<MessageReceivedEvent>("MessageReceivedEvent")
         val message = event.message
         
@@ -82,7 +82,7 @@ class MemberParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyMember>
         } else {
             input
         }
-        
+    
         try {
             val id = stringId.toULong().toLong()
             
@@ -91,12 +91,12 @@ class MemberParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyMember>
                 inputQueue.remove()
                 return ArgumentParseResult.success(member.poly(bot))
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
         } catch (e: ErrorResponseException) {
             when (e.errorResponse) {
                 ErrorResponse.UNKNOWN_MEMBER -> return ArgumentParseResult.failure(MemberNotFoundParseException(input))
                 ErrorResponse.UNKNOWN_USER   -> return ArgumentParseResult.failure(MemberNotFoundParseException(input))
-                
+            
                 else                         -> {
                 }
             }
@@ -113,15 +113,27 @@ class MemberParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyMember>
     
     override fun isContextFree(): Boolean = true
     
-    open class MemberParseException(val input: String) : IllegalArgumentException(input)
+    open class MemberParseException(val input: String) : IllegalArgumentException(input) {
+        companion object {
+            private const val serialVersionUID: Long = -3436169107052162523L
+        }
+    }
     
     class TooManyMembersFoundParseException(input: String) : MemberParseException(input) {
         override val message: String
             get() = "Too many members found for '$input'."
+        
+        companion object {
+            private const val serialVersionUID: Long = -4088134494098649568L
+        }
     }
     
     class MemberNotFoundParseException(input: String) : MemberParseException(input) {
         override val message: String
             get() = "Member not found for '$input'."
+    
+        companion object {
+            private const val serialVersionUID: Long = -3156310678963192075L
+        }
     }
 }

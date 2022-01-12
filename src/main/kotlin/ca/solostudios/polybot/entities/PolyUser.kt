@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyUser.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:30 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -26,14 +26,15 @@
  * SOFTWARE.
  */
 
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package ca.solostudios.polybot.entities
 
 import ca.solostudios.polybot.PolyBot
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import dev.minn.jda.ktx.await
 import net.dv8tion.jda.api.entities.User
 
-@Suppress("unused")
 open class PolyUser(open val bot: PolyBot, val jdaUser: User) {
     val id: Long
         get() = jdaUser.idLong

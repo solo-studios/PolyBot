@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TextChannelParser.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 03:31 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package ca.solostudios.polybot.cloud.parser
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.PolyTextChannel
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import cloud.commandframework.arguments.parser.ArgumentParseResult
 import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.context.CommandContext
@@ -38,6 +38,7 @@ import cloud.commandframework.exceptions.parsing.NoInputProvidedException
 import java.util.Queue
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
+import net.dv8tion.jda.api.requests.ErrorResponse
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
@@ -65,23 +66,23 @@ class TextChannelParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyTe
         } else {
             input
         }
-        
+    
         try {
             val id = stringId.toULong().toLong()
-            
+        
             val channel = event.jda.getTextChannelById(id)
             if (channel != null) {
                 inputQueue.remove()
                 return ArgumentParseResult.success(channel.poly(bot))
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
         } catch (e: ErrorResponseException) {
-            // when (e.errorResponse) {
-            //     ErrorResponse.UNKNOWN_CHANNEL -> return ArgumentParseResult.failure(ChannelNotFoundParseException(input))
-            //
-            //     else                          -> {
-            //     }
-            // }
+            when (e.errorResponse) {
+                ErrorResponse.UNKNOWN_CHANNEL -> return ArgumentParseResult.failure(ChannelNotFoundParseException(input))
+            
+                else                          -> {
+                }
+            }
         }
         
         val channels = event.guild.getTextChannelsByName(input, true).map { it }
@@ -97,15 +98,27 @@ class TextChannelParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyTe
         return true
     }
     
-    open class ChannelParseException(val input: String) : IllegalArgumentException()
+    open class ChannelParseException(val input: String) : IllegalArgumentException(input) {
+        companion object {
+            private const val serialVersionUID: Long = 1178892630670472442L
+        }
+    }
     
     class TooManyChannelsFoundParseException(input: String) : ChannelParseException(input) {
         override val message: String
             get() = "Too many channels found for '$input'."
+        
+        companion object {
+            private const val serialVersionUID: Long = 7567085389950332447L
+        }
     }
     
     class ChannelNotFoundParseException(input: String) : ChannelParseException(input) {
         override val message: String
             get() = "Channel not found for '$input'."
+    
+        companion object {
+            private const val serialVersionUID: Long = -8731190718258272375L
+        }
     }
 }

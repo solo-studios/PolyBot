@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TagCommands.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:15 p.m.
+ * Last modified on 31-12-2021 01:31 p.m.
  *
  * MIT License
  *
@@ -33,14 +33,16 @@ import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
+import ca.solostudios.polybot.cloud.commands.annotations.CurrentGuild
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyGuild
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.data.Tag
 import ca.solostudios.polybot.util.chunkedBy
-import ca.solostudios.polybot.util.toDiscordTimestamp
+import ca.solostudios.polybot.util.jda.toDiscordTimestamp
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
@@ -65,10 +67,13 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandName("View Tag")
     @CommandMethod("tag|t view|v <tag>")
     @CommandDescription("Sends the specified tag in the current channel.")
-    @CommandLongDescription("Displays a tag in the current channel.\nThis is the main functionality of tags, allowing you to specify reusable messages, to later send them in chat.")
-    suspend fun tag(message: PolyMessage,
-                    @Argument(value = "tag", description = "The tag to send.")
-                    tag: PolyTag) {
+    @CommandLongDescription("Displays a tag in the current channel.\nThis is the main functionality of tags, allowing you to specify reusable messages, to later send them in the chat.")
+    suspend fun tag(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "tag", description = "The tag to send.")
+            tag: PolyTag,
+                   ) {
         tag.usages++
         
         message.channel.sendMessage(tag.content, listOf(MentionType.EVERYONE, MentionType.HERE, MentionType.ROLE, MentionType.USER))
@@ -80,13 +85,17 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("tag|t create|c <name> <content>")
     @CommandDescription("Creates a new tag for this server.")
     @CommandLongDescription("Creates a new tag to be used in this server. Tags can later be displayed with `\$tag view [tag name]`, which will send the content you specified.")
-    suspend fun createTag(message: PolyMessage,
-                          guild: PolyGuild,
-                          @Argument(value = "name", description = "The name of the new tag.")
-                          name: String,
-                          @Greedy
-                          @Argument(value = "content", description = "The contents of the tag.")
-                          content: String) {
+    suspend fun createTag(
+            @SourceMessage
+            message: PolyMessage,
+            @CurrentGuild
+            guild: PolyGuild,
+            @Argument(value = "name", description = "The name of the new tag.")
+            name: String,
+            @Greedy
+            @Argument(value = "content", description = "The contents of the tag.")
+            content: String,
+                         ) {
         if (!isValidTagNameAlias(name)) {
             message.reply(invalidTag(name))
             return
@@ -116,12 +125,16 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("tag|t rename|ren <tag> <new-name>")
     @CommandDescription("Changes the name of an existing tag.")
     @CommandLongDescription("Replaces the name of an already existing tag with a new one.")
-    suspend fun renameTag(message: PolyMessage,
-                          guild: PolyGuild,
-                          @Argument(value = "tag", description = "The current name of the tag.")
-                          tag: PolyTag,
-                          @Argument(value = "new-name", description = "The new name of the tag.")
-                          newName: String) {
+    suspend fun renameTag(
+            @SourceMessage
+            message: PolyMessage,
+            @CurrentGuild
+            guild: PolyGuild,
+            @Argument(value = "tag", description = "The current name of the tag.")
+            tag: PolyTag,
+            @Argument(value = "new-name", description = "The new name of the tag.")
+            newName: String,
+                         ) {
         if (!isValidTagNameAlias(newName)) {
             message.reply(invalidTag(newName))
             return
@@ -150,12 +163,15 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("tag|t edit|ed|e <tag> <content>")
     @CommandDescription("Edits the contents of an existing tag.")
     @CommandLongDescription("Alters the contents of an existing tag, replacing it. Tags can later be displayed with `\$tag view [tag name]`, which will send the content you specified.")
-    suspend fun editTag(message: PolyMessage,
-                        @Argument(value = "tag", description = "The tag to edit.")
-                        tag: PolyTag,
-                        @Greedy
-                        @Argument(value = "content", description = "The new content of the tag.")
-                        content: String) {
+    suspend fun editTag(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "tag", description = "The tag to edit.")
+            tag: PolyTag,
+            @Greedy
+            @Argument(value = "content", description = "The new content of the tag.")
+            content: String,
+                       ) {
         tag.content = content
         
         message.reply("Updated the content of tag '${tag.name}' with UUID `${tag.uuid}`")
@@ -167,19 +183,23 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("tag|t alias|a add|a <tag> <alias>")
     @CommandDescription("Adds an alias to a tag.")
     @CommandLongDescription("Adds a new alias to the specified tag. Tags can be referenced either with their name, or with an alias.")
-    suspend fun addTagAlias(message: PolyMessage,
-                            guild: PolyGuild,
-                            @Argument(value = "tag", description = "The tag to add an alias to.")
-                            tag: PolyTag,
-                            @Argument(value = "alias", description = "The alias to add to the tag.")
-                            alias: String) {
+    suspend fun addTagAlias(
+            @SourceMessage
+            message: PolyMessage,
+            @CurrentGuild
+            guild: PolyGuild,
+            @Argument(value = "tag", description = "The tag to add an alias to.")
+            tag: PolyTag,
+            @Argument(value = "alias", description = "The alias to add to the tag.")
+            alias: String,
+                           ) {
         if (!isValidTagNameAlias(alias)) {
             message.reply(invalidTag(alias))
             return
         }
         
         if (tag.aliases.size > 8) {
-            message.reply("Tags cannot have more than 8 aliases. What are you doing with more than 8 aliases, anyways?")
+            message.reply("Tags cannot have more than 8 aliases. What are you doing with more than 8 aliases, anyway?")
             return
         }
         
@@ -205,11 +225,14 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("tag|t alias|a delete|d|remove|rm|r <tag> <alias>")
     @CommandDescription("Removes an alias from a tag.")
     @CommandLongDescription("Removes an alias from the specified tag. Tags can be referenced either with their name, or with an alias.")
-    suspend fun deleteTagAlias(message: PolyMessage,
-                               @Argument(value = "tag", description = "The tag to remove an alias from.")
-                               tag: PolyTag,
-                               @Argument(value = "alias", description = "The alias to remove from the tag.")
-                               alias: String) {
+    suspend fun deleteTagAlias(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "tag", description = "The tag to remove an alias from.")
+            tag: PolyTag,
+            @Argument(value = "alias", description = "The alias to remove from the tag.")
+            alias: String,
+                              ) {
         if (tag.aliases.remove(alias))
             message.reply("Deleted alias '${alias}' from tag '${tag.name}' with UUID `${tag.uuid}`.")
         else
@@ -223,10 +246,14 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("tag|t delete|del|d|remove|rm <tag>")
     @CommandDescription("Deletes a tag from this guild.")
     @CommandLongDescription("Permanently deletes a tag. This will remove the tag from the guild.\n\n**This operation is non-reversible!! Be careful!**")
-    suspend fun deleteTag(message: PolyMessage,
-                          guild: PolyGuild,
-                          @Argument(value = "tag", description = "The tag to permanently delete from this guild.")
-                          tag: PolyTag) {
+    suspend fun deleteTag(
+            @SourceMessage
+            message: PolyMessage,
+            @CurrentGuild
+            guild: PolyGuild,
+            @Argument(value = "tag", description = "The tag to permanently delete from this guild.")
+            tag: PolyTag,
+                         ) {
         if (guild.tags.remove(tag))
             message.reply("Deleted tag '${tag.name}'.")
         else
@@ -238,9 +265,12 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("tag|t info|i <tag>")
     @CommandDescription("Queries the info of the specified tag.")
     @CommandLongDescription("Queries the info of the specified tag.\nThis will return a list of aliases the tag has, when the tag was created, how many times the tag has been used, and the UUID of the tag.")
-    suspend fun tagInfo(message: PolyMessage,
-                        @Argument(value = "tag", description = "The tag to query the info for.")
-                        tag: PolyTag) {
+    suspend fun tagInfo(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "tag", description = "The tag to query the info for.")
+            tag: PolyTag,
+                       ) {
         val tagEmbed = Embed {
             title = "Info for Tag ${tag.name}."
             description = tag.content
@@ -289,8 +319,12 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("tag|t list|l")
     @CommandDescription("Lists all the tags existing in this guild.")
     @CommandLongDescription("Prints out a list of all the tags that exist in this guild. Useful if you forget the name of a tag.")
-    suspend fun listTags(message: PolyMessage,
-                         guild: PolyGuild) {
+    suspend fun listTags(
+            @SourceMessage
+            message: PolyMessage,
+            @CurrentGuild
+            guild: PolyGuild,
+                        ) {
         val chunkedTags = guild.tags.chunkedBy(1800) { this.name.length + 4 /* 2 to include ", ". */ }
         
         val splitTagNameList = chunkedTags.map { tagList ->
@@ -322,10 +356,13 @@ class TagCommands(di: DI) : PolyCommands(di) {
     @CommandName("Raw Tag")
     @CommandMethod("tag|t raw|r <tag>")
     @CommandDescription("Returns the raw value of this tag.")
-    @CommandLongDescription("Returns the raw (unformatted) contents of a tag.\nThis will give you the tag *without any* markdown formatting.")
-    suspend fun rawTag(message: PolyMessage,
-                       @Argument(value = "tag", description = "The tag to get the raw value of.")
-                       tag: PolyTag) {
+    @CommandLongDescription("Returns the raw (unformatted) contents of a tag.\nThis will give you the tag *without any* Markdown formatting.")
+    suspend fun rawTag(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "tag", description = "The tag to get the raw value of.")
+            tag: PolyTag,
+                      ) {
         val escapedTag = MarkdownSanitizer.sanitize(tag.content, MarkdownSanitizer.SanitizationStrategy.ESCAPE)
         
         if (escapedTag.length <= 2000)

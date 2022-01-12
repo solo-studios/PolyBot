@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PaginationMenu.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 12:29 p.m.
+ * Last modified on 31-12-2021 01:26 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package ca.solostudios.polybot.util
+package ca.solostudios.polybot.util.jda
 
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Menu
@@ -70,9 +70,9 @@ import kotlin.math.ceil
  *
  * When displayed, a Paginator will add three reactions in the following order:
  *
- *  * **Left Arrow** - Causes the Paginator to traverse one page backwards.
+ *  * **Left Arrow** - Causes the Paginator to traverse one-page backwards.
  *  * **Stop** - Stops the Paginator.
- *  * **Right Arrow** - Causes the Paginator to traverse one page forwards.
+ *  * **Right Arrow** - Causes the Paginator to traverse one-page forwards.
  *
  *
  * Additionally, if specified in the [PaginationMenu.Builder], two "bulk skip" reactions
@@ -479,7 +479,7 @@ class PaginationMenu internal constructor(
          * stay available.
          *
          *
-         * After this has expired, the a final action in the form of a
+         * After this has expired, the final action in the form of a
          * [Runnable][java.lang.Runnable] may execute.
          *
          * The amount of time for the Menu to stay available
@@ -495,7 +495,7 @@ class PaginationMenu internal constructor(
          * stay available.
          *
          *
-         * After this has expired, the a final action in the form of a
+         * After this has expired, the final action in the form of a
          * [Runnable][java.lang.Runnable] may execute.
          *
          * The [TimeUnit][java.util.concurrent.TimeUnit] for the timeout
@@ -629,7 +629,7 @@ class PaginationMenu internal constructor(
          *
          *
          * If one or both these parameters are provided `null` this resets
-         * both of them and they will no longer be available when the Paginator is built.
+         * both of them, and they will no longer be available when the Paginator is built.
          *
          * @param  left
          * The left text input, causes the Paginator to traverse one page left

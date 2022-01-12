@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommands.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:15 p.m.
+ * Last modified on 31-12-2021 01:26 p.m.
  *
  * MIT License
  *
@@ -35,13 +35,15 @@ import ca.solostudios.polybot.cloud.commands.IndexHelpTopic
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.SingleCommandHelpTopic
+import ca.solostudios.polybot.cloud.commands.annotations.Author
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.entities.PolyUser
-import ca.solostudios.polybot.util.PaginationMenu
+import ca.solostudios.polybot.util.jda.PaginationMenu
 import cloud.commandframework.annotations.Argument
 import cloud.commandframework.annotations.CommandDescription
 import cloud.commandframework.annotations.CommandMethod
@@ -75,11 +77,15 @@ class HelpCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("help [query]")
     @CommandDescription("Display help information about PolyBot commands.")
     @CommandLongDescription("Displays all help information about PolyBot commands.\nThis can be used to search for commands, check what permissions are required for commands, or to figure out what arguments are required for commands.")
-    suspend fun help(message: PolyMessage,
-                     member: PolyMember,
-                     @Greedy
-                     @Argument(value = "query", description = "Name of the command to search for.")
-                     query: String?) {
+    suspend fun help(
+            @SourceMessage
+            message: PolyMessage,
+            @Author
+            member: PolyMember,
+            @Greedy
+            @Argument(value = "query", description = "Name of the command to search for.")
+            query: String?,
+                    ) {
         val embed = Embed {
             title = "Help"
             description = "Searching for results..."

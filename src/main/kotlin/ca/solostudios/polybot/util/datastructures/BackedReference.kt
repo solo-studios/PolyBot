@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AntiWebhookPreProcessor.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 03:51 p.m.
+ * The file BackedReference.kt is part of PolyhedralBot
+ * Last modified on 31-12-2021 01:38 p.m.
  *
  * MIT License
  *
@@ -26,29 +26,33 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.cloud.preprocessor
+package ca.solostudios.polybot.util.datastructures
 
-import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext
-import cloud.commandframework.execution.preprocessor.CommandPreprocessor
-import cloud.commandframework.jda.JDA4CommandManager
-import cloud.commandframework.services.types.ConsumerService
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
+import java.lang.ref.WeakReference
+import kotlin.reflect.KProperty
 
-class AntiWebhookPreProcessor<C>(override val di: DI) : CommandPreprocessor<C>,
-                                                        DIAware {
-    private val manager: JDA4CommandManager<Any> by instance()
+open class BackedReference<T, V>(
+        private var backingProperty: V,
+        private val refresh: (V) -> T,
+        private val getBackingProperty: (T) -> V,
+                                ) {
+    private var reference: WeakReference<T>? = null
     
-    override fun accept(context: CommandPreprocessingContext<C>) {
-        val event: MessageReceivedEvent = try {
-            manager.backwardsCommandSenderMapper.apply(context.commandContext.sender!!)
-        } catch (e: IllegalStateException) {
-            return
-        }
+    operator fun getValue(thisRef: Any, property: KProperty<*>): T {
+        val referent = reference?.get()
         
-        if (event.isWebhookMessage)
-            ConsumerService.interrupt()
+        return if (referent != null) {
+            referent
+        } else {
+            val newReferent = refresh(backingProperty)
+            reference = WeakReference(newReferent)
+            
+            newReferent
+        }
+    }
+    
+    operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        backingProperty = getBackingProperty(value)
+        reference = WeakReference(value)
     }
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMember.kt is part of PolyhedralBot
- * Last modified on 20-10-2021 11:59 a.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -26,10 +26,12 @@
  * SOFTWARE.
  */
 
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package ca.solostudios.polybot.entities
 
 import ca.solostudios.polybot.PolyBot
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import dev.minn.jda.ktx.await
 import java.awt.Color
 import java.time.LocalDateTime
@@ -38,7 +40,6 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Role
 
-@Suppress("unused")
 class PolyMember(override val bot: PolyBot, val jdaMember: Member) : PolyUser(bot, jdaMember.user) {
     val effectiveName: String
         get() = jdaMember.effectiveName

@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 03:14 p.m.
+ * Last modified on 01-01-2022 12:24 a.m.
  *
  * MIT License
  *
@@ -32,10 +32,12 @@ import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.Version
 import ca.solostudios.polybot.cloud.commands.PolyCommandContainer
 import ca.solostudios.polybot.cloud.commands.PolyCommands
+import ca.solostudios.polybot.cloud.commands.annotations.Author
 import ca.solostudios.polybot.cloud.commands.annotations.CommandLongDescription
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMember
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.util.commandCount
@@ -125,7 +127,7 @@ class UtilCommands(di: DI) : PolyCommands(di) {
     @CommandName("Ping")
     @CommandMethod("ping|pong")
     @CommandDescription("Checks the ping of the bot.")
-    suspend fun ping(message: PolyMessage) {
+    suspend fun ping(@SourceMessage message: PolyMessage) {
         message.textChannel.sendTyping()
         val restPing = bot.jda.restPing.await()
     
@@ -139,7 +141,7 @@ class UtilCommands(di: DI) : PolyCommands(di) {
     @CommandMethod("info|polybot|bot|botinfo")
     @CommandDescription("Returns information about the bot.")
     @CommandLongDescription("Returns any information regarding the bot, as well as the source code for the bot.")
-    suspend fun info(message: PolyMessage) {
+    suspend fun info(@SourceMessage message: PolyMessage) {
         val embed = Embed {
             author {
                 name = "Polybot"
@@ -164,7 +166,10 @@ class UtilCommands(di: DI) : PolyCommands(di) {
                 value = Version.version
             }
             field("Uptime", runtimeMXBean.uptime.milliseconds.shortFormat())
-            field("Members") {
+            if (bot.runConfig.crashes != 0)
+                field("Recent Crashes") {
+                    value = "${bot.runConfig.crashes} crashes within 30 seconds at the time of launch"
+                }field("Members") {
                 value = "%,d".format(bot.totalMembers)
             }
         
@@ -182,7 +187,8 @@ class UtilCommands(di: DI) : PolyCommands(di) {
             field("JVM Version") {
                 value = System.getProperty("java.runtime.name") + "\n" + System.getProperty("java.runtime.version")
             }
-        
+        if (bot.runConfig.crashes != 0)
+                field() // for alignment
             field("Commands") {
                 value = commandManager.commandCount.toString()
             }
@@ -195,11 +201,10 @@ class UtilCommands(di: DI) : PolyCommands(di) {
     
     @JDAGuildCommand
     @CommandName("Server Info")
-    @CommandMethod("serverinfo|server|polydev|polyhedral|p")
+    @CommandMethod("serverinfo|server|polydev|polyhedral|p|")
     @CommandDescription("Returns information about the Polyhedral Development discord server.")
     @CommandLongDescription("Returns information about the Polyhedral Development discord server, any projects we're working on, as well as where to get support. ")
-    suspend fun serverInfo(message: PolyMessage,
-                           member: PolyMember) {
+    suspend fun serverInfo(@SourceMessage message: PolyMessage, @Author member: PolyMember) {
         val embed = Embed {
             title = "$polydevEmoji Polyhedral Development Discord Server"
             color = 0x8fd032

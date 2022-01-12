@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UserParser.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 03:34 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package ca.solostudios.polybot.cloud.parser
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.PolyUser
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import cloud.commandframework.arguments.parser.ArgumentParseResult
 import cloud.commandframework.arguments.parser.ArgumentParser
 import cloud.commandframework.context.CommandContext
@@ -47,11 +47,12 @@ class UserParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyUser>,
                                                  DIAware {
     private val bot: PolyBot by instance()
     
-    @Suppress("DuplicatedCode")
     override fun parse(commandContext: CommandContext<C>, inputQueue: Queue<String>): ArgumentParseResult<PolyUser> {
         val input = inputQueue.peek() ?: return ArgumentParseResult.failure(NoInputProvidedException(this::class.java, commandContext))
+    
         if (!commandContext.contains("MessageReceivedEvent"))
             return ArgumentParseResult.failure(IllegalStateException("MessageReceivedEvent was not in the command context."))
+    
         val event = commandContext.get<MessageReceivedEvent>("MessageReceivedEvent")
         val message = event.message
         
@@ -77,7 +78,7 @@ class UserParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyUser>,
         } else {
             input
         }
-        
+    
         try {
             val id = stringId.toULong().toLong()
             
@@ -86,12 +87,12 @@ class UserParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyUser>,
                 inputQueue.remove()
                 return ArgumentParseResult.success(user.poly(bot))
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
         } catch (e: ErrorResponseException) {
             when (e.errorResponse) {
                 ErrorResponse.UNKNOWN_MEMBER -> return ArgumentParseResult.failure(UserNotFoundParseException(input))
                 ErrorResponse.UNKNOWN_USER   -> return ArgumentParseResult.failure(UserNotFoundParseException(input))
-                
+            
                 else                         -> {
                 }
             }
@@ -108,15 +109,27 @@ class UserParser<C : Any>(override val di: DI) : ArgumentParser<C, PolyUser>,
     
     override fun isContextFree(): Boolean = true
     
-    open class UserParseException(val input: String) : IllegalArgumentException()
+    open class UserParseException(val input: String) : IllegalArgumentException(input) {
+        companion object {
+            private const val serialVersionUID: Long = 1471386230072201186L
+        }
+    }
     
     class TooManyUsersFoundParseException(input: String) : UserParseException(input) {
         override val message: String
             get() = "Too many users found for '$input'."
+        
+        companion object {
+            private const val serialVersionUID: Long = -3064499679858717708L
+        }
     }
     
     class UserNotFoundParseException(input: String) : UserParseException(input) {
         override val message: String
             get() = "User not found for '$input'."
+    
+        companion object {
+            private const val serialVersionUID: Long = 2002633611911613894L
+        }
     }
 }

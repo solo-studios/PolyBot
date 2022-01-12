@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EventMapper.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 03:51 p.m.
+ * Last modified on 22-12-2021 11:40 p.m.
  *
  * MIT License
  *
@@ -29,9 +29,7 @@
 package ca.solostudios.polybot.cloud.event
 
 import ca.solostudios.polybot.PolyBot
-import cloud.commandframework.jda.JDACommandSender
-import cloud.commandframework.jda.JDAGuildSender
-import cloud.commandframework.jda.JDAPrivateSender
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
@@ -39,14 +37,14 @@ import org.kodein.di.instance
 class EventMapper(override val di: DI) : DIAware {
     private val bot: PolyBot by instance()
     
-    fun senderToMessageEvent(sender: JDACommandSender): MessageEvent {
-        return when (sender::class) {
-            JDAGuildSender::class   -> GuildMessageEvent(bot, sender)
-            JDAPrivateSender::class -> PrivateMessageEvent(bot, sender)
-            JDACommandSender::class -> MessageEvent(bot, sender)
-            else                    -> throw UnsupportedOperationException("what.")
+    fun jdaEventToPlatformEvent(event: MessageReceivedEvent): MessageEvent {
+        return when {
+            event.isFromGuild && !event.isWebhookMessage -> GuildMessageEvent(bot, event)
+            !event.isFromGuild                           -> PrivateMessageEvent(bot, event)
+            else                                         -> MessageEvent(bot, event)
         }
     }
     
-    fun messageEventToSender(event: MessageEvent): JDACommandSender = event.sender
+    @Suppress("unused")
+    fun platformEventToJDAEvent(event: MessageEvent): MessageReceivedEvent = event.event
 }

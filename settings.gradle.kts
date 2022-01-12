@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 13-10-2021 08:21 p.m.
+ * Last modified on 31-12-2021 11:23 p.m.
  *
  * MIT License
  *
@@ -40,17 +40,5 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-    }
-}
-
-include("bootstrap")
-include("bot")
-
-// https://github.com/marketplace/actions/gradle-cache
-val isCiServer = System.getenv().containsKey("CI")
-// Cache build artifacts, so expensive operations do not need to be re-computed
-buildCache {
-    local {
-        isEnabled = !isCiServer
     }
 }

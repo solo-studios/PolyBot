@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuild.kt is part of PolyhedralBot
- * Last modified on 12-10-2021 07:34 p.m.
+ * Last modified on 31-12-2021 01:29 p.m.
  *
  * MIT License
  *
@@ -26,11 +26,13 @@
  * SOFTWARE.
  */
 
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package ca.solostudios.polybot.entities
 
 import ca.solostudios.polybot.PolyBot
 import ca.solostudios.polybot.entities.data.PolyTagData
-import ca.solostudios.polybot.util.poly
+import ca.solostudios.polybot.util.jda.poly
 import java.util.Locale
 import net.dv8tion.jda.api.entities.Guild
 

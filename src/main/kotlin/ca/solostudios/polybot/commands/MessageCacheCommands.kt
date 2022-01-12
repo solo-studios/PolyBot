@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:51 p.m.
+ * Last modified on 01-01-2022 12:24 a.m.
  *
  * MIT License
  *
@@ -34,6 +34,7 @@ import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.annotations.CommandName
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
+import ca.solostudios.polybot.cloud.commands.annotations.SourceMessage
 import ca.solostudios.polybot.entities.PolyMessage
 import ca.solostudios.polybot.util.idFooter
 import cloud.commandframework.annotations.Argument
@@ -60,19 +61,22 @@ class MessageCacheCommands(di: DI) : PolyCommands(di) {
     @JDAUserPermission(ownerOnly = true)
     @CommandMethod("cache|msg-cache <id>")
     @CommandDescription("Returns a message from the message cache/")
-    suspend fun messageFromCache(message: PolyMessage,
-                                 @Argument(value = "id", description = "The ID of the message to get from the cache.")
-                                 id: Long) {
+    suspend fun messageFromCache(
+            @SourceMessage
+            message: PolyMessage,
+            @Argument(value = "id", description = "The ID of the message to get from the cache.")
+            id: Long,
+                                ) {
         val cachedMessage = cacheManager.messageCache.getMessage(id)
         
         if (cachedMessage != null) {
-            logger.info(cachedMessage) { "here is the message {}" }
+            logger.info { "here is the message $cachedMessage" }
             
             val embed = Embed {
                 author {
                     name = "${cachedMessage.username}#${cachedMessage.discriminator}"
                     url = cachedMessage.url
-                    iconUrl = jda.retrieveUserById(cachedMessage.author)
+                    iconUrl = bot.jda.retrieveUserById(cachedMessage.author)
                             .map { it.effectiveAvatarUrl }
                             .onErrorMap { null }
                             .await() ?: ca.solostudios.polybot.Constants.defaultAvatarUrl

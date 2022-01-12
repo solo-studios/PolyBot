@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AutoQuoteListener.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 04:04 p.m.
+ * Last modified on 31-12-2021 01:32 p.m.
  *
  * MIT License
  *
@@ -28,12 +28,15 @@
 
 package ca.solostudios.polybot.listener
 
-import ca.solostudios.polybot.util.WebhookMessage
+import ca.solostudios.polybot.Constants
+import ca.solostudios.polybot.util.jda.WebhookMessage
 import club.minnced.discord.webhook.WebhookClientBuilder
 import club.minnced.discord.webhook.external.JDAWebhookClient
 import club.minnced.discord.webhook.send.AllowedMentions
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import dev.minn.jda.ktx.await
-import io.github.reactivecircus.cache4k.Cache
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.ScheduledExecutorService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -43,7 +46,6 @@ import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
 import org.slf4j.kotlin.*
-import kotlin.time.Duration.Companion.hours
 
 class AutoQuoteListener(override val di: DI) : ListenerAdapter(),
                                                DIAware {
@@ -60,9 +62,9 @@ class AutoQuoteListener(override val di: DI) : ListenerAdapter(),
      *
      * Returns a [JDAWebhookClient], or null.
      */
-    private val webhookCache: Cache<Pair<Long, String>, JDAWebhookClient> = Cache.Builder()
-            .expireAfterAccess(4.hours)
-            .maximumCacheSize(40)
+    private val webhookCache: Cache<Pair<Long, String>, JDAWebhookClient> = CacheBuilder.newBuilder()
+            .expireAfterAccess(4, TimeUnit.HOURS)
+            .maximumSize(40)
             .build()
     
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
@@ -70,13 +72,13 @@ class AutoQuoteListener(override val di: DI) : ListenerAdapter(),
             event.isWebhookMessage -> return
             event.author.isBot     -> return
         }
-    
+        
         scope.launch {
             val jda = event.jda
             val textChannel = event.channel
             val messageContentRaw = event.message.contentRaw
-            val matcher = ca.solostudios.polybot.Constants.messageLinkRegex.find(messageContentRaw)
-        
+            val matcher = Constants.messageLinkRegex.find(messageContentRaw)
+            
             try {
                 if (matcher != null) {
                     logger.info { "Found match with msg '$messageContentRaw'" }
@@ -106,24 +108,24 @@ class AutoQuoteListener(override val di: DI) : ListenerAdapter(),
                         avatarUrl = quotedMessage.author.effectiveAvatarUrl
                         if (quotedMessage.contentRaw.isNotEmpty())
                             content = quotedMessage.contentRaw
-    
+                        
                         for (embed in quotedMessage.embeds) {
                             embed {
                                 title(embed.title ?: "", embed.url)
-    
+                                
                                 timestamp = embed.timestamp
                                 if (embed.color != null)
                                     color = embed.color?.rgb
-    
+                                
                                 description = embed.description
                                 thumbnailUrl = embed.thumbnail?.url
                                 imageUrl = embed.image?.url
-    
+                                
                                 if (embed.footer != null)
                                     footer(embed.footer!!.text ?: "", embed.footer?.iconUrl)
                                 if (embed.author != null)
                                     author(embed.author!!.name ?: "", embed.author?.iconUrl, embed.author?.url)
-    
+                                
                                 for (field in embed.fields) {
                                     field(field.name ?: "", field.value ?: "", field.isInline)
                                 }

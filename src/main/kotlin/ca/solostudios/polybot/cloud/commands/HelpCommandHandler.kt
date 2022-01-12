@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file HelpCommandHandler.kt is part of PolyhedralBot
- * Last modified on 29-11-2021 03:51 p.m.
+ * Last modified on 30-12-2021 03:31 p.m.
  *
  * MIT License
  *

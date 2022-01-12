@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file BackedReference.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * The file CurrentChannel.kt is part of PolyhedralBot
+ * Last modified on 23-12-2021 03:28 p.m.
  *
  * MIT License
  *
@@ -26,33 +26,9 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.util
+package ca.solostudios.polybot.cloud.commands.annotations
 
-import java.lang.ref.WeakReference
-import kotlin.reflect.KProperty
-
-open class BackedReference<T, V>(
-        private var backingProperty: V,
-        private val refresh: (V) -> T,
-        private val getBackingProperty: (T) -> V,
-                                ) {
-    private var reference: WeakReference<T>? = null
-    
-    operator fun getValue(thisRef: Any, property: KProperty<*>): T {
-        val referent = reference?.get()
-        
-        return if (referent != null) {
-            referent
-        } else {
-            val newReferent = refresh(backingProperty)
-            reference = WeakReference(newReferent)
-            
-            newReferent
-        }
-    }
-    
-    operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-        backingProperty = getBackingProperty(value)
-        reference = WeakReference(value)
-    }
-}
+@MustBeDocumented
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class CurrentChannel

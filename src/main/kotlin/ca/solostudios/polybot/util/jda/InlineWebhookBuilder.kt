@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file webhook.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:58 p.m.
+ * The file InlineWebhookBuilder.kt is part of PolyhedralBot
+ * Last modified on 31-12-2021 01:33 p.m.
  *
  * MIT License
  *
@@ -26,35 +26,15 @@
  * SOFTWARE.
  */
 
-@file:Suppress("NOTHING_TO_INLINE", "unused", "FunctionName")
+@file:Suppress("NOTHING_TO_INLINE")
 
-package ca.solostudios.polybot.util
+package ca.solostudios.polybot.util.jda
 
 import club.minnced.discord.webhook.send.AllowedMentions
-import club.minnced.discord.webhook.send.WebhookEmbed
-import club.minnced.discord.webhook.send.WebhookEmbed.EmbedAuthor
-import club.minnced.discord.webhook.send.WebhookEmbed.EmbedFooter
-import club.minnced.discord.webhook.send.WebhookEmbed.EmbedTitle
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder
-import club.minnced.discord.webhook.send.WebhookMessage
 import club.minnced.discord.webhook.send.WebhookMessageBuilder
 import java.io.File
 import java.io.InputStream
-import java.time.OffsetDateTime
-
-inline fun WebhookMessage(builder: InlineWebhookMessage.() -> Unit = {}): WebhookMessage {
-    return WebhookMessageBuilder().run {
-        InlineWebhookMessage(this).builder()
-        build()
-    }
-}
-
-inline fun WebhookMessageBuilder(builder: InlineWebhookMessage.() -> Unit = {}): InlineWebhookMessage {
-    return WebhookMessageBuilder().run {
-        InlineWebhookMessage(this).apply(builder)
-    }
-}
-
 
 class InlineWebhookMessage(val builder: WebhookMessageBuilder) {
     fun build() = builder.build()
@@ -112,56 +92,5 @@ class InlineWebhookMessage(val builder: WebhookMessageBuilder) {
     
     inline fun file(name: String, data: InputStream) {
         builder.addFile(name, data)
-    }
-    
-}
-
-class InlineWebhookEmbed(val builder: WebhookEmbedBuilder) {
-    fun build() = builder.build()
-    
-    var timestamp: OffsetDateTime? = null
-        set(value) {
-            builder.setTimestamp(value)
-            field = value
-        }
-    
-    var color: Int? = null
-        set(value) {
-            builder.setColor(value)
-            field = value
-        }
-    
-    var description: String? = null
-        set(value) {
-            builder.setDescription(value)
-            field = value
-        }
-    
-    var thumbnailUrl: String? = null
-        set(value) {
-            builder.setThumbnailUrl(value)
-            field = value
-        }
-    
-    var imageUrl: String? = null
-        set(value) {
-            builder.setImageUrl(value)
-            field = value
-        }
-    
-    inline fun footer(text: String, icon: String?) {
-        builder.setFooter(EmbedFooter(text, icon))
-    }
-    
-    inline fun title(text: String, url: String?) {
-        builder.setTitle(EmbedTitle(text, url))
-    }
-    
-    inline fun author(name: String, iconUrl: String?, url: String?) {
-        builder.setAuthor(EmbedAuthor(name, iconUrl, url))
-    }
-    
-    inline fun field(name: String, content: String, inline: Boolean = false) {
-        builder.addField(WebhookEmbed.EmbedField(inline, name, content))
     }
 }
