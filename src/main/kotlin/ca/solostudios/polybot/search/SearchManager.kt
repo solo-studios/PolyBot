@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file SearchManager.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:30 p.m.
+ * Last modified on 12-01-2022 06:03 p.m.
  *
  * MIT License
  *
@@ -36,14 +36,16 @@ import kotlinx.coroutines.launch
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.store.NRTCachingDirectory
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 
 
 @Suppress("MemberVisibilityCanBePrivate")
-class SearchManager(di: DI) : ShutdownService() {
-    private val bot: PolyBot by di.instance()
+class SearchManager(override val di: DI) : ShutdownService(),
+                                           DIAware {
+    private val bot: PolyBot by instance()
     
     val searchIndexes: Map<String, Index<*>>
     

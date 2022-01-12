@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCloudCommandManager.kt is part of PolyhedralBot
- * Last modified on 22-12-2021 11:41 p.m.
+ * Last modified on 12-01-2022 06:12 p.m.
  *
  * MIT License
  *
@@ -28,11 +28,10 @@
 
 package ca.solostudios.polybot.cloud.manager
 
-import ca.solostudios.polybot.PolyBot
+import ca.solostudios.polybot.PermissionManager
 import ca.solostudios.polybot.cloud.commands.permission.BotPermissionPostprocessor
 import ca.solostudios.polybot.cloud.commands.permission.GuildCommandPostProcessor
 import ca.solostudios.polybot.cloud.commands.permission.UserPermissionPostprocessor
-import ca.solostudios.polybot.cloud.event.EventMapper
 import ca.solostudios.polybot.cloud.event.MessageEvent
 import ca.solostudios.polybot.cloud.parser.MemberParser
 import ca.solostudios.polybot.cloud.parser.MessageChannelParser
@@ -48,34 +47,37 @@ import cloud.commandframework.internal.CommandRegistrationHandler
 import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.meta.SimpleCommandMeta
 import net.dv8tion.jda.api.JDA
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 
 class PolyCloudCommandManager(
-        val bot: PolyBot,
+        override val di: DI
                              ) : CommandManager<MessageEvent>(
         AsynchronousCommandExecutionCoordinator.newBuilder<MessageEvent>()
                 .withAsynchronousParsing()
                 .build(),
         CommandRegistrationHandler.nullCommandRegistrationHandler(),
-                                                             ) {
-    private val jda: JDA = bot.jda
-    val eventMapper: EventMapper = bot.eventMapper
+                                                             ),
+                                 DIAware {
+    private val jda: JDA by instance()
+    private val permissionManager: PermissionManager by instance()
     val botId: Long
         get() = jda.selfUser.idLong
-    private val permissionManager = bot.permissionManager
     
     init {
-        jda.addEventListener(PolyCloudCommandListener(this))
+        jda.addEventListener(PolyCloudCommandListener(di))
         
-        registerCommandPreProcessor(CloudCommandPreprocessor())
+        registerCommandPreProcessor(CloudCommandPreprocessor(di))
         
-        parserRegistry.registerParserSupplier(MemberParser(bot))
-        parserRegistry.registerParserSupplier(UserParser(bot))
-        parserRegistry.registerParserSupplier(MessageChannelParser(bot))
-        parserRegistry.registerParserSupplier(TextChannelParser(bot))
-        parserRegistry.registerParserSupplier(RoleParser(bot))
-        parserRegistry.registerParserSupplier(TagParser(bot))
+        parserRegistry.registerParserSupplier(MemberParser(di))
+        parserRegistry.registerParserSupplier(UserParser(di))
+        parserRegistry.registerParserSupplier(MessageChannelParser(di))
+        parserRegistry.registerParserSupplier(TextChannelParser(di))
+        parserRegistry.registerParserSupplier(RoleParser(di))
+        parserRegistry.registerParserSupplier(TagParser(di))
         
-        registerCommandPostProcessors(GuildCommandPostProcessor(bot), UserPermissionPostprocessor(bot), BotPermissionPostprocessor(bot))
+        registerCommandPostProcessors(GuildCommandPostProcessor(di), UserPermissionPostprocessor(di), BotPermissionPostprocessor(di))
     }
     
     override fun hasPermission(sender: MessageEvent, permission: String): Boolean = permissionManager.permissionCheck(sender, permission)

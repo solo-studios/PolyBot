@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PartialMatchEmbedSuppression.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 05:43 p.m.
+ * The file FullMatchPolyEmbedSuppression.kt is part of PolyhedralBot
+ * Last modified on 12-01-2022 06:00 p.m.
  *
  * MIT License
  *
@@ -28,34 +28,34 @@
 
 package ca.solostudios.polybot.config.impl
 
-import ca.solostudios.polybot.config.EmbedSuppression
+import ca.solostudios.polybot.config.PolyEmbedSuppression
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URL
 
-class PartialMatchEmbedSuppression(
+class FullMatchPolyEmbedSuppression(
         @JsonProperty("ignoreCase")
         val ignoreCase: Boolean = true,
         query: String? = null,
         host: String? = null,
         path: String? = null,
         protocol: String? = null,
-                                  ) : EmbedSuppression(query, host, path, protocol) {
+                                   ) : PolyEmbedSuppression(query, host, path, protocol) {
     override fun matches(url: URL): Boolean {
         if (query != null) {
-            if (url.query.contains(query, ignoreCase))
+            if (url.query.equals(query, ignoreCase))
                 return true
         }
         if (host != null) {
-            if (url.host.contains(host, ignoreCase))
+            if (url.host.equals(host, ignoreCase))
                 return true
         }
         if (path != null) {
-            if (url.path.contains(path, ignoreCase))
+            if (url.path.equals(path, ignoreCase))
                 return true
         }
         
         if (protocol != null) {
-            if (url.protocol.contains(protocol, ignoreCase))
+            if (url.protocol.equals(protocol, ignoreCase))
                 return true
         }
         

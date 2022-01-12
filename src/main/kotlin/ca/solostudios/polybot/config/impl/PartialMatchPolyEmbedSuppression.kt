@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file EmbedSuppression.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 05:35 p.m.
+ * The file PartialMatchPolyEmbedSuppression.kt is part of PolyhedralBot
+ * Last modified on 12-01-2022 06:00 p.m.
  *
  * MIT License
  *
@@ -26,33 +26,39 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config
+package ca.solostudios.polybot.config.impl
 
-import ca.solostudios.polybot.config.impl.FullMatchEmbedSuppression
-import ca.solostudios.polybot.config.impl.PartialMatchEmbedSuppression
+import ca.solostudios.polybot.config.PolyEmbedSuppression
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.net.URL
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "type"
-             )
-@JsonSubTypes(
-        JsonSubTypes.Type(value = FullMatchEmbedSuppression::class, name = "full"),
-        JsonSubTypes.Type(value = PartialMatchEmbedSuppression::class, name = "partial"),
-             )
-abstract class EmbedSuppression(
-        @JsonProperty("query")
-        val query: String? = null,
-        @JsonProperty("host")
-        val host: String? = null,
-        @JsonProperty("path")
-        val path: String? = null,
-        @JsonProperty("protocol")
-        val protocol: String? = null,
-                               ) {
-    abstract fun matches(url: URL): Boolean
+class PartialMatchPolyEmbedSuppression(
+        @JsonProperty("ignoreCase")
+        val ignoreCase: Boolean = true,
+        query: String? = null,
+        host: String? = null,
+        path: String? = null,
+        protocol: String? = null,
+                                      ) : PolyEmbedSuppression(query, host, path, protocol) {
+    override fun matches(url: URL): Boolean {
+        if (query != null) {
+            if (url.query.contains(query, ignoreCase))
+                return true
+        }
+        if (host != null) {
+            if (url.host.contains(host, ignoreCase))
+                return true
+        }
+        if (path != null) {
+            if (url.path.contains(path, ignoreCase))
+                return true
+        }
+        
+        if (protocol != null) {
+            if (url.protocol.contains(protocol, ignoreCase))
+                return true
+        }
+        
+        return false
+    }
 }

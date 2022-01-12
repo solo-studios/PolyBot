@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 31-12-2021 11:45 p.m.
+ * Last modified on 12-01-2022 06:18 p.m.
  *
  * MIT License
  *
@@ -98,8 +98,10 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.bindInstance
 import org.kodein.di.bindProvider
+import org.kodein.di.instance
 import org.reflections.Reflections
 import org.slf4j.kotlin.*
 import kotlin.io.path.Path
@@ -111,7 +113,7 @@ import kotlin.time.Duration.Companion.minutes
 
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: InlineJDABuilder) {
+class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: InlineJDABuilder) : DIAware {
     private val logger by getLogger()
     
     var shutdown = false
@@ -129,7 +131,7 @@ class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: 
     val scope: CoroutineScope = CoroutineScope(SupervisorJob() + coroutineDispatcher)
     
     @Suppress("RemoveExplicitTypeArguments")
-    val kodein = DI {
+    override val di = DI {
         import(polybotConfigModule)
         
         bindInstance<PolyBot> { this@PolyBot }
@@ -148,36 +150,39 @@ class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: 
         bindProvider<SearchManager> { this@PolyBot.searchManager }
         bindProvider<EntityManager> { this@PolyBot.entityManager }
         bindProvider<PermissionManager> { this@PolyBot.permissionManager }
-        bindProvider<CommandManager<MessageEvent>> { this@PolyBot.commandManager }
+        bindProvider<PolyCloudCommandManager> { this@PolyBot.commandManager }
         bindProvider<PolyExceptionHandler> { this@PolyBot.exceptionHandler }
+        bindProvider<EventMapper> { this@PolyBot.eventMapper }
     }
     
     val jda: JDA = builder.apply {
-        eventListeners += LoggingListener(kodein)
-        eventListeners += PolyBotListener(kodein)
-        eventListeners += AutoQuoteListener(kodein)
-        eventListeners += AntiEmbedListener(kodein)
+        eventListeners += LoggingListener(di)
+        eventListeners += PolyBotListener(di)
+        eventListeners += AutoQuoteListener(di)
+        eventListeners += AntiEmbedListener(di)
     }.build()
     
-    val cacheManager: CacheManager = CacheManager(kodein)
+    val cacheManager: CacheManager = CacheManager(di)
     
-    val eventManager: EventManager = EventManager(kodein)
+    val eventManager: EventManager = EventManager(di)
     
-    val moderationManager: ModerationManager = ModerationManager(kodein)
+    val moderationManager: ModerationManager = ModerationManager(di)
     
-    val searchManager: SearchManager = SearchManager(kodein)
+    val searchManager: SearchManager = SearchManager(di)
     
     // val databaseManager = DatabaseManager(this@PolyBot)
     
-    val entityManager: EntityManager = EntityManager(kodein)
+    val entityManager: EntityManager = EntityManager(di)
     
-    val permissionManager: PermissionManager = PermissionManager(kodein)
+    val permissionManager: PermissionManager = PermissionManager(di)
     
-    val eventMapper: EventMapper = EventMapper(kodein)
+    val eventMapper: EventMapper = EventMapper(di)
     
-    val commandManager = PolyCloudCommandManager(this)
+    val commandManager: PolyCloudCommandManager = PolyCloudCommandManager(di)
     
-    val exceptionHandler = PolyExceptionHandler(this@PolyBot, commandManager)
+    val exceptionHandler: PolyExceptionHandler = PolyExceptionHandler(di)
+    
+    private val polybotConfig: PolyBotConfig by instance()
     
     init {
         scheduledThreadPool.fixedRate(100.milliseconds, 5.minutes) {
@@ -189,7 +194,7 @@ class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: 
         }
         
         val annotationParser = AnnotationParser(commandManager) { SimpleCommandMeta.empty() }.apply {
-            parameterInjectorRegistry.registerInjectionService(CloudInjectorService(this@PolyBot))
+            parameterInjectorRegistry.registerInjectionService(CloudInjectionService(this@PolyBot))
             
             installCoroutineSupport(this@PolyBot.scope)
             
@@ -207,8 +212,8 @@ class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: 
         
         val commands = reflections.subTypesOf<PolyCommands>().map { klass ->
             val constructor = klass.constructors.single()
-            
-            return@map constructor.call(kodein)
+    
+            return@map constructor.call(di)
         }
         
         annotationParser.parseCommands(commands)

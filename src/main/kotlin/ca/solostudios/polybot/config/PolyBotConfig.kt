@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotConfig.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 05:44 p.m.
+ * Last modified on 12-01-2022 06:00 p.m.
  *
  * MIT License
  *
@@ -48,5 +48,5 @@ data class PolyBotConfig(
         @JsonProperty("automod")
         val polyAutomodConfig: PolyAutomodConfig,
         @JsonProperty("embedSuppression")
-        val embedSuppression: List<EmbedSuppression>
+        val polyEmbedSuppression: List<PolyEmbedSuppression>
                         )

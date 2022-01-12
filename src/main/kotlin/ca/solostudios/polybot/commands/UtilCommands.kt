@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file UtilCommands.kt is part of PolyhedralBot
- * Last modified on 01-01-2022 12:24 a.m.
+ * Last modified on 12-01-2022 06:18 p.m.
  *
  * MIT License
  *
@@ -148,7 +148,7 @@ class UtilCommands(di: DI) : PolyCommands(di) {
                 iconUrl = bot.avatarUrl
             }
             title = "PolyBot Info"
-        
+    
             field("Description", inline = false) {
                 value = """
                     PolyBot is a multipurpose bot designed for the Polyhedral Development discord server.
@@ -157,11 +157,11 @@ class UtilCommands(di: DI) : PolyCommands(di) {
                     The goal of this bot was to create a FOSS discord bot for managing servers centered around Open Source projects.
                 """.trimIndent()
             }
-        
+    
             field("Author", "solonovamax#6983")
             field("Repository", "[PolyBot](https://github.com/solonovamax/PolyBot)")
             field("Library", "[JDA](https://github.com/DV8FromTheWorld/JDA)")
-        
+    
             field("Version") {
                 value = Version.version
             }
@@ -169,10 +169,12 @@ class UtilCommands(di: DI) : PolyCommands(di) {
             if (bot.runConfig.crashes != 0)
                 field("Recent Crashes") {
                     value = "${bot.runConfig.crashes} crashes within 30 seconds at the time of launch"
-                }field("Members") {
+                }
+    
+            field("Members") {
                 value = "%,d".format(bot.totalMembers)
             }
-        
+    
             field("JDA Version") {
                 value = JDAInfo.VERSION
             }
@@ -181,18 +183,18 @@ class UtilCommands(di: DI) : PolyCommands(di) {
                 val total = runtime.totalMemory
                 val max = runtime.maxMemory
                 val used = total - free
-            
+        
                 value = "%.2f MB/%.2f MB".format(used.toFloat() / (1 shl 20), max.toFloat() / (1 shl 20))
             }
             field("JVM Version") {
                 value = System.getProperty("java.runtime.name") + "\n" + System.getProperty("java.runtime.version")
             }
-        if (bot.runConfig.crashes != 0)
+            if (bot.runConfig.crashes != 0)
                 field() // for alignment
             field("Commands") {
                 value = commandManager.commandCount.toString()
             }
-        
+    
             timestamp = Instant.now()
         }
     
@@ -210,31 +212,31 @@ class UtilCommands(di: DI) : PolyCommands(di) {
             color = 0x8fd032
             description = serverDescription
             thumbnail = githubImage
-        
+    
             field {
                 name = "Who We Are"
                 value = whoWeAreDescription
                 inline = false
             }
-        
+    
             field {
                 name = "Rules"
                 value = rulesDescription
                 inline = false
             }
-        
+    
             field {
                 name = "Useful Links"
                 value = usefulLinks
                 inline = false
             }
-        
+    
             field {
                 name = "Getting Support"
                 value = supportDescription
                 inline = false
             }
-        
+    
             footer {
                 name = "Requested by ${member.effectiveName} (${member.name}#${member.discriminator})"
                 iconUrl = member.avatarUrl

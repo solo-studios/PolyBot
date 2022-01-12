@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file RunCommand.kt is part of PolyhedralBot
- * Last modified on 12-01-2022 05:19 p.m.
+ * Last modified on 12-01-2022 06:12 p.m.
  *
  * MIT License
  *
@@ -90,7 +90,7 @@ object RunCommand : CliktCommand() {
             
             val runConfig = PolybotRunConfig(crashes = crashes, bootstrap = usingBootstrap, usingBootstrap && enableBootstrapUpdate)
             val config = readConfig(Constants.configFile)
-            val jda = createJDABuilder(config.botConfig.token)
+            val jda = createJDABuilder(config.polybotConfig.token)
             
             val polybot = PolyBot(runConfig, config, jda)
             

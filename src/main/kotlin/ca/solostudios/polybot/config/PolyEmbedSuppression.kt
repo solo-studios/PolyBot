@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file FullMatchEmbedSuppression.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 05:42 p.m.
+ * The file PolyEmbedSuppression.kt is part of PolyhedralBot
+ * Last modified on 12-01-2022 06:00 p.m.
  *
  * MIT License
  *
@@ -26,39 +26,33 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.config.impl
+package ca.solostudios.polybot.config
 
-import ca.solostudios.polybot.config.EmbedSuppression
+import ca.solostudios.polybot.config.impl.FullMatchPolyEmbedSuppression
+import ca.solostudios.polybot.config.impl.PartialMatchPolyEmbedSuppression
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.net.URL
 
-class FullMatchEmbedSuppression(
-        @JsonProperty("ignoreCase")
-        val ignoreCase: Boolean = true,
-        query: String? = null,
-        host: String? = null,
-        path: String? = null,
-        protocol: String? = null,
-                               ) : EmbedSuppression(query, host, path, protocol) {
-    override fun matches(url: URL): Boolean {
-        if (query != null) {
-            if (url.query.equals(query, ignoreCase))
-                return true
-        }
-        if (host != null) {
-            if (url.host.equals(host, ignoreCase))
-                return true
-        }
-        if (path != null) {
-            if (url.path.equals(path, ignoreCase))
-                return true
-        }
-        
-        if (protocol != null) {
-            if (url.protocol.equals(protocol, ignoreCase))
-                return true
-        }
-        
-        return false
-    }
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+             )
+@JsonSubTypes(
+        JsonSubTypes.Type(value = FullMatchPolyEmbedSuppression::class, name = "full"),
+        JsonSubTypes.Type(value = PartialMatchPolyEmbedSuppression::class, name = "partial"),
+             )
+abstract class PolyEmbedSuppression(
+        @JsonProperty("query")
+        val query: String? = null,
+        @JsonProperty("host")
+        val host: String? = null,
+        @JsonProperty("path")
+        val path: String? = null,
+        @JsonProperty("protocol")
+        val protocol: String? = null,
+                                   ) {
+    abstract fun matches(url: URL): Boolean
 }

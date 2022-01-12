@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyConfig.kt is part of PolyhedralBot
- * Last modified on 17-11-2021 02:32 p.m.
+ * Last modified on 12-01-2022 06:18 p.m.
  *
  * MIT License
  *
@@ -52,14 +52,16 @@ data class PolyConfig(
 val PolyBot.polybotConfigModule: DI.Module
     get() = DI.Module(name = "") {
         bindInstance<PolyConfig> { config }
-        
+    
         bindInstance<PolyBotConfig> { config.polybotConfig }
         bindInstance<PolyAutomodConfig> { config.polybotConfig.polyAutomodConfig }
         bindInstance<PolyAutomodDomainConfig> { config.polybotConfig.polyAutomodConfig.polyAutomodDomainConfig }
         bindInstance<PolyAutomodMessages> { config.polybotConfig.polyAutomodConfig.messages }
         bindInstance<PolyBadWordsConfig> { config.polybotConfig.polyAutomodConfig.polyBadWordsConfig }
-        
+        bindInstance<List<PolyEmbedSuppression>> { config.polybotConfig.polyEmbedSuppression }
+    
         bindInstance<PolySearchConfig> { config.polySearchConfig }
-        
+    
         bindInstance<PolyDatabaseConfig> { config.polyDatabaseConfig }
+    
     }

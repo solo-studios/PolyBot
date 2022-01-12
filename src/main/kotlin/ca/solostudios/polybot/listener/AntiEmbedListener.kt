@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AntiEmbedListener.kt is part of PolyhedralBot
- * Last modified on 30-12-2021 05:51 p.m.
+ * Last modified on 12-01-2022 06:00 p.m.
  *
  * MIT License
  *
@@ -29,21 +29,27 @@
 package ca.solostudios.polybot.listener
 
 import ca.solostudios.polybot.Constants
-import ca.solostudios.polybot.PolyBot
+import ca.solostudios.polybot.config.PolyEmbedSuppression
 import dev.minn.jda.ktx.await
 import java.net.URL
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 import org.slf4j.kotlin.*
 
-class AntiEmbedListener(val bot: PolyBot) : ListenerAdapter() {
+class AntiEmbedListener(override val di: DI) : ListenerAdapter(),
+                                               DIAware {
     private val logger by getLogger()
     
-    private val suppressionConfigs = bot.config.botConfig.embedSuppression
+    private val suppressionConfigs: List<PolyEmbedSuppression> by instance()
+    private val scope: CoroutineScope by instance()
     
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
-        bot.scope.launch {
+        scope.launch {
             val message = event.message
             val messageContentRaw = message.contentRaw
             

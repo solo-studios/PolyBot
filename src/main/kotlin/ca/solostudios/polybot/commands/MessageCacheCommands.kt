@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageCacheCommands.kt is part of PolyhedralBot
- * Last modified on 01-01-2022 12:24 a.m.
+ * Last modified on 12-01-2022 06:12 p.m.
  *
  * MIT License
  *
@@ -76,7 +76,7 @@ class MessageCacheCommands(di: DI) : PolyCommands(di) {
                 author {
                     name = "${cachedMessage.username}#${cachedMessage.discriminator}"
                     url = cachedMessage.url
-                    iconUrl = bot.jda.retrieveUserById(cachedMessage.author)
+                    iconUrl = jda.retrieveUserById(cachedMessage.author)
                             .map { it.effectiveAvatarUrl }
                             .onErrorMap { null }
                             .await() ?: ca.solostudios.polybot.Constants.defaultAvatarUrl

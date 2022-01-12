@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCloudCommandListener.kt is part of PolyhedralBot
- * Last modified on 22-12-2021 11:41 p.m.
+ * Last modified on 12-01-2022 06:12 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,8 @@
 
 package ca.solostudios.polybot.cloud.manager
 
+import ca.solostudios.polybot.cloud.event.EventMapper
+import ca.solostudios.polybot.config.PolyBotConfig
 import cloud.commandframework.exceptions.ArgumentParseException
 import cloud.commandframework.exceptions.CommandExecutionException
 import cloud.commandframework.exceptions.InvalidCommandSenderException
@@ -36,18 +38,26 @@ import cloud.commandframework.exceptions.NoPermissionException
 import cloud.commandframework.exceptions.NoSuchCommandException
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 
 class PolyCloudCommandListener(
-        private val commandManager: PolyCloudCommandManager
-                              ) : ListenerAdapter() {
+        override val di: DI
+                              ) : ListenerAdapter(),
+                                  DIAware {
+    private val commandManager: PolyCloudCommandManager by instance()
+    private val polybotConfig: PolyBotConfig by instance()
+    private val eventMapper: EventMapper by instance()
     
-    private val prefixes = commandManager.bot.botConfig.prefixes
+    private val prefixes: List<String>
+        get() = polybotConfig.prefixes
     private val botId: Long
         get() = commandManager.botId
     
     override fun onMessageReceived(event: MessageReceivedEvent) {
         val message = event.message
-        val sender = commandManager.eventMapper.jdaEventToPlatformEvent(event)
+        val sender = eventMapper.jdaEventToPlatformEvent(event)
         
         if (botId == event.author.idLong) // Self
             return
@@ -80,8 +90,10 @@ class PolyCloudCommandListener(
                         
                         is NoPermissionException         -> {
                             commandManager.handleException(sender, NoPermissionException::class.java, throwable) { _, _ ->
-                                sendMessage(event, ("I'm sorry, but you do not have permission to perform this command. "
-                                        + "Please contact the server administrators if you believe that this is in error."))
+                                sendMessage(
+                                        event, ("I'm sorry, but you do not have permission to perform this command. "
+                                        + "Please contact the server administrators if you believe that this is in error.")
+                                           )
                             }
                         }
                         
