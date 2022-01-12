@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BotAdminCommands.kt is part of PolyhedralBot
- * Last modified on 31-12-2021 11:48 p.m.
+ * Last modified on 12-01-2022 05:19 p.m.
  *
  * MIT License
  *
@@ -62,7 +62,7 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
             return
         }
     
-        message.reply("Shutting down PolyBot")
+        message.reply("Shutting down PolyBot and the bootstrap process")
         logger.info { "Shutdown request was triggered by ${author.tag} (${author.id})" }
         bot.shutdown(ExitCodes.EXIT_CODE_SHUTDOWN)
     }
@@ -74,7 +74,7 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     suspend fun restart(@SourceMessage message: PolyMessage, @Author author: PolyUser) {
         if (!bot.runConfig.bootstrap) {
             message.reply("Cannot restart PolyBot because it is not running under the bootstrap process!")
-            logger.warn { "Restart request was triggered by ${author.tag} (${author.id}), but was cancelled because it is not running as bootstrap." }
+            logger.warn { "Restart request was triggered by ${author.tag} (${author.id}), but was cancelled because it is not running under the bootstrap process." }
             return
         }
     
@@ -88,9 +88,10 @@ class BotAdminCommands(bot: PolyBot) : PolyCommands(bot) {
     @JDAUserPermission(ownerOnly = true)
     @CommandDescription("Update PolyBot from within discord.\nThe bot process will exit, a new jar will be downloaded, and then the bot will start again.")
     suspend fun update(@SourceMessage message: PolyMessage, @Author author: PolyUser) {
-        if (!bot.runConfig.bootstrap) {
-            message.reply("Cannot update PolyBot because it is not running under the bootstrap process!")
-            logger.warn { "Update request was triggered by ${author.tag} (${author.id}), but was cancelled because it is not running as bootstrap." }
+        if (!bot.runConfig.bootstrap || !bot.runConfig.bootstrapRestart) {
+            val reason = if (bot.runConfig.bootstrap) "has the bootstrap restart disabled" else "is not running under the bootstrap process"
+            message.reply("Cannot update PolyBot because $reason!")
+            logger.warn { "Update request was triggered by ${author.tag} (${author.id}), but was cancelled because it $reason." }
             return
         }
     

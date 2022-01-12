@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolybotRunConfig.kt is part of PolyhedralBot
- * Last modified on 31-12-2021 11:46 p.m.
+ * Last modified on 12-01-2022 05:08 p.m.
  *
  * MIT License
  *
@@ -31,4 +31,5 @@ package ca.solostudios.polybot.cli
 data class PolybotRunConfig(
         val crashes: Int,
         val bootstrap: Boolean,
+        val bootstrapRestart: Boolean
                            ) 

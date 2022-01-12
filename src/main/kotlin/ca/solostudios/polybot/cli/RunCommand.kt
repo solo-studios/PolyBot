@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file RunCommand.kt is part of PolyhedralBot
- * Last modified on 31-12-2021 11:46 p.m.
+ * Last modified on 12-01-2022 05:19 p.m.
  *
  * MIT License
  *
@@ -70,19 +70,25 @@ object RunCommand : CliktCommand() {
     
     lateinit var shutdownThread: Thread
     
-    val crashes: Int by option("--crashes", help = "Specifies the number of crashes that have occurred.", hidden = true)
+    private val crashes: Int by option("--crashes", help = "Specifies the number of crashes that have occurred.", hidden = true)
             .int()
             .default(0)
     
-    val usingBootstrap: Boolean by option("--bootstrap", help = "Determines whether this instance is being run with the bootstrap.")
+    private val usingBootstrap: Boolean by option("--bootstrap", help = "Determines whether this instance is being run with the bootstrap.")
             .flag("--no-bootstrap", default = false)
+    
+    private val enableBootstrapUpdate: Boolean by option(
+            "--bootstrap-update",
+            help = "Configure updates via the bootstrap process. If bootstrap is disabled, this is automatically disabled.",
+                                                        )
+            .flag("--no-bootstrap-update", default = true, defaultForHelp = "enabled if bootstrap is enabled.")
     
     override fun run() {
         try {
             logger.info { "Starting polybot version ${Version.version}." }
             TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
             
-            val runConfig = PolybotRunConfig(crashes = crashes, bootstrap = usingBootstrap)
+            val runConfig = PolybotRunConfig(crashes = crashes, bootstrap = usingBootstrap, usingBootstrap && enableBootstrapUpdate)
             val config = readConfig(Constants.configFile)
             val jda = createJDABuilder(config.botConfig.token)
             
