@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 31-12-2021 01:38 p.m.
+ * Last modified on 31-12-2021 11:45 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,8 @@
 package ca.solostudios.polybot
 
 import ca.solostudios.polybot.cache.CacheManager
+import ca.solostudios.polybot.cli.PolybotRunConfig
+import ca.solostudios.polybot.cli.RunCommand
 import ca.solostudios.polybot.cloud.CloudInjectionService
 import ca.solostudios.polybot.cloud.commands.PolyCommands
 import ca.solostudios.polybot.cloud.commands.PolyMeta
@@ -102,7 +104,7 @@ import kotlin.time.Duration.Companion.minutes
 
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
+class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: InlineJDABuilder) {
     private val logger by getLogger()
     
     var shutdown = false
@@ -354,7 +356,7 @@ class PolyBot(val config: PolyConfig, builder: InlineJDABuilder) {
         }
         
         if (!isShutdownHook) {
-            removeShutdownThread()
+            RunCommand.removeShutdownThread()
             exitProcess(exitStatus)
         }
     }
