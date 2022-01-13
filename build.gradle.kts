@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 31-12-2021 11:49 p.m.
+ * Last modified on 13-01-2022 06:52 p.m.
  *
  * MIT License
  *
@@ -91,7 +91,7 @@ plugins {
 var mainClassName: String by application.mainClass
 mainClassName = "ca.solostudios.polybot.cli.Launcher"
 group = "ca.solostudios.polybot"
-val versionObj = Version("0", "3", "2")
+val versionObj = Version("0", "3", "3")
 version = versionObj
 
 repositories {
