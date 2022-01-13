@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2021 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Version.kt is part of PolyhedralBot
- * Last modified on 09-10-2021 10:17 p.m.
+ * Last modified on 13-01-2022 06:52 p.m.
  *
  * MIT License
  *
@@ -37,13 +37,15 @@ object Version : PropertiesConfig("/polybot") {
     val minor: String by properties
     val patch: String by properties
     val hash: String by properties
+    val shortHash: String
+        get() = hash.take(8)
     val build: String by properties
     val local: String by properties
     
     fun isLocal(): Boolean = local.toBoolean()
     
     val version: String = if (isLocal())
-        "%s.%s.%s+local.%.8s".format(major, minor, patch, hash)
+        "$major.$minor.$patch+local.$shortHash"
     else
-        "%s.%s.%s+%s.build-%.8s".format(major, minor, patch, hash, build)
+        "$major.$minor.$patch+$shortHash.build-$build"
 }
