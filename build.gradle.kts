@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 18-01-2022 11:13 a.m.
+ * Last modified on 18-01-2022 01:31 p.m.
  *
  * MIT License
  *
@@ -48,9 +48,9 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.noarg")
     kotlin("plugin.serialization")
-    id("org.ajoberstar.grgit") version "4.1.1"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.1"
+    id("org.ajoberstar.grgit")
+    id("com.github.johnrengelman.shadow")
+    id("org.jetbrains.gradle.plugin.idea-ext")
 }
 
 var mainClassName: String by application.mainClass
@@ -62,10 +62,10 @@ version = versionObj
 repositories {
     mavenCentral()
     
-    maven { // Incendo (Cloud) Snapshots
-        name = "incendo-snapshots"
-        url = uri("https://repo.incendo.org/content/repositories/snapshots")
-    }
+    // maven { // Incendo (Cloud) Snapshots
+    //     name = "incendo-snapshots"
+    //     url = uri("https://repo.incendo.org/content/repositories/snapshots")
+    // }
     
     maven { // JDA
         name = "dv8tion-repo"
@@ -86,170 +86,96 @@ repositories {
     }
 }
 
-configurations.all {
-    // Check for updates every build
-    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
-}
-
 dependencies {
-    
-    val kotlinVersion = findProperty("KOTLIN_VERSION") as String
-    val kotlinxSerializationVersion = findProperty("KOTLINX_SERIALIZATION_VERSION") as String
-    val kotlinxCoroutinesVersion = findProperty("KOTLINX_COROUTINES_VERSION") as String
-    val kotlinxUuidVersion = findProperty("KOTLINX_UUID_VERSION") as String
-    val cliKtVersion = findProperty("CLIKT_VERSION") as String
-    val kodeinDiVersion = findProperty("KODEIN_DI_VERSION") as String
-    val jetbrainsAnnotationVersion = findProperty("JETBRAINS_ANNOTATIONS_VERSION") as String
-    val jdaVersion = findProperty("JDA_VERSION") as String
-    val discordWebhooksVersion = findProperty("DISCORD_WEBHOOKS_VERSION") as String
-    val jdaKtxVersion = findProperty("JDA_KTX_VERSION") as String
-    val jdaUtilitiesVersion = findProperty("JDA_UTILITIES_VERSION") as String
-    val cloudVersion = findProperty("CLOUD_VERSION") as String
-    val kryoVersion = findProperty("KRYO_VERSION") as String
-    val reflectionsVersion = findProperty("REFLECTIONS_VERSION") as String
-    val slf4jVersion = findProperty("SLF4J_VERSION") as String
-    val slf4kVersion = findProperty("SLF4K_VERSION") as String
-    val logbackVersion = findProperty("LOGBACK_VERSION") as String
-    val fuelVersion = findProperty("FUEL_VERSION") as String
-    val jacksonVersion = findProperty("JACKSON_VERSION") as String
-    val jacksonHoconVersion = findProperty("JACKSON_HOCON_VERSION") as String
-    val ehcacheVersion = findProperty("EHCACHE_VERSION") as String
-    val guavaVersion = findProperty("GUAVA_VERSION") as String
-    val hikariVersion = findProperty("HIKARI_VERSION") as String
-    val mariadbVersion = findProperty("MARIADB_VERSION") as String
-    val postgresqlVersion = findProperty("POSTGRESQL_VERSION") as String
-    // val sqliteVersion = findProperty("SQLITE_VERSION") as String
-    val exposedVersion = findProperty("EXPOSED_VERSION") as String
-    val exposedMigrationsVersion = findProperty("EXPOSED_MIGRATIONS_VERSION") as String
-    val luceneVersion = findProperty("LUCENE_VERSION") as String
-    val intellijMarkdownVersion = findProperty("INTELLIJ_MARKDOWN_VERSION") as String
-    val jGitVersion = findProperty("JGIT_VERSION") as String
-    val commonsCompressVersion = findProperty("COMMONS_COMPRESS_VERSION") as String
-    val commonsIOVersion = findProperty("COMMONS_IO_VERSION") as String
-    
-    
     // Kotlin
-    implementation(kotlin("stdlib", kotlinVersion))
-    implementation(kotlin("reflect", kotlinVersion)) // Reflection stuff
-    implementation(kotlin("script-runtime", kotlinVersion)) // For executing scripts at runtime
-    implementation(kotlin("script-util", kotlinVersion))
-    implementation(kotlin("compiler-embeddable", kotlinVersion))
-    implementation(kotlin("scripting-compiler-embeddable", kotlinVersion))
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect) // Reflection stuff
+    implementation(libs.bundles.kotlin.scripting) // For executing scripts at runtime
     
     // Kotlin Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+    implementation(libs.bundles.kotlinx.serialization)
+    
     // Kotlin Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinxCoroutinesVersion")
-    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$KOTLINX_COROUTINES_VERSION")
+    implementation(libs.bundles.kotlinx.coroutines)
     
     // Kotlin UUID support
-    implementation("app.softwork:kotlinx-uuid-core:$kotlinxUuidVersion")
+    implementation(libs.kotlinx.uuid)
     
     // Kotlin CLI library
-    implementation("com.github.ajalt.clikt:clikt:$cliKtVersion")
+    implementation(libs.clikt)
     
     // Kodein Dependency Injection
-    implementation("org.kodein.di:kodein-di:$kodeinDiVersion")
+    implementation(libs.kodein)
     
     // Utility annotations
-    implementation("org.jetbrains:annotations:$jetbrainsAnnotationVersion")
+    implementation(libs.jetbrains.annotations)
     
     // JDA
-    implementation("net.dv8tion:JDA:$jdaVersion") {
-        exclude(module = "opus-java")
-    }
+    implementation(libs.jda)
     // Discord webhooks
-    implementation("club.minnced:discord-webhooks:$discordWebhooksVersion")
+    implementation(libs.discord.webhooks)
     // JDA Kotlin extensions
-    implementation("com.github.minndevelopment:jda-ktx:$jdaKtxVersion")
+    implementation(libs.jda.ktx)
     // JDA utilities
-    implementation("com.jagrosh:jda-utilities-commons:$jdaUtilitiesVersion")
-    implementation("com.jagrosh:jda-utilities-menu:$jdaUtilitiesVersion")
+    implementation(libs.bundles.jda.utilities)
     
     // Cloud (Command handler)
-    implementation("cloud.commandframework:cloud-core:$cloudVersion")
-    implementation("cloud.commandframework:cloud-annotations:$cloudVersion") // Annotation parser
-    implementation("cloud.commandframework:cloud-jda:$cloudVersion") // JDA impl
-    implementation("cloud.commandframework:cloud-kotlin-extensions:$cloudVersion") // Kotlin extensions
-    implementation("cloud.commandframework:cloud-kotlin-coroutines:$cloudVersion") // Kotlin extensions (coroutines)
-    implementation("cloud.commandframework:cloud-kotlin-coroutines-annotations:$cloudVersion") // Kotlin extensions (coroutine annotations)
-    implementation("cloud.commandframework:cloud-services:$cloudVersion") // Kotlin extensions
+    implementation(libs.bundles.cloud)
     
     // Kryo fast object serialization
-    implementation("com.esotericsoftware:kryo:$kryoVersion")
+    implementation(libs.kryo)
     
     // Reflections
-    implementation("org.reflections:reflections:$reflectionsVersion")
+    implementation(libs.reflections)
     
     // SLF4J
-    implementation("org.slf4j:slf4j-api:$slf4jVersion")
-    implementation("ca.solo-studios:slf4k:$slf4kVersion") // SLF4J extension library
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation(libs.slf4j)
+    implementation(libs.slf4k) // SLF4J extension library
+    implementation(libs.logback)
     
     // Kotlin HTTP api
-    implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
-    implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
-    implementation("com.github.kittinunf.fuel:fuel-jackson:$fuelVersion")
-    // implementation("com.github.kittinunf.fuel:fuel-reactor:$fuelVersion") // Use Reactor??
+    implementation(libs.bundles.fuel)
     
     // Jackson (JSON object serialization/deserialization)
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    implementation("org.honton.chas.hocon:jackson-dataformat-hocon:$jacksonHoconVersion") // HOCON support for Jackson
+    implementation(libs.bundles.jackson)
     
     // Persistent cache
-    implementation("org.ehcache:ehcache:$ehcacheVersion")
+    implementation(libs.ehcache)
     
     // Guava
-    implementation("com.google.guava:guava:$guavaVersion")
+    implementation(libs.guava)
     
     // Hikari (SQL Connection Pooling)
-    implementation("com.zaxxer:HikariCP:$hikariVersion")
+    implementation(libs.hikari)
     // SQLite
-    // implementation("org.xerial:sqlite-jdbc:$sqliteVersion")
+    // implementation(libs.sqlite)
     // MariaDB
-    implementation("org.mariadb.jdbc:mariadb-java-client:$mariadbVersion")
-    implementation("org.postgresql:postgresql:$postgresqlVersion")
+    implementation(libs.mariadb)
+    // PostreSQL
+    implementation(libs.postgresql)
     
     // Make using SQL not the most excrutiating shit ever and actually bearable to use
-    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+    implementation(libs.bundles.exposed)
     // Exposed Migrations
-    implementation("gay.solonovamax:exposed-migrations:$exposedMigrationsVersion")
-    // Exposed UUID support
-    implementation("app.softwork:kotlinx-uuid-exposed:$kotlinxUuidVersion")
+    implementation(libs.exposed.migrations)
     
     // Apache Lucene search engine
-    implementation("org.apache.lucene:lucene-core:$luceneVersion")
-    // implementation("org.apache.lucene:lucene-memory:$luceneVersion")
-    // implementation("org.apache.lucene:lucene-suggest:$luceneVersion")
-    implementation("org.apache.lucene:lucene-queryparser:$luceneVersion")
-    implementation("org.apache.lucene:lucene-analysis-common:$luceneVersion")
+    implementation(libs.bundles.lucene)
     
     // Markdown library
-    implementation("org.jetbrains:markdown:$intellijMarkdownVersion")
+    implementation(libs.jetbrains.markdown)
     
     // Git
-    implementation("org.eclipse.jgit:org.eclipse.jgit:$jGitVersion")
+    implementation(libs.jgit)
     
     // Used for fast random number generators
-    implementation("it.unimi.dsi:dsiutils:2.6.17")
+    implementation(libs.dsiutils)
     
-    implementation("org.apache.commons:commons-compress:$commonsCompressVersion")
-    implementation("org.apache.commons:commons-io:$commonsIOVersion")
-    
-    val jUnitVersion = "5.8.2"
+    implementation(libs.commons.compress)
+    implementation(libs.commons.io)
     
     // Testing (JUnit 5)
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$jUnitVersion")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jUnitVersion")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:$jUnitVersion")
+    testImplementation(libs.bundles.junit)
 }
 
 application {
