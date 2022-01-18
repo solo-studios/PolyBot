@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 18-01-2022 12:52 p.m.
+ * Last modified on 18-01-2022 01:33 p.m.
  *
  * MIT License
  *
@@ -102,7 +102,7 @@ dependencyResolutionManagement {
             alias("exposed-uuid") library ("app.softwork" to "kotlinx-uuid-exposed") versionRef "kotlinx-uuid"
             
             // Kotlin CLI library
-            alias("clikt") library ("com.github.ajalt.clikt" to "clikt") version "3.3.0"
+            alias("clikt") library ("com.github.ajalt.clikt" to "clikt") version "3.4.0"
             
             // Kodein Dependency Injection
             alias("kodein") library ("org.kodein.di" to "kodein-di") version "7.10.0"
@@ -114,7 +114,7 @@ dependencyResolutionManagement {
             alias("jda") library ("net.dv8tion" to "JDA") version "4.3.0_313"
             
             // Discord webhooks
-            alias("discord-webhooks") library ("club.minnced" to "discord-webhooks") version "0.7.4"
+            alias("discord-webhooks") library ("club.minnced" to "discord-webhooks") version "0.7.5"
             
             // JDA Kotlin extensions
             alias("jda-ktx") library ("com.github.minndevelopment" to "jda-ktx") version "0.7.0"
@@ -154,7 +154,7 @@ dependencyResolutionManagement {
             alias("reflections") library ("org.reflections" to "reflections") version "0.10.2"
             
             // SLF4J
-            alias("slf4j") library ("org.slf4j" to "slf4j-api") version "1.7.32"
+            alias("slf4j") library ("org.slf4j" to "slf4j-api") version "1.7.33"
             alias("slf4k") library ("ca.solo-studios" to "slf4k") version "0.4.6" // SLF4J extension library
             alias("logback") library ("ch.qos.logback" to "logback-classic") version "1.2.10"
             
@@ -199,11 +199,11 @@ dependencyResolutionManagement {
             alias("guava") library ("com.google.guava" to "guava") version "31.0.1-jre"
             
             // Hikari (SQL Connection Pooling)
-            alias("hikari") library ("com.zaxxer" to "HikariCP") version "5.0.0"
+            alias("hikari") library ("com.zaxxer" to "HikariCP") version "5.0.1"
             // SQLite
             // alias("sqlite-jdbc") library ("org.xerial" to "sqlite-jdbc") version "3.36.0.2"
             // MariaDB
-            alias("mariadb") library ("org.mariadb.jdbc" to "mariadb-java-client") version "2.7.3"
+            alias("mariadb") library ("org.mariadb.jdbc" to "mariadb-java-client") version "2.7.4"
             alias("postgresql") library ("org.postgresql" to "postgresql") version "42.3.1"
             
             // Make using SQL not the most excrutiating shit ever and actually bearable to use
@@ -247,7 +247,7 @@ dependencyResolutionManagement {
             alias("jetbrains-markdown") library ("org.jetbrains" to "markdown") version "0.2.4"
             
             // Git
-            alias("jgit") library ("org.eclipse.jgit" to "org.eclipse.jgit") version "5.13.0.202109080827-r"
+            alias("jgit") library ("org.eclipse.jgit" to "org.eclipse.jgit") version "6.0.0.202111291000-r"
             
             // Used for fast random number generators
             alias("dsiutils") library ("it.unimi.dsi" to "dsiutils") version "2.6.17"
