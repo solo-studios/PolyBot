@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 18-01-2022 01:33 p.m.
+ * Last modified on 18-01-2022 01:38 p.m.
  *
  * MIT License
  *
@@ -207,7 +207,7 @@ dependencyResolutionManagement {
             alias("postgresql") library ("org.postgresql" to "postgresql") version "42.3.1"
             
             // Make using SQL not the most excrutiating shit ever and actually bearable to use
-            version("exposed", "0.36.1")
+            version("exposed", "0.37.3")
             alias("exposed-core") library ("org.jetbrains.exposed" to "exposed-core") versionRef "exposed"
             alias("exposed-dao") library ("org.jetbrains.exposed" to "exposed-dao") versionRef "exposed"
             alias("exposed-jdbc") library ("org.jetbrains.exposed" to "exposed-jdbc") versionRef "exposed"
