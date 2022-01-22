@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 18-01-2022 01:38 p.m.
+ * Last modified on 21-01-2022 11:07 a.m.
  *
  * MIT License
  *
@@ -45,6 +45,8 @@ pluginManagement {
     }
 }
 
+include(":core")
+
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
@@ -52,6 +54,7 @@ dependencyResolutionManagement {
             val kotlinVersion = "1.6.10"
             version("kotlin", kotlinVersion)
             alias("kotlin-stdlib") library ("org.jetbrains.kotlin" to "kotlin-stdlib") versionRef "kotlin"
+            alias("kotlin-stdlib") library ("org.jetbrains.kotlin" to "kotlin-stdlib-jdk8") versionRef "kotlin"
             alias("kotlin-reflect") library ("org.jetbrains.kotlin" to "kotlin-reflect") versionRef "kotlin"
             
             pluginManagement {
@@ -94,6 +97,8 @@ dependencyResolutionManagement {
                             // "kotlinx-coroutines-debug",
                           )
                   )
+            
+            alias("kotlinx-datetime") library ("org.jetbrains.kotlinx" to "kotlinx-datetime") version "0.3.2"
             
             // Kotlin UUID Support
             version("kotlinx-uuid", "0.0.12")

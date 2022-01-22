@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 12-01-2022 06:18 p.m.
+ * Last modified on 22-01-2022 05:20 p.m.
  *
  * MIT License
  *
@@ -41,7 +41,6 @@ import ca.solostudios.polybot.cloud.commands.annotations.JDAGuildCommand
 import ca.solostudios.polybot.cloud.commands.annotations.JDAUserPermission
 import ca.solostudios.polybot.cloud.commands.annotations.PolyCategory
 import ca.solostudios.polybot.cloud.event.EventMapper
-import ca.solostudios.polybot.cloud.event.MessageEvent
 import ca.solostudios.polybot.cloud.manager.PolyCloudCommandManager
 import ca.solostudios.polybot.config.PolyBotConfig
 import ca.solostudios.polybot.config.PolyConfig
@@ -238,9 +237,6 @@ class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: 
         get() = commandManager.commandHelpHandler.allCommands.size
     
     fun getCacheDirectory(vararg name: String) = Path(".cache", *name)
-    
-    @Suppress("UNUSED_PARAMETER")
-    private fun botPrefix(event: MessageEvent) = polybotConfig.prefix
     
     fun guildReference(guildId: Long): BackedReference<Guild?, Long> {
         return BackedReference(guildId, { jda.getGuildById(it) }, { it?.idLong ?: 0 })
