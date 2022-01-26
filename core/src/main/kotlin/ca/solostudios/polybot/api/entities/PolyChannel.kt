@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyChannel.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 03:26 p.m.
+ * Last modified on 26-01-2022 01:05 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,7 @@ package ca.solostudios.polybot.api.entities
 import net.dv8tion.jda.api.entities.AbstractChannel
 
 public interface PolyChannel : PolySnowflakeEntity {
-    public val name: String
-    
     public val jdaChannel: AbstractChannel
+    
+    public val name: String
 }
