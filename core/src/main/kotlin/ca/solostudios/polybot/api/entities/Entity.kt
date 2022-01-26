@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Entity.kt is part of PolyhedralBot
- * Last modified on 21-01-2022 12:13 p.m.
+ * Last modified on 23-01-2022 03:26 p.m.
  *
  * MIT License
  *
@@ -43,4 +43,4 @@ public interface SnowflakeEntity : Comparable<SnowflakeEntity> {
     public val snowflake: Snowflake
 }
 
-public interface PolySnowflakeEntity : PolyObject
+public interface PolySnowflakeEntity : PolyObject, SnowflakeEntity

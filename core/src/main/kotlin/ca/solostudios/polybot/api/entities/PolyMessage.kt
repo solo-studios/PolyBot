@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessage.kt is part of PolyhedralBot
- * Last modified on 22-01-2022 05:18 p.m.
+ * Last modified on 25-01-2022 09:46 a.m.
  *
  * MIT License
  *
@@ -29,28 +29,11 @@
 package ca.solostudios.polybot.api.entities
 
 import kotlinx.datetime.Instant
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.MessageReaction
 
 public interface PolyMessage : PolySnowflakeEntity {
-    
-    public val mentionedUsers: List<PolyUser>
-    
-    public val mentionedChannels: List<PolyChannel>
-    
-    public val mentionedRoles: List<PolyRole>
-    
-    public val mentionedMembers: List<PolyMember>
-    
-    public val mentionsEveryone: Boolean
-    
-    public val isEdited: Boolean
-    
-    public val timeEdited: Instant?
-    
-    public val author: PolyUser
-    
-    public val member: PolyMember?
-    
-    public val jumpUrl: String
+    public val jdaMessage: Message
     
     public val content: String
     
@@ -58,13 +41,41 @@ public interface PolyMessage : PolySnowflakeEntity {
     
     public val contentStripped: String
     
-    public val invites: String
+    public val edited: Boolean
+    
+    public val timeEdited: Instant?
+    
+    public val author: PolyUser
+    
+    public val user: PolyUser
+    
+    public val member: PolyMember?
+    
+    public val url: String
+    
+    public val mentionedUsers: List<PolyUser>
+    
+    public val mentionedRoles: List<PolyRole>
+    
+    public val mentionedMembers: List<PolyMember>
+    
+    public val mentionedChannels: List<PolyChannel>
+    
+    public val emotes: List<PolyEmote>
+    
+    public val mentionsEveryone: Boolean
+    
+    public val invites: List<String>
     
     public val nonce: String
     
     public val fromGuild: Boolean
     
-    public val isWebhook: Boolean
+    public val fromBot: Boolean
+    
+    public val fromWebhook: Boolean
+    
+    public val fromPrivateChannel: Boolean
     
     public val privateChannel: PolyPrivateChannel
     
@@ -74,13 +85,33 @@ public interface PolyMessage : PolySnowflakeEntity {
     
     public val embeds: List<PolyMessageEmbed>
     
-    public val emotes: List<PolyEmote>
+    public val attachments: List<Message.Attachment>
     
-    public val isTTS: Boolean
+    public val reactions: List<MessageReaction>
     
-    public val isPinned: Boolean
+    public val tts: Boolean
     
-    public val isSuppressEmbeds: Boolean
+    public val pinned: Boolean
+    
+    public val suppressEmbeds: Boolean
+    
+    public fun matches(regex: Regex): Boolean
+    
+    public fun startsWith(prefix: String, ignoreCase: Boolean = false): Boolean
+    
+    public fun endsWith(postfix: String, ignoreCase: Boolean = false): Boolean
+    
+    public fun matchesRaw(regex: Regex): Boolean
+    
+    public fun startsWithRaw(prefix: String, ignoreCase: Boolean = false): Boolean
+    
+    public fun endsWithRaw(postfix: String, ignoreCase: Boolean = false): Boolean
+    
+    public fun matchesStripped(regex: Regex): Boolean
+    
+    public fun startsWithStripped(prefix: String, ignoreCase: Boolean = false): Boolean
+    
+    public fun endsWithStripped(postfix: String, ignoreCase: Boolean = false): Boolean
     
     public suspend fun edit(content: String? = null, embeds: List<PolyMessageEmbed>? = null)
     
@@ -98,6 +129,8 @@ public interface PolyMessage : PolySnowflakeEntity {
     
     public suspend fun pin()
     
+    public suspend fun unpin()
+    
     public suspend fun addReaction(emote: PolyEmote)
     
     public suspend fun addReaction(unicode: String)
@@ -107,12 +140,4 @@ public interface PolyMessage : PolySnowflakeEntity {
     public suspend fun suppressEmbeds(suppress: Boolean)
     
     public suspend fun referencedMessage(): PolyMessage?
-    
-    public enum class AllowedMentionTypes {
-        USER,
-        ROLE,
-        CHANNEL,
-        EMOTE,
-        EVERYONE,
-    }
 }

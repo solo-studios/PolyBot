@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyRole.kt is part of PolyhedralBot
- * Last modified on 22-01-2022 05:19 p.m.
+ * Last modified on 23-01-2022 03:26 p.m.
  *
  * MIT License
  *
@@ -28,4 +28,8 @@
 
 package ca.solostudios.polybot.api.entities
 
-public interface PolyRole : Mentionable, PolySnowflakeEntity 
+import net.dv8tion.jda.api.entities.Role
+
+public interface PolyRole : Mentionable, PolySnowflakeEntity {
+    public val jdaRole: Role
+}

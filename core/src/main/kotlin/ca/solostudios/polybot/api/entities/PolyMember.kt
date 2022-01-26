@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMember.kt is part of PolyhedralBot
- * Last modified on 21-01-2022 05:09 p.m.
+ * Last modified on 23-01-2022 04:00 p.m.
  *
  * MIT License
  *
@@ -30,13 +30,19 @@ package ca.solostudios.polybot.api.entities
 
 import java.awt.Color
 import kotlinx.datetime.Instant
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Member
 
 public interface PolyMember : PolyUser {
+    public val jdaMember: Member
+    
     public val guild: PolyGuild
+    
+    public val guildId: ULong
     
     public val timeJoined: Instant
     
-    public val timeBoosted: Instant
+    public val timeBoosted: Instant?
     
     public val nickname: String?
     
@@ -46,7 +52,11 @@ public interface PolyMember : PolyUser {
     
     public val roles: List<PolyRole>
     
+    public val guildPermissions: List<Permission>
+    
     public val color: Color?
     
     public val isGuildOwner: Boolean
+    
+    public suspend fun changeNickname(nickname: String?)
 }

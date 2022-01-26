@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyChannel.kt is part of PolyhedralBot
+ * The file PolyCategory.kt is part of PolyhedralBot
  * Last modified on 23-01-2022 03:26 p.m.
  *
  * MIT License
@@ -28,10 +28,17 @@
 
 package ca.solostudios.polybot.api.entities
 
-import net.dv8tion.jda.api.entities.AbstractChannel
+import net.dv8tion.jda.api.entities.Category
 
-public interface PolyChannel : PolySnowflakeEntity {
-    public val name: String
+public interface PolyCategory : PolyGuildChannel {
+    public override val jdaChannel: Category
     
-    public val jdaChannel: AbstractChannel
+    public val jdaCategory: Category
+        get() = jdaChannel
+    
+    public val guildChannels: List<PolyGuildChannel>
+    
+    public val textChannels: List<PolyTextChannel>
+    
+    public val voiceChannels: List<PolyVoiceChannel>
 }

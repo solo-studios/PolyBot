@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEmote.kt is part of PolyhedralBot
- * Last modified on 22-01-2022 05:18 p.m.
+ * Last modified on 23-01-2022 03:26 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,11 @@
 
 package ca.solostudios.polybot.api.entities
 
+import net.dv8tion.jda.api.entities.Emote
+
 public interface PolyEmote : Mentionable, PolySnowflakeEntity {
+    public val jdaEmote: Emote
+    
     public val guild: PolyGuild?
     
     public val roles: List<PolyRole>
@@ -41,9 +45,9 @@ public interface PolyEmote : Mentionable, PolySnowflakeEntity {
     
     public val available: Boolean
     
-    public suspend fun delete()
-    
     public val animated: Boolean
     
     public val imageUrl: String
+    
+    public suspend fun delete()
 }

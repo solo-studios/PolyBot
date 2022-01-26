@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuild.kt is part of PolyhedralBot
- * Last modified on 22-01-2022 05:19 p.m.
+ * Last modified on 23-01-2022 03:50 p.m.
  *
  * MIT License
  *
@@ -28,11 +28,20 @@
 
 package ca.solostudios.polybot.api.entities
 
+import java.awt.Color
+import java.util.Locale
 import kotlinx.coroutines.flow.Flow
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Icon
 import kotlin.time.Duration
 
 public interface PolyGuild : PolySnowflakeEntity {
+    public val jdaGuild: Guild
+    
     public val loaded: Boolean
+    
+    public val available: Boolean
     
     public val memberCount: Int
     
@@ -58,11 +67,23 @@ public interface PolyGuild : PolySnowflakeEntity {
     
     public val bannerUrl: String?
     
-    public val boostTier: BoostTier
+    public val locale: Locale
     
-    public val boostCount: Int
+    public val boostTier: Guild.BoostTier
+    
+    public val boosts: Int
+    
+    public val boostRole: PolyRole?
     
     public val boosters: Flow<PolyMember>
+    
+    public val verificationLevel: Guild.VerificationLevel
+    
+    public val notificationLevel: Guild.NotificationLevel
+    
+    public val requiredMFALevel: Guild.MFALevel
+    
+    public val explicitContentLevel: Guild.ExplicitContentLevel
     
     public val maxBitrate: Int
     
@@ -82,26 +103,79 @@ public interface PolyGuild : PolySnowflakeEntity {
     
     public val selfMember: PolyMember
     
-    public enum class BoostTier(
-            public val id: Int,
-            public val maxBitrate: Int,
-            public val maxEmotes: Int,
-                               ) {
-        NONE(0, 96000, 50),
-        TIER_1(1, 128000, 100),
-        TIER_2(2, 256000, 150),
-        TIER_3(3, 384000, 250),
-        
-        UNKNOWN(-1, Int.MAX_VALUE, Int.MAX_VALUE);
-        
-        public companion object {
-            public fun fromId(id: Int): BoostTier {
-                for (tier in values())
-                    if (tier.id == id)
-                        return tier
-                
-                return UNKNOWN
-            }
-        }
-    }
+    public val botRole: PolyRole?
+    
+    public val channels: List<PolyGuildChannel>
+    
+    public val textChannels: List<PolyTextChannel>
+    
+    public val voiceChannels: List<PolyVoiceChannel>
+    
+    public val categories: List<PolyCategory>
+    
+    public val roles: List<PolyRole>
+    
+    public val emotes: List<PolyEmote>
+    
+    public suspend fun memberById(id: ULong): PolyMember
+    
+    public suspend fun prune(days: Int, wait: Boolean, vararg roles: PolyRole)
+    
+    public suspend fun kick(member: PolyMember, reason: String? = null)
+    
+    public suspend fun kick(member: ULong, reason: String? = null)
+    
+    public suspend fun ban(user: PolyUser, delDays: Int = 3, reason: String? = null)
+    
+    public suspend fun ban(user: ULong, delDays: Int = 3, reason: String? = null)
+    
+    public suspend fun unban(user: PolyUser)
+    
+    public suspend fun unban(user: ULong)
+    
+    public suspend fun deafen(member: PolyMember, deafen: Boolean)
+    
+    public suspend fun mute(member: PolyMember, mute: Boolean)
+    
+    public suspend fun addRole(member: PolyMember, role: PolyRole)
+    
+    public suspend fun removeRole(member: PolyMember, role: PolyRole)
+    
+    public suspend fun modifyRoles(member: PolyMember, rolesToAdd: List<PolyRole>? = null, rolesToRemove: List<PolyRole>? = null)
+    
+    public suspend fun createTextChannel(
+            name: String,
+            parent: PolyCategory? = null,
+            position: Int? = null,
+            topic: String? = null,
+            slowmode: Int? = null,
+            news: Boolean? = null,
+                                        ): PolyTextChannel
+    
+    public suspend fun createVoiceChannel(
+            name: String,
+            parent: PolyCategory? = null,
+            position: Int? = null,
+            bitrate: Int? = null,
+            userLimit: Int? = null,
+                                         ): PolyVoiceChannel
+    
+    public suspend fun createCategory(
+            name: String,
+                                     ): PolyCategory
+    
+    
+    public suspend fun createRole(
+            name: String,
+            hoisted: Boolean? = null,
+            mentionable: Boolean? = null,
+            color: Color? = null,
+            permissions: List<Permission>? = null,
+                                 ): PolyRole
+    
+    public suspend fun createEmote(
+            name: String,
+            icon: Icon
+                                  )
+    
 }

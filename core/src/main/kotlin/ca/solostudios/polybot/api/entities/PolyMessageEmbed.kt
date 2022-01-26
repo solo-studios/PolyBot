@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageEmbed.kt is part of PolyhedralBot
- * Last modified on 22-01-2022 05:19 p.m.
+ * Last modified on 23-01-2022 04:57 p.m.
  *
  * MIT License
  *
@@ -28,4 +28,39 @@
 
 package ca.solostudios.polybot.api.entities
 
-public interface PolyMessageEmbed 
+import java.awt.Color
+import kotlinx.datetime.Instant
+import net.dv8tion.jda.api.entities.EmbedType
+import net.dv8tion.jda.api.entities.MessageEmbed
+
+public interface PolyMessageEmbed {
+    public val url: String?
+    
+    public val title: String?
+    
+    public val type: EmbedType
+    
+    public val thumbnail: MessageEmbed.Thumbnail?
+    
+    public val siteProvider: MessageEmbed.Provider?
+    
+    public val author: MessageEmbed.AuthorInfo?
+    
+    public val videoInfo: MessageEmbed.VideoInfo?
+    
+    public val footer: MessageEmbed.Footer?
+    
+    public val image: MessageEmbed.ImageInfo?
+    
+    public val fields: List<MessageEmbed.Field>
+    
+    public val color: Color?
+    
+    public val timestamp: Instant?
+    
+    public val empty: Boolean
+    
+    public val length: Int
+    
+    public val sendable: Boolean
+} 

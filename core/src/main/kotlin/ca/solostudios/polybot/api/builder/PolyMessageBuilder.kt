@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageBuilder.kt is part of PolyhedralBot
- * Last modified on 21-01-2022 12:15 p.m.
+ * Last modified on 23-01-2022 05:01 p.m.
  *
  * MIT License
  *
@@ -31,26 +31,53 @@ package ca.solostudios.polybot.api.builder
 import ca.solostudios.polybot.api.data.PolyFile
 import ca.solostudios.polybot.api.entities.PolyMessage
 import ca.solostudios.polybot.api.entities.PolyMessageChannel
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.FileInputStream
 import java.io.InputStream
 
 public interface PolyMessageBuilder {
-    public var channel: PolyMessageChannel?
+    public var tts: Boolean?
     
-    public var referencedMessage: PolyMessage?
+    public val channel: PolyMessageChannel?
     
     public var content: String?
     
-    public var tts: Boolean?
+    public var nonce: String?
+    
+    public var referencedMessage: PolyMessage?
     
     public val embeds: MutableList<PolyMessageEmbedBuilder>
     
-    public var allowedMentions: PolyAllowedMentionsBuilder
+    public var mentions: PolyAllowedMentionsBuilder
     
     public val files: MutableList<PolyFile>
     
-    public fun addFile(name: String, inputStream: InputStream, spoiler: Boolean = false): PolyFile
+    public var mentionRepliedUser: Boolean
+    
+    public val empty: Boolean
+    
+    public val edit: Boolean
+    
+    public fun content(contentBlock: StringBuilder.() -> Unit)
+    
+    public fun addFile(name: String, data: InputStream, spoiler: Boolean = false): PolyFile
+    
+    public fun addFile(name: String, data: ByteArray, spoiler: Boolean = false): PolyFile {
+        return addFile(name, ByteArrayInputStream(data), spoiler)
+    }
+    
+    public fun addFile(file: File, spoiler: Boolean = false): PolyFile {
+        return addFile(file.name, file, spoiler)
+    }
+    
+    public fun addFile(name: String, file: File, spoiler: Boolean = false): PolyFile {
+        return addFile(name, FileInputStream(file), spoiler)
+    }
     
     public fun embed(embedBuilder: PolyMessageEmbedBuilder.() -> Unit)
     
-    public fun allowedMentions(allowedMentionsBuilder: PolyAllowedMentionsBuilder.() -> Unit)
+    public fun mentions(allowedMentionsBuilder: PolyAllowedMentionsBuilder.() -> Unit)
+    
+    public fun build(): PolyMessage
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyAllowedMentionsBuilder.kt is part of PolyhedralBot
- * Last modified on 20-01-2022 04:59 p.m.
+ * Last modified on 23-01-2022 04:43 p.m.
  *
  * MIT License
  *
@@ -28,22 +28,26 @@
 
 package ca.solostudios.polybot.api.builder
 
-import ca.solostudios.polybot.api.entities.PolyMessage
 import ca.solostudios.polybot.api.entities.PolyRole
 import ca.solostudios.polybot.api.entities.PolyUser
+import net.dv8tion.jda.api.entities.Message
 
 public interface PolyAllowedMentionsBuilder {
     public val roles: MutableSet<PolyRole>
     
     public val users: MutableSet<PolyUser>
     
-    public val types: MutableSet<PolyMessage.AllowedMentionTypes>
+    public val types: MutableSet<Message.MentionType>
     
     public var repliedUser: Boolean
     
-    public fun clear() {
-        roles.clear()
-        users.clear()
-        types.clear()
-    }
+    public fun user(user: PolyUser)
+    
+    public fun user(id: ULong)
+    
+    public fun role(role: PolyRole)
+    
+    public fun role(role: ULong)
+    
+    public fun clear()
 }

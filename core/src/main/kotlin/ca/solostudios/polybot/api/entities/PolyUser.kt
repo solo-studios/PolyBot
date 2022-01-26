@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyUser.kt is part of PolyhedralBot
- * Last modified on 21-01-2022 04:50 p.m.
+ * Last modified on 23-01-2022 05:15 p.m.
  *
  * MIT License
  *
@@ -28,10 +28,11 @@
 
 package ca.solostudios.polybot.api.entities
 
-import ca.solostudios.polybot.api.PolyObject
-import ca.solostudios.polybot.api.data.PolyImage
+import net.dv8tion.jda.api.entities.User
 
 public interface PolyUser : PolySnowflakeEntity, Mentionable {
+    public val jdaUser: User
+    
     public val name: String
     
     public val discriminator: Int
@@ -40,31 +41,39 @@ public interface PolyUser : PolySnowflakeEntity, Mentionable {
     
     public val asTag: String
     
+    public val isOwner: Boolean
+    
+    public val isCoOwner: Boolean
+    
     public val mutualGuilds: List<PolyGuild>
+    
+    public val avatarUrl: String
+    
+    public val defaultAvatarId: String
+    
+    public val defaultAvatarUrl: String
+    
+    public val customAvatarId: String?
+    
+    public val customAvatarUrl: String?
+    
+    public val isAvatarAnimated: Boolean
+    
+    public val isAvatarCustom: Boolean
     
     public val isBot: Boolean
     
     public val isSystem: Boolean
     
-    public interface Avatar : PolyObject {
-        
-        public val user: PolyUser
-        
-        public val url: String
-        
-        public val defaultUrl: String
-        
-        public val isCustom: Boolean
-        
-        public val isAnimated: Boolean
-            get() = url.startsWith("a")
-        
-        public val format: PolyImage.Format
-            get() = when {
-                isAnimated -> PolyImage.Format.GIF
-                else       -> PolyImage.Format.PNG
-            }
-        
-        public fun getUrl(format: PolyImage.Format): String
-    }
+    public val isDiscordStaff: Boolean
+    
+    public val isDiscordPartner: Boolean
+    
+    public val isDiscordVerifiedBot: Boolean
+    
+    public val isDiscordVerifiedDeveloper: Boolean
+    
+    public val isDiscordCertifiedModerator: Boolean
+    
+    public suspend fun privateChannel(): PolyPrivateChannel
 }

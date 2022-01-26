@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Mentionable.kt is part of PolyhedralBot
- * Last modified on 21-01-2022 12:06 p.m.
+ * Last modified on 23-01-2022 05:15 p.m.
  *
  * MIT License
  *
@@ -30,4 +30,6 @@ package ca.solostudios.polybot.api.entities
 
 public interface Mentionable {
     public val asMention: String
+    
+    public override fun toString(): String
 }

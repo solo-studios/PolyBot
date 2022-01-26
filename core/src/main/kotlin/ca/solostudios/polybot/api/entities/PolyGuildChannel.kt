@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuildChannel.kt is part of PolyhedralBot
- * Last modified on 21-01-2022 12:06 p.m.
+ * Last modified on 23-01-2022 03:26 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,23 @@
 
 package ca.solostudios.polybot.api.entities
 
+import net.dv8tion.jda.api.entities.GuildChannel
+
 public interface PolyGuildChannel : PolyChannel, Mentionable {
+    public override val jdaChannel: GuildChannel
+    
     public val guild: PolyGuild
+    
+    public val parent: PolyCategory?
+    
+    public val members: List<PolyMember>
+    
+    public val position: Int
+    
+    public val positionRaw: Int
+    
+    public val isSynced: Boolean
+    
+    public suspend fun delete()
+    
 }

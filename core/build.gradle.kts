@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 21-01-2022 11:07 a.m.
+ * Last modified on 23-01-2022 03:09 p.m.
  *
  * MIT License
  *
@@ -33,6 +33,11 @@ plugins {
 
 repositories {
     mavenCentral()
+    
+    maven { // JDA
+        name = "dv8tion-repo"
+        url = uri("https://m2.dv8tion.net/releases")
+    }
 }
 
 kotlin {
@@ -55,4 +60,13 @@ dependencies {
     
     // Kotlin Datetime
     implementation(libs.kotlinx.datetime)
+    
+    // JDA
+    implementation(libs.jda)
+    // Discord webhooks
+    implementation(libs.discord.webhooks)
+    // JDA Kotlin extensions
+    implementation(libs.jda.ktx)
+    // JDA utilities
+    implementation(libs.bundles.jda.utilities)
 }
