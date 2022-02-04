@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCategory.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 03:26 p.m.
+ * Last modified on 03-02-2022 08:28 p.m.
  *
  * MIT License
  *
@@ -30,15 +30,46 @@ package ca.solostudios.polybot.api.entities
 
 import net.dv8tion.jda.api.entities.Category
 
+/**
+ * Represents a discord category.
+ *
+ * This is a wrapper for a [JDA category][Category].
+ *
+ * Categories are used in guilds to organize channels into groups.
+ * A channel may or may not have a parent category.
+ *
+ * @see PolyGuildChannel
+ */
 public interface PolyCategory : PolyGuildChannel {
+    /**
+     * The JDA category that is being wrapped by this entity
+     */
     public override val jdaChannel: Category
     
+    /**
+     * The JDA category that is being wrapped by this entity
+     */
     public val jdaCategory: Category
         get() = jdaChannel
     
+    /**
+     * A list of all guild channels that belong to this category
+     *
+     * @see PolyGuildChannel
+     */
     public val guildChannels: List<PolyGuildChannel>
     
+    /**
+     * A list of all text channels that belong to this category
+     *
+     * @see PolyTextChannel
+     */
     public val textChannels: List<PolyTextChannel>
     
+    /**
+     * A list of all voice channels that belong to this category
+     *
+     * @see PolyVoiceChannel
+     */
     public val voiceChannels: List<PolyVoiceChannel>
 }
