@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEventListener.kt is part of PolyhedralBot
- * Last modified on 03-02-2022 06:44 p.m.
+ * Last modified on 03-02-2022 07:31 p.m.
  *
  * MIT License
  *
@@ -31,9 +31,16 @@ package ca.solostudios.polybot.api.event
 /**
  * An event listener
  *
+ * Note: event listeners may be invoked on multiple threads and simultaneously.
+ * There is no guarantee that it will only invoke one at a time.
  * @param T The event listened for by this listener
  * @see PolyEventManager
  */
 public interface PolyEventListener<T : PolyEvent> {
+    /**
+     * Handles the event
+     *
+     * @param event The event to handle
+     */
     public operator fun invoke(event: T)
 }

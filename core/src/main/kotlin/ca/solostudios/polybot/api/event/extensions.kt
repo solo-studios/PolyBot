@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file extensions.kt is part of PolyhedralBot
- * Last modified on 31-01-2022 08:27 p.m.
+ * Last modified on 03-02-2022 06:47 p.m.
  *
  * MIT License
  *
@@ -28,14 +28,35 @@
 
 package ca.solostudios.polybot.api.event
 
+/**
+ * Register a listener for a specific event
+ *
+ * @param T The type event to listen for
+ * @param listener The listener to be invoked when the event is dispatched
+ * @see dispatch
+ */
 public inline fun <reified T : PolyEvent> PolyEventManager.register(listener: PolyEventListener<T>) {
     register(listener, T::class)
 }
 
+/**
+ * Unregisters a listener for a specific event
+ *
+ * @param T The event type the listener is listening to
+ * @param listener The listener to be removed
+ * @see register
+ */
 public inline fun <reified T : PolyEvent> PolyEventManager.unregister(listener: PolyEventListener<T>) {
     unregister(listener, T::class)
 }
 
+/**
+ * Dispatches an event and alerts all registered listeners
+ *
+ * @param T The event type to dispatch
+ * @param event The event to be dispatched
+ * @see PolyEventManager.listeners
+ */
 public inline fun <reified T : PolyEvent> PolyEventManager.dispatch(event: T) {
     dispatch(event, event::class)
 }
