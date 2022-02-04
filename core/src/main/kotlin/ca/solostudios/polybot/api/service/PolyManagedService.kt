@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyManagedService.kt is part of PolyhedralBot
- * Last modified on 03-02-2022 06:28 p.m.
+ * Last modified on 03-02-2022 07:58 p.m.
  *
  * MIT License
  *
@@ -39,5 +39,5 @@ public interface PolyManagedService : PolyService {
     /**
      * The service manager that is managing this service
      */
-    public val serviceManager: PolyServiceManager?
+    public val serviceManager: PolyServiceManager
 }
