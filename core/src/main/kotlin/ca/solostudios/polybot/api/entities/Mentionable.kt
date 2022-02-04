@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Mentionable.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 05:15 p.m.
+ * Last modified on 03-02-2022 08:21 p.m.
  *
  * MIT License
  *
@@ -28,8 +28,26 @@
 
 package ca.solostudios.polybot.api.entities
 
+/**
+ * Marks an entity as mentionable.
+ *
+ * A mentionable entity is one that can be formatted as a string, which can be resolved to the entity.
+ *
+ * An example of this is:
+ * - @user mentions on github.
+ *   A user can be formatted as `"@" + the_username`, and it will resolve to a mention for the user.
+ */
 public interface Mentionable {
+    /**
+     * Formats this entity as a resolvable mention, and returns the corresponding string.
+     */
     public val asMention: String
     
+    /**
+     * Formats this entity as a resolvable mention, and returns the corresponding string.
+     *
+     * @return This entity, formatted as a mention
+     * @see asMention
+     */
     public override fun toString(): String
 }
