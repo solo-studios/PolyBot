@@ -1,9 +1,9 @@
 /*
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file Entity.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 03:26 p.m.
+ * The file PolySnowflakeEntity.kt is part of PolyhedralBot
+ * Last modified on 03-02-2022 08:00 p.m.
  *
  * MIT License
  *
@@ -29,18 +29,5 @@
 package ca.solostudios.polybot.api.entities
 
 import ca.solostudios.polybot.api.PolyObject
-
-public interface SnowflakeEntity : Comparable<SnowflakeEntity> {
-    public val id: ULong
-        get() = snowflake.id
-    
-    public val idLong: Long
-        get() = snowflake.idLong
-    
-    public val idString: String
-        get() = snowflake.idString
-    
-    public val snowflake: Snowflake
-}
 
 public interface PolySnowflakeEntity : PolyObject, SnowflakeEntity
