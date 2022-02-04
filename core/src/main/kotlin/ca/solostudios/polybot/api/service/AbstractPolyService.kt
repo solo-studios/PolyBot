@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AbstractPolyService.kt is part of PolyhedralBot
- * Last modified on 03-02-2022 06:35 p.m.
+ * Last modified on 03-02-2022 08:00 p.m.
  *
  * MIT License
  *
@@ -73,7 +73,6 @@ public abstract class AbstractPolyService : PolyService {
     
     /**
      * This method must be invoked when the service is finished being initialized.
-     *
      */
     protected fun initialized() {
         state = PolyService.State.INITIALIZED
