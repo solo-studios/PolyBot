@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyChannel.kt is part of PolyhedralBot
- * Last modified on 26-01-2022 01:05 p.m.
+ * Last modified on 06-02-2022 04:05 p.m.
  *
  * MIT License
  *
@@ -30,8 +30,21 @@ package ca.solostudios.polybot.api.entities
 
 import net.dv8tion.jda.api.entities.AbstractChannel
 
+/**
+ * An abstract channel interface for all channels.
+ *
+ * @see PolyGuildChannel
+ * @see PolyPrivateChannel
+ * @see PolyMessageChannel
+ */
 public interface PolyChannel : PolySnowflakeEntity {
+    /**
+     * The JDA channel that is being wrapped by this entity
+     */
     public val jdaChannel: AbstractChannel
     
+    /**
+     * The human readable name of this channel.
+     */
     public val name: String
 }

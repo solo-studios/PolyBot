@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEmote.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 03:26 p.m.
+ * Last modified on 06-02-2022 06:26 p.m.
  *
  * MIT License
  *
@@ -28,26 +28,85 @@
 
 package ca.solostudios.polybot.api.entities
 
+import net.dv8tion.jda.api.Permission.MANAGE_EMOTES
 import net.dv8tion.jda.api.entities.Emote
+import net.dv8tion.jda.api.entities.Guild.BoostTier
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
 
 public interface PolyEmote : Mentionable, PolySnowflakeEntity {
+    /**
+     * The JDA emote that is being wrapped by this entity
+     */
     public val jdaEmote: Emote
     
+    /**
+     * The guild this emote is attached to.
+     *
+     * Will be null if this emote is created from a message.
+     */
     public val guild: PolyGuild?
     
+    /**
+     * A list of roles this emote is active for.
+     */
     public val roles: List<PolyRole>
     
+    /**
+     * Whether this emote has attached roles.
+     * This may be false when the emote is retrieved through special cases like audit logs.
+     */
     public val providesRoles: Boolean
     
+    /**
+     * The name of this emote.
+     *
+     * Does not include colons.
+     */
     public val name: String
     
+    /**
+     * Whether this emote is managed by an external service.
+     *
+     * A managed emote is controlled by a discord application, not the guild administrators.
+     */
     public val managed: Boolean
     
+    /**
+     * Whether this emote is available.
+     * When an emote becomes unavailable, it cannot be used in messages.
+     * An emote becomes unavailable when the [BoostTier] of the guild drops,
+     * such that the maximum number of allowed emotes is lower than
+     * the total amount of emotes added to the guild.
+     *
+     * If an emote is added to the guild when the boost tier allows for more than 50 normal and 50 animated emotes
+     * (BoostTier is at least [BoostTier.TIER_1] and the emote is at least
+     * the 51st one added, then the emote becomes unavailable when the BoostTier drops below a level that allows those emotes
+     * to be used.
+     * Emotes that where added as part of a lower BoostTier (i.e. the 51st emote on BoostTier 2) will remain available,
+     * as long as the BoostTier stays above the required level.
+     */
     public val available: Boolean
     
+    /**
+     * Whether this emote is animated.
+     *
+     * Animated emotes are available to discord nitro users, as well as bot accounts.
+     */
     public val animated: Boolean
     
+    /**
+     * A string representation of the URL, which leads to the image displayed in the official discord client when this emote is used.
+     */
     public val imageUrl: String
     
-    public suspend fun delete()
+    /**
+     * Deletes this emote.
+     *
+     * @param reason The reason the emote is being deleted.
+     *
+     * @throws UnsupportedOperationException If this emote is managed by discord. ([managed])
+     * @throws InsufficientPermissionException If the currently logged in account does not have the permission [MANAGE_EMOTES].
+     */
+    @Throws(UnsupportedOperationException::class, InsufficientPermissionException::class)
+    public suspend fun delete(reason: String? = null)
 }

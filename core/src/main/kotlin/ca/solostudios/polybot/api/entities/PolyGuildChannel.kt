@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuildChannel.kt is part of PolyhedralBot
- * Last modified on 06-02-2022 04:00 p.m.
+ * Last modified on 06-02-2022 05:23 p.m.
  *
  * MIT License
  *
@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.Permission.CREATE_INSTANT_INVITE
 import net.dv8tion.jda.api.Permission.MANAGE_CHANNEL
 import net.dv8tion.jda.api.Permission.MESSAGE_READ
 import net.dv8tion.jda.api.entities.GuildChannel
-import net.dv8tion.jda.api.entities.IPermissionHolder
 import net.dv8tion.jda.api.entities.Invite
 import net.dv8tion.jda.api.entities.PermissionOverride
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
@@ -152,7 +151,6 @@ public interface PolyGuildChannel : PolyChannel, Mentionable {
      */
     public val invites: Flow<Invite>
     
-    
     /**
      * The [PermissionOverride] corresponding to the provided [PolyMember] or [PolyRole].
      * If there is no [PermissionOverride] for this channel corresponding to the provided role, then this returns `null`.
@@ -162,7 +160,7 @@ public interface PolyGuildChannel : PolyChannel, Mentionable {
      * @throws IllegalArgumentException If the provided permission holder is from a different guild
      */
     @Throws(IllegalArgumentException::class)
-    public fun getPermissionOverride(permissionHolder: IPermissionHolder): PermissionOverride?
+    public fun getPermissionOverride(permissionHolder: PolyPermissionHolder): PermissionOverride?
     
     /**
      * Deletes this channel.

@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyMember.kt is part of PolyhedralBot
- * Last modified on 06-02-2022 05:23 p.m.
+ * The file PolyExtensions.kt is part of PolyhedralBot
+ * Last modified on 06-02-2022 06:26 p.m.
  *
  * MIT License
  *
@@ -26,40 +26,6 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.entities
+package ca.solostudios.polybot.api.util
 
-import java.awt.Color
-import kotlinx.datetime.Instant
-import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.Member
-
-public interface PolyMember : PolyPermissionHolder, PolyUser {
-    /**
-     * The JDA member that is being wrapped by this entity
-     */
-    public val jdaMember: Member
-    
-    public override val guild: PolyGuild
-    
-    public override val guildId: ULong
-    
-    public val timeJoined: Instant
-    
-    public val timeBoosted: Instant?
-    
-    public val nickname: String?
-    
-    public val hasNickname: Boolean
-    
-    public val effectiveName: String
-    
-    public val roles: List<PolyRole>
-    
-    public val guildPermissions: List<Permission>
-    
-    public val color: Color?
-    
-    public val isGuildOwner: Boolean
-    
-    public suspend fun changeNickname(nickname: String?)
-}
+// public fun PolyObject.poly(jdaMentionable: IMentionable): Mentionable

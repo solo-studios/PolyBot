@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyMember.kt is part of PolyhedralBot
+ * The file PolyPermissionHolder.kt is part of PolyhedralBot
  * Last modified on 06-02-2022 05:23 p.m.
  *
  * MIT License
@@ -28,38 +28,33 @@
 
 package ca.solostudios.polybot.api.entities
 
-import java.awt.Color
-import kotlinx.datetime.Instant
+import java.util.EnumSet
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.IPermissionHolder
 
-public interface PolyMember : PolyPermissionHolder, PolyUser {
+public interface PolyPermissionHolder : PolySnowflakeEntity {
     /**
-     * The JDA member that is being wrapped by this entity
+     * The JDA permission holder that is being wrapped by this entity
      */
-    public val jdaMember: Member
+    public val jdaPermissionHolder: IPermissionHolder
     
-    public override val guild: PolyGuild
+    public val guild: PolyGuild
     
-    public override val guildId: ULong
+    public val guildId: ULong
     
-    public val timeJoined: Instant
+    public val permissions: EnumSet<Permission>
     
-    public val timeBoosted: Instant?
+    public val explicitPermissions: EnumSet<Permission>
     
-    public val nickname: String?
+    public fun getPermissions(channel: PolyGuildChannel): EnumSet<Permission>
     
-    public val hasNickname: Boolean
+    public fun getExplicitPermissions(channel: PolyGuildChannel): EnumSet<Permission>
     
-    public val effectiveName: String
+    public operator fun contains(permission: Permission): Boolean
     
-    public val roles: List<PolyRole>
+    public fun containsAll(permissions: Collection<Permission>): Boolean
     
-    public val guildPermissions: List<Permission>
+    public fun containsAll(channel: PolyGuildChannel, permissions: Collection<Permission>): Boolean
     
-    public val color: Color?
-    
-    public val isGuildOwner: Boolean
-    
-    public suspend fun changeNickname(nickname: String?)
+    public fun hasAccess(channel: PolyGuildChannel): Boolean
 }

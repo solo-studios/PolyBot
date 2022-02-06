@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuild.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 03:50 p.m.
+ * Last modified on 06-02-2022 04:05 p.m.
  *
  * MIT License
  *
@@ -37,6 +37,9 @@ import net.dv8tion.jda.api.entities.Icon
 import kotlin.time.Duration
 
 public interface PolyGuild : PolySnowflakeEntity {
+    /**
+     * The JDA guild that is being wrapped by this entity
+     */
     public val jdaGuild: Guild
     
     public val loaded: Boolean

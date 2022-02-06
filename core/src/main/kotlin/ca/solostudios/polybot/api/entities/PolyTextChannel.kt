@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyTextChannel.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 03:26 p.m.
+ * Last modified on 06-02-2022 04:05 p.m.
  *
  * MIT License
  *
@@ -31,6 +31,9 @@ package ca.solostudios.polybot.api.entities
 import net.dv8tion.jda.api.entities.TextChannel
 
 public interface PolyTextChannel : PolyGuildChannel, PolyMessageChannel {
+    /**
+     * The JDA text channel that is being wrapped by this entity
+     */
     public override val jdaChannel: TextChannel
     
     public val topic: String?
@@ -44,4 +47,12 @@ public interface PolyTextChannel : PolyGuildChannel, PolyMessageChannel {
     public suspend fun deleteMessagesById(vararg messages: Long)
     
     public suspend fun deleteMessagesById(messages: Collection<Long>)
+    
+    public suspend fun setTopic(topic: String?)
+    
+    public suspend fun setNSFW(nsfw: Boolean)
+    
+    public suspend fun setSlowmode(slowmode: Int?)
+    
+    public suspend fun setNews(news: Boolean)
 }

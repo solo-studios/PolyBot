@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyVoiceChannel.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 03:26 p.m.
+ * Last modified on 06-02-2022 04:05 p.m.
  *
  * MIT License
  *
@@ -28,9 +28,13 @@
 
 package ca.solostudios.polybot.api.entities
 
+import net.dv8tion.jda.api.Region
 import net.dv8tion.jda.api.entities.VoiceChannel
 
 public interface PolyVoiceChannel : PolyGuildChannel {
+    /**
+     * The JDA voice channel that is being wrapped by this entity
+     */
     public override val jdaChannel: VoiceChannel
     
     public val userLimit: Int
@@ -38,4 +42,10 @@ public interface PolyVoiceChannel : PolyGuildChannel {
     public val bitrate: Int
     
     public val region: String?
+    
+    public suspend fun setUserLimit(userLimit: Int)
+    
+    public suspend fun setBitrate(bitrate: Int)
+    
+    public suspend fun setRegion(region: Region)
 }

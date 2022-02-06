@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyRole.kt is part of PolyhedralBot
- * Last modified on 26-01-2022 01:04 p.m.
+ * Last modified on 06-02-2022 05:23 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,10 @@ package ca.solostudios.polybot.api.entities
 import java.awt.Color
 import net.dv8tion.jda.api.entities.Role
 
-public interface PolyRole : Mentionable, PolySnowflakeEntity {
+public interface PolyRole : PolyPermissionHolder, Mentionable, PolySnowflakeEntity {
+    /**
+     * The JDA role that is being wrapped by this entity
+     */
     public val jdaRole: Role
     
     public val name: String
@@ -46,7 +49,9 @@ public interface PolyRole : Mentionable, PolySnowflakeEntity {
     
     public val publicRole: Boolean
     
-    public val guild: PolyGuild
+    public override val guild: PolyGuild
+    
+    public override val guildId: ULong
     
     public val bot: Boolean
     

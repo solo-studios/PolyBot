@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessage.kt is part of PolyhedralBot
- * Last modified on 25-01-2022 09:46 a.m.
+ * Last modified on 06-02-2022 04:05 p.m.
  *
  * MIT License
  *
@@ -33,6 +33,9 @@ import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageReaction
 
 public interface PolyMessage : PolySnowflakeEntity {
+    /**
+     * The JDA message that is being wrapped by this entity
+     */
     public val jdaMessage: Message
     
     public val content: String

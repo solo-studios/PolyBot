@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPrivateChannel.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 03:26 p.m.
+ * Last modified on 06-02-2022 04:05 p.m.
  *
  * MIT License
  *
@@ -31,6 +31,9 @@ package ca.solostudios.polybot.api.entities
 import net.dv8tion.jda.api.entities.PrivateChannel
 
 public interface PolyPrivateChannel : PolyMessageChannel {
+    /**
+     * The JDA private channel that is being wrapped by this entity
+     */
     public override val jdaChannel: PrivateChannel
     
     public val user: PolyUser
