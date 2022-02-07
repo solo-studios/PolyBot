@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEmote.kt is part of PolyhedralBot
- * Last modified on 06-02-2022 06:26 p.m.
+ * Last modified on 07-02-2022 01:12 a.m.
  *
  * MIT License
  *
@@ -33,7 +33,7 @@ import net.dv8tion.jda.api.entities.Emote
 import net.dv8tion.jda.api.entities.Guild.BoostTier
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
 
-public interface PolyEmote : Mentionable, PolySnowflakeEntity {
+public interface PolyEmote : PolyMentionable, PolySnowflakeEntity {
     /**
      * The JDA emote that is being wrapped by this entity
      */

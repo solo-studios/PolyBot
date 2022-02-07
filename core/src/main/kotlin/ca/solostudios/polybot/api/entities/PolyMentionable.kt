@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyEventListener.kt is part of PolyhedralBot
+ * The file PolyMentionable.kt is part of PolyhedralBot
  * Last modified on 07-02-2022 01:12 a.m.
  *
  * MIT License
@@ -26,21 +26,28 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.event
+package ca.solostudios.polybot.api.entities
 
 /**
- * An event listener
+ * Marks an entity as mentionable.
  *
- * Note: event listeners may be invoked on multiple threads and simultaneously.
- * There is no guarantee that it will only invoke one at a time.
- * @param T The event listened for by this listener
- * @see PolyEventManager
+ * A mentionable entity is one that can be formatted as a string, which can be resolved to the entity.
+ *
+ * An example of this is:
+ * - @user mentions on github.
+ *   A user can be formatted as `"@" + the_username`, and it will resolve to a mention for the user.
  */
-public interface PolyEventListener<T : PolyEvent> {
+public interface PolyMentionable {
     /**
-     * Handles the event
-     *
-     * @param event The event to handle
+     * Formats this entity as a resolvable mention, and returns the corresponding string.
      */
-    public operator fun invoke(event: T)
+    public val asMention: String
+    
+    /**
+     * Formats this entity as a resolvable mention, and returns the corresponding string.
+     *
+     * @return This entity, formatted as a mention
+     * @see asMention
+     */
+    public override fun toString(): String
 }

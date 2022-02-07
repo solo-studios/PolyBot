@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyGuildChannel.kt is part of PolyhedralBot
- * Last modified on 06-02-2022 05:23 p.m.
+ * Last modified on 07-02-2022 01:12 a.m.
  *
  * MIT License
  *
@@ -51,7 +51,7 @@ import kotlin.time.Duration
  * @see PolyCategory
  * @see PolyVoiceChannel
  */
-public interface PolyGuildChannel : PolyChannel, Mentionable {
+public interface PolyGuildChannel : PolyChannel, PolyMentionable {
     /**
      * The JDA guild channel that is being wrapped by this entity
      */

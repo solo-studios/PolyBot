@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManager.kt is part of PolyhedralBot
- * Last modified on 03-02-2022 06:37 p.m.
+ * Last modified on 07-02-2022 01:12 a.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 package ca.solostudios.polybot.api.service
 
-import ca.solostudios.polybot.api.PolyObject
+import ca.solostudios.polybot.PolyObject
 import ca.solostudios.polybot.api.service.PolyService.State
 import kotlin.reflect.KClass
 import kotlin.time.Duration
@@ -38,7 +38,7 @@ import kotlin.time.Duration
  *
  * @constructor Create empty Poly service manager
  */
-public interface PolyServiceManager : PolyService, PolyObject {
+public interface PolyServiceManager : PolyService, ca.solostudios.polybot.PolyObject {
     /**
      * All the services that have been registered to this service manager.
      */

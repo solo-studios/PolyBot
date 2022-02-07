@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyService.kt is part of PolyhedralBot
- * Last modified on 03-02-2022 06:24 p.m.
+ * Last modified on 07-02-2022 01:12 a.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 package ca.solostudios.polybot.api.service
 
-import ca.solostudios.polybot.api.PolyObject
+import ca.solostudios.polybot.PolyObject
 
 /**
  * This represents a service, which can be started and stopped.
@@ -37,7 +37,7 @@ import ca.solostudios.polybot.api.PolyObject
  *
  * All services can be started, stopped, and then started again.
  */
-public interface PolyService : PolyObject {
+public interface PolyService : ca.solostudios.polybot.PolyObject {
     /**
      * The state the service is currently in
      *

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 06-02-2022 10:40 p.m.
+ * Last modified on 07-02-2022 01:13 a.m.
  *
  * MIT License
  *
@@ -72,4 +72,7 @@ dependencies {
     implementation(libs.jda.ktx)
     // JDA utilities
     implementation(libs.bundles.jda.utilities)
+    
+    // Cloud
+    implementation(libs.bundles.cloud)
 }

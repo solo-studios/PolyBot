@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyObject.kt is part of PolyhedralBot
- * Last modified on 21-01-2022 11:58 a.m.
+ * Last modified on 07-02-2022 01:12 a.m.
  *
  * MIT License
  *
@@ -35,5 +35,5 @@ public interface PolyObject {
     /**
      * The polybot reference for this object
      */
-    public val polybot: PolyBot
+    public val polybot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot
 }

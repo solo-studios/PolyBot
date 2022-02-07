@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyUser.kt is part of PolyhedralBot
- * Last modified on 06-02-2022 04:05 p.m.
+ * Last modified on 07-02-2022 01:12 a.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package ca.solostudios.polybot.api.entities
 
 import net.dv8tion.jda.api.entities.User
 
-public interface PolyUser : PolySnowflakeEntity, Mentionable {
+public interface PolyUser : PolySnowflakeEntity, PolyMentionable {
     /**
      * The JDA user that is being wrapped by this entity
      */

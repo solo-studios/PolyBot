@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageBuilder.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 05:01 p.m.
+ * Last modified on 07-02-2022 01:16 a.m.
  *
  * MIT License
  *
@@ -28,9 +28,9 @@
 
 package ca.solostudios.polybot.api.builder
 
-import ca.solostudios.polybot.api.data.PolyFile
 import ca.solostudios.polybot.api.entities.PolyMessage
 import ca.solostudios.polybot.api.entities.PolyMessageChannel
+import ca.solostudios.polybot.data.PolyFile
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -47,11 +47,11 @@ public interface PolyMessageBuilder {
     
     public var referencedMessage: PolyMessage?
     
-    public val embeds: MutableList<PolyMessageEmbedBuilder>
+    public val embeds: MutableList<ca.solostudios.polybot.builder.PolyMessageEmbedBuilder>
     
-    public var mentions: PolyAllowedMentionsBuilder
+    public var mentions: ca.solostudios.polybot.builder.PolyAllowedMentionsBuilder
     
-    public val files: MutableList<PolyFile>
+    public val files: MutableList<ca.solostudios.polybot.data.PolyFile>
     
     public var mentionRepliedUser: Boolean
     
@@ -61,23 +61,23 @@ public interface PolyMessageBuilder {
     
     public fun content(contentBlock: StringBuilder.() -> Unit)
     
-    public fun addFile(name: String, data: InputStream, spoiler: Boolean = false): PolyFile
+    public fun addFile(name: String, data: InputStream, spoiler: Boolean = false): ca.solostudios.polybot.data.PolyFile
     
-    public fun addFile(name: String, data: ByteArray, spoiler: Boolean = false): PolyFile {
+    public fun addFile(name: String, data: ByteArray, spoiler: Boolean = false): ca.solostudios.polybot.data.PolyFile {
         return addFile(name, ByteArrayInputStream(data), spoiler)
     }
     
-    public fun addFile(file: File, spoiler: Boolean = false): PolyFile {
+    public fun addFile(file: File, spoiler: Boolean = false): ca.solostudios.polybot.data.PolyFile {
         return addFile(file.name, file, spoiler)
     }
     
-    public fun addFile(name: String, file: File, spoiler: Boolean = false): PolyFile {
+    public fun addFile(name: String, file: File, spoiler: Boolean = false): ca.solostudios.polybot.data.PolyFile {
         return addFile(name, FileInputStream(file), spoiler)
     }
     
-    public fun embed(embedBuilder: PolyMessageEmbedBuilder.() -> Unit)
+    public fun embed(embedBuilder: ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.() -> Unit)
     
-    public fun mentions(allowedMentionsBuilder: PolyAllowedMentionsBuilder.() -> Unit)
+    public fun mentions(allowedMentionsBuilder: ca.solostudios.polybot.builder.PolyAllowedMentionsBuilder.() -> Unit)
     
     public fun build(): PolyMessage
 }

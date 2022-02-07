@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyAllowedMentionsBuilder.kt is part of PolyhedralBot
- * Last modified on 23-01-2022 04:43 p.m.
+ * Last modified on 07-02-2022 01:12 a.m.
  *
  * MIT License
  *

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageChannel.kt is part of PolyhedralBot
- * Last modified on 06-02-2022 06:26 p.m.
+ * Last modified on 07-02-2022 01:12 a.m.
  *
  * MIT License
  *
@@ -28,8 +28,8 @@
 
 package ca.solostudios.polybot.api.entities
 
-import ca.solostudios.polybot.api.builder.PolyMessageBuilder
-import ca.solostudios.polybot.api.builder.PolyMessageEmbedBuilder
+import ca.solostudios.polybot.builder.PolyMessageBuilder
+import ca.solostudios.polybot.builder.PolyMessageEmbedBuilder
 import java.io.InputStream
 import kotlinx.coroutines.flow.Flow
 import net.dv8tion.jda.api.AccountType
@@ -97,7 +97,7 @@ public interface PolyMessageChannel : PolyChannel {
      * and both the logged in account and the target user are bots.
      */
     @Throws(InsufficientPermissionException::class, IllegalArgumentException::class, UnsupportedOperationException::class)
-    public suspend fun sendMessage(messageBuilder: suspend PolyMessageBuilder.() -> Unit)
+    public suspend fun sendMessage(messageBuilder: suspend ca.solostudios.polybot.builder.PolyMessageBuilder.() -> Unit)
     
     /**
      * Send message embed to this channel.
@@ -125,7 +125,7 @@ public interface PolyMessageChannel : PolyChannel {
      * @see sendMessage
      */
     @Throws(InsufficientPermissionException::class, IllegalArgumentException::class, UnsupportedOperationException::class)
-    public suspend fun sendMessageEmbed(messageEmbedBuilder: suspend PolyMessageEmbedBuilder.() -> Unit)
+    public suspend fun sendMessageEmbed(messageEmbedBuilder: suspend ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.() -> Unit)
     
     /**
      * Uploads a file to the Discord servers and sends it to this channel.

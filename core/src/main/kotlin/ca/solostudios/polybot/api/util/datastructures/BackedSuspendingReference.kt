@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolySnowflakeEntity.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:12 a.m.
+ * The file BackedSuspendingReference.kt is part of PolyhedralBot
+ * Last modified on 07-02-2022 01:16 a.m.
  *
  * MIT License
  *
@@ -26,8 +26,36 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.entities
+package ca.solostudios.polybot.api.util.datastructures
 
 import ca.solostudios.polybot.PolyObject
+import java.lang.ref.WeakReference
+import kotlinx.coroutines.runBlocking
+import kotlin.reflect.KProperty
 
-public interface PolySnowflakeEntity : ca.solostudios.polybot.PolyObject, SnowflakeEntity
+public open class BackedSuspendingReference<T, V>(
+        private var backingProperty: V,
+        private val refresh: suspend (V) -> T,
+        private val getBackingProperty: (T) -> V,
+        override val polybot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot,
+                                                 ) : ca.solostudios.polybot.PolyObject {
+    private var reference: WeakReference<T>? = null
+    
+    public operator fun getValue(thisRef: Any, property: KProperty<*>): T {
+        val referent = reference?.get()
+        
+        return if (referent != null) {
+            referent
+        } else {
+            val newReferent = runBlocking { refresh(backingProperty) }
+            reference = WeakReference(newReferent)
+            
+            newReferent
+        }
+    }
+    
+    public operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        backingProperty = getBackingProperty(value)
+        reference = WeakReference(value)
+    }
+}
