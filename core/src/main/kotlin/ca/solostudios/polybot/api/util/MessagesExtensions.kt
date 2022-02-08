@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file Extensions.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file MessagesExtensions.kt is part of PolyhedralBot
+ * Last modified on 08-02-2022 03:38 p.m.
  *
  * MIT License
  *
