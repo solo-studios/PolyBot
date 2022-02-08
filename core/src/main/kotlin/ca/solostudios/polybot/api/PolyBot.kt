@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:12 a.m.
+ * Last modified on 08-02-2022 03:33 p.m.
  *
  * MIT License
  *
@@ -83,7 +83,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      *
      * @see State
      */
-    public val state: ca.solostudios.polybot.api.PolyBot.State
+    public val state: State
     
     /**
      * True if this service has been shutdown successfully. False otherwise.

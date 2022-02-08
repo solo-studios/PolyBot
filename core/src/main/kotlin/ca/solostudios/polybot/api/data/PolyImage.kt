@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyImage.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:16 a.m.
+ * Last modified on 08-02-2022 03:33 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,7 @@ package ca.solostudios.polybot.api.data
 
 import java.util.Base64
 
-public class PolyImage private constructor(public val data: ByteArray, public val format: ca.solostudios.polybot.data.PolyImage.Format) {
+public class PolyImage private constructor(public val data: ByteArray, public val format: Format) {
     public val dataUri: String
         get() {
             val hash = Base64.getEncoder().encode(data)
@@ -38,8 +38,8 @@ public class PolyImage private constructor(public val data: ByteArray, public va
         }
     
     public companion object {
-        public fun raw(data: ByteArray, format: ca.solostudios.polybot.data.PolyImage.Format): ca.solostudios.polybot.data.PolyImage {
-            return ca.solostudios.polybot.data.PolyImage(data, format)
+        public fun raw(data: ByteArray, format: PolyImage.Format): PolyImage {
+            return PolyImage(data, format)
         }
     }
     
@@ -50,13 +50,13 @@ public class PolyImage private constructor(public val data: ByteArray, public va
         GIF(listOf("gif"), listOf("image/gif"));
         
         public companion object {
-            public fun fromMimeType(mimeType: String): ca.solostudios.polybot.data.PolyImage.Format? {
+            public fun fromMimeType(mimeType: String): Format? {
                 return values().find {
                     it.mimeTypes.contains(mimeType)
                 }
             }
     
-            public fun fromFileName(fileName: String): ca.solostudios.polybot.data.PolyImage.Format? {
+            public fun fromFileName(fileName: String): Format? {
                 return values().find {
                     it.extensions.any { ext -> fileName.endsWith(".$ext", ignoreCase = true) }
                 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyExtensions.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:16 a.m.
+ * Last modified on 08-02-2022 03:33 p.m.
  *
  * MIT License
  *
@@ -26,9 +26,10 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.util
+package api.util
 
-import ca.solostudios.polybot.PolyObject
+import ca.solostudios.polybot.api.PolyBot
+import ca.solostudios.polybot.api.PolyObject
 import ca.solostudios.polybot.api.entities.PolyCategory
 import ca.solostudios.polybot.api.entities.PolyChannel
 import ca.solostudios.polybot.api.entities.PolyEmote
@@ -68,7 +69,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun Member.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyMember = bot.poly(this)
+public fun Member.poly(bot: PolyBot): PolyMember = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -76,7 +77,7 @@ public fun Member.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBo
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Member): PolyMember = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Member): PolyMember = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -84,7 +85,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Member): PolyMember
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun User.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyUser = bot.poly(this)
+public fun User.poly(bot: PolyBot): PolyUser = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -92,7 +93,7 @@ public fun User.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: User): PolyUser = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: User): PolyUser = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -100,7 +101,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: User): PolyUser = p
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun Guild.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyGuild = bot.poly(this)
+public fun Guild.poly(bot: PolyBot): PolyGuild = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -108,7 +109,7 @@ public fun Guild.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Guild): PolyGuild = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Guild): PolyGuild = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -116,7 +117,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Guild): PolyGuild =
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun Message.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyMessage = bot.poly(this)
+public fun Message.poly(bot: PolyBot): PolyMessage = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -124,7 +125,7 @@ public fun Message.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyB
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Message): PolyMessage = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Message): PolyMessage = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -132,7 +133,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Message): PolyMessa
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun Role.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyRole = bot.poly(this)
+public fun Role.poly(bot: PolyBot): PolyRole = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -140,7 +141,7 @@ public fun Role.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Role): PolyRole = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Role): PolyRole = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -148,7 +149,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Role): PolyRole = p
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun AbstractChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyChannel = bot.poly(this)
+public fun AbstractChannel.poly(bot: PolyBot): PolyChannel = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -156,7 +157,7 @@ public fun AbstractChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.a
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: AbstractChannel): PolyChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: AbstractChannel): PolyChannel = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -164,7 +165,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: AbstractChannel): P
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun GuildChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyGuildChannel = bot.poly(this)
+public fun GuildChannel.poly(bot: PolyBot): PolyGuildChannel = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -172,7 +173,7 @@ public fun GuildChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: GuildChannel): PolyGuildChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: GuildChannel): PolyGuildChannel = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -180,7 +181,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: GuildChannel): Poly
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun MessageChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyMessageChannel = bot.poly(this)
+public fun MessageChannel.poly(bot: PolyBot): PolyMessageChannel = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -188,7 +189,7 @@ public fun MessageChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.ap
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: MessageChannel): PolyMessageChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: MessageChannel): PolyMessageChannel = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -196,7 +197,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: MessageChannel): Po
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun TextChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyTextChannel = bot.poly(this)
+public fun TextChannel.poly(bot: PolyBot): PolyTextChannel = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -204,7 +205,7 @@ public fun TextChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.P
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: TextChannel): PolyTextChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: TextChannel): PolyTextChannel = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -212,7 +213,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: TextChannel): PolyT
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun Category.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyCategory = bot.poly(this)
+public fun Category.poly(bot: PolyBot): PolyCategory = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -220,7 +221,7 @@ public fun Category.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.Poly
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Category): PolyCategory = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Category): PolyCategory = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -228,7 +229,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Category): PolyCate
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun PrivateChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyPrivateChannel = bot.poly(this)
+public fun PrivateChannel.poly(bot: PolyBot): PolyPrivateChannel = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -236,7 +237,7 @@ public fun PrivateChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.ap
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: PrivateChannel): PolyPrivateChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: PrivateChannel): PolyPrivateChannel = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -244,7 +245,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: PrivateChannel): Po
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun VoiceChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyVoiceChannel = bot.poly(this)
+public fun VoiceChannel.poly(bot: PolyBot): PolyVoiceChannel = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -252,9 +253,9 @@ public fun VoiceChannel.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: VoiceChannel): PolyVoiceChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: VoiceChannel): PolyVoiceChannel = polybot.poly(jdaEntity)
 
-public fun MessageEmbed.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyMessageEmbed = bot.poly(this)
+public fun MessageEmbed.poly(bot: PolyBot): PolyMessageEmbed = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -262,7 +263,7 @@ public fun MessageEmbed.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: MessageEmbed): PolyMessageEmbed = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: MessageEmbed): PolyMessageEmbed = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -270,7 +271,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: MessageEmbed): Poly
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun Emote.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyEmote = bot.poly(this)
+public fun Emote.poly(bot: PolyBot): PolyEmote = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -278,7 +279,7 @@ public fun Emote.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Emote): PolyEmote = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Emote): PolyEmote = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -286,7 +287,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: Emote): PolyEmote =
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun IMentionable.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyMentionable = bot.poly(this)
+public fun IMentionable.poly(bot: PolyBot): PolyMentionable = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -294,7 +295,7 @@ public fun IMentionable.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: IMentionable): PolyMentionable = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: IMentionable): PolyMentionable = polybot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -302,7 +303,7 @@ public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: IMentionable): Poly
  * @param bot The PolyBot instance used to wrap this entity.
  * @return The wrapped JDA entity.
  */
-public fun IPermissionHolder.poly(bot: _root_ide_package_.ca.solostudios.polybot.api.PolyBot): PolyPermissionHolder = bot.poly(this)
+public fun IPermissionHolder.poly(bot: PolyBot): PolyPermissionHolder = bot.poly(this)
 
 /**
  * Wrap the provided JDA entity in the respective polybot entity.
@@ -310,4 +311,4 @@ public fun IPermissionHolder.poly(bot: _root_ide_package_.ca.solostudios.polybot
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun ca.solostudios.polybot.PolyObject.poly(jdaEntity: IPermissionHolder): PolyPermissionHolder = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: IPermissionHolder): PolyPermissionHolder = polybot.poly(jdaEntity)

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEvent.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:12 a.m.
+ * Last modified on 08-02-2022 03:33 p.m.
  *
  * MIT License
  *
@@ -28,11 +28,11 @@
 
 package ca.solostudios.polybot.api.event
 
-import ca.solostudios.polybot.PolyObject
+import ca.solostudios.polybot.api.PolyObject
 
 /**
  * A generic event
  *
  * @constructor Create empty Poly event
  */
-public interface PolyEvent : ca.solostudios.polybot.PolyObject 
+public interface PolyEvent : PolyObject 

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageEmbedBuilder.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:12 a.m.
+ * Last modified on 08-02-2022 03:33 p.m.
  *
  * MIT License
  *
@@ -43,35 +43,35 @@ public interface PolyMessageEmbedBuilder {
     
     public var timestamp: Instant?
     
-    public val fields: MutableList<ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.PolyFieldBuilder>
+    public val fields: MutableList<PolyFieldBuilder>
     
     public var thumbnail: String?
     
     public var image: String?
     
-    public val author: ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.PolyAuthorBuilder
+    public val author: PolyAuthorBuilder
     
-    public val footer: ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.PolyFooterBuilder
+    public val footer: PolyFooterBuilder
     
     public fun field(
-            name: String = ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.Companion.ZERO_WIDTH_SPACE,
-            value: String = ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.Companion.ZERO_WIDTH_SPACE,
+            name: String = ZERO_WIDTH_SPACE,
+            value: String = ZERO_WIDTH_SPACE,
             inline: Boolean = true,
-            block: ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.PolyFieldBuilder.() -> Unit,
+            block: PolyFieldBuilder.() -> Unit,
                     )
     
     public fun author(
             name: String? = null,
             url: String? = null,
             iconUrl: String? = null,
-            block: ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.PolyAuthorBuilder.() -> Unit,
+            block: PolyAuthorBuilder.() -> Unit,
                      )
     
     public fun footer(
             name: String? = null,
             iconUrl: String? = null,
             proxyIconUrl: String? = null,
-            block: ca.solostudios.polybot.builder.PolyMessageEmbedBuilder.PolyFooterBuilder.() -> Unit,
+            block: PolyFooterBuilder.() -> Unit,
                      )
     
     public fun build(): PolyMessageEmbed
