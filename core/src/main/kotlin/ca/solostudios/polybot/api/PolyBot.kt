@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 03:33 p.m.
+ * Last modified on 08-02-2022 03:40 p.m.
  *
  * MIT License
  *
@@ -79,76 +79,7 @@ import kotlin.random.Random
  */
 public interface PolyBot : CoroutineScope, CoroutineContext {
     /**
-     * The state the service is currently in
-     *
-     * @see State
-     */
-    public val state: State
-    
-    /**
-     * True if this service has been shutdown successfully. False otherwise.
-     *
-     * Corresponds to when `state` is `SHUTDOWN` or `FAILED`.
-     *
-     * @see state
-     * @see State.SHUTDOWN
-     * @see State.FAILED
-     */
-    public val shutdown: Boolean
-    
-    /**
-     * True if this service is running. False otherwise.
-     *
-     * Corresponds to when `state` is `RUNNING`
-     *
-     * @see state
-     * @see State.RUNNING
-     */
-    public val running: Boolean
-    
-    /**
-     * True if this service is active. False otherwise.
-     *
-     * Corresponds to any state with [State.active]
-     *
-     * When a service is in an active state, this indicates that it is capable of performing actions outside its own class namespace.
-     *
-     * This includes, but is not limited to:
-     * - reading/writing to any files
-     * - sending HTTP requests
-     * - manipulating objects outside its own namespace
-     *
-     * @see state
-     * @see State
-     */
-    public val active: Boolean
-    
-    /**
-     * Shutdown the running service and blocks until it is fully shutdown.
-     *
-     * Exceptions may be thrown during shutdown.
-     *
-     * @param exitCode The exit code to exit the JVM with.
-     * @param isShutdownHook Whether this is invoked by a shutdown hook or not.
-     */
-    @Throws(Exception::class)
-    public suspend fun shutdown(exitCode: Int = ExitCodes.EXIT_CODE_NORMAL, isShutdownHook: Boolean)
-    
-    /**
-     * Starts PolyBot and blocks until it is fully started.
-     *
-     * Exceptions may be thrown during startup.
-     *
-     * Note: services may be restarted several times.
-     */
-    @Throws(Exception::class)
-    public suspend fun start()
-    
-    /**
      * The state of PolyBot
-     *
-     * @property active
-     * @constructor Create empty State
      */
     public enum class State(
             /**
@@ -206,6 +137,51 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
     }
     
     /**
+     * The state the service is currently in
+     *
+     * @see State
+     */
+    public val state: State
+    
+    /**
+     * True if this service has been shutdown successfully. False otherwise.
+     *
+     * Corresponds to when `state` is `SHUTDOWN` or `FAILED`.
+     *
+     * @see state
+     * @see State.SHUTDOWN
+     * @see State.FAILED
+     */
+    public val shutdown: Boolean
+    
+    /**
+     * True if this service is running. False otherwise.
+     *
+     * Corresponds to when `state` is `RUNNING`
+     *
+     * @see state
+     * @see State.RUNNING
+     */
+    public val running: Boolean
+    
+    /**
+     * True if this service is active. False otherwise.
+     *
+     * Corresponds to any state with [State.active]
+     *
+     * When a service is in an active state, this indicates that it is capable of performing actions outside its own class namespace.
+     *
+     * This includes, but is not limited to:
+     * - reading/writing to any files
+     * - sending HTTP requests
+     * - manipulating objects outside its own namespace
+     *
+     * @see state
+     * @see State
+     */
+    public val active: Boolean
+    
+    /**
      * The global random instance for the bot.
      */
     public val globalRandom: Random
@@ -234,6 +210,27 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * The discord id of the bot.
      */
     public val id: ULong
+    
+    /**
+     * Shutdown the running service and blocks until it is fully shutdown.
+     *
+     * Exceptions may be thrown during shutdown.
+     *
+     * @param exitCode The exit code to exit the JVM with.
+     * @param isShutdownHook Whether this is invoked by a shutdown hook or not.
+     */
+    @Throws(Exception::class)
+    public suspend fun shutdown(exitCode: Int = ExitCodes.EXIT_CODE_NORMAL, isShutdownHook: Boolean)
+    
+    /**
+     * Starts PolyBot and blocks until it is fully started.
+     *
+     * Exceptions may be thrown during startup.
+     *
+     * Note: services may be restarted several times.
+     */
+    @Throws(Exception::class)
+    public suspend fun start()
     
     /**
      * Returns a backed reference for a guild.
