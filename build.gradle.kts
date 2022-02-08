@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 18-01-2022 01:38 p.m.
+ * Last modified on 08-02-2022 04:13 p.m.
  *
  * MIT License
  *
@@ -77,12 +77,9 @@ repositories {
         url = uri("https://jitpack.io/")
     }
     
-    @Suppress("DEPRECATION")
-    jcenter {
-        content {
-            // includeModuleByRegex("com\\.jagrosh", "jda-*")
-            includeGroup("com.jagrosh")
-        }
+    maven {
+        name = "chew-repo"
+        url = uri("https://m2.chew.pro/releases")
     }
 }
 
@@ -154,7 +151,7 @@ dependencies {
     // PostreSQL
     implementation(libs.postgresql)
     
-    // Make using SQL not the most excrutiating shit ever and actually bearable to use
+    // Make using SQL not the most excruciating shit ever and actually bearable to use
     implementation(libs.bundles.exposed)
     // Exposed Migrations
     implementation(libs.exposed.migrations)

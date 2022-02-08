@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 07-02-2022 01:13 a.m.
+ * Last modified on 08-02-2022 04:13 p.m.
  *
  * MIT License
  *
@@ -34,10 +34,21 @@ plugins {
 repositories {
     mavenCentral()
     
-    maven { // JDA
+    maven {
         name = "dv8tion-repo"
         url = uri("https://m2.dv8tion.net/releases")
     }
+    
+    maven {
+        name = "jitpack"
+        url = uri("https://jitpack.io/")
+    }
+    
+    maven {
+        name = "chew-repo"
+        url = uri("https://m2.chew.pro/releases")
+    }
+    
 }
 
 kotlin {
@@ -53,26 +64,34 @@ kotlin {
 
 dependencies {
     // Kotlin
-    implementation(libs.kotlin.stdlib)
-    
+    api(libs.bundles.kotlin)
+    // Kotlin Serialization
+    api(libs.bundles.kotlinx.serialization)
     // Kotlin Coroutines
-    implementation(libs.bundles.kotlinx.coroutines)
-    
+    api(libs.bundles.kotlinx.coroutines)
     // Kotlin Datetime
-    implementation(libs.kotlinx.datetime)
+    api(libs.kotlinx.datetime)
+    
+    // Kodein Dependency Injection
+    api(libs.kodein)
     
     // Jetbrains Annotations
-    implementation(libs.jetbrains.annotations)
+    api(libs.jetbrains.annotations)
     
     // JDA
-    implementation(libs.jda)
+    api(libs.jda)
     // Discord webhooks
-    implementation(libs.discord.webhooks)
+    api(libs.discord.webhooks)
     // JDA Kotlin extensions
-    implementation(libs.jda.ktx)
+    api(libs.jda.ktx)
     // JDA utilities
-    implementation(libs.bundles.jda.utilities)
+    api(libs.bundles.jda.utilities)
     
     // Cloud
-    implementation(libs.bundles.cloud)
+    api(libs.bundles.cloud)
+    
+    // SLF4J
+    api(libs.slf4j)
+    // SLF4J extension library
+    api(libs.slf4k)
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 21-01-2022 11:07 a.m.
+ * Last modified on 08-02-2022 04:13 p.m.
  *
  * MIT License
  *
@@ -54,9 +54,14 @@ dependencyResolutionManagement {
             val kotlinVersion = "1.6.10"
             version("kotlin", kotlinVersion)
             alias("kotlin-stdlib") library ("org.jetbrains.kotlin" to "kotlin-stdlib") versionRef "kotlin"
-            alias("kotlin-stdlib") library ("org.jetbrains.kotlin" to "kotlin-stdlib-jdk8") versionRef "kotlin"
+            alias("kotlin-stdlib-jdk7") library ("org.jetbrains.kotlin" to "kotlin-stdlib-jdk7") versionRef "kotlin"
+            alias("kotlin-stdlib-jdk8") library ("org.jetbrains.kotlin" to "kotlin-stdlib-jdk8") versionRef "kotlin"
             alias("kotlin-reflect") library ("org.jetbrains.kotlin" to "kotlin-reflect") versionRef "kotlin"
-            
+            bundle(
+                    "kotlin",
+                    listOf("kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8", "kotlin-reflect")
+                  )
+    
             pluginManagement {
                 plugins {
                     kotlin("jvm") version kotlinVersion
@@ -64,7 +69,7 @@ dependencyResolutionManagement {
                     kotlin("plugin.serialization") version kotlinVersion
                 }
             }
-            
+    
             alias("kotlin-jvm") plugin "org.jetbrains.kotlin.jvm" versionRef "kotlin"
             alias("kotlin-noarg") plugin "org.jetbrains.kotlin.plugin.noarg" versionRef "kotlin"
             alias("kotlin-serialization") plugin "org.jetbrains.kotlin.plugin.serialization" versionRef "kotlin"
@@ -125,7 +130,7 @@ dependencyResolutionManagement {
             alias("jda-ktx") library ("com.github.minndevelopment" to "jda-ktx") version "0.7.0"
             
             // JDA utilities
-            version("jda-utilities", "3.0.5")
+            version("jda-utilities", "3.1.0")
             alias("jda-utilities-commons") library ("com.jagrosh" to "jda-utilities-commons") versionRef "jda-utilities"
             alias("jda-utilities-menu") library ("com.jagrosh" to "jda-utilities-menu") versionRef "jda-utilities"
             bundle("jda-utilities", listOf("jda-utilities-commons", "jda-utilities-menu"))
