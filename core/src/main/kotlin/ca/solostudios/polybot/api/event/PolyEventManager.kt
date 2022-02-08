@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEventManager.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:12 a.m.
+ * Last modified on 08-02-2022 12:29 a.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 
 package ca.solostudios.polybot.api.event
 
-import ca.solostudios.polybot.PolyObject
+import ca.solostudios.polybot.api.PolyObject
 import kotlin.reflect.KClass
 
 /**
@@ -36,7 +36,7 @@ import kotlin.reflect.KClass
  *
  * Event managers are used to register listeners to events and dispatch events to the listeners
  */
-public interface PolyEventManager : ca.solostudios.polybot.PolyObject {
+public interface PolyEventManager : PolyObject {
     /**
      * A list of all currently registered listeners
      */

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolySnowflakeEntity.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:12 a.m.
+ * Last modified on 08-02-2022 12:29 a.m.
  *
  * MIT License
  *
@@ -28,6 +28,6 @@
 
 package ca.solostudios.polybot.api.entities
 
-import ca.solostudios.polybot.PolyObject
+import ca.solostudios.polybot.api.PolyObject
 
-public interface PolySnowflakeEntity : ca.solostudios.polybot.PolyObject, SnowflakeEntity
+public interface PolySnowflakeEntity : PolyObject, SnowflakeEntity
