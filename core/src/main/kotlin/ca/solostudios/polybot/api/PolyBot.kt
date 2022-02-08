@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 03:40 p.m.
+ * Last modified on 08-02-2022 03:43 p.m.
  *
  * MIT License
  *
@@ -45,6 +45,8 @@ import ca.solostudios.polybot.api.entities.PolyRole
 import ca.solostudios.polybot.api.entities.PolyTextChannel
 import ca.solostudios.polybot.api.entities.PolyUser
 import ca.solostudios.polybot.api.entities.PolyVoiceChannel
+import ca.solostudios.polybot.api.event.PolyEventManager
+import ca.solostudios.polybot.api.service.PolyServiceManager
 import dev.minn.jda.ktx.BackedReference
 import java.util.concurrent.ScheduledExecutorService
 import kotlinx.coroutines.CoroutineScope
@@ -210,6 +212,20 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * The discord id of the bot.
      */
     public val id: ULong
+    
+    /**
+     * The poly event manager.
+     *
+     * This class is used to register to and listen for events.
+     */
+    public val eventManager: PolyEventManager
+    
+    /**
+     * The poly service manager.
+     *
+     * Use this class to retrieve and interface with services directly.
+     */
+    public val serviceManager: PolyServiceManager
     
     /**
      * Shutdown the running service and blocks until it is fully shutdown.
