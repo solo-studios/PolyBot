@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceExtensions.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 03:38 p.m.
+ * Last modified on 08-02-2022 03:57 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,7 @@ package ca.solostudios.polybot.api.util
 
 import ca.solostudios.polybot.api.service.DuplicateServiceException
 import ca.solostudios.polybot.api.service.PolyService
+import ca.solostudios.polybot.api.service.PolyServiceCompanionObject
 import ca.solostudios.polybot.api.service.PolyServiceManager
 import ca.solostudios.polybot.api.service.ServiceAlreadyStartedException
 import kotlin.reflect.KClass
@@ -44,6 +45,16 @@ import kotlin.reflect.KProperty
  * @throws NullPointerException if no service of the specified type can be found
  */
 public operator fun <T : PolyService> PolyServiceManager.get(clazz: KClass<T>): T = getService(clazz)
+
+/**
+ * Returns a service from the manager.
+ *
+ * @param T The type of the service to return
+ * @param clazz The class of the service
+ * @return The service
+ * @throws NullPointerException if no service of the specified type can be found
+ */
+public operator fun <T : PolyService> PolyServiceManager.get(clazz: PolyServiceCompanionObject<T>): T = getService(clazz.serviceClass)
 
 /**
  * Returns a service from the manager.
@@ -65,6 +76,20 @@ public inline fun <reified T : PolyService> PolyServiceManager.service(): T = ge
  */
 @Throws(DuplicateServiceException::class, ServiceAlreadyStartedException::class, IllegalArgumentException::class)
 public operator fun <T : PolyService> PolyServiceManager.set(clazz: KClass<T>, service: T): Unit = addService(service, clazz)
+
+/**
+ * Add service to the manager
+ *
+ * @param T The type of service to be added
+ * @param service The service to be added
+ * @throws DuplicateServiceException if a service is added more than once
+ * @throws ServiceAlreadyStartedException if a service has already been started
+ * @throws IllegalArgumentException if the service being added is a [PolyServiceManager]
+ */
+@Throws(DuplicateServiceException::class, ServiceAlreadyStartedException::class, IllegalArgumentException::class)
+public operator fun <T : PolyService> PolyServiceManager.set(clazz: PolyServiceCompanionObject<T>, service: T) {
+    addService(service, clazz.serviceClass)
+}
 
 /**
  * Add service to the manager
