@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManager.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 03:33 p.m.
+ * Last modified on 08-02-2022 03:38 p.m.
  *
  * MIT License
  *
@@ -136,7 +136,7 @@ public interface PolyServiceManager : PolyService, PolyObject {
      * @throws ServiceAlreadyStartedException if a service has already been started
      * @throws IllegalArgumentException if the service being added is a [PolyServiceManager]
      */
-    @Throws(DuplicateServiceException::class, ServiceAlreadyStartedException::class)
+    @Throws(DuplicateServiceException::class, ServiceAlreadyStartedException::class, IllegalArgumentException::class)
     public fun <T : PolyService> addService(service: T, clazz: KClass<T>)
     
     /**

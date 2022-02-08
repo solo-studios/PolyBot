@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file extensions.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 12:28 a.m.
+ * The file EventExtensions.kt is part of PolyhedralBot
+ * Last modified on 08-02-2022 03:36 p.m.
  *
  * MIT License
  *
@@ -26,7 +26,11 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.event
+package ca.solostudios.polybot.api.util
+
+import ca.solostudios.polybot.api.event.PolyEvent
+import ca.solostudios.polybot.api.event.PolyEventListener
+import ca.solostudios.polybot.api.event.PolyEventManager
 
 /**
  * Register a listener for a specific event
