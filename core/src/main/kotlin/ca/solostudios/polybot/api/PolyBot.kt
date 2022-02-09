@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 09-02-2022 11:57 a.m.
+ * Last modified on 09-02-2022 12:06 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,6 @@
 
 package ca.solostudios.polybot.api
 
-import ca.solostudios.polybot.ExitCodes
 import ca.solostudios.polybot.api.entities.PolyCategory
 import ca.solostudios.polybot.api.entities.PolyChannel
 import ca.solostudios.polybot.api.entities.PolyEmote
@@ -47,6 +46,7 @@ import ca.solostudios.polybot.api.entities.PolyUser
 import ca.solostudios.polybot.api.entities.PolyVoiceChannel
 import ca.solostudios.polybot.api.event.PolyEventManager
 import ca.solostudios.polybot.api.service.PolyServiceManager
+import ca.solostudios.polybot.common.ExitCodes
 import com.uchuhimo.konf.Config
 import dev.minn.jda.ktx.BackedReference
 import java.util.concurrent.ScheduledExecutorService

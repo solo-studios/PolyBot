@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ExitCodes.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:12 a.m.
+ * Last modified on 09-02-2022 12:06 p.m.
  *
  * MIT License
  *
@@ -26,7 +26,7 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot
+package ca.solostudios.polybot.common
 
 public object ExitCodes {
     public const val EXIT_CODE_NORMAL: Int = 0
