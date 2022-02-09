@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceExtensions.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 03:57 p.m.
+ * Last modified on 09-02-2022 12:18 p.m.
  *
  * MIT License
  *
@@ -28,11 +28,11 @@
 
 package ca.solostudios.polybot.api.util
 
-import ca.solostudios.polybot.api.service.DuplicateServiceException
 import ca.solostudios.polybot.api.service.PolyService
 import ca.solostudios.polybot.api.service.PolyServiceCompanionObject
 import ca.solostudios.polybot.api.service.PolyServiceManager
-import ca.solostudios.polybot.api.service.ServiceAlreadyStartedException
+import ca.solostudios.polybot.common.service.DuplicateServiceException
+import ca.solostudios.polybot.common.service.ServiceAlreadyStartedException
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 

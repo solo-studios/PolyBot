@@ -2,7 +2,7 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyManagedService.kt is part of PolyhedralBot
+ * The file ServiceCompanionObject.kt is part of PolyhedralBot
  * Last modified on 09-02-2022 12:18 p.m.
  *
  * MIT License
@@ -26,16 +26,15 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.common.service
 
-import ca.solostudios.polybot.common.service.ManagedService
+import kotlin.reflect.KClass
 
 /**
- * This represents a service, which can be started and stopped, and is also aware that it is being managed.
+ * A [PolyService] companion object.
  *
- * This class provides a common interface for services, as well as managing them.
- *
- * @see PolyServiceManager
- * @see ManagedService
+ * This is used to make retrieving the service smoother.
  */
-public interface PolyManagedService : ManagedService, PolyService 
+public interface ServiceCompanionObject<S : Service> {
+    public val serviceClass: KClass<S>
+}

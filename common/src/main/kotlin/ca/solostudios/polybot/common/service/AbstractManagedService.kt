@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file DuplicateServiceException.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 12:28 a.m.
+ * The file AbstractManagedService.kt is part of PolyhedralBot
+ * Last modified on 09-02-2022 12:18 p.m.
  *
  * MIT License
  *
@@ -26,15 +26,25 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.common.service
 
-/**
- * An exception that is thrown when a service is added to a [PolyServiceManager] more than once.
- */
-public class DuplicateServiceException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause) {
-    public constructor(cause: Throwable) : this(null, cause)
+public abstract class AbstractManagedService : AbstractService(), ManagedService {
+    /**
+     * The service manager that is managing this service.
+     *
+     * @throws NullPointerException if the service manager has not been set
+     */
+    final override lateinit var serviceManager: ServiceManager
     
-    public companion object {
-        private const val serialVersionUID: Long = 4604817406309293731L
+    /**
+     * Adds an exception to the service manager.
+     *
+     * This does nothing if the service manager is null.
+     *
+     * @param exception The exception to be added.
+     */
+    protected fun addException(exception: Exception) {
+        // Note: this::class will reference the subclass.
+        serviceManager.addException(this::class, exception)
     }
 }

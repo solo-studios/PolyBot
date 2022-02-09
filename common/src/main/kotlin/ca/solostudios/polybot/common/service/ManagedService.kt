@@ -2,8 +2,8 @@
  * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ServiceAlreadyStartedException.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file ManagedService.kt is part of PolyhedralBot
+ * Last modified on 09-02-2022 12:18 p.m.
  *
  * MIT License
  *
@@ -26,17 +26,18 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.common.service
 
 /**
- * An exception that is thrown if a service has already been started.
+ * This represents a service, which can be started and stopped, and is also aware that it is being managed.
  *
- * @see PolyServiceManager
+ * This class provides a common interface for services, as well as managing them.
+ *
+ * @see ServiceManager
  */
-public class ServiceAlreadyStartedException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause) {
-    public constructor(cause: Throwable) : this(null, cause)
-    
-    public companion object {
-        private const val serialVersionUID: Long = -1985603020742423944L
-    }
+public interface ManagedService : Service {
+    /**
+     * The service manager that is managing this service
+     */
+    public val serviceManager: ServiceManager
 }

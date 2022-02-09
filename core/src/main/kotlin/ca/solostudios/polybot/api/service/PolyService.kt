@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyService.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 03:33 p.m.
+ * Last modified on 09-02-2022 12:18 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package ca.solostudios.polybot.api.service
 
 import ca.solostudios.polybot.api.PolyObject
+import ca.solostudios.polybot.common.service.Service
 
 /**
  * This represents a service, which can be started and stopped.
@@ -36,123 +37,7 @@ import ca.solostudios.polybot.api.PolyObject
  * This class provides a common interface for services, as well as managing them.
  *
  * All services can be started, stopped, and then started again.
+ *
+ * @see Service
  */
-public interface PolyService : PolyObject {
-    /**
-     * The state the service is currently in
-     *
-     * @see State
-     */
-    public val state: State
-    
-    /**
-     * True if this service has been shutdown successfully. False otherwise.
-     *
-     * Corresponds to when `state` is `SHUTDOWN` or `FAILED`.
-     *
-     * @see state
-     * @see State.SHUTDOWN
-     * @see State.FAILED
-     */
-    public val shutdown: Boolean
-    
-    /**
-     * True if this service is running. False otherwise.
-     *
-     * Corresponds to when `state` is `RUNNING`
-     *
-     * @see state
-     * @see State.RUNNING
-     */
-    public val running: Boolean
-    
-    /**
-     * True if this service is active. False otherwise.
-     *
-     * Corresponds to any state with [State.active]
-     *
-     * When a service is in an active state, this indicates that it is capable of performing actions outside its own class namespace.
-     *
-     * This includes, but is not limited to:
-     * - reading/writing to any files
-     * - sending HTTP requests
-     * - manipulating objects outside its own namespace
-     *
-     * @see state
-     * @see State
-     */
-    public val active: Boolean
-    
-    /**
-     * Shutdown the running service and blocks until it is fully shutdown.
-     *
-     * Exceptions may be thrown during shutdown.
-     */
-    @Throws(Exception::class)
-    public suspend fun shutdown()
-    
-    /**
-     * Starts this service and blocks until it is fully started.
-     *
-     * Exceptions may be thrown during startup.
-     *
-     * Note: services may be restarted several times.
-     */
-    @Throws(Exception::class)
-    public suspend fun start()
-    
-    public enum class State(
-            /**
-             * Any state where this is true indicates that the service is capable of performing actions outside its own class namespace.
-             *
-             * This includes, but is not limited to:
-             * - reading/writing to any files
-             * - sending HTTP requests
-             * - manipulating objects outside its own namespace
-             */
-            public val active: Boolean,
-                           ) {
-        /**
-         * The service is setting up supporting *internal* systems like thread pools, etc.
-         *
-         * It is **not** starting up the service.
-         */
-        INITIALIZING(false),
-        
-        /**
-         * The service has set up all supporting systems and is ready to be started.
-         *
-         * It is dormant in this state.
-         */
-        INITIALIZED(false),
-        
-        /**
-         * The service is starting up and is connecting to all required systems.
-         */
-        STARTING(true),
-        
-        /**
-         * The service is actively running
-         */
-        RUNNING(true),
-        
-        /**
-         * The service has begun the shutdown proces and is cleaning up all remaining processes/tasks.
-         */
-        SHUTTING_DOWN(true),
-        
-        /**
-         * The service has shutdown successfully.
-         *
-         * It is dormant in this state.
-         */
-        SHUTDOWN(false),
-        
-        /**
-         * The service failed to start successfully.
-         *
-         * It is dormant during this state.
-         */
-        FAILED(false)
-    }
-}
+public interface PolyService : Service, PolyObject 

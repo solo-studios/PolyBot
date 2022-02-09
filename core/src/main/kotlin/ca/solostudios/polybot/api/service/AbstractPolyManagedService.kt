@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AbstractPolyManagedService.kt is part of PolyhedralBot
- * Last modified on 03-02-2022 07:58 p.m.
+ * Last modified on 09-02-2022 12:18 p.m.
  *
  * MIT License
  *
@@ -28,23 +28,6 @@
 
 package ca.solostudios.polybot.api.service
 
-public abstract class AbstractPolyManagedService : AbstractPolyService(), PolyManagedService {
-    /**
-     * The service manager that is managing this service.
-     *
-     * @throws NullPointerException if the service manager has not been set
-     */
-    final override lateinit var serviceManager: PolyServiceManager
-    
-    /**
-     * Adds an exception to the service manager.
-     *
-     * This does nothing if the service manager is null.
-     *
-     * @param exception The exception to be added.
-     */
-    protected fun addException(exception: Exception) {
-        // Note: this::class will reference the subclass.
-        serviceManager.addException(this::class, exception)
-    }
-}
+import ca.solostudios.polybot.common.service.AbstractManagedService
+
+public abstract class AbstractPolyManagedService : AbstractManagedService(), PolyManagedService 

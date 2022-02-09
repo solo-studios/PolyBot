@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AbstractPolyService.kt is part of PolyhedralBot
- * Last modified on 03-02-2022 08:00 p.m.
+ * Last modified on 09-02-2022 12:18 p.m.
  *
  * MIT License
  *
@@ -28,59 +28,12 @@
 
 package ca.solostudios.polybot.api.service
 
+import ca.solostudios.polybot.common.service.AbstractService
+
 /**
  * Abstract service to make creating services easier.
  *
  * [initialized] **must** be called when the service is finished initialization,
  * whether this is in the constructor or off-thread.
  */
-public abstract class AbstractPolyService : PolyService {
-    final override var state: PolyService.State = PolyService.State.INITIALIZING
-        protected set
-    
-    final override val shutdown: Boolean
-        get() = state == PolyService.State.SHUTDOWN || state == PolyService.State.FAILED
-    
-    final override val running: Boolean
-        get() = state == PolyService.State.RUNNING
-    
-    final override val active: Boolean
-        get() = state.active
-    
-    @Throws(Exception::class)
-    final override suspend fun shutdown() {
-        if (!running)
-            return
-        
-        state = PolyService.State.SHUTTING_DOWN
-        
-        serviceShutdown() // Throws an exception on failure
-        
-        state = PolyService.State.SHUTDOWN
-    }
-    
-    @Throws(Exception::class)
-    final override suspend fun start() {
-        if (state.active) // If this service is active, just return
-            return
-        
-        state = PolyService.State.STARTING
-        
-        serviceStart() // Throws an exception on failure
-        
-        state = PolyService.State.RUNNING
-    }
-    
-    /**
-     * This method must be invoked when the service is finished being initialized.
-     */
-    protected fun initialized() {
-        state = PolyService.State.INITIALIZED
-    }
-    
-    @Throws(Exception::class)
-    protected abstract fun serviceStart()
-    
-    @Throws(Exception::class)
-    protected abstract fun serviceShutdown()
-}
+public abstract class AbstractPolyService : AbstractService(), PolyService 

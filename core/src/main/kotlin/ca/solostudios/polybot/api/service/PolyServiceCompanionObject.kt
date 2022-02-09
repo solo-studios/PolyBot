@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceCompanionObject.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 03:53 p.m.
+ * Last modified on 09-02-2022 12:18 p.m.
  *
  * MIT License
  *
@@ -28,13 +28,13 @@
 
 package ca.solostudios.polybot.api.service
 
-import kotlin.reflect.KClass
+import ca.solostudios.polybot.common.service.ServiceCompanionObject
 
 /**
  * A [PolyService] companion object.
  *
  * This is used to make retrieving the service smoother.
+ *
+ * @see ServiceCompanionObject
  */
-public interface PolyServiceCompanionObject<S : PolyService> {
-    public val serviceClass: KClass<S>
-}
+public interface PolyServiceCompanionObject<S : PolyService> : ServiceCompanionObject<S> 
