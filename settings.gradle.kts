@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 08-02-2022 04:13 p.m.
+ * Last modified on 09-02-2022 11:56 a.m.
  *
  * MIT License
  *
@@ -110,22 +110,25 @@ dependencyResolutionManagement {
             alias("kotlinx-uuid") library ("app.softwork" to "kotlinx-uuid-core") versionRef "kotlinx-uuid"
             // Exposed UUID support
             alias("exposed-uuid") library ("app.softwork" to "kotlinx-uuid-exposed") versionRef "kotlinx-uuid"
-            
+    
             // Kotlin CLI library
             alias("clikt") library ("com.github.ajalt.clikt" to "clikt") version "3.4.0"
-            
+    
             // Kodein Dependency Injection
             alias("kodein") library ("org.kodein.di" to "kodein-di") version "7.10.0"
-            
+    
+            // Konf
+            alias("konf") library ("com.uchuhimo" to "konf") version "1.1.2"
+    
             // Utility annotations
             alias("jetbrains-annotations") library ("org.jetbrains" to "annotations") version "22.0.0"
-            
+    
             // JDA
             alias("jda") library ("net.dv8tion" to "JDA") version "4.3.0_313"
-            
+    
             // Discord webhooks
             alias("discord-webhooks") library ("club.minnced" to "discord-webhooks") version "0.7.5"
-            
+    
             // JDA Kotlin extensions
             alias("jda-ktx") library ("com.github.minndevelopment" to "jda-ktx") version "0.7.0"
             
