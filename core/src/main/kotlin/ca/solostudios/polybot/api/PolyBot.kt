@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 08-02-2022 03:43 p.m.
+ * Last modified on 09-02-2022 11:57 a.m.
  *
  * MIT License
  *
@@ -47,6 +47,7 @@ import ca.solostudios.polybot.api.entities.PolyUser
 import ca.solostudios.polybot.api.entities.PolyVoiceChannel
 import ca.solostudios.polybot.api.event.PolyEventManager
 import ca.solostudios.polybot.api.service.PolyServiceManager
+import com.uchuhimo.konf.Config
 import dev.minn.jda.ktx.BackedReference
 import java.util.concurrent.ScheduledExecutorService
 import kotlinx.coroutines.CoroutineScope
@@ -182,6 +183,11 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @see State
      */
     public val active: Boolean
+    
+    /**
+     * The global bot Konf [Config] class.
+     */
+    public val config: Config
     
     /**
      * The global random instance for the bot.
