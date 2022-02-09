@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 09-02-2022 12:00 p.m.
+ * Last modified on 09-02-2022 12:04 p.m.
  *
  * MIT License
  *
@@ -46,6 +46,7 @@ pluginManagement {
 }
 
 include(":core")
+include(":common")
 include(":plugin-framework")
 
 dependencyResolutionManagement {

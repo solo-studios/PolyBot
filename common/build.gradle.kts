@@ -49,8 +49,6 @@ kotlin {
 dependencies {
     // Kotlin
     api(libs.bundles.kotlin)
-    // Kotlin Serialization
-    api(libs.bundles.kotlinx.serialization)
     // Kotlin Coroutines
     api(libs.bundles.kotlinx.coroutines)
     // Kotlin Datetime
@@ -58,9 +56,6 @@ dependencies {
     
     // Kodein Dependency Injection
     api(libs.kodein)
-    
-    // Konf
-    api(libs.konf)
     
     // Jetbrains Annotations
     api(libs.jetbrains.annotations)
