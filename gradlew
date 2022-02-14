@@ -2,10 +2,10 @@
 
 #
 # PolyhedralBot - A Discord bot for the Polyhedral Development discord server
-# Copyright (c) 2021 solonovamax <solonovamax@12oclockpoint.com>
+# Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
 #
 # The file gradlew is part of PolyhedralBot
-# Last modified on 29-09-2021 12:43 p.m.
+# Last modified on 14-02-2022 09:42 a.m.
 #
 # MIT License
 #
