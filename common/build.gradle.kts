@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-02-2022 12:04 p.m.
+ * Last modified on 14-02-2022 09:34 a.m.
  *
  * MIT License
  *
@@ -37,13 +37,6 @@ repositories {
 
 kotlin {
     explicitApi()
-    target {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
-            }
-        }
-    }
 }
 
 dependencies {

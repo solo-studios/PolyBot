@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-02-2022 12:06 p.m.
+ * Last modified on 14-02-2022 09:34 a.m.
  *
  * MIT License
  *
@@ -32,34 +32,8 @@ plugins {
 }
 
 repositories {
-    mavenCentral()
-    
-    maven {
-        name = "dv8tion-repo"
-        url = uri("https://m2.dv8tion.net/releases")
-    }
-    
-    maven {
-        name = "jitpack"
-        url = uri("https://jitpack.io/")
-    }
-    
-    maven {
-        name = "chew-repo"
-        url = uri("https://m2.chew.pro/releases")
-    }
-    
-}
-
-kotlin {
-    explicitApi()
-    target {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
-            }
-        }
-    }
+    maven("https://jitpack.io/")
+    maven("https://m2.chew.pro/releases")
 }
 
 dependencies {

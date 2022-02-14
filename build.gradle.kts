@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 08-02-2022 04:13 p.m.
+ * Last modified on 14-02-2022 09:34 a.m.
  *
  * MIT License
  *
@@ -38,7 +38,6 @@ import org.jetbrains.gradle.ext.GroovyCompilerConfiguration
 import org.jetbrains.gradle.ext.IdeaCompilerConfiguration
 import org.jetbrains.gradle.ext.ProjectSettings
 import org.jetbrains.gradle.ext.RunConfiguration
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     idea
@@ -59,28 +58,39 @@ group = "ca.solostudios.polybot"
 val versionObj = Version("0", "3", "5")
 version = versionObj
 
+allprojects {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    
+    kotlin {
+        target {
+            compilations.all {
+                kotlinOptions {
+                    jvmTarget = "11"
+                    apiVersion = "1.6"
+                    languageVersion = "1.6"
+                }
+            }
+        }
+    }
+    
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    
+    
+    repositories {
+        mavenCentral()
+        
+        maven("https://m2.dv8tion.net/releases")
+    }
+}
+
 repositories {
     mavenCentral()
-    
-    // maven { // Incendo (Cloud) Snapshots
-    //     name = "incendo-snapshots"
-    //     url = uri("https://repo.incendo.org/content/repositories/snapshots")
-    // }
-    
-    maven { // JDA
-        name = "dv8tion-repo"
-        url = uri("https://m2.dv8tion.net/releases")
-    }
-    
-    maven {
-        name = "jitpack"
-        url = uri("https://jitpack.io/")
-    }
-    
-    maven {
-        name = "chew-repo"
-        url = uri("https://m2.chew.pro/releases")
-    }
+    maven("https://m2.dv8tion.net/releases")
+    maven("https://jitpack.io/")
+    maven("https://m2.chew.pro/releases")
 }
 
 dependencies {
@@ -211,15 +221,6 @@ tasks {
         }
     }
     
-    withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_11.toString()
-            apiVersion = "1.6"
-            languageVersion = "1.6"
-            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-        }
-    }
-    
     withType<ShadowJar> {
         mergeServiceFiles()
         minimize {
@@ -254,11 +255,6 @@ tasks {
         compression = Compression.GZIP
         archiveFileName.set("PolyhedralBot-dist.tar.gz")
     }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
 }
 
 idea {
