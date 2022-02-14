@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyhedralBot
- * Last modified on 14-02-2022 09:42 a.m.
+ * Last modified on 14-02-2022 09:43 a.m.
  *
  * MIT License
  *
@@ -28,7 +28,7 @@
 import org.gradle.api.initialization.dsl.VersionCatalogBuilder.LibraryAliasBuilder
 import org.gradle.api.initialization.dsl.VersionCatalogBuilder.PluginAliasBuilder
 
-rootProject.name = "PolyhedralBot"
+rootProject.name = "PolyBot"
 
 pluginManagement {
     plugins {
