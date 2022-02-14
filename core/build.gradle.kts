@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 14-02-2022 09:34 a.m.
+ * The file build.gradle.kts is part of PolyBot
+ * Last modified on 14-02-2022 09:51 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -34,6 +34,10 @@ plugins {
 repositories {
     maven("https://jitpack.io/")
     maven("https://m2.chew.pro/releases")
+}
+
+kotlin {
+    explicitApi()
 }
 
 dependencies {
