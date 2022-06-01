@@ -93,11 +93,11 @@ class LuceneCommands(di: DI) : PolyCommands(di) {
         // message.reply(writer.writeValueAsString(parsedTree)).mentionRepliedUser(false).queue()
     }
     
-    @CommandName("Search Docs")
+//    @CommandName("Search Docs")
     // @CommandMethod("lucene search <query>")
-    @CommandMethod("search|s <query>")
-    @CommandDescription("Searches the Terra documentation.")
-    @CommandLongDescription("Searches through the Terra documentation and returns a list of links (or a single link) of possible results to your query.")
+//    @CommandMethod("search|s <query>")
+//    @CommandDescription("Searches the Terra documentation.")
+ //   @CommandLongDescription("Searches through the Terra documentation and returns a list of links (or a single link) of possible results to your query.")
     suspend fun search(
             @SourceMessage
             message: PolyMessage,

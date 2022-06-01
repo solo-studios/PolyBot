@@ -147,7 +147,7 @@ class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: 
         bindProvider<CacheManager> { this@PolyBot.cacheManager }
         bindProvider<EventManager> { this@PolyBot.eventManager }
         bindProvider<ModerationManager> { this@PolyBot.moderationManager }
-        bindProvider<SearchManager> { this@PolyBot.searchManager }
+        // bindProvider<SearchManager> { this@PolyBot.searchManager }
         bindProvider<EntityManager> { this@PolyBot.entityManager }
         bindProvider<PermissionManager> { this@PolyBot.permissionManager }
         bindProvider<PolyCloudCommandManager> { this@PolyBot.commandManager }
@@ -168,7 +168,7 @@ class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: 
     
     val moderationManager: ModerationManager = ModerationManager(di)
     
-    val searchManager: SearchManager = SearchManager(di)
+    // val searchManager: SearchManager = SearchManager(di)
     
     // val databaseManager = DatabaseManager(this@PolyBot)
     
@@ -373,7 +373,7 @@ class PolyBot(val runConfig: PolybotRunConfig, val config: PolyConfig, builder: 
             entityManager.shutdown()
             // databaseManager.shutdown()
             cacheManager.shutdown()
-            searchManager.shutdown()
+            // searchManager.shutdown()
             
             scheduledThreadPool.shutdown()
             coroutineDispatcher.close()
