@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * Last modified on 10-06-2022 03:01 p.m.
  *
  * MIT License
  *
@@ -25,6 +25,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import de.fayard.refreshVersions.core.StabilityLevel
 import org.gradle.api.initialization.dsl.VersionCatalogBuilder.LibraryAliasBuilder
 import org.gradle.api.initialization.dsl.VersionCatalogBuilder.PluginAliasBuilder
 
@@ -38,17 +39,23 @@ pluginManagement {
 }
 
 plugins {
-    id("de.fayard.refreshVersions") version "0.40.1"
+    id("de.fayard.refreshVersions") version "0.40.2"
 }
 
 refreshVersions {
     extraArtifactVersionKeyRules(file("versions.rules"))
+    
+    rejectVersionIf {
+        @Suppress("UnstableApiUsage")
+        candidate.stabilityLevel != StabilityLevel.Stable
+    }
 }
 
 include(":core")
 include(":common")
 
 dependencyResolutionManagement {
+    @Suppress("UnstableApiUsage")
     versionCatalogs {
         create("libs") {
             // Kotlin

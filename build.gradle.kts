@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 10-06-2022 01:32 p.m.
  *
  * MIT License
  *
@@ -79,8 +79,8 @@ allprojects {
             compilations.configureEach {
                 kotlinOptions {
                     jvmTarget = "11"
-                    apiVersion = "1.6"
-                    languageVersion = "1.6"
+                    apiVersion = "1.7"
+                    languageVersion = "1.7"
                 }
             }
         }
