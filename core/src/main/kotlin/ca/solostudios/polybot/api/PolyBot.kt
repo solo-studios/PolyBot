@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyBot.kt is part of PolyhedralBot
- * Last modified on 09-02-2022 12:06 p.m.
+ * The file PolyBot.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:32 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -46,9 +46,9 @@ import ca.solostudios.polybot.api.entities.PolyUser
 import ca.solostudios.polybot.api.entities.PolyVoiceChannel
 import ca.solostudios.polybot.api.event.PolyEventManager
 import ca.solostudios.polybot.api.service.PolyServiceManager
+import ca.solostudios.polybot.api.util.datastructures.BackedSuspendingReference
 import ca.solostudios.polybot.common.ExitCodes
 import com.uchuhimo.konf.Config
-import dev.minn.jda.ktx.BackedReference
 import java.util.concurrent.ScheduledExecutorService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -76,11 +76,11 @@ import kotlin.random.Random
  * PolyBot interface.
  *
  * This is the core of the polybot api.
- * All polybot components can be access starting from this class.
+ * All polybot components can be accessed starting from this class.
  *
  * The bot class itself is a coroutine scope and can be used to launch coroutines.
  */
-public interface PolyBot : CoroutineScope, CoroutineContext {
+public interface PolyBot : CoroutineScope {
     /**
      * The state of PolyBot
      */
@@ -180,7 +180,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * - manipulating objects outside its own namespace
      *
      * @see state
-     * @see State
+     * @see State.active
      */
     public val active: Boolean
     
@@ -260,7 +260,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param guildId The id of the guild.
      * @return The backed reference.
      */
-    public fun guildReference(guildId: Long): BackedReference<PolyGuild>
+    public fun guildReference(guildId: ULong): BackedSuspendingReference<ULong, PolyGuild>
     
     /**
      * Retrieves a guild asynchronously.
@@ -268,7 +268,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param guildId The id of the guild.
      * @return The deferred for the guild.
      */
-    public fun guildAsync(guildId: Long): Deferred<PolyGuild>
+    public fun guildAsync(guildId: ULong): Deferred<PolyGuild>
     
     /**
      * Retrieves a guild.
@@ -276,7 +276,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param guildId The id of the guild.
      * @return The guild.
      */
-    public suspend fun guild(guildId: Long): PolyGuild
+    public suspend fun guild(guildId: ULong): PolyGuild
     
     /**
      * Returns a backed reference for a role.
@@ -284,7 +284,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param roleId The id of the guild.
      * @return The backed reference.
      */
-    public fun roleReference(roleId: Long): BackedReference<PolyRole>
+    public fun roleReference(roleId: ULong): BackedSuspendingReference<ULong, PolyRole>
     
     /**
      * Retrieves a role asynchronously.
@@ -292,7 +292,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param roleId The id of the role.
      * @return The deferred for the role.
      */
-    public fun roleAsync(roleId: Long): Deferred<PolyRole>
+    public fun roleAsync(roleId: ULong): Deferred<PolyRole>
     
     /**
      * Retrieves a role.
@@ -300,7 +300,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param roleId The id of the role.
      * @return The role.
      */
-    public suspend fun role(roleId: Long): PolyRole
+    public suspend fun role(roleId: ULong): PolyRole
     
     /**
      * Returns a backed reference for a user.
@@ -308,7 +308,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param userId The id of the user.
      * @return The backed reference.
      */
-    public fun userReference(userId: Long): BackedReference<PolyUser>
+    public fun userReference(userId: ULong): BackedSuspendingReference<ULong, PolyUser>
     
     /**
      * Retrieves a user asynchronously.
@@ -316,7 +316,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param userId The id of the user.
      * @return The deferred for the user.
      */
-    public fun userAsync(userId: Long): Deferred<PolyUser>
+    public fun userAsync(userId: ULong): Deferred<PolyUser>
     
     /**
      * Retrieves a user.
@@ -324,7 +324,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param userId The id of the user.
      * @return The guild.
      */
-    public suspend fun user(userId: Long): PolyUser
+    public suspend fun user(userId: ULong): PolyUser
     
     /**
      * Returns a backed reference for a member.
@@ -333,7 +333,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param userId The id of the member.
      * @return The backed reference.
      */
-    public fun memberReference(guildId: Long, userId: Long): BackedReference<PolyMember>
+    public fun memberReference(guildId: ULong, userId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyMember>
     
     /**
      * Retrieves a member asynchronously.
@@ -342,7 +342,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param userId The id of the member.
      * @return The deferred for the member.
      */
-    public fun memberAsync(guildId: Long, userId: Long): Deferred<PolyMember>
+    public fun memberAsync(guildId: ULong, userId: ULong): Deferred<PolyMember>
     
     /**
      * Retrieves a member.
@@ -351,7 +351,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param userId The id of the user.
      * @return The member.
      */
-    public suspend fun member(guildId: Long, userId: Long): PolyMember
+    public suspend fun member(guildId: ULong, userId: ULong): PolyMember
     
     /**
      * Returns a backed reference for an emote.
@@ -360,7 +360,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param emoteId The id of the emote.
      * @return The backed reference.
      */
-    public fun emoteReference(guildId: Long, emoteId: Long): BackedReference<PolyEmote>
+    public fun emoteReference(guildId: ULong, emoteId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyEmote>
     
     /**
      * Retrieves an emote asynchronously.
@@ -369,7 +369,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param emoteId The id of the emote.
      * @return The deferred for the emote.
      */
-    public fun emoteAsync(guildId: Long, emoteId: Long): Deferred<PolyEmote>
+    public fun emoteAsync(guildId: ULong, emoteId: ULong): Deferred<PolyEmote>
     
     /**
      * Retrieves an emote.
@@ -378,7 +378,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param emoteId The id of the emote.
      * @return The emote.
      */
-    public suspend fun emote(guildId: Long, emoteId: Long): PolyEmote
+    public suspend fun emote(guildId: ULong, emoteId: ULong): PolyEmote
     
     /**
      * Returns a backed reference for a channel.
@@ -387,7 +387,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param channelId The id of the channel.
      * @return The backed reference.
      */
-    public fun channelReference(guildId: Long, channelId: Long): BackedReference<PolyChannel>
+    public fun channelReference(guildId: ULong, channelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyChannel>
     
     /**
      * Retrieves a channel asynchronously.
@@ -396,7 +396,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param channelId The id of the channel.
      * @return The deferred for the channel.
      */
-    public fun channelAsync(guildId: Long, channelId: Long): Deferred<PolyChannel>
+    public fun channelAsync(guildId: ULong, channelId: ULong): Deferred<PolyChannel>
     
     /**
      * Retrieves a channel.
@@ -405,7 +405,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param channelId The id of the channel.
      * @return The channel.
      */
-    public suspend fun channel(guildId: Long, channelId: Long): PolyChannel
+    public suspend fun channel(guildId: ULong, channelId: ULong): PolyChannel
     
     /**
      * Returns a backed reference for a category.
@@ -414,7 +414,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param categoryId The id of the category.
      * @return The backed reference.
      */
-    public fun categoryReference(guildId: Long, categoryId: Long): BackedReference<PolyCategory>
+    public fun categoryReference(guildId: ULong, categoryId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyCategory>
     
     /**
      * Retrieves a category asynchronously.
@@ -423,7 +423,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param categoryId The id of the category.
      * @return The deferred for the category.
      */
-    public fun categoryAsync(guildId: Long, categoryId: Long): Deferred<PolyCategory>
+    public fun categoryAsync(guildId: ULong, categoryId: ULong): Deferred<PolyCategory>
     
     /**
      * Retrieves a category.
@@ -432,7 +432,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param categoryId The id of the category.
      * @return The category.
      */
-    public suspend fun category(guildId: Long, categoryId: Long): PolyCategory
+    public suspend fun category(guildId: ULong, categoryId: ULong): PolyCategory
     
     /**
      * Returns a backed reference for a guild channel.
@@ -441,7 +441,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param guildChannelId The id of the guild channel.
      * @return The backed reference.
      */
-    public fun guildChannelReference(guildId: Long, guildChannelId: Long): BackedReference<PolyGuildChannel>
+    public fun guildChannelReference(guildId: ULong, guildChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyGuildChannel>
     
     /**
      * Retrieves a guild channel asynchronously.
@@ -450,7 +450,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param guildChannelId The id of the guild channel.
      * @return The deferred for the guild channel.
      */
-    public fun guildChannelAsync(guildId: Long, guildChannelId: Long): Deferred<PolyGuildChannel>
+    public fun guildChannelAsync(guildId: ULong, guildChannelId: ULong): Deferred<PolyGuildChannel>
     
     /**
      * Retrieves a guild channel.
@@ -459,7 +459,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param guildChannelId The id of the guild channel.
      * @return The guild channel.
      */
-    public suspend fun guildChannel(guildId: Long, guildChannelId: Long): PolyGuildChannel
+    public suspend fun guildChannel(guildId: ULong, guildChannelId: ULong): PolyGuildChannel
     
     /**
      * Returns a backed reference for a message channel.
@@ -468,7 +468,10 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param messageChannelId The id of the message channel.
      * @return The backed reference.
      */
-    public fun messageChannelReference(guildId: Long, messageChannelId: Long): BackedReference<PolyMessageChannel>
+    public fun messageChannelReference(
+            guildId: ULong,
+            messageChannelId: ULong,
+                                      ): BackedSuspendingReference<Pair<ULong, ULong>, PolyMessageChannel>
     
     /**
      * Retrieves a message channel asynchronously.
@@ -477,7 +480,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param messageChannelId The id of the message channel.
      * @return The deferred for the message channel.
      */
-    public fun messageChannelAsync(guildId: Long, messageChannelId: Long): Deferred<PolyMessageChannel>
+    public fun messageChannelAsync(guildId: ULong, messageChannelId: ULong): Deferred<PolyMessageChannel>
     
     /**
      * Retrieves a message channel.
@@ -486,7 +489,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param messageChannelId The id of the message channel.
      * @return The message channel.
      */
-    public suspend fun messageChannel(guildId: Long, messageChannelId: Long): PolyMessageChannel
+    public suspend fun messageChannel(guildId: ULong, messageChannelId: ULong): PolyMessageChannel
     
     /**
      * Returns a backed reference for a text channel.
@@ -495,7 +498,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param textChannelId The id of the text channel.
      * @return The backed reference.
      */
-    public fun textChannelReference(guildId: Long, textChannelId: Long): BackedReference<PolyTextChannel>
+    public fun textChannelReference(guildId: ULong, textChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyTextChannel>
     
     /**
      * Retrieves a text channel asynchronously.
@@ -504,7 +507,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param textChannelId The id of the text channel.
      * @return The deferred for the text channel.
      */
-    public fun textChannelAsync(guildId: Long, textChannelId: Long): Deferred<PolyTextChannel>
+    public fun textChannelAsync(guildId: ULong, textChannelId: ULong): Deferred<PolyTextChannel>
     
     /**
      * Retrieves a text channel.
@@ -513,7 +516,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param textChannelId The id of the text channel.
      * @return The text channel.
      */
-    public suspend fun textChannel(guildId: Long, textChannelId: Long): PolyTextChannel
+    public suspend fun textChannel(guildId: ULong, textChannelId: ULong): PolyTextChannel
     
     /**
      * Returns a backed reference for a voice channel.
@@ -522,7 +525,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param voiceChannelId The id of the voice channel.
      * @return The backed reference.
      */
-    public fun voiceChannelReference(guildId: Long, voiceChannelId: Long): BackedReference<PolyVoiceChannel>
+    public fun voiceChannelReference(guildId: ULong, voiceChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyVoiceChannel>
     
     /**
      * Retrieves a voice channel asynchronously.
@@ -531,7 +534,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param voiceChannelId The id of the voice channel.
      * @return The deferred for the voice channel.
      */
-    public fun voiceChannelAsync(guildId: Long, voiceChannelId: Long): Deferred<PolyVoiceChannel>
+    public fun voiceChannelAsync(guildId: ULong, voiceChannelId: ULong): Deferred<PolyVoiceChannel>
     
     /**
      * Retrieves a voice channel.
@@ -540,7 +543,7 @@ public interface PolyBot : CoroutineScope, CoroutineContext {
      * @param voiceChannelId The id of the voice channel.
      * @return The a voice channel.
      */
-    public suspend fun voiceChannel(guildId: Long, voiceChannelId: Long): PolyVoiceChannel
+    public suspend fun voiceChannel(guildId: ULong, voiceChannelId: ULong): PolyVoiceChannel
     
     /**
      * Wrap the provided JDA entity in the respective polybot entity.

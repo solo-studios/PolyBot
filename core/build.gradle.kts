@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 14-02-2022 09:51 a.m.
+ * Last modified on 10-06-2022 11:32 a.m.
  *
  * MIT License
  *
@@ -26,23 +26,40 @@
  * SOFTWARE.
  */
 
+@file:Suppress("SuspiciousCollectionReassignment")
+
 plugins {
     java
     kotlin("jvm")
+    kotlin("plugin.noarg")
+    kotlin("plugin.serialization")
+    id("com.google.devtools.ksp")
 }
 
 repositories {
+    maven("https://m2.dv8tion.net/releases")
+    
     maven("https://jitpack.io/")
     maven("https://m2.chew.pro/releases")
 }
 
 kotlin {
     explicitApi()
+    target {
+        compilations.all {
+            kotlinOptions {
+                freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+            }
+        }
+    }
 }
 
 dependencies {
     // Common Subproject
     api(project(":common"))
+    
+    implementation(libs.ksp.service)
+    ksp(libs.ksp.service)
     
     // Kotlin
     api(libs.bundles.kotlin)
@@ -78,4 +95,13 @@ dependencies {
     api(libs.slf4j)
     // SLF4J extension library
     api(libs.slf4k)
+    
+    api(libs.bundles.strata)
+    
+    implementation(libs.dsiutils)
+}
+
+noArg {
+    invokeInitializers = true
+    annotation("kotlinx.serialization.Serializable")
 }

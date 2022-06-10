@@ -1,0 +1,95 @@
+app.softwork:kotlinx-uuid-*
+             ^^^^^^^.^^^^
+
+com.github.ajalt.clikt:clikt
+                 ^^^^^
+
+org.jetbrains:annotations
+    ^^^^^^^^^.^^^^^^^^^^^
+
+com.uchuhimo:konf
+             ^^^^
+
+net.dv8tion:JDA
+            ^^^
+
+club.minnced:discord-webhooks
+             ^^^^^^^^^^^^^^^^
+
+com.github.minndevelopment:jda-ktx
+                           ^^^.^^^
+
+com.jagrosh:jda-utilities-*
+            ^^^.^^^^^^^^^
+
+cloud.commandframework:cloud-*
+                       ^^^^^
+
+com.esotericsoftware:kryo
+                     ^^^^
+
+org.reflections:reflections
+                ^^^^^^^^^^^
+
+org.slf4j:slf4j-*
+          ^^^^^
+
+ca.solo-studios:slf4k
+                ^^^^^
+
+ch.qos.logback:logback-*
+               ^^^^^^^
+
+com.github.kittinunf.fuel:fuel(-*)
+                          ^^^^
+
+com.fasterxml.jackson.core:jackson-*
+                           ^^^^^^^
+
+com.fasterxml.jackson.module:jackson-module-???
+                             ^^^^^^^.^^^^^^.^^^
+
+org.honton.chas.hocon:jackson-dataformat-hocon
+                      ^^^^^^^.^^^^^^^^^^.^^^^^
+
+org.ehcache:ehcache
+            ^^^^^^^
+
+com.google.guava:guava
+                 ^^^^^
+
+com.zaxxer:HikariCP
+           ^^^^^^^^
+
+org.mariadb.jdbc:mariadb-java-client
+                 ^^^^^^^
+
+org.postgresql:postgresql
+               ^^^^^^^^^^
+
+org.jetbrains.exposed:exposed-*
+    ^^^^^^^^^^        ^^^^^^^
+
+gay.solonovamax:exposed-migrations
+                ^^^^^^^.^^^^^^^^^^
+
+org.apache.lucene:lucene-*
+                  ^^^^^^
+
+org.jetbrains:markdown
+    ^^^^^^^^^.^^^^^^^^
+
+org.eclipse.jgit:org.eclipse.jgit
+                             ^^^^
+
+it.unimi.dsi:dsiutils
+             ^^^^^^^^
+
+org.apache.commons:commons-???
+    ^^^^^^^^^^^^^^        ^^^^
+
+ca.solo-studios:strata(-*)
+^^^^^^^^^^^^^^^.^^^^^^
+
+ca.solo-studios:ksp-service-annotation
+^^^^^^^^^^^^^^^.^^^^^^^^^^^^^^^^^^^^^^

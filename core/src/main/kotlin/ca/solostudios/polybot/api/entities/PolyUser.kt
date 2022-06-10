@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyUser.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file PolyUser.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:33 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -28,6 +28,7 @@
 
 package ca.solostudios.polybot.api.entities
 
+import kotlinx.coroutines.flow.Flow
 import net.dv8tion.jda.api.entities.User
 
 public interface PolyUser : PolySnowflakeEntity, PolyMentionable {
@@ -48,7 +49,7 @@ public interface PolyUser : PolySnowflakeEntity, PolyMentionable {
     
     public val isCoOwner: Boolean
     
-    public val mutualGuilds: List<PolyGuild>
+    public val mutualGuilds: Flow<PolyGuild>
     
     public val avatarUrl: String
     

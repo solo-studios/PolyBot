@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyEventListener.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file PolyEventListener.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:30 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -31,8 +31,11 @@ package ca.solostudios.polybot.api.event
 /**
  * An event listener
  *
- * Note: event listeners may be invoked on multiple threads and simultaneously.
+ * Event listeners may be invoked on multiple threads and simultaneously.
  * There is no guarantee that it will only invoke one at a time.
+ *
+ * Event listeners *must* be thread-safe.
+ *
  * @param T The event listened for by this listener
  * @see PolyEventManager
  */

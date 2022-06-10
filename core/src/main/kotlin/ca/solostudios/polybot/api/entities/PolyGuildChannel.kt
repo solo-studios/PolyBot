@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyGuildChannel.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file PolyGuildChannel.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:32 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -79,7 +79,7 @@ public interface PolyGuildChannel : PolyChannel, PolyMentionable {
      * - For [PolyVoiceChannel], this returns all members who have joined this channel.
      * - For [PolyCategory], this returns all members who are in its child channels.
      */
-    public val members: List<PolyMember>
+    public val members: Flow<PolyMember>
     
     /**
      * The position this channel is displayed at.
@@ -112,7 +112,7 @@ public interface PolyGuildChannel : PolyChannel, PolyMentionable {
      * @see memberPermissionOverrides For the list of member permission overrides
      * @see rolePermissionOverrides For the list of role permission overrides
      */
-    public val permissionOverrides: List<PermissionOverride>
+    public val permissionOverrides: Flow<PermissionOverride>
     
     /**
      * Gets all the member [PermissionOverride]s that are part of this channel
@@ -122,7 +122,7 @@ public interface PolyGuildChannel : PolyChannel, PolyMentionable {
      *
      * @see permissionOverrides For the complete list of permission overrides
      */
-    public val memberPermissionOverrides: List<PermissionOverride>
+    public val memberPermissionOverrides: Flow<PermissionOverride>
     
     /**
      * Gets all the role [PermissionOverride]s that are part of this channel
@@ -132,7 +132,7 @@ public interface PolyGuildChannel : PolyChannel, PolyMentionable {
      *
      * @see permissionOverrides For the complete list of permission overrides
      */
-    public val rolePermissionOverrides: List<PermissionOverride>
+    public val rolePermissionOverrides: Flow<PermissionOverride>
     
     /**
      * Whether this channel's [PermissionOverride]s match those of its [parent category][PolyCategory].
@@ -229,5 +229,10 @@ public interface PolyGuildChannel : PolyChannel, PolyMentionable {
      * @throws IllegalArgumentException If this is an instance of [PolyCategory]
      */
     @Throws(InsufficientPermissionException::class, IllegalArgumentException::class)
-    public suspend fun createInvite(maxAge: Duration? = null, maxUses: Int? = null, temporary: Boolean? = null, unique: Boolean? = false)
+    public suspend fun createInvite(
+            maxAge: Duration? = null,
+            maxUses: Int? = null,
+            temporary: Boolean? = null,
+            unique: Boolean? = false,
+                                   ): Invite
 }

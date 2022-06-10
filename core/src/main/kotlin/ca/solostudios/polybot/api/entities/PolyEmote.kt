@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyEmote.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file PolyEmote.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:33 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -28,6 +28,7 @@
 
 package ca.solostudios.polybot.api.entities
 
+import kotlinx.coroutines.flow.Flow
 import net.dv8tion.jda.api.Permission.MANAGE_EMOTES
 import net.dv8tion.jda.api.entities.Emote
 import net.dv8tion.jda.api.entities.Guild.BoostTier
@@ -49,7 +50,7 @@ public interface PolyEmote : PolyMentionable, PolySnowflakeEntity {
     /**
      * A list of roles this emote is active for.
      */
-    public val roles: List<PolyRole>
+    public val roles: Flow<PolyRole>
     
     /**
      * Whether this emote has attached roles.
@@ -69,7 +70,7 @@ public interface PolyEmote : PolyMentionable, PolySnowflakeEntity {
      *
      * A managed emote is controlled by a discord application, not the guild administrators.
      */
-    public val managed: Boolean
+    public val isManaged: Boolean
     
     /**
      * Whether this emote is available.
@@ -85,14 +86,14 @@ public interface PolyEmote : PolyMentionable, PolySnowflakeEntity {
      * Emotes that where added as part of a lower BoostTier (i.e. the 51st emote on BoostTier 2) will remain available,
      * as long as the BoostTier stays above the required level.
      */
-    public val available: Boolean
+    public val isAvailable: Boolean
     
     /**
      * Whether this emote is animated.
      *
      * Animated emotes are available to discord nitro users, as well as bot accounts.
      */
-    public val animated: Boolean
+    public val isAnimated: Boolean
     
     /**
      * A string representation of the URL, which leads to the image displayed in the official discord client when this emote is used.

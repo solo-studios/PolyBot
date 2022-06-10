@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 09-02-2022 12:04 p.m.
+ * The file PrivateMessageEvent.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:33 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -26,47 +26,12 @@
  * SOFTWARE.
  */
 
-plugins {
-    java
-    kotlin("jvm")
-}
+package ca.solostudios.polybot.api.cloud.event
 
-repositories {
-    mavenCentral()
-}
+import ca.solostudios.polybot.api.PolyBot
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-kotlin {
-    explicitApi()
-    target {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
-            }
-        }
-    }
-}
-
-dependencies {
-    // Kotlin
-    api(libs.bundles.kotlin)
-    // Kotlin Serialization
-    api(libs.bundles.kotlinx.serialization)
-    // Kotlin Coroutines
-    api(libs.bundles.kotlinx.coroutines)
-    // Kotlin Datetime
-    api(libs.kotlinx.datetime)
-    
-    // Kodein Dependency Injection
-    api(libs.kodein)
-    
-    // Konf
-    api(libs.konf)
-    
-    // Jetbrains Annotations
-    api(libs.jetbrains.annotations)
-    
-    // SLF4J
-    api(libs.slf4j)
-    // SLF4J extension library
-    api(libs.slf4k)
-}
+public data class PrivateMessageEvent(
+        override val bot: PolyBot,
+        override val event: MessageReceivedEvent,
+                                     ) : MessageEvent(bot, event)

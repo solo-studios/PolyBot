@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyRole.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file PolyRole.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:32 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -39,31 +39,31 @@ public interface PolyRole : PolyPermissionHolder, PolyMentionable, PolySnowflake
     
     public val name: String
     
-    public val managed: Boolean
+    public val isManaged: Boolean
     
-    public val hoisted: Boolean
+    public val isHoisted: Boolean
     
-    public val mentionable: Boolean
+    public val isMentionable: Boolean
     
     public val color: Color?
     
-    public val publicRole: Boolean
+    public val isPublicRole: Boolean
     
     public override val guild: PolyGuild
     
     public override val guildId: ULong
     
-    public val bot: Boolean
+    public val isBot: Boolean
     
     public val botId: ULong
     
-    public val boost: Boolean
+    public val isBoost: Boolean
     
-    public val integration: Boolean
+    public val isIntegration: Boolean
     
     public val integrationId: ULong
     
     public fun canInteract(role: Role): Boolean
     
-    public suspend fun delete()
+    public suspend fun delete(reason: String? = null)
 }

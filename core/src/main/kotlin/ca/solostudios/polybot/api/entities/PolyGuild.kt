@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyGuild.kt is part of PolyhedralBot
- * Last modified on 06-02-2022 11:50 p.m.
+ * The file PolyGuild.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:33 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -55,10 +55,10 @@ public interface PolyGuild : PolySnowflakeEntity {
      *
      * @see Guild.isLoaded
      */
-    public val loaded: Boolean
+    public val isLoaded: Boolean
     
     
-    public val available: Boolean
+    public val isAvailable: Boolean
     
     /**
      * The expected member count for this guild.
@@ -225,7 +225,7 @@ public interface PolyGuild : PolySnowflakeEntity {
      *
      * If no channel has been set as the AFK channel, this returns `null`.
      */
-    public val afkChannel: PolyPrivateChannel?
+    public val afkChannel: PolyVoiceChannel?
     
     /**
      * Provides the [PolyTextChannel] that has been set as the channel,
@@ -272,17 +272,17 @@ public interface PolyGuild : PolySnowflakeEntity {
     
     public val botRole: PolyRole?
     
-    public val channels: List<PolyGuildChannel>
+    public val channels: Flow<PolyGuildChannel>
     
-    public val textChannels: List<PolyTextChannel>
+    public val textChannels: Flow<PolyTextChannel>
     
-    public val voiceChannels: List<PolyVoiceChannel>
+    public val voiceChannels: Flow<PolyVoiceChannel>
     
-    public val categories: List<PolyCategory>
+    public val categories: Flow<PolyCategory>
     
-    public val roles: List<PolyRole>
+    public val roles: Flow<PolyRole>
     
-    public val emotes: List<PolyEmote>
+    public val emotes: Flow<PolyEmote>
     
     /**
      * Loads the [Guild.MetaData] for this guild instance.

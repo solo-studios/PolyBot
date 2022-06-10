@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file build.gradle.kts is part of PolyhedralBot
- * Last modified on 14-02-2022 09:34 a.m.
+ * The file build.gradle.kts is part of PolyBot
+ * Last modified on 10-06-2022 11:33 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -29,6 +29,7 @@
 @file:Suppress("SuspiciousCollectionReassignment", "PropertyName")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.ajoberstar.grgit.Grgit
 import org.gradle.plugins.ide.idea.model.IdeaProject
 import org.jetbrains.gradle.ext.ActionDelegationConfig
 import org.jetbrains.gradle.ext.CodeStyleConfig
@@ -38,32 +39,44 @@ import org.jetbrains.gradle.ext.GroovyCompilerConfiguration
 import org.jetbrains.gradle.ext.IdeaCompilerConfiguration
 import org.jetbrains.gradle.ext.ProjectSettings
 import org.jetbrains.gradle.ext.RunConfiguration
+import kotlin.math.max
 
 plugins {
-    idea
+    kotlin("jvm") version "_"
+    kotlin("plugin.noarg") version "_"
+    kotlin("plugin.serialization")
+    
     java
+    
     application
     distribution
-    kotlin("jvm")
-    kotlin("plugin.noarg")
-    kotlin("plugin.serialization")
-    id("org.ajoberstar.grgit")
+    
+    id("org.jetbrains.dokka")
+    
+    id("org.ajoberstar.grgit.service")
+    
     id("com.github.johnrengelman.shadow")
+    
+    idea
     id("org.jetbrains.gradle.plugin.idea-ext")
 }
 
 var mainClassName: String by application.mainClass
 mainClassName = "ca.solostudios.polybot.cli.Launcher"
-group = "ca.solostudios.polybot"
+// group = "ca.solostudios.polybot"
 val versionObj = Version("0", "3", "5")
-version = versionObj
+// version = versionObj
 
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.dokka")
+    
+    version = versionObj
+    group = "ca.solostudios.polybot"
     
     kotlin {
         target {
-            compilations.all {
+            compilations.configureEach {
                 kotlinOptions {
                     jvmTarget = "11"
                     apiVersion = "1.6"
@@ -73,7 +86,28 @@ allprojects {
         }
     }
     
+    tasks {
+        withType<Test>().configureEach {
+            useJUnitPlatform()
+            
+            failFast = false
+            maxParallelForks = max(Runtime.getRuntime().availableProcessors() - 1, 1)
+        }
+        
+        withType<Javadoc>().configureEach {
+            options {
+                encoding = "UTF-8"
+            }
+        }
+        
+        withType<Jar>().configureEach {
+            from("LICENSE")
+        }
+    }
+    
     java {
+        withSourcesJar()
+        
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -81,8 +115,6 @@ allprojects {
     
     repositories {
         mavenCentral()
-        
-        maven("https://m2.dv8tion.net/releases")
     }
 }
 
@@ -199,16 +231,16 @@ noArg {
 }
 
 tasks {
-    getByName<JavaExec>("run") {
+    named<JavaExec>("run") {
         args = listOf(
                 "run"
                      )
     }
-    getByName<Test>("test") {
+    named<Test>("test") {
         useJUnitPlatform()
     }
     
-    processResources {
+    processResources.configure {
         filesMatching("polybot.properties") {
             expand(
                     "versionMajor" to versionObj.major,
@@ -221,7 +253,7 @@ tasks {
         }
     }
     
-    withType<ShadowJar> {
+    withType<ShadowJar>().configureEach {
         mergeServiceFiles()
         minimize {
             exclude {
@@ -238,7 +270,7 @@ tasks {
         }
     }
     
-    withType<Jar> {
+    withType<Jar>().configureEach {
         manifest {
             attributes(
                     "Main-Class" to mainClassName,
@@ -251,7 +283,7 @@ tasks {
         }
     }
     
-    getByName<Tar>("distTar") {
+    named<Tar>("distTar") {
         compression = Compression.GZIP
         archiveFileName.set("PolyhedralBot-dist.tar.gz")
     }
@@ -385,6 +417,8 @@ fun ProjectSettings.runConfigurations(configuration: PolymorphicDomainObjectCont
     }
 }
 
+val grgit: Grgit by lazy { grgitService.service.get().grgit!! }
+
 /**
  * Version class, which does version stuff.
  */
@@ -400,17 +434,15 @@ class Version(val major: String, val minor: String, val patch: String) {
         get() = grgit.head().id
     
     val shortGitHash: String
-        get() = grgit.head().id
+        get() = grgit.head().abbreviatedId
     
     override fun toString(): String {
         return if (localBuild) // Only use git hash if it's a local build.
-            "$major.$minor.$patch-local+${getGitHash()}"
+            "$major.$minor.$patch-local+$shortGitHash"
         else
             "$major.$minor.$patch+$buildNumber"
     }
 }
-
-fun getGitHash(): String = grgit.head().abbreviatedId
 
 val env: Map<String, String>
     get() = System.getenv()

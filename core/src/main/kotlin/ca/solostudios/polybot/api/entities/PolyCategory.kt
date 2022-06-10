@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyCategory.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file PolyCategory.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:32 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -28,6 +28,7 @@
 
 package ca.solostudios.polybot.api.entities
 
+import kotlinx.coroutines.flow.Flow
 import net.dv8tion.jda.api.entities.Category
 
 /**
@@ -57,19 +58,19 @@ public interface PolyCategory : PolyGuildChannel {
      *
      * @see PolyGuildChannel
      */
-    public val guildChannels: List<PolyGuildChannel>
+    public val guildChannels: Flow<PolyGuildChannel>
     
     /**
      * A list of all text channels that belong to this category
      *
      * @see PolyTextChannel
      */
-    public val textChannels: List<PolyTextChannel>
+    public val textChannels: Flow<PolyTextChannel>
     
     /**
      * A list of all voice channels that belong to this category
      *
      * @see PolyVoiceChannel
      */
-    public val voiceChannels: List<PolyVoiceChannel>
+    public val voiceChannels: Flow<PolyVoiceChannel>
 }

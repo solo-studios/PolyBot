@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyMessageEmbed.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file PolyMessageEmbed.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:33 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -29,11 +29,14 @@
 package ca.solostudios.polybot.api.entities
 
 import java.awt.Color
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 import net.dv8tion.jda.api.entities.EmbedType
 import net.dv8tion.jda.api.entities.MessageEmbed
 
-public interface PolyMessageEmbed {
+public interface PolyMessageEmbed : PolyEntity {
+    public val jdaMessageEmbed: MessageEmbed
+    
     public val url: String?
     
     public val title: String?
@@ -52,15 +55,15 @@ public interface PolyMessageEmbed {
     
     public val image: MessageEmbed.ImageInfo?
     
-    public val fields: List<MessageEmbed.Field>
+    public val fields: Flow<MessageEmbed.Field>
     
     public val color: Color?
     
     public val timestamp: Instant?
     
-    public val empty: Boolean
+    public val isEmpty: Boolean
     
     public val length: Int
     
-    public val sendable: Boolean
-} 
+    public val isSendable: Boolean
+}

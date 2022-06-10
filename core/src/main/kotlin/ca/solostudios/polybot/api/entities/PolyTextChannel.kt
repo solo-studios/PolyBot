@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyTextChannel.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file PolyTextChannel.kt is part of PolyBot
+ * Last modified on 10-06-2022 11:33 a.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -44,15 +44,15 @@ public interface PolyTextChannel : PolyGuildChannel, PolyMessageChannel {
     
     public suspend fun deleteMessages(messages: Collection<PolyMessage>)
     
-    public suspend fun deleteMessagesById(vararg messages: Long)
+    public suspend fun deleteMessagesById(vararg messages: ULong)
     
-    public suspend fun deleteMessagesById(messages: Collection<Long>)
+    public suspend fun deleteMessagesById(messages: Collection<ULong>)
     
-    public suspend fun setTopic(topic: String?)
+    public suspend fun setTopic(topic: String?, reason: String? = null)
     
-    public suspend fun setNSFW(nsfw: Boolean)
+    public suspend fun setNSFW(nsfw: Boolean, reason: String? = null)
     
-    public suspend fun setSlowmode(slowmode: Int?)
+    public suspend fun setSlowmode(slowmode: Int?, reason: String? = null)
     
-    public suspend fun setNews(news: Boolean)
+    public suspend fun setNews(news: Boolean, reason: String? = null)
 }
