@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyParserRegistryDsl.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 10-06-2022 12:11 p.m.
  *
  * MIT License
  *
@@ -32,11 +32,10 @@ import ca.solostudios.polybot.api.annotations.PolyPluginDslMarker
 import cloud.commandframework.arguments.parser.ParserRegistry
 import cloud.commandframework.arguments.parser.StandardParameters
 import io.leangen.geantyref.TypeToken
-import org.kodein.di.DIAware
 import kotlin.reflect.KClass
 
 @PolyPluginDslMarker
-public interface PolyParserRegistryDsl : DIAware {
+public interface PolyParserRegistryDsl {
     /**
      * Registers a parser supplier.
      *

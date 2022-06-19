@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyMessageChannel.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * Last modified on 10-06-2022 12:22 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,7 @@
 
 package ca.solostudios.polybot.api.entities
 
+import ca.solostudios.polybot.api.builder.PolyMessageBuilder
 import java.io.InputStream
 import kotlinx.coroutines.flow.Flow
 import net.dv8tion.jda.api.AccountType
@@ -97,6 +98,32 @@ public interface PolyMessageChannel : PolyChannel {
      */
     @Throws(InsufficientPermissionException::class, IllegalArgumentException::class, UnsupportedOperationException::class)
     public suspend fun sendMessage(message: PolyMessage): PolyMessage
+    
+    /**
+     * Sends a specified message to this channel.
+     *
+     * This will fail if this channel is an instance of [PolyTextChannel],
+     * and the currently logged in account does not have the required permission
+     * to send a message to this channel.
+     *
+     * To determine if the currently logged in account has permission to send messages
+     * in this channel, use [canSendMessages].
+     *
+     * @param block The message builder block to send
+     *
+     * @return The message that was sent
+     *
+     * @throws InsufficientPermissionException If this is a [PolyTextChannel],
+     * and the currently logged in account does not have
+     *   - [MESSAGE_READ]
+     *   - [MESSAGE_WRITE]
+     *   - [MESSAGE_EMBED_LINKS] (if this message is only an embed)
+     * @throws IllegalArgumentException if the provided message is empty,
+     * is longer than 2000 characters, or is not [sendable][PolyMessageEmbed.isSendable].
+     * @throws UnsupportedOperationException If this is a [PolyPrivateChannel]
+     * and both the logged in account and the target user are bots.
+     */
+    public suspend fun sendMessage(block: PolyMessageBuilder.() -> Unit): PolyMessage
     
     /**
      * Send message embed to this channel.

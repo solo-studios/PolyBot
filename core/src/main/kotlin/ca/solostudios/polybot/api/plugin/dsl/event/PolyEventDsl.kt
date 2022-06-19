@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyPluginDsl.kt is part of PolyBot
- * Last modified on 10-06-2022 01:02 p.m.
+ * The file PolyEventDsl.kt is part of PolyBot
+ * Last modified on 10-06-2022 12:29 p.m.
  *
  * MIT License
  *
@@ -26,30 +26,14 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin.dsl
+package ca.solostudios.polybot.api.plugin.dsl.event
 
-import ca.solostudios.polybot.api.annotations.PolyPluginDslMarker
-import ca.solostudios.polybot.api.cloud.CommandManager
-import ca.solostudios.polybot.api.plugin.dsl.command.PolyCommandDsl
-import ca.solostudios.polybot.api.plugin.dsl.event.PolyEventDsl
-import ca.solostudios.polybot.api.plugin.dsl.service.PolyServiceDsl
-import com.uchuhimo.konf.ConfigSpec
-import org.kodein.di.DIAware
+import ca.solostudios.polybot.api.annotations.PolyDslMarker
+import ca.solostudios.polybot.api.event.PolyEvent
+import ca.solostudios.polybot.api.event.PolyEventListener
+import kotlin.reflect.KClass
 
-@PolyPluginDslMarker
-public interface PolyPluginDsl : DIAware {
-    /**
-     * Configures the [CommandManager] using the DSL.
-     *
-     * @param block The configuration block for the command manager.
-     */
-    public fun commands(block: PolyCommandDsl.() -> Unit)
-    
-    public fun services(block: PolyServiceDsl.() -> Unit)
-    
-    public fun events(block: PolyEventDsl.() -> Unit)
-    
-    public fun diModule()
-    
-    public fun configSpec(configSpec: ConfigSpec)
+@PolyDslMarker
+public interface PolyEventDsl {
+    public fun <E : PolyEvent> listener(clazz: KClass<E>, eventListener: PolyEventListener<E>)
 }

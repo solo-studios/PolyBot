@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessagesExtensions.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 10-06-2022 12:22 p.m.
  *
  * MIT License
  *
@@ -63,11 +63,10 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
  * @throws UnsupportedOperationException If this is a [PolyPrivateChannel]
  * and both the logged in account and the target user are bots.
  */
-public suspend fun PolyMessageChannel.sendMessage(text: String) {
-    TODO()
-    // sendMessage {
-    //     content = text
-    // }
+public suspend fun PolyMessageChannel.sendMessage(text: String): PolyMessage {
+    return sendMessage {
+        content = text
+    }
 }
 
 
@@ -92,11 +91,10 @@ public suspend fun PolyMessageChannel.sendMessage(text: String) {
  * @throws UnsupportedOperationException If this is a [PolyPrivateChannel]
  * and both the logged in account and the target user are bots.
  */
-public suspend fun PolyMessageChannel.sendMessage(textBlock: StringBuilder.() -> Unit) {
-    TODO()
-    // sendMessage {
-    //     content(textBlock)
-    // }
+public suspend fun PolyMessageChannel.sendMessage(textBlock: StringBuilder.() -> Unit): PolyMessage {
+    return sendMessage {
+        content(textBlock)
+    }
 }
 
 /**

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCommandDsl.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 10-06-2022 12:11 p.m.
  *
  * MIT License
  *
@@ -37,12 +37,11 @@ import ca.solostudios.polybot.api.cloud.CommandSyntaxFormatter
 import cloud.commandframework.CommandManager
 import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.arguments.parser.ParserRegistry
-import org.kodein.di.DIAware
 import kotlin.reflect.KClass
 
 
 @PolyPluginDslMarker
-public interface PolyCommandDsl : PolyParameterInjectorDsl, DIAware {
+public interface PolyCommandDsl : PolyParameterInjectorDsl {
     /**
      * The command syntax formatter.
      */
