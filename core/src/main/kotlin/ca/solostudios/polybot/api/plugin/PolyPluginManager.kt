@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManager.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 26-06-2022 04:41 p.m.
  *
  * MIT License
  *
@@ -39,7 +39,7 @@ import kotlin.reflect.KClass
 public interface PolyPluginManager : ServiceManager, PolyObject {
     public val plugins: Map<PolyPluginInfo, PolyPlugin>
     
-    public fun loadPlugin(info: PolyPluginInfo)
+    public suspend fun loadPlugins()
     
     /**
      * Add service to the manager

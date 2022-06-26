@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * Last modified on 26-06-2022 04:42 p.m.
  *
  * MIT License
  *
@@ -45,10 +45,12 @@ import ca.solostudios.polybot.api.entities.PolyTextChannel
 import ca.solostudios.polybot.api.entities.PolyUser
 import ca.solostudios.polybot.api.entities.PolyVoiceChannel
 import ca.solostudios.polybot.api.event.PolyEventManager
+import ca.solostudios.polybot.api.plugin.PolyPluginManager
 import ca.solostudios.polybot.api.service.PolyServiceManager
 import ca.solostudios.polybot.api.util.datastructures.BackedSuspendingReference
 import ca.solostudios.polybot.common.ExitCodes
 import com.uchuhimo.konf.Config
+import java.nio.file.Path
 import java.util.concurrent.ScheduledExecutorService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -69,6 +71,7 @@ import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.VoiceChannel
+import org.kodein.di.DI
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
@@ -234,6 +237,18 @@ public interface PolyBot : CoroutineScope {
     public val serviceManager: PolyServiceManager
     
     /**
+     * The plugin manager
+     *
+     * This class manages and handles the loading of all plugins
+     */
+    public val polyPluginManager: PolyPluginManager
+    
+    /**
+     * The dependency injection instance
+     */
+    public val di: DI
+    
+    /**
      * Shutdown the running service and blocks until it is fully shutdown.
      *
      * Exceptions may be thrown during shutdown.
@@ -253,6 +268,10 @@ public interface PolyBot : CoroutineScope {
      */
     @Throws(Exception::class)
     public suspend fun start()
+    
+    public fun configDirectory(base: String, vararg subpaths: String): Path
+    
+    public fun directory(base: String, vararg subpaths: String): Path
     
     /**
      * Returns a backed reference for a guild.

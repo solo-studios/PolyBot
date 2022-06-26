@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginExtensions.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * Last modified on 26-06-2022 04:41 p.m.
  *
  * MIT License
  *
@@ -44,6 +44,7 @@ import kotlin.reflect.KProperty
  * @return The Plugin
  * @throws NullPointerException if no Plugin of the specified type can be found
  */
+@Suppress("DEPRECATION")
 public operator fun <T : PolyPlugin> PolyPluginManager.get(clazz: KClass<T>): T = getService(clazz)
 
 /**
@@ -54,6 +55,7 @@ public operator fun <T : PolyPlugin> PolyPluginManager.get(clazz: KClass<T>): T 
  * @return The Plugin
  * @throws NullPointerException if no Plugin of the specified type can be found
  */
+@Suppress("DEPRECATION")
 public operator fun <T : PolyPlugin> PolyPluginManager.get(clazz: PolyPluginCompanionObject<T>): T = getService(clazz.serviceClass)
 
 /**
@@ -63,6 +65,7 @@ public operator fun <T : PolyPlugin> PolyPluginManager.get(clazz: PolyPluginComp
  * @return The Plugin
  * @throws NullPointerException if no Plugin of the specified type can be found
  */
+@Suppress("DEPRECATION")
 public inline fun <reified T : PolyPlugin> PolyPluginManager.plugin(): T = getService(T::class)
 
 /**
@@ -72,6 +75,7 @@ public inline fun <reified T : PolyPlugin> PolyPluginManager.plugin(): T = getSe
  * @return The Plugin
  * @throws NullPointerException if no Plugin of the specified type can be found
  */
+@Suppress("DEPRECATION")
 public inline operator fun <reified T : PolyPlugin> PolyPluginManager.getValue(thisRef: Any?, property: KProperty<*>): T {
     return getService(T::class)
 }

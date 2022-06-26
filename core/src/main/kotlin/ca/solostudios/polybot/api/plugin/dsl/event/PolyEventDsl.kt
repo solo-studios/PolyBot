@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEventDsl.kt is part of PolyBot
- * Last modified on 10-06-2022 12:29 p.m.
+ * Last modified on 26-06-2022 04:42 p.m.
  *
  * MIT License
  *
@@ -31,9 +31,12 @@ package ca.solostudios.polybot.api.plugin.dsl.event
 import ca.solostudios.polybot.api.annotations.PolyDslMarker
 import ca.solostudios.polybot.api.event.PolyEvent
 import ca.solostudios.polybot.api.event.PolyEventListener
+import net.dv8tion.jda.api.hooks.EventListener
 import kotlin.reflect.KClass
 
 @PolyDslMarker
 public interface PolyEventDsl {
     public fun <E : PolyEvent> listener(clazz: KClass<E>, eventListener: PolyEventListener<E>)
+    
+    public fun jdaListener(eventListener: EventListener)
 }

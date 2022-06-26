@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPrivateChannelImpl.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * Last modified on 26-06-2022 04:41 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package ca.solostudios.polybot.impl.entities
 
 import ca.solostudios.polybot.api.PolyBot
+import ca.solostudios.polybot.api.builder.PolyMessageBuilder
 import ca.solostudios.polybot.api.entities.PolyMessage
 import ca.solostudios.polybot.api.entities.PolyMessageEmbed
 import ca.solostudios.polybot.api.entities.PolyPrivateChannel
@@ -74,6 +75,10 @@ internal class PolyPrivateChannelImpl(
         return jdaChannel.sendMessage(message.jdaMessage)
                 .await()
                 .poly(bot)
+    }
+    
+    override suspend fun sendMessage(block: PolyMessageBuilder.() -> Unit): PolyMessage {
+        TODO("Not yet implemented")
     }
     
     override suspend fun sendMessageEmbed(messageEmbed: PolyMessageEmbed): PolyMessage {

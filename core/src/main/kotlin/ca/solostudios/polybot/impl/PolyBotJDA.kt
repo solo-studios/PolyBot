@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 10-06-2022 11:35 a.m.
+ * Last modified on 26-06-2022 04:42 p.m.
  *
  * MIT License
  *
@@ -47,6 +47,7 @@ import ca.solostudios.polybot.api.entities.PolyUser
 import ca.solostudios.polybot.api.entities.PolyVoiceChannel
 import ca.solostudios.polybot.api.event.PolyEventManager
 import ca.solostudios.polybot.api.jda.builder.InlineJDABuilder
+import ca.solostudios.polybot.api.plugin.PolyPluginManager
 import ca.solostudios.polybot.api.service.PolyServiceManager
 import ca.solostudios.polybot.api.util.datastructures.BackedSuspendingReference
 import ca.solostudios.polybot.api.util.ext.ScheduledThreadPool
@@ -66,6 +67,7 @@ import ca.solostudios.polybot.impl.entities.PolyUserImpl
 import ca.solostudios.polybot.impl.entities.PolyVoiceChannelImpl
 import com.uchuhimo.konf.Config
 import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
+import java.nio.file.Path
 import java.util.concurrent.ScheduledExecutorService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -89,6 +91,7 @@ import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.VoiceChannel
+import org.kodein.di.DI
 import org.slf4j.kotlin.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
@@ -137,8 +140,14 @@ public class PolyBotJDA(
     override val serviceManager: PolyServiceManager
         get() = TODO("Not yet implemented")
     
+    override val polyPluginManager: PolyPluginManager
+        get() = TODO("Not yet implemented")
+    
     override val id: ULong
         get() = jda.selfUser.idLong.toULong()
+    
+    override val di: DI
+        get() = TODO("Not yet implemented")
     
     @Throws(Exception::class)
     override suspend fun start() {
@@ -158,12 +167,18 @@ public class PolyBotJDA(
     override suspend fun shutdown(exitCode: Int, isShutdownHook: Boolean) {
         if (!running)
             return
-        
+    
         state = PolyBot.State.SHUTTING_DOWN
-        
+    
         // TODO: 2022-03-06 Stop Polybot
-        
+    
         state = PolyBot.State.SHUTDOWN
+    }
+    
+    public override fun configDirectory(base: String, vararg subpaths: String): Path = directory(".config", base, *subpaths)
+    
+    public override fun directory(base: String, vararg subpaths: String): Path {
+        TODO("Not yet implemented")
     }
     
     override fun guildReference(guildId: ULong): BackedSuspendingReference<ULong, PolyGuild> {

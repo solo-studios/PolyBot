@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyBot
- * Last modified on 10-06-2022 03:01 p.m.
+ * Last modified on 26-06-2022 04:33 p.m.
  *
  * MIT License
  *
@@ -87,13 +87,19 @@ dependencyResolutionManagement {
                     "kotlin-scripting",
                     listOf("kotlin-script-runtime", "kotlin-compiler", "kotlin-scripting-compiler")
                   )
-            
+    
             // Kotlin Serialization
             library("kotlinx-serialization-core", "org.jetbrains.kotlinx", "kotlinx-serialization-core") version "_"
             library("kotlinx-serialization-json", "org.jetbrains.kotlinx", "kotlinx-serialization-json") version "_"
-            
-            bundle("kotlinx-serialization", listOf("kotlinx-serialization-core", "kotlinx-serialization-json"))
-            
+    
+            bundle(
+                    "kotlinx-serialization",
+                    listOf(
+                            "kotlinx-serialization-core",
+                            "kotlinx-serialization-json",
+                          )
+                  )
+    
             // Kotlin Coroutines
             library("kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core") version "_"
             library("kotlinx-coroutines-jdk8", "org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8") version "_"
