@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 10-06-2022 01:32 p.m.
+ * Last modified on 20-08-2022 05:43 p.m.
  *
  * MIT License
  *
@@ -42,8 +42,8 @@ import org.jetbrains.gradle.ext.RunConfiguration
 import kotlin.math.max
 
 plugins {
-    kotlin("jvm") version "_"
-    kotlin("plugin.noarg") version "_"
+    kotlin("jvm")
+    kotlin("plugin.noarg")
     kotlin("plugin.serialization")
     
     java
@@ -59,6 +59,8 @@ plugins {
     
     idea
     id("org.jetbrains.gradle.plugin.idea-ext")
+    
+    // id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 var mainClassName: String by application.mainClass
@@ -289,6 +291,41 @@ tasks {
     }
 }
 
+val grgit: Grgit by lazy { grgitService.service.get().grgit!! }
+
+/**
+ * Version class, which does version stuff.
+ */
+@Suppress("MemberVisibilityCanBePrivate")
+class Version(val major: String, val minor: String, val patch: String) {
+    val localBuild: Boolean
+        get() = env["BUILD_NUMBER"] == null
+    
+    val buildNumber: String
+        get() = env["BUILD_NUMBER"] ?: "0"
+    
+    val gitHash: String
+        get() = grgit.head().id
+    
+    val shortGitHash: String
+        get() = grgit.head().abbreviatedId
+    
+    override fun toString(): String {
+        return if (localBuild) // Only use git hash if it's a local build.
+            "$major.$minor.$patch-local+$shortGitHash"
+        else
+            "$major.$minor.$patch+$buildNumber"
+    }
+}
+
+val env: Map<String, String>
+    get() = System.getenv()
+
+
+/*-----------------------*
+ | BEGIN IntelliJ Config |
+ *-----------------------*/
+
 idea {
     project {
         settings {
@@ -379,6 +416,14 @@ idea {
     }
 }
 
+/*---------------------*
+ | END IntelliJ Config |
+ *---------------------*/
+
+/*-----------------------*
+ | BEGIN Utility Methods |
+ *-----------------------*/
+
 fun IdeaProject.settings(configuration: ProjectSettings.() -> Unit) {
     (this as ExtensionAware).configure(configuration)
 }
@@ -417,32 +462,6 @@ fun ProjectSettings.runConfigurations(configuration: PolymorphicDomainObjectCont
     }
 }
 
-val grgit: Grgit by lazy { grgitService.service.get().grgit!! }
-
-/**
- * Version class, which does version stuff.
- */
-@Suppress("MemberVisibilityCanBePrivate")
-class Version(val major: String, val minor: String, val patch: String) {
-    val localBuild: Boolean
-        get() = env["BUILD_NUMBER"] == null
-    
-    val buildNumber: String
-        get() = env["BUILD_NUMBER"] ?: "0"
-    
-    val gitHash: String
-        get() = grgit.head().id
-    
-    val shortGitHash: String
-        get() = grgit.head().abbreviatedId
-    
-    override fun toString(): String {
-        return if (localBuild) // Only use git hash if it's a local build.
-            "$major.$minor.$patch-local+$shortGitHash"
-        else
-            "$major.$minor.$patch+$buildNumber"
-    }
-}
-
-val env: Map<String, String>
-    get() = System.getenv()
+/*---------------------*
+ | END Utility Methods |
+ *---------------------*/
