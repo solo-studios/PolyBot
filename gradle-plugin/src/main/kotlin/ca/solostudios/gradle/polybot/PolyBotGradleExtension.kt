@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file StrataVersionRangeSerializer.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * The file PolyBotGradleExtension.kt is part of PolyBot
+ * Last modified on 20-08-2022 05:43 p.m.
  *
  * MIT License
  *
@@ -26,25 +26,36 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin.info.serializers
+package ca.solostudios.gradle.polybot
 
-import ca.solostudios.strata.kotlin.toVersionRange
-import ca.solostudios.strata.version.VersionRange
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
+import ca.solostudios.gradle.polybot.plugin.PolyPluginConfig
+import javax.inject.Inject
+import org.gradle.api.Action
+import org.gradle.api.DomainObjectSet
+import org.gradle.api.model.ObjectFactory
+import org.gradle.kotlin.dsl.domainObjectSet
+import org.gradle.kotlin.dsl.newInstance
 
-public object StrataVersionRangeSerializer : KSerializer<VersionRange> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("VersionRange", PrimitiveKind.STRING)
+public open class PolyBotGradleExtension @Inject constructor(private val objectFactory: ObjectFactory) {
+    public val plugins: DomainObjectSet<PolyPluginConfig> = objectFactory.domainObjectSet(PolyPluginConfig::class)
     
-    override fun serialize(encoder: Encoder, value: VersionRange) {
-        encoder.encodeString(value.formatted)
+    public fun plugins(action: Action<in DomainObjectSet<PolyPluginConfig>>) {
+        action.execute(plugins)
     }
     
-    override fun deserialize(decoder: Decoder): VersionRange {
-        return decoder.decodeString().toVersionRange()
+    public fun plugin(id: String, action: Action<in PolyPluginConfig>) {
+        val plugin = objectFactory.newInstance(PolyPluginConfig::class)
+        plugin.id(id)
+        action.execute(plugin)
+        
+        plugins.add(plugin) // register
+    }
+    
+    
+    public fun plugin(action: Action<in PolyPluginConfig>) {
+        val plugin = objectFactory.newInstance(PolyPluginConfig::class)
+        action.execute(plugin)
+        
+        plugins.add(plugin) // register
     }
 }

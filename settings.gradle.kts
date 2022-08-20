@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyBot
- * Last modified on 26-06-2022 04:33 p.m.
+ * Last modified on 20-08-2022 05:43 p.m.
  *
  * MIT License
  *
@@ -53,6 +53,7 @@ refreshVersions {
 
 include(":core")
 include(":common")
+include(":gradle-plugin")
 
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
