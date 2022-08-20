@@ -1,7 +1,11 @@
 # PolyBot
 
-A Discord bot for the [Discord Server](https://discord.dfsek.com) centered around the FOSS Organization,
-[Polyhedral Development](https://github.com/PolyhedralDev).
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Pure Kotlin](https://img.shields.io/badge/100%25-kotlin-blue.svg?style=for-the-badge)](https://kotlinlang.org/)
+[![Discord Server](https://img.shields.io/discord/871114669761372221?color=7389D8&label=Discord&logo=discord&logoColor=8fa3ff&style=for-the-badge)](https://discord.solo-studios.ca)
+
+PolyBot is a multipurpose discord bot framework written in Kotlin.
+It is designed to be highly extensible and easy to re-use features through the addon system.
 
 ## Building
 
