@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file StrataVersionSerializer.kt is part of PolyBot
- * Last modified on 03-03-2022 02:14 p.m.
+ * Last modified on 20-08-2022 05:43 p.m.
  *
  * MIT License
  *
@@ -26,11 +26,13 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin.info.serializers
+package ca.solostudios.polybot.impl.serializers
 
 import ca.solostudios.strata.kotlin.toVersion
+import ca.solostudios.strata.parser.tokenizer.ParseException
 import ca.solostudios.strata.version.Version
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -45,6 +47,10 @@ public object StrataVersionSerializer : KSerializer<Version> {
     }
     
     override fun deserialize(decoder: Decoder): Version {
-        return decoder.decodeString().toVersion()
+        return try {
+            decoder.decodeString().toVersion()
+        } catch (e: ParseException) {
+            throw SerializationException("The provided version could not be parsed", e)
+        }
     }
 }

@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AbstractManagedService.kt is part of PolyhedralBot
- * Last modified on 09-02-2022 12:18 p.m.
+ * The file PathSerializer.kt is part of PolyBot
+ * Last modified on 20-08-2022 05:43 p.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -26,25 +26,24 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.common.service
+package ca.solostudios.polybot.impl.serializers
 
-public abstract class AbstractManagedService : AbstractService(), ManagedService {
-    /**
-     * The service manager that is managing this service.
-     *
-     * @throws NullPointerException if the service manager has not been set
-     */
-    final override lateinit var serviceManager: ServiceManager
+import java.nio.file.Path
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+
+public object PathSerializer : KSerializer<Path> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Path", PrimitiveKind.STRING)
     
-    /**
-     * Adds an exception to the service manager.
-     *
-     * This does nothing if the service manager is null.
-     *
-     * @param exception The exception to be added.
-     */
-    protected fun addException(exception: Exception) {
-        // Note: this::class will reference the subclass.
-        serviceManager.addException(this::class, exception)
+    override fun serialize(encoder: Encoder, value: Path) {
+        encoder.encodeString(value.toString())
+    }
+    
+    override fun deserialize(decoder: Decoder): Path {
+        return Path.of(decoder.decodeString())
     }
 }

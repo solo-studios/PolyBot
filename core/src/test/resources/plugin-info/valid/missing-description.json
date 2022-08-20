@@ -1,0 +1,27 @@
+{
+    "group" :        "ca.solo-studios.test",
+    "id" :           "valid-plugin",
+    "version" :      "1.2.3",
+    "entrypoints" :  [
+        "ca.solostudios.test.ValidPluginEntrypoint"
+    ],
+    "depends" :      [
+        "ca.solo-studios.test:test-dep-one:5.6.7"
+    ],
+    "breaks" :       [
+        "ca.solo-studios.test:test-breaks-one:+"
+    ],
+    "name" :         "Test Plugin",
+    "license" :      "MIT",
+    "nestedJars" :   [
+        {
+            "file" : "/here/is/the/first.jar"
+        }
+    ],
+    "contributors" : [
+        {
+            "role" : "role one",
+            "name" : "contributor one"
+        }
+    ]
+}
