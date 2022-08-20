@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ManagedService.kt is part of PolyhedralBot
- * Last modified on 09-02-2022 12:18 p.m.
+ * The file PluginCandidateFinder.kt is part of PolyBot
+ * Last modified on 02-07-2022 05:12 p.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -26,18 +26,10 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.common.service
+package ca.solostudios.polybot.api.plugin.finder
 
-/**
- * This represents a service, which can be started and stopped, and is also aware that it is being managed.
- *
- * This class provides a common interface for services, as well as managing them.
- *
- * @see ServiceManager
- */
-public interface ManagedService : Service {
-    /**
-     * The service manager that is managing this service
-     */
-    public val serviceManager: ServiceManager
+import java.nio.file.Path
+
+public interface PluginCandidateFinder {
+    public fun findCandidates(): List<Path>
 }

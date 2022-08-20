@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AbstractPolyService.kt is part of PolyBot
- * Last modified on 02-08-2022 03:27 p.m.
+ * The file ClasspathCandidateFinder.kt is part of PolyBot
+ * Last modified on 30-07-2022 06:20 p.m.
  *
  * MIT License
  *
@@ -26,11 +26,23 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.api.plugin.finder
 
-import ca.solostudios.polybot.common.service.AbstractService
+import ca.solostudios.polybot.api.PolyBot
+import ca.solostudios.polybot.api.plugin.info.PluginInfo
+import ca.solostudios.polybot.impl.util.resolveCodeSource
+import java.nio.file.Path
+import kotlin.streams.toList
 
-/**
- * Abstract service to make creating services easier.
- */
-public abstract class AbstractPolyService : AbstractService(), PolyService
+public class ClasspathCandidateFinder : PluginCandidateFinder {
+    private val classLoader: ClassLoader
+        get() = PolyBot::class.java.classLoader
+    
+    override fun findCandidates(): List<Path> {
+        return classLoader.resources(PluginInfo.PLUGIN_INFO_FILE)
+                .map {
+                    it.resolveCodeSource(PluginInfo.PLUGIN_INFO_FILE).toRealPath()
+                }
+                .toList()
+    }
+}

@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file Snowflake.kt is part of PolyhedralBot
- * Last modified on 07-02-2022 01:17 a.m.
+ * The file Snowflake.kt is part of PolyBot
+ * Last modified on 17-08-2022 12:18 p.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -42,7 +42,7 @@ import kotlinx.datetime.Instant
  * @property id
  * @constructor Create a snowflake with the specified id
  */
-public class Snowflake public constructor(public val id: ULong) : Comparable<Snowflake> {
+public data class Snowflake public constructor(public val id: ULong) : Comparable<Snowflake> {
     public val idLong: Long
         get() = id.toLong()
     
@@ -64,8 +64,8 @@ public class Snowflake public constructor(public val id: ULong) : Comparable<Sno
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        
-        other as SnowflakeEntity
+    
+        other as Snowflake
         
         if (id != other.id) return false
         
@@ -77,7 +77,7 @@ public class Snowflake public constructor(public val id: ULong) : Comparable<Sno
     }
     
     override fun toString(): String {
-        return "PolySnowflake(id=$id)"
+        return "Snowflake(id=$id)"
     }
     
     public companion object {

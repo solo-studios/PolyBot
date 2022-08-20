@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyPluginInfo.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * The file PolyPluginContainer.kt is part of PolyBot
+ * Last modified on 02-08-2022 03:56 p.m.
  *
  * MIT License
  *
@@ -26,26 +26,12 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin.info
+package ca.solostudios.polybot.api.plugin
 
-import ca.solostudios.polybot.api.plugin.info.serializers.StrataVersionSerializer
-import ca.solostudios.strata.version.Version
-import kotlinx.serialization.Serializable
+import ca.solostudios.polybot.api.plugin.info.PluginInfo
 
-@Serializable
-public data class PolyPluginInfo(
-        public val schemaVersion: Int,
-        public val group: String,
-        public val id: String,
-        @Serializable(with = StrataVersionSerializer::class)
-        public val version: Version,
-        public val entrypoints: List<String>?,
-        public val depends: List<PolyPluginDependency>?,
-        public val breaks: List<PolyPluginDependency>?,
-        public val name: String?,
-        public val description: String?,
-        public val authors: List<String>?,
-        public val contributors: List<String>?,
-        public val contact: Map<String, String>?,
-        public val license: String?,
-                                )
+public interface PolyPluginContainer<T : PolyPlugin> {
+    public val entrypoints: List<T>
+    
+    public val info: PluginInfo
+}

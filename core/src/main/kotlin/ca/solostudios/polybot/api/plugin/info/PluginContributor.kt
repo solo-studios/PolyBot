@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AbstractPolyService.kt is part of PolyBot
- * Last modified on 02-08-2022 03:27 p.m.
+ * The file PluginContributor.kt is part of PolyBot
+ * Last modified on 30-07-2022 06:20 p.m.
  *
  * MIT License
  *
@@ -26,11 +26,9 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.api.plugin.info
 
-import ca.solostudios.polybot.common.service.AbstractService
+import kotlinx.serialization.Serializable
 
-/**
- * Abstract service to make creating services easier.
- */
-public abstract class AbstractPolyService : AbstractService(), PolyService
+@Serializable
+public data class PluginContributor(val name: String, val role: String)

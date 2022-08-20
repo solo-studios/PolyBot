@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ServiceManager.kt is part of PolyhedralBot
- * Last modified on 09-02-2022 12:18 p.m.
+ * The file ServiceManager.kt is part of PolyBot
+ * Last modified on 20-08-2022 05:43 p.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -34,23 +34,23 @@ import kotlin.time.Duration
 /**
  * Service manager
  */
-public interface ServiceManager : Service {
+public interface ServiceManager<S : Service> : Service {
     /**
      * All the services that have been registered to this service manager.
      */
-    public val services: List<Service>
+    public val services: List<S>
     
     /**
      * The amount of time it took for each service to start up
      */
-    public val startupTimes: List<Pair<Service, Duration>>
+    public val startupTimes: List<Pair<S, Duration>>
     
     /**
      * The health of each service.
      *
      * @see ServiceHealth
      */
-    public val serviceHealth: List<ServiceHealth<*>>
+    public val serviceHealth: Map<KClass<S>, ServiceHealth>
     
     /**
      * The state the service manager is currently in
@@ -123,7 +123,7 @@ public interface ServiceManager : Service {
     override suspend fun start()
     
     /**
-     * Add service to the manager
+     * Add a service to the manager
      *
      * @param T The type of service to be added
      * @param service The service to be added
@@ -133,7 +133,7 @@ public interface ServiceManager : Service {
      * @throws IllegalArgumentException if the service being added is a [ServiceManager]
      */
     @Throws(DuplicateServiceException::class, ServiceAlreadyStartedException::class, IllegalArgumentException::class)
-    public fun <T : Service> addService(service: T, clazz: KClass<T>)
+    public fun <T : S> addService(service: T, clazz: KClass<T>)
     
     /**
      * Returns a service from the manager.
@@ -141,9 +141,10 @@ public interface ServiceManager : Service {
      * @param T The type of the service to return
      * @param clazz The class of the service
      * @return The service
-     * @throws NullPointerException if no service of the specified type can be found
+     * @throws NullPointerException If no service of the specified type can be found
      */
-    public fun <T : Service> getService(clazz: KClass<T>): T
+    @Throws(NullPointerException::class)
+    public fun <T : S> getService(clazz: KClass<T>): T
     
     /**
      * Adds an exception to the specified service.
@@ -155,9 +156,9 @@ public interface ServiceManager : Service {
      * @param serviceClass The service class
      * @param exception The exception to be added
      */
-    public fun <T : Service> addException(serviceClass: KClass<T>, exception: Exception)
+    public fun addException(serviceClass: KClass<S>, exception: Exception)
     
-    public interface ServiceHealth<T : Service> {
+    public interface ServiceHealth {
         /**
          * Whether this service is healthy.
          *
@@ -166,16 +167,6 @@ public interface ServiceManager : Service {
          * @see suppressedExceptions
          */
         public val healthy: Boolean
-        
-        /**
-         * A reference to the service
-         */
-        public val service: T
-        
-        /**
-         * The type of the service
-         */
-        public val serviceClass: KClass<T>
         
         /**
          * A list of exceptions thrown by the service.

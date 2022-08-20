@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyManagedService.kt is part of PolyhedralBot
- * Last modified on 09-02-2022 12:18 p.m.
+ * The file PluginDependency.kt is part of PolyBot
+ * Last modified on 30-07-2022 06:20 p.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -26,16 +26,17 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.api.plugin.info
 
-import ca.solostudios.polybot.common.service.ManagedService
+import ca.solostudios.polybot.impl.serializers.PolyPluginDependencySerializer
+import ca.solostudios.polybot.impl.serializers.StrataVersionRangeSerializer
+import ca.solostudios.strata.version.VersionRange
+import kotlinx.serialization.Serializable
 
-/**
- * This represents a service, which can be started and stopped, and is also aware that it is being managed.
- *
- * This class provides a common interface for services, as well as managing them.
- *
- * @see PolyServiceManager
- * @see ManagedService
- */
-public interface PolyManagedService : ManagedService, PolyService 
+@Serializable(with = PolyPluginDependencySerializer::class)
+public data class PluginDependency(
+        public val group: String,
+        public val id: String,
+        @Serializable(with = StrataVersionRangeSerializer::class)
+        public val versionRange: VersionRange,
+                                  )

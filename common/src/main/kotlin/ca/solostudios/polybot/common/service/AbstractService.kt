@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AbstractService.kt is part of PolyhedralBot
- * Last modified on 09-02-2022 12:18 p.m.
+ * The file AbstractService.kt is part of PolyBot
+ * Last modified on 20-08-2022 05:43 p.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -30,9 +30,6 @@ package ca.solostudios.polybot.common.service
 
 /**
  * Abstract service to make creating services easier.
- *
- * [initialized] **must** be called when the service is finished initialization,
- * whether this is in the constructor or off-thread.
  */
 public abstract class AbstractService : Service {
     final override var state: Service.State = Service.State.INITIALIZING
@@ -69,13 +66,6 @@ public abstract class AbstractService : Service {
         serviceStart() // Throws an exception on failure
         
         state = Service.State.RUNNING
-    }
-    
-    /**
-     * This method must be invoked when the service is finished being initialized.
-     */
-    protected fun initialized() {
-        state = Service.State.INITIALIZED
     }
     
     @Throws(Exception::class)

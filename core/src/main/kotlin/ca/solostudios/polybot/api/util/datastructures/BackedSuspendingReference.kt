@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file BackedSuspendingReference.kt is part of PolyBot
- * Last modified on 10-06-2022 11:30 a.m.
+ * Last modified on 16-08-2022 10:47 p.m.
  *
  * MIT License
  *
@@ -28,19 +28,15 @@
 
 package ca.solostudios.polybot.api.util.datastructures
 
-import ca.solostudios.polybot.api.PolyBot
-import ca.solostudios.polybot.api.PolyObject
 import java.lang.ref.WeakReference
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlin.reflect.KProperty
 
 public open class BackedSuspendingReference<T, V>(
         private var backingProperty: V,
         private val refresh: suspend (V) -> T,
-        private val getBackingProperty: (T) -> V,
-        override val polybot: PolyBot,
-                                                 ) : PolyObject, CoroutineScope by polybot {
+        private val getBackingProperty: (T) -> V
+                                                 ) {
     private var reference: WeakReference<T>? = null
     
     public operator fun getValue(thisRef: Any, property: KProperty<*>): T {

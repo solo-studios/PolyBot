@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 26-06-2022 04:42 p.m.
+ * Last modified on 17-08-2022 12:18 p.m.
  *
  * MIT License
  *
@@ -48,24 +48,31 @@ import ca.solostudios.polybot.api.entities.PolyVoiceChannel
 import ca.solostudios.polybot.api.event.PolyEventManager
 import ca.solostudios.polybot.api.jda.builder.InlineJDABuilder
 import ca.solostudios.polybot.api.plugin.PolyPluginManager
+import ca.solostudios.polybot.api.plugin.finder.ClasspathCandidateFinder
+import ca.solostudios.polybot.api.plugin.finder.FlatDirectoryCandidateFinder
 import ca.solostudios.polybot.api.service.PolyServiceManager
-import ca.solostudios.polybot.api.util.datastructures.BackedSuspendingReference
 import ca.solostudios.polybot.api.util.ext.ScheduledThreadPool
+import ca.solostudios.polybot.api.util.ext.poly
 import ca.solostudios.polybot.api.util.ext.processors
 import ca.solostudios.polybot.api.util.ext.runtime
 import ca.solostudios.polybot.impl.entities.PolyCategoryImpl
 import ca.solostudios.polybot.impl.entities.PolyChannelImpl
+import ca.solostudios.polybot.impl.entities.PolyEmoteImpl
 import ca.solostudios.polybot.impl.entities.PolyGuildChannelImpl
 import ca.solostudios.polybot.impl.entities.PolyGuildImpl
 import ca.solostudios.polybot.impl.entities.PolyMemberImpl
 import ca.solostudios.polybot.impl.entities.PolyMessageChannelImpl
+import ca.solostudios.polybot.impl.entities.PolyMessageEmbedImpl
 import ca.solostudios.polybot.impl.entities.PolyMessageImpl
 import ca.solostudios.polybot.impl.entities.PolyPrivateChannelImpl
 import ca.solostudios.polybot.impl.entities.PolyRoleImpl
 import ca.solostudios.polybot.impl.entities.PolyTextChannelImpl
 import ca.solostudios.polybot.impl.entities.PolyUserImpl
 import ca.solostudios.polybot.impl.entities.PolyVoiceChannelImpl
+import ca.solostudios.polybot.impl.plugin.PolyPluginManagerImpl
+import ca.solostudios.polybot.impl.plugin.loader.PolyClassLoader
 import com.uchuhimo.konf.Config
+import dev.minn.jda.ktx.await
 import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
 import java.nio.file.Path
 import java.util.concurrent.ScheduledExecutorService
@@ -74,6 +81,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.async
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.AbstractChannel
 import net.dv8tion.jda.api.entities.Category
@@ -94,6 +102,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import org.kodein.di.DI
 import org.slf4j.kotlin.*
 import kotlin.coroutines.CoroutineContext
+import kotlin.io.path.Path
 import kotlin.random.Random
 import kotlin.random.asKotlinRandom
 
@@ -137,17 +146,25 @@ public class PolyBotJDA(
     override val eventManager: PolyEventManager
         get() = TODO("Not yet implemented")
     
-    override val serviceManager: PolyServiceManager
+    override val serviceManager: PolyServiceManager<*>
         get() = TODO("Not yet implemented")
     
-    override val polyPluginManager: PolyPluginManager
-        get() = TODO("Not yet implemented")
+    override val polyPluginManager: PolyPluginManager = PolyPluginManagerImpl(
+            this,
+            listOf(
+                    ClasspathCandidateFinder(),
+                    FlatDirectoryCandidateFinder(directory("plugins")),
+                  )
+                                                                             )
     
     override val id: ULong
         get() = jda.selfUser.idLong.toULong()
     
-    override val di: DI
-        get() = TODO("Not yet implemented")
+    override val di: DI = DI {
+    
+    }
+    
+    public override val classLoader: ClassLoader = PolyClassLoader(javaClass.classLoader)
     
     @Throws(Exception::class)
     override suspend fun start() {
@@ -158,7 +175,7 @@ public class PolyBotJDA(
         
         state = PolyBot.State.STARTING
         
-        // TODO: 2022-03-06 Start Polybot
+        TODO("Start Polybot") // TODO: 2022-08-17
         
         state = PolyBot.State.RUNNING
     }
@@ -170,7 +187,7 @@ public class PolyBotJDA(
     
         state = PolyBot.State.SHUTTING_DOWN
     
-        // TODO: 2022-03-06 Stop Polybot
+        TODO("Polybot shutdown") // TODO: 2022-03-06
     
         state = PolyBot.State.SHUTDOWN
     }
@@ -178,143 +195,79 @@ public class PolyBotJDA(
     public override fun configDirectory(base: String, vararg subpaths: String): Path = directory(".config", base, *subpaths)
     
     public override fun directory(base: String, vararg subpaths: String): Path {
-        TODO("Not yet implemented")
+        return Path("./", base, *subpaths)
     }
     
-    override fun guildReference(guildId: ULong): BackedSuspendingReference<ULong, PolyGuild> {
-        TODO("Not yet implemented")
+    override fun guildAsync(guildId: ULong): Deferred<PolyGuild?> {
+        return async { guild(guildId) }
     }
     
-    override fun guildAsync(guildId: ULong): Deferred<PolyGuild> {
-        TODO("Not yet implemented")
+    override suspend fun guild(guildId: ULong): PolyGuild? {
+        return jda.getGuildById(guildId.toLong())?.poly(this)
     }
     
-    override suspend fun guild(guildId: ULong): PolyGuild {
-        TODO("Not yet implemented")
+    override fun roleAsync(guildId: ULong, roleId: ULong): Deferred<PolyRole?> {
+        return async { role(guildId, roleId) }
     }
     
-    override fun roleReference(roleId: ULong): BackedSuspendingReference<ULong, PolyRole> {
-        TODO("Not yet implemented")
+    override suspend fun role(guildId: ULong, roleId: ULong): PolyRole? {
+        return jda.getGuildById(guildId.toLong())?.getRoleById(roleId.toLong())?.poly(this)
     }
     
-    override fun roleAsync(roleId: ULong): Deferred<PolyRole> {
-        TODO("Not yet implemented")
-    }
-    
-    override suspend fun role(roleId: ULong): PolyRole {
-        TODO("Not yet implemented")
-    }
-    
-    override fun userReference(userId: ULong): BackedSuspendingReference<ULong, PolyUser> {
-        TODO("Not yet implemented")
-    }
-    
-    override fun userAsync(userId: ULong): Deferred<PolyUser> {
-        TODO("Not yet implemented")
+    override fun userAsync(userId: ULong): Deferred<PolyUser?> {
+        return async { user(userId) }
     }
     
     override suspend fun user(userId: ULong): PolyUser {
-        TODO("Not yet implemented")
+        return jda.retrieveUserById(userId.toLong()).await().poly(this)
     }
     
-    override fun memberReference(guildId: ULong, userId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyMember> {
-        TODO("Not yet implemented")
+    override fun memberAsync(guildId: ULong, userId: ULong): Deferred<PolyMember?> {
+        return async { member(guildId, userId) }
     }
     
-    override fun memberAsync(guildId: ULong, userId: ULong): Deferred<PolyMember> {
-        TODO("Not yet implemented")
+    override suspend fun member(guildId: ULong, userId: ULong): PolyMember? {
+        return jda.getGuildById(guildId.toLong())?.retrieveMemberById(userId.toLong())?.await()?.poly(this)
     }
     
-    override suspend fun member(guildId: ULong, userId: ULong): PolyMember {
-        TODO("Not yet implemented")
+    override fun emoteAsync(guildId: ULong, emoteId: ULong): Deferred<PolyEmote?> {
+        return async { emote(guildId, emoteId) }
     }
     
-    override fun emoteReference(guildId: ULong, emoteId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyEmote> {
-        TODO("Not yet implemented")
+    override suspend fun emote(guildId: ULong, emoteId: ULong): PolyEmote? {
+        return jda.getGuildById(guildId.toLong())?.retrieveEmoteById(emoteId.toLong())?.await()?.poly(this)
     }
     
-    override fun emoteAsync(guildId: ULong, emoteId: ULong): Deferred<PolyEmote> {
-        TODO("Not yet implemented")
+    override fun categoryAsync(categoryId: ULong): Deferred<PolyCategory?> {
+        return async { category(categoryId) }
     }
     
-    override suspend fun emote(guildId: ULong, emoteId: ULong): PolyEmote {
-        TODO("Not yet implemented")
+    override suspend fun category(categoryId: ULong): PolyCategory? {
+        return jda.getCategoryById(categoryId.toLong())?.poly(this)
     }
     
-    override fun channelReference(guildId: ULong, channelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyChannel> {
-        TODO("Not yet implemented")
+    override fun guildChannelAsync(guildChannelId: ULong): Deferred<PolyGuildChannel?> {
+        return async { guildChannel(guildChannelId) }
     }
     
-    override fun channelAsync(guildId: ULong, channelId: ULong): Deferred<PolyChannel> {
-        TODO("Not yet implemented")
+    override suspend fun guildChannel(guildChannelId: ULong): PolyGuildChannel? {
+        return jda.getGuildChannelById(guildChannelId.toLong())?.poly(this)
     }
     
-    override suspend fun channel(guildId: ULong, channelId: ULong): PolyChannel {
-        TODO("Not yet implemented")
+    override fun textChannelAsync(textChannelId: ULong): Deferred<PolyTextChannel?> {
+        return async { textChannel(textChannelId) }
     }
     
-    override fun categoryReference(guildId: ULong, categoryId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyCategory> {
-        TODO("Not yet implemented")
+    override suspend fun textChannel(textChannelId: ULong): PolyTextChannel? {
+        return jda.getTextChannelById(textChannelId.toLong())?.poly(this)
     }
     
-    override fun categoryAsync(guildId: ULong, categoryId: ULong): Deferred<PolyCategory> {
-        TODO("Not yet implemented")
+    override fun voiceChannelAsync(voiceChannelId: ULong): Deferred<PolyVoiceChannel?> {
+        return async { voiceChannel(voiceChannelId) }
     }
     
-    override suspend fun category(guildId: ULong, categoryId: ULong): PolyCategory {
-        TODO("Not yet implemented")
-    }
-    
-    override fun guildChannelReference(guildId: ULong,
-                                       guildChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyGuildChannel> {
-        TODO("Not yet implemented")
-    }
-    
-    override fun guildChannelAsync(guildId: ULong, guildChannelId: ULong): Deferred<PolyGuildChannel> {
-        TODO("Not yet implemented")
-    }
-    
-    override suspend fun guildChannel(guildId: ULong, guildChannelId: ULong): PolyGuildChannel {
-        TODO("Not yet implemented")
-    }
-    
-    override fun messageChannelReference(guildId: ULong,
-                                         messageChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyMessageChannel> {
-        TODO("Not yet implemented")
-    }
-    
-    override fun messageChannelAsync(guildId: ULong, messageChannelId: ULong): Deferred<PolyMessageChannel> {
-        TODO("Not yet implemented")
-    }
-    
-    override suspend fun messageChannel(guildId: ULong, messageChannelId: ULong): PolyMessageChannel {
-        TODO("Not yet implemented")
-    }
-    
-    override fun textChannelReference(guildId: ULong,
-                                      textChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyTextChannel> {
-        TODO("Not yet implemented")
-    }
-    
-    override fun textChannelAsync(guildId: ULong, textChannelId: ULong): Deferred<PolyTextChannel> {
-        TODO("Not yet implemented")
-    }
-    
-    override suspend fun textChannel(guildId: ULong, textChannelId: ULong): PolyTextChannel {
-        TODO("Not yet implemented")
-    }
-    
-    override fun voiceChannelReference(guildId: ULong,
-                                       voiceChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyVoiceChannel> {
-        TODO("Not yet implemented")
-    }
-    
-    override fun voiceChannelAsync(guildId: ULong, voiceChannelId: ULong): Deferred<PolyVoiceChannel> {
-        TODO("Not yet implemented")
-    }
-    
-    override suspend fun voiceChannel(guildId: ULong, voiceChannelId: ULong): PolyVoiceChannel {
-        TODO("Not yet implemented")
+    override suspend fun voiceChannel(voiceChannelId: ULong): PolyVoiceChannel? {
+        return jda.getVoiceChannelById(voiceChannelId.toLong())?.poly(this)
     }
     
     override fun poly(jdaEntity: Member): PolyMember = PolyMemberImpl(this, jdaEntity)
@@ -329,60 +282,74 @@ public class PolyBotJDA(
     
     override fun poly(jdaEntity: AbstractChannel): PolyChannel {
         return when (jdaEntity) {
-            is PrivateChannel -> PolyPrivateChannelImpl(this, jdaEntity)
-            is VoiceChannel   -> PolyVoiceChannelImpl(this, jdaEntity)
-            is TextChannel    -> PolyTextChannelImpl(this, jdaEntity)
-            is Category       -> PolyCategoryImpl(this, jdaEntity)
-            is MessageChannel -> PolyMessageChannelImpl(this, jdaEntity)
-            is GuildChannel   -> PolyGuildChannelImpl(this, jdaEntity)
-            else              -> PolyChannelImpl(this, jdaEntity)
+            is PrivateChannel -> poly(jdaEntity)
+            is VoiceChannel   -> poly(jdaEntity)
+            is TextChannel    -> poly(jdaEntity)
+            is Category       -> poly(jdaEntity)
+            is MessageChannel -> poly(jdaEntity)
+            is GuildChannel   -> poly(jdaEntity)
+            else              -> PolyChannelImpl(this, jdaEntity) // Unknown channel type (default channel)
         }
     }
     
     override fun poly(jdaEntity: GuildChannel): PolyGuildChannel {
         return when (jdaEntity) {
-            is VoiceChannel -> PolyVoiceChannelImpl(this, jdaEntity)
-            is TextChannel  -> PolyTextChannelImpl(this, jdaEntity)
-            is Category     -> PolyCategoryImpl(this, jdaEntity)
-            else            -> PolyGuildChannelImpl(this, jdaEntity)
+            is VoiceChannel -> poly(jdaEntity)
+            is TextChannel  -> poly(jdaEntity)
+            is Category     -> poly(jdaEntity)
+            else            -> PolyGuildChannelImpl(this, jdaEntity) // Unknown channel type (default guild channel)
         }
     }
     
     override fun poly(jdaEntity: MessageChannel): PolyMessageChannel {
         return when (jdaEntity) {
-            is PrivateChannel -> PolyPrivateChannelImpl(this, jdaEntity)
-            is TextChannel    -> PolyTextChannelImpl(this, jdaEntity)
-            else              -> PolyMessageChannelImpl(this, jdaEntity)
+            is PrivateChannel -> poly(jdaEntity)
+            is TextChannel    -> poly(jdaEntity)
+            else              -> PolyMessageChannelImpl(this, jdaEntity) // Unknown channel type (default message channel)
         }
     }
     
     override fun poly(jdaEntity: PrivateChannel): PolyPrivateChannel = PolyPrivateChannelImpl(this, jdaEntity)
     
     override fun poly(jdaEntity: Category): PolyCategory {
-        TODO("Not yet implemented")
+        return PolyCategoryImpl(this, jdaEntity)
     }
     
     override fun poly(jdaEntity: TextChannel): PolyTextChannel {
-        TODO("Not yet implemented")
+        return PolyTextChannelImpl(this, jdaEntity)
     }
     
     override fun poly(jdaEntity: VoiceChannel): PolyVoiceChannel {
-        TODO("Not yet implemented")
+        return PolyVoiceChannelImpl(this, jdaEntity)
     }
     
     override fun poly(jdaEntity: MessageEmbed): PolyMessageEmbed {
-        TODO("Not yet implemented")
+        return PolyMessageEmbedImpl(this, jdaEntity)
     }
     
     override fun poly(jdaEntity: Emote): PolyEmote {
-        TODO("Not yet implemented")
+        return PolyEmoteImpl(this, jdaEntity)
     }
     
     override fun poly(jdaEntity: IMentionable): PolyMentionable {
-        TODO("Not yet implemented")
+        return when (jdaEntity) {
+            is VoiceChannel -> poly(jdaEntity)
+            is TextChannel  -> poly(jdaEntity)
+            is Category     -> poly(jdaEntity)
+            is GuildChannel -> poly(jdaEntity)
+            is Role         -> poly(jdaEntity)
+            is User         -> poly(jdaEntity)
+            is Member       -> poly(jdaEntity)
+            is Emote        -> poly(jdaEntity)
+            else            -> error("Unknown type ${jdaEntity::class}, could not find assignable ${PolyMentionable::class}.")
+        }
     }
     
     override fun poly(jdaEntity: IPermissionHolder): PolyPermissionHolder {
-        TODO("Not yet implemented")
+        return when (jdaEntity) {
+            is Role   -> poly(jdaEntity)
+            is Member -> poly(jdaEntity)
+            else      -> error("Unknown type ${jdaEntity::class}, Could not find assignable ${PolyPermissionHolder::class}.")
+        }
     }
 }

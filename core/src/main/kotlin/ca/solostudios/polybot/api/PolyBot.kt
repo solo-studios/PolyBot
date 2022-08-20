@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyBot
- * Last modified on 26-06-2022 04:42 p.m.
+ * Last modified on 17-08-2022 11:53 a.m.
  *
  * MIT License
  *
@@ -47,7 +47,6 @@ import ca.solostudios.polybot.api.entities.PolyVoiceChannel
 import ca.solostudios.polybot.api.event.PolyEventManager
 import ca.solostudios.polybot.api.plugin.PolyPluginManager
 import ca.solostudios.polybot.api.service.PolyServiceManager
-import ca.solostudios.polybot.api.util.datastructures.BackedSuspendingReference
 import ca.solostudios.polybot.common.ExitCodes
 import com.uchuhimo.konf.Config
 import java.nio.file.Path
@@ -123,7 +122,7 @@ public interface PolyBot : CoroutineScope {
         RUNNING(true),
         
         /**
-         * The service has begun the shutdown proces and is cleaning up all remaining processes/tasks.
+         * The service has begun the shutdown process and is cleaning up all remaining processes/tasks.
          */
         SHUTTING_DOWN(true),
         
@@ -234,7 +233,7 @@ public interface PolyBot : CoroutineScope {
      *
      * Use this class to retrieve and interface with services directly.
      */
-    public val serviceManager: PolyServiceManager
+    public val serviceManager: PolyServiceManager<*>
     
     /**
      * The plugin manager
@@ -247,6 +246,11 @@ public interface PolyBot : CoroutineScope {
      * The dependency injection instance
      */
     public val di: DI
+    
+    /**
+     * The internal class loader used to load plugins
+     */
+    public val classLoader: ClassLoader
     
     /**
      * Shutdown the running service and blocks until it is fully shutdown.
@@ -274,295 +278,184 @@ public interface PolyBot : CoroutineScope {
     public fun directory(base: String, vararg subpaths: String): Path
     
     /**
-     * Returns a backed reference for a guild.
-     *
-     * @param guildId The id of the guild.
-     * @return The backed reference.
-     */
-    public fun guildReference(guildId: ULong): BackedSuspendingReference<ULong, PolyGuild>
-    
-    /**
      * Retrieves a guild asynchronously.
      *
      * @param guildId The id of the guild.
      * @return The deferred for the guild.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it).
      */
-    public fun guildAsync(guildId: ULong): Deferred<PolyGuild>
+    public fun guildAsync(guildId: ULong): Deferred<PolyGuild?>
     
     /**
      * Retrieves a guild.
      *
      * @param guildId The id of the guild.
      * @return The guild.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it).
      */
-    public suspend fun guild(guildId: ULong): PolyGuild
-    
-    /**
-     * Returns a backed reference for a role.
-     *
-     * @param roleId The id of the guild.
-     * @return The backed reference.
-     */
-    public fun roleReference(roleId: ULong): BackedSuspendingReference<ULong, PolyRole>
+    public suspend fun guild(guildId: ULong): PolyGuild?
     
     /**
      * Retrieves a role asynchronously.
      *
      * @param roleId The id of the role.
-     * @return The deferred for the role.
+     * @return A deferred result for the role.
+     *         The resulting value is `null` if the role is not cached,
+     *         or does not exist.
      */
-    public fun roleAsync(roleId: ULong): Deferred<PolyRole>
+    public fun roleAsync(guildId: ULong, roleId: ULong): Deferred<PolyRole?>
     
     /**
      * Retrieves a role.
      *
      * @param roleId The id of the role.
      * @return The role.
+     *         The resulting value is `null` if the role is not cached,
+     *         or does not exist.
      */
-    public suspend fun role(roleId: ULong): PolyRole
-    
-    /**
-     * Returns a backed reference for a user.
-     *
-     * @param userId The id of the user.
-     * @return The backed reference.
-     */
-    public fun userReference(userId: ULong): BackedSuspendingReference<ULong, PolyUser>
+    public suspend fun role(guildId: ULong, roleId: ULong): PolyRole?
     
     /**
      * Retrieves a user asynchronously.
      *
      * @param userId The id of the user.
-     * @return The deferred for the user.
+     * @return A deferred result for the user.
+     *         The resulting value is `null` if the user does not exist.
      */
-    public fun userAsync(userId: ULong): Deferred<PolyUser>
+    public fun userAsync(userId: ULong): Deferred<PolyUser?>
     
     /**
      * Retrieves a user.
      *
      * @param userId The id of the user.
-     * @return The guild.
+     * @return The user.
+     *         The resulting value is `null` if the user does not exist.
      */
-    public suspend fun user(userId: ULong): PolyUser
+    public suspend fun user(userId: ULong): PolyUser?
     
     /**
-     * Returns a backed reference for a member.
+     * Retrieves a member in the specified guild asynchronously.
      *
      * @param guildId The id of the guild.
      * @param userId The id of the member.
-     * @return The backed reference.
+     * @return A deferred result for the member.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the member is not in the guild.
      */
-    public fun memberReference(guildId: ULong, userId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyMember>
+    public fun memberAsync(guildId: ULong, userId: ULong): Deferred<PolyMember?>
     
     /**
-     * Retrieves a member asynchronously.
-     *
-     * @param guildId The id of the guild.
-     * @param userId The id of the member.
-     * @return The deferred for the member.
-     */
-    public fun memberAsync(guildId: ULong, userId: ULong): Deferred<PolyMember>
-    
-    /**
-     * Retrieves a member.
+     * Retrieves a member in the specified guild
      *
      * @param guildId The id of the guild.
      * @param userId The id of the user.
      * @return The member.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the member is not in the guild.
      */
-    public suspend fun member(guildId: ULong, userId: ULong): PolyMember
+    public suspend fun member(guildId: ULong, userId: ULong): PolyMember?
     
     /**
-     * Returns a backed reference for an emote.
-     *
-     * @param guildId The id of the guild.
-     * @param emoteId The id of the emote.
-     * @return The backed reference.
-     */
-    public fun emoteReference(guildId: ULong, emoteId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyEmote>
-    
-    /**
-     * Retrieves an emote asynchronously.
+     * Retrieves an emote in the specified guild asynchronously.
      *
      * @param guildId The id of the guild.
      * @param emoteId The id of the emote.
      * @return The deferred for the emote.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the emote is cannot be found in the guild.
      */
-    public fun emoteAsync(guildId: ULong, emoteId: ULong): Deferred<PolyEmote>
+    public fun emoteAsync(guildId: ULong, emoteId: ULong): Deferred<PolyEmote?>
     
     /**
-     * Retrieves an emote.
+     * Retrieves an emote in the specified guild.
      *
      * @param guildId The id of the guild.
      * @param emoteId The id of the emote.
      * @return The emote.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the emote is cannot be found in the guild.
      */
-    public suspend fun emote(guildId: ULong, emoteId: ULong): PolyEmote
+    public suspend fun emote(guildId: ULong, emoteId: ULong): PolyEmote?
     
     /**
-     * Returns a backed reference for a channel.
+     * Returns a backed reference for a categguild asynchronously.
      *
-     * @param guildId The id of the guild.
-     * @param channelId The id of the channel.
-     * @return The backed reference.
-     */
-    public fun channelReference(guildId: ULong, channelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyChannel>
-    
-    /**
-     * Retrieves a channel asynchronously.
-     *
-     * @param guildId The id of the guild.
-     * @param channelId The id of the channel.
-     * @return The deferred for the channel.
-     */
-    public fun channelAsync(guildId: ULong, channelId: ULong): Deferred<PolyChannel>
-    
-    /**
-     * Retrieves a channel.
-     *
-     * @param guildId The id of the guild.
-     * @param channelId The id of the channel.
-     * @return The channel.
-     */
-    public suspend fun channel(guildId: ULong, channelId: ULong): PolyChannel
-    
-    /**
-     * Returns a backed reference for a category.
-     *
-     * @param guildId The id of the guild.
-     * @param categoryId The id of the category.
-     * @return The backed reference.
-     */
-    public fun categoryReference(guildId: ULong, categoryId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyCategory>
-    
-    /**
-     * Retrieves a category asynchronously.
-     *
-     * @param guildId The id of the guild.
      * @param categoryId The id of the category.
      * @return The deferred for the category.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the category is cannot be found in the guild.
      */
-    public fun categoryAsync(guildId: ULong, categoryId: ULong): Deferred<PolyCategory>
+    public fun categoryAsync(categoryId: ULong): Deferred<PolyCategory?>
     
     /**
-     * Retrieves a category.
+     * Retrieves a category in the specified guild.
      *
-     * @param guildId The id of the guild.
      * @param categoryId The id of the category.
      * @return The category.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the category is cannot be found in the guild.
      */
-    public suspend fun category(guildId: ULong, categoryId: ULong): PolyCategory
+    public suspend fun category(categoryId: ULong): PolyCategory?
     
     /**
-     * Returns a backed reference for a guild channel.
+     * Retrieves a guild channel in the specified guild asynchronously.
      *
-     * @param guildId The id of the guild.
-     * @param guildChannelId The id of the guild channel.
-     * @return The backed reference.
-     */
-    public fun guildChannelReference(guildId: ULong, guildChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyGuildChannel>
-    
-    /**
-     * Retrieves a guild channel asynchronously.
-     *
-     * @param guildId The id of the guild.
      * @param guildChannelId The id of the guild channel.
      * @return The deferred for the guild channel.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the channel is cannot be found in the guild.
      */
-    public fun guildChannelAsync(guildId: ULong, guildChannelId: ULong): Deferred<PolyGuildChannel>
+    public fun guildChannelAsync(guildChannelId: ULong): Deferred<PolyGuildChannel?>
     
     /**
-     * Retrieves a guild channel.
+     * Retrieves a guild channel in the specified guild.
      *
-     * @param guildId The id of the guild.
      * @param guildChannelId The id of the guild channel.
      * @return The guild channel.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the channel is cannot be found in the guild.
      */
-    public suspend fun guildChannel(guildId: ULong, guildChannelId: ULong): PolyGuildChannel
+    public suspend fun guildChannel(guildChannelId: ULong): PolyGuildChannel?
     
     /**
-     * Returns a backed reference for a message channel.
+     * Retrieves a text channel in the specified guild asynchronously.
      *
-     * @param guildId The id of the guild.
-     * @param messageChannelId The id of the message channel.
-     * @return The backed reference.
-     */
-    public fun messageChannelReference(
-            guildId: ULong,
-            messageChannelId: ULong,
-                                      ): BackedSuspendingReference<Pair<ULong, ULong>, PolyMessageChannel>
-    
-    /**
-     * Retrieves a message channel asynchronously.
-     *
-     * @param guildId The id of the guild.
-     * @param messageChannelId The id of the message channel.
-     * @return The deferred for the message channel.
-     */
-    public fun messageChannelAsync(guildId: ULong, messageChannelId: ULong): Deferred<PolyMessageChannel>
-    
-    /**
-     * Retrieves a message channel.
-     *
-     * @param guildId The id of the guild.
-     * @param messageChannelId The id of the message channel.
-     * @return The message channel.
-     */
-    public suspend fun messageChannel(guildId: ULong, messageChannelId: ULong): PolyMessageChannel
-    
-    /**
-     * Returns a backed reference for a text channel.
-     *
-     * @param guildId The id of the guild.
-     * @param textChannelId The id of the text channel.
-     * @return The backed reference.
-     */
-    public fun textChannelReference(guildId: ULong, textChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyTextChannel>
-    
-    /**
-     * Retrieves a text channel asynchronously.
-     *
-     * @param guildId The id of the guild.
      * @param textChannelId The id of the text channel.
      * @return The deferred for the text channel.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the channel is cannot be found in the guild.
      */
-    public fun textChannelAsync(guildId: ULong, textChannelId: ULong): Deferred<PolyTextChannel>
+    public fun textChannelAsync(textChannelId: ULong): Deferred<PolyTextChannel?>
     
     /**
-     * Retrieves a text channel.
+     * Retrieves a text channel in the specified guild.
      *
-     * @param guildId The id of the guild.
      * @param textChannelId The id of the text channel.
      * @return The text channel.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the channel is cannot be found in the guild.
      */
-    public suspend fun textChannel(guildId: ULong, textChannelId: ULong): PolyTextChannel
+    public suspend fun textChannel(textChannelId: ULong): PolyTextChannel?
     
     /**
-     * Returns a backed reference for a voice channel.
+     * Retrieves a voice channel in the specified guild asynchronously.
      *
-     * @param guildId The id of the guild.
-     * @param voiceChannelId The id of the voice channel.
-     * @return The backed reference.
-     */
-    public fun voiceChannelReference(guildId: ULong, voiceChannelId: ULong): BackedSuspendingReference<Pair<ULong, ULong>, PolyVoiceChannel>
-    
-    /**
-     * Retrieves a voice channel asynchronously.
-     *
-     * @param guildId The id of the guild.
      * @param voiceChannelId The id of the voice channel.
      * @return The deferred for the voice channel.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the channel is cannot be found in the guild.
      */
-    public fun voiceChannelAsync(guildId: ULong, voiceChannelId: ULong): Deferred<PolyVoiceChannel>
+    public fun voiceChannelAsync(voiceChannelId: ULong): Deferred<PolyVoiceChannel?>
     
     /**
-     * Retrieves a voice channel.
+     * Retrieves a voice channel in the specified guild.
      *
-     * @param guildId The id of the guild.
      * @param voiceChannelId The id of the voice channel.
-     * @return The a voice channel.
+     * @return The voice channel.
+     *         The resulting value is `null` if the guild cannot be found (is unavailable or the bot is not in it),
+     *         or the channel is cannot be found in the guild.
      */
-    public suspend fun voiceChannel(guildId: ULong, voiceChannelId: ULong): PolyVoiceChannel
+    public suspend fun voiceChannel(voiceChannelId: ULong): PolyVoiceChannel?
     
     /**
      * Wrap the provided JDA entity in the respective polybot entity.

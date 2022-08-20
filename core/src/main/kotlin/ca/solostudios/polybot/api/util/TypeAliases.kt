@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyPluginDependency.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * The file TypeAliases.kt is part of PolyBot
+ * Last modified on 17-08-2022 11:39 a.m.
  *
  * MIT License
  *
@@ -26,16 +26,8 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin.info
+package ca.solostudios.polybot.api.util
 
-import ca.solostudios.polybot.api.plugin.info.serializers.StrataVersionRangeSerializer
-import ca.solostudios.strata.version.VersionRange
-import kotlinx.serialization.Serializable
+public typealias LongPair = Pair<Long, Long>
 
-@Serializable
-public data class PolyPluginDependency(
-        public val group: String,
-        public val id: String,
-        @Serializable(with = StrataVersionRangeSerializer::class)
-        public val versionRange: VersionRange,
-                                      )
+public typealias ULongPair = Pair<ULong, ULong>
