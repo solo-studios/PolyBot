@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 20-08-2022 05:43 p.m.
+ * Last modified on 09-09-2022 10:54 a.m.
  *
  * MIT License
  *
@@ -26,10 +26,11 @@
  * SOFTWARE.
  */
 
+@file:Suppress("DSL_SCOPE_VIOLATION")
 
 plugins {
-    kotlin("jvm")
-    kotlin("plugin.serialization")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
     
     `java-gradle-plugin`
 }
@@ -61,11 +62,11 @@ dependencies {
     compileOnly(gradleKotlinDsl())
     
     // Kotlin
-    implementation(libs.bundles.kotlin)
+    implementation(libs.bundles.kotlin.base)
     // Kotlin Serialization
-    implementation(libs.bundles.kotlinx.serialization)
+    implementation(libs.bundles.kotlinx.serialization.base)
     // Kotlin Coroutines
-    implementation(libs.bundles.kotlinx.coroutines)
+    implementation(libs.bundles.kotlinx.coroutines.core)
     
     // Jetbrains Annotations
     implementation(libs.jetbrains.annotations)

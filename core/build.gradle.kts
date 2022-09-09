@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 20-08-2022 05:46 p.m.
+ * Last modified on 09-09-2022 10:54 a.m.
  *
  * MIT License
  *
@@ -26,14 +26,15 @@
  * SOFTWARE.
  */
 
-@file:Suppress("SuspiciousCollectionReassignment")
+@file:Suppress("SuspiciousCollectionReassignment", "DSL_SCOPE_VIOLATION")
 
 plugins {
     java
-    kotlin("jvm")
-    kotlin("plugin.noarg")
-    kotlin("plugin.serialization")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.noarg)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    distribution
 }
 
 repositories {
@@ -62,26 +63,28 @@ dependencies {
     ksp(libs.ksp.service)
     
     // Kotlin
-    api(libs.bundles.kotlin)
+    api(libs.bundles.kotlin.base)
     // Kotlin Serialization
-    api(libs.bundles.kotlinx.serialization)
+    api(libs.bundles.kotlinx.serialization.base)
     
     // Kotlin Coroutines
-    api(libs.bundles.kotlinx.coroutines)
+    api(libs.bundles.kotlinx.coroutines.core)
     // Kotlin Datetime
     api(libs.kotlinx.datetime)
     
     // Kodein Dependency Injection
-    api(libs.kodein)
+    api(libs.kodein.di)
     
     // Konf
-    api(libs.konf)
+    api(libs.bundles.konf)
     
     // Jetbrains Annotations
     api(libs.jetbrains.annotations)
     
     // JDA
-    api(libs.jda)
+    api(libs.jda) {
+        exclude(module = "opus-java")
+    }
     // Discord webhooks
     api(libs.discord.webhooks)
     // JDA Kotlin extensions
@@ -101,7 +104,7 @@ dependencies {
     
     implementation(libs.logback)
     
-    implementation(libs.dsiutils)
+    implementation(libs.dsi.dsiutils)
     
     // Testing
     testApi(libs.bundles.junit)

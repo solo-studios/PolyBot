@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 20-08-2022 05:43 p.m.
+ * Last modified on 09-09-2022 10:51 a.m.
  *
  * MIT License
  *
@@ -26,7 +26,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("SuspiciousCollectionReassignment", "PropertyName")
+@file:Suppress("SuspiciousCollectionReassignment", "PropertyName", "DSL_SCOPE_VIOLATION")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.ajoberstar.grgit.Grgit
@@ -42,23 +42,23 @@ import org.jetbrains.gradle.ext.RunConfiguration
 import kotlin.math.max
 
 plugins {
-    kotlin("jvm")
-    kotlin("plugin.noarg")
-    kotlin("plugin.serialization")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.noarg)
+    alias(libs.plugins.kotlin.serialization)
     
     java
     
     application
     distribution
     
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.dokka)
     
-    id("org.ajoberstar.grgit.service")
+    alias(libs.plugins.grgit)
     
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
     
     idea
-    id("org.jetbrains.gradle.plugin.idea-ext")
+    alias(libs.plugins.idea.ext)
     
     // id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
@@ -134,10 +134,10 @@ dependencies {
     implementation(libs.bundles.kotlin.scripting) // For executing scripts at runtime
     
     // Kotlin Serialization
-    implementation(libs.bundles.kotlinx.serialization)
+    implementation(libs.bundles.kotlinx.serialization.base)
     
     // Kotlin Coroutines
-    implementation(libs.bundles.kotlinx.coroutines)
+    implementation(libs.bundles.kotlinx.coroutines.core)
     
     // Kotlin UUID support
     implementation(libs.kotlinx.uuid)
@@ -146,13 +146,15 @@ dependencies {
     implementation(libs.clikt)
     
     // Kodein Dependency Injection
-    implementation(libs.kodein)
+    implementation(libs.kodein.di)
     
     // Utility annotations
     implementation(libs.jetbrains.annotations)
     
     // JDA
-    implementation(libs.jda)
+    implementation(libs.jda) {
+        exclude(module = "opus-java")
+    }
     // Discord webhooks
     implementation(libs.discord.webhooks)
     // JDA Kotlin extensions
@@ -179,6 +181,7 @@ dependencies {
     
     // Jackson (JSON object serialization/deserialization)
     implementation(libs.bundles.jackson)
+    implementation(libs.jackson.dataformat.hocon)
     
     // Persistent cache
     implementation(libs.ehcache)
@@ -187,7 +190,7 @@ dependencies {
     implementation(libs.guava)
     
     // Hikari (SQL Connection Pooling)
-    implementation(libs.hikari)
+    implementation(libs.hikaricp)
     // SQLite
     // implementation(libs.sqlite)
     // MariaDB
@@ -210,7 +213,7 @@ dependencies {
     implementation(libs.jgit)
     
     // Used for fast random number generators
-    implementation(libs.dsiutils)
+    implementation(libs.dsi.dsiutils)
     
     implementation(libs.commons.compress)
     implementation(libs.commons.io)
