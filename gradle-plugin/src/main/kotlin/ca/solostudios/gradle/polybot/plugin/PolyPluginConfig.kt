@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginConfig.kt is part of PolyBot
- * Last modified on 20-08-2022 05:43 p.m.
+ * Last modified on 10-09-2022 02:13 p.m.
  *
  * MIT License
  *
@@ -88,7 +88,8 @@ public open class PolyPluginConfig @Inject constructor(objectFactory: ObjectFact
     }
     
     public fun entrypoints(entrypointsBuilder: MutableList<String>.() -> Unit) {
-        this.entrypoints.set(buildList(entrypointsBuilder))
+        this.entrypoints.get()
+        this.entrypoints.set(mutableListOf<String>().apply(entrypointsBuilder))
     }
     
     public fun entrypoint(entrypoint: String) {
