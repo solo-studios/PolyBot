@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file FlatDirectoryCandidateFinder.kt is part of PolyBot
- * Last modified on 16-08-2022 09:35 p.m.
+ * Last modified on 10-09-2022 03:20 p.m.
  *
  * MIT License
  *
@@ -63,7 +63,7 @@ public class FlatDirectoryCandidateFinder(
         }
         
         try {
-            return Files.walk(path)
+            return Files.walk(path, 1)
                     .filter {
                         path.isValid()
                     }
@@ -83,7 +83,7 @@ public class FlatDirectoryCandidateFinder(
         } catch (e: IOException) {
             logger.warn(e) { "Error occurred while checking if the file '$this' is hidden." }
         }
-        
-        return extension == "jar" && name.startsWith('.')
+    
+        return extension == "jar" && !name.startsWith('.')
     }
 }
