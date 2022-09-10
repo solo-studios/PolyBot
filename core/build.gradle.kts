@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 09-09-2022 10:54 a.m.
+ * Last modified on 10-09-2022 02:57 p.m.
  *
  * MIT License
  *
@@ -28,16 +28,25 @@
 
 @file:Suppress("SuspiciousCollectionReassignment", "DSL_SCOPE_VIOLATION")
 
+import kotlin.math.max
+
 plugins {
     java
+    
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.noarg)
     alias(libs.plugins.kotlin.serialization)
+    
     alias(libs.plugins.ksp)
+    
+    alias(libs.plugins.dokka)
+    
     distribution
 }
 
 repositories {
+    mavenCentral()
+    
     maven("https://m2.dv8tion.net/releases")
     
     maven("https://jitpack.io/")
@@ -47,8 +56,11 @@ repositories {
 kotlin {
     explicitApi()
     target {
-        compilations.all {
+        compilations.configureEach {
             kotlinOptions {
+                jvmTarget = "11"
+                apiVersion = "1.7"
+                languageVersion = "1.7"
                 freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
             }
         }
@@ -114,4 +126,30 @@ dependencies {
 noArg {
     invokeInitializers = true
     annotation("kotlinx.serialization.Serializable")
+}
+
+tasks {
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+        
+        failFast = false
+        maxParallelForks = max(Runtime.getRuntime().availableProcessors() - 1, 1)
+    }
+    
+    withType<Javadoc>().configureEach {
+        options {
+            encoding = "UTF-8"
+        }
+    }
+    
+    withType<Jar>().configureEach {
+        from(rootProject.file("LICENSE"))
+    }
+}
+
+java {
+    withSourcesJar()
+    
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }

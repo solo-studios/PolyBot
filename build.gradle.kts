@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 09-09-2022 10:51 a.m.
+ * Last modified on 10-09-2022 02:57 p.m.
  *
  * MIT License
  *
@@ -70,54 +70,8 @@ val versionObj = Version("0", "3", "5")
 // version = versionObj
 
 allprojects {
-    apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin = "org.jetbrains.dokka")
-    
     version = versionObj
     group = "ca.solostudios.polybot"
-    
-    kotlin {
-        target {
-            compilations.configureEach {
-                kotlinOptions {
-                    jvmTarget = "11"
-                    apiVersion = "1.7"
-                    languageVersion = "1.7"
-                }
-            }
-        }
-    }
-    
-    tasks {
-        withType<Test>().configureEach {
-            useJUnitPlatform()
-            
-            failFast = false
-            maxParallelForks = max(Runtime.getRuntime().availableProcessors() - 1, 1)
-        }
-        
-        withType<Javadoc>().configureEach {
-            options {
-                encoding = "UTF-8"
-            }
-        }
-        
-        withType<Jar>().configureEach {
-            from("LICENSE")
-        }
-    }
-    
-    java {
-        withSourcesJar()
-        
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    
-    
-    repositories {
-        mavenCentral()
-    }
 }
 
 repositories {
@@ -235,14 +189,31 @@ noArg {
     annotation("kotlinx.serialization.Serializable")
 }
 
+java {
+    withSourcesJar()
+    
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 tasks {
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+        
+        failFast = false
+        maxParallelForks = max(Runtime.getRuntime().availableProcessors() - 1, 1)
+    }
+    
+    withType<Javadoc>().configureEach {
+        options {
+            encoding = "UTF-8"
+        }
+    }
+    
     named<JavaExec>("run") {
         args = listOf(
                 "run"
                      )
-    }
-    named<Test>("test") {
-        useJUnitPlatform()
     }
     
     processResources.configure {
@@ -276,6 +247,7 @@ tasks {
     }
     
     withType<Jar>().configureEach {
+        from(rootProject.file("LICENSE"))
         manifest {
             attributes(
                     "Main-Class" to mainClassName,
