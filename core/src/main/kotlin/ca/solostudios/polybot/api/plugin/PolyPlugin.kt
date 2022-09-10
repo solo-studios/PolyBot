@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPlugin.kt is part of PolyBot
- * Last modified on 02-08-2022 03:18 p.m.
+ * Last modified on 10-09-2022 03:17 p.m.
  *
  * MIT License
  *
@@ -32,9 +32,8 @@ import ca.solostudios.polybot.api.PolyBot
 import ca.solostudios.polybot.api.annotations.PolyPluginDslMarker
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
 import ca.solostudios.polybot.api.service.AbstractPolyService
-import kotlinx.coroutines.CoroutineScope
 
-public abstract class PolyPlugin(override val polybot: PolyBot) : AbstractPolyService(), CoroutineScope by polybot {
+public abstract class PolyPlugin(override val polybot: PolyBot) : AbstractPolyService() {
     @PolyPluginDslMarker
     public abstract fun PolyPluginDsl.init()
 }

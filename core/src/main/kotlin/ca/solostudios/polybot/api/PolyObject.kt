@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyObject.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * Last modified on 09-09-2022 12:11 p.m.
  *
  * MIT License
  *
@@ -28,12 +28,10 @@
 
 package ca.solostudios.polybot.api
 
-import kotlinx.coroutines.CoroutineScope
-
 /**
  * An object that contains a [PolyBot] reference
  */
-public interface PolyObject : CoroutineScope {
+public interface PolyObject {
     /**
      * The polybot reference for this object
      */

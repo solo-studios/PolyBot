@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCommandManager.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 10-09-2022 03:17 p.m.
  *
  * MIT License
  *
@@ -40,8 +40,7 @@ public abstract class PolyCommandManager(
         override val polybot: PolyBot,
         commandExecutionCoordinator: CommandExecutionCoordinatorSupplier,
         commandRegistrationHandler: CommandRegistrationHandler,
-                                        ) : CommandManager(commandExecutionCoordinator, commandRegistrationHandler),
-                                            PolyObject {
+                                        ) : CommandManager(commandExecutionCoordinator, commandRegistrationHandler), PolyObject {
     override fun hasPermission(sender: MessageEvent, permission: String): Boolean {
         TODO("Not yet implemented")
     }

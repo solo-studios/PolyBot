@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManagerImpl.kt is part of PolyBot
- * Last modified on 20-08-2022 05:43 p.m.
+ * Last modified on 10-09-2022 03:17 p.m.
  *
  * MIT License
  *
@@ -37,7 +37,6 @@ import ca.solostudios.polybot.api.plugin.info.PluginInfo
 import ca.solostudios.polybot.common.service.Service
 import ca.solostudios.polybot.common.service.ServiceManager
 import java.nio.file.Path
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -55,7 +54,7 @@ import kotlin.time.Duration
 public class PolyPluginManagerImpl(
         override val polybot: PolyBot,
         override val candidateFinders: List<PluginCandidateFinder>
-                                  ) : PolyPluginManager, DIAware, CoroutineScope by polybot {
+                                  ) : PolyPluginManager, DIAware {
     private val logger by getLogger()
     
     override val di: DI = polybot.di
