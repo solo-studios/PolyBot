@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PluginCandidateFinder.kt is part of PolyBot
- * Last modified on 02-07-2022 05:12 p.m.
+ * Last modified on 10-09-2022 03:47 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,6 @@ package ca.solostudios.polybot.api.plugin.finder
 
 import java.nio.file.Path
 
-public interface PluginCandidateFinder {
+public fun interface PluginCandidateFinder {
     public fun findCandidates(): List<Path>
 }

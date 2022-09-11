@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 10-09-2022 02:57 p.m.
+ * Last modified on 10-09-2022 03:45 p.m.
  *
  * MIT License
  *
@@ -119,8 +119,12 @@ dependencies {
     implementation(libs.dsi.dsiutils)
     
     // Testing
-    testApi(libs.bundles.junit)
     testApi(kotlin("test"))
+    
+    testApi(libs.bundles.junit)
+    testApi(libs.bundles.kotlinx.coroutines.debugging)
+    
+    testApi(libs.mockk)
 }
 
 noArg {

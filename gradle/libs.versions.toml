@@ -224,6 +224,10 @@ junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", v
 junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit-jupiter" }
 junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit-jupiter" }
 
+# MockK
+## Mocking library for Kotlin
+mockk = { group = "io.mockk", name = "mockk", version = "1.12.7" }
+
 [bundles]
 kotlin-base = ["kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"]
 kotlin-scripting = ["kotlin-scripting-runtime", "kotlin-compiler-embeddable", "kotlin-scripting-compiler"]

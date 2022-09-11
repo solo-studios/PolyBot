@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyClassLoader.kt is part of PolyBot
- * Last modified on 20-08-2022 05:43 p.m.
+ * The file PolyPluginContainerImpl.kt is part of PolyBot
+ * Last modified on 10-09-2022 04:31 p.m.
  *
  * MIT License
  *
@@ -26,19 +26,17 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.impl.plugin.loader
+package ca.solostudios.polybot.impl.plugin
 
-import java.net.URL
-import java.net.URLClassLoader
+import ca.solostudios.polybot.api.plugin.PolyPlugin
+import ca.solostudios.polybot.api.plugin.PolyPluginContainer
+import ca.solostudios.polybot.api.plugin.info.PluginInfo
+import java.nio.file.FileSystem
+import java.nio.file.Path
 
-public class PolyClassLoader(originalClassLoader: ClassLoader) : URLClassLoader(arrayOf(), originalClassLoader) {
-    public override fun addURL(url: URL) {
-        super.addURL(url)
-    }
-    
-    public companion object {
-        init {
-            registerAsParallelCapable()
-        }
-    }
-}
+public data class PolyPluginContainerImpl<T : PolyPlugin>(
+        override val entrypoints: List<T>,
+        override val info: PluginInfo,
+        override val paths: List<Path>,
+        override val filesystem: FileSystem,
+                                                         ) : PolyPluginContainer<T>

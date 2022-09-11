@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 17-08-2022 12:18 p.m.
+ * Last modified on 11-09-2022 12:00 a.m.
  *
  * MIT License
  *
@@ -50,6 +50,7 @@ import ca.solostudios.polybot.api.jda.builder.InlineJDABuilder
 import ca.solostudios.polybot.api.plugin.PolyPluginManager
 import ca.solostudios.polybot.api.plugin.finder.ClasspathCandidateFinder
 import ca.solostudios.polybot.api.plugin.finder.FlatDirectoryCandidateFinder
+import ca.solostudios.polybot.api.plugin.loader.PolyClassLoader
 import ca.solostudios.polybot.api.service.PolyServiceManager
 import ca.solostudios.polybot.api.util.ext.ScheduledThreadPool
 import ca.solostudios.polybot.api.util.ext.poly
@@ -70,7 +71,6 @@ import ca.solostudios.polybot.impl.entities.PolyTextChannelImpl
 import ca.solostudios.polybot.impl.entities.PolyUserImpl
 import ca.solostudios.polybot.impl.entities.PolyVoiceChannelImpl
 import ca.solostudios.polybot.impl.plugin.PolyPluginManagerImpl
-import ca.solostudios.polybot.impl.plugin.loader.PolyClassLoader
 import com.uchuhimo.konf.Config
 import dev.minn.jda.ktx.await
 import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
