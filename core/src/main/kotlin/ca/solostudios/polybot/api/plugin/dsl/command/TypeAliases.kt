@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TypeAliases.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 11-09-2022 06:49 p.m.
  *
  * MIT License
  *
@@ -34,6 +34,7 @@ import ca.solostudios.polybot.api.cloud.CommandMethodContext
 import ca.solostudios.polybot.api.cloud.MethodCommandExecutionHandler
 import ca.solostudios.polybot.api.cloud.MutableCommandBuilder
 import ca.solostudios.polybot.api.cloud.event.MessageEvent
+import cloud.commandframework.annotations.AnnotationParser
 import cloud.commandframework.arguments.parser.ArgumentParseResult
 import cloud.commandframework.arguments.parser.ParserParameters
 import io.leangen.geantyref.TypeToken
@@ -54,3 +55,5 @@ public typealias ExecutionMethodFactory = (CommandMethodContext) -> MethodComman
 public typealias ParserSupplier<T> = (parameters: ParserParameters) -> ArgumentParser<T>
 
 public typealias SuggestionProvider = (context: CommandContext, input: String) -> List<String>
+
+public typealias AnnotationParser = AnnotationParser<MessageEvent>

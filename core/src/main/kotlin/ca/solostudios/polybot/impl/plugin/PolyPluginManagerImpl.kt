@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManagerImpl.kt is part of PolyBot
- * Last modified on 10-09-2022 04:57 p.m.
+ * Last modified on 11-09-2022 07:11 p.m.
  *
  * MIT License
  *
@@ -35,14 +35,15 @@ import ca.solostudios.polybot.api.plugin.PolyPluginManager
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
 import ca.solostudios.polybot.api.plugin.finder.PluginCandidateFinder
 import ca.solostudios.polybot.api.plugin.info.PluginInfo
-import ca.solostudios.polybot.api.plugin.loader.PolyClassLoader
-import ca.solostudios.polybot.common.service.Service
-import ca.solostudios.polybot.common.service.ServiceManager
+import ca.solostudios.polybot.common.service.AbstractServiceManager
+import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Path
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -55,27 +56,47 @@ import kotlin.io.path.notExists
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
-import kotlin.time.Duration
 
 public class PolyPluginManagerImpl(
         override val polybot: PolyBot,
         override val candidateFinders: List<PluginCandidateFinder>
-                                  ) : PolyPluginManager, DIAware {
+                                  ) : PolyPluginManager, AbstractServiceManager<PolyPlugin>(), DIAware {
     private val logger by getLogger()
     
     override val di: DI = polybot.di
     
-    override val plugins: MutableList<PolyPluginContainer<*>> = mutableListOf()
-    override val pluginMap: MutableMap<String, PolyPluginContainer<*>> = mutableMapOf()
+    override val plugins: List<PolyPluginContainer<*>>
+        get() = pluginMap.entries.map { it.value }
     
-    override suspend fun initPlugins() {
+    public val pluginMap: MutableMap<Pair<String, String>, PolyPluginContainer<*>> = mutableMapOf()
+    override val services: List<PolyPlugin>
+        get() = plugins.flatMap { it.entrypoints }
+    
+    override fun serviceStart() {
+        TODO("Not yet implemented")
+    }
+    
+    override fun serviceShutdown() {
+        TODO("Not yet implemented")
+    }
+    
+    override suspend fun startPlugins(polyPluginDsl: PolyPluginDsl) {
+        for (plugin in plugins) {
+            for (entrypoint in plugin.entrypoints) {
+                logger.debug { "Starting entrypoint ${entrypoint::class} for plugin ${plugin.info.id}" }
+                with(entrypoint) {
+                    polyPluginDsl.init()
+                }
+            }
+        }
+    }
+    
+    override suspend fun loadPlugins() {
         val candidates = resolveCandidates()
-        
-        val classLoader = polybot.classLoader as PolyClassLoader
         
         for (candidate in candidates) {
             for (path in candidate.paths) {
-                classLoader.addURL(path.toUri().toURL())
+                polybot.classLoader.addURL(path.toUri().toURL())
             }
         }
         
@@ -84,7 +105,7 @@ public class PolyPluginManagerImpl(
             for (entrypoint in candidate.info.entrypoints) {
                 logger.debug { "Loading entrypoint class $entrypoint for plugin ${candidate.info.id}" }
                 try {
-                    val kClass = classLoader.loadClass(entrypoint).kotlin
+                    val kClass = polybot.classLoader.loadClass(entrypoint).kotlin
                     
                     if (!kClass.isSubclassOf(PolyPlugin::class)) {
                         logger.error { "Error loading plugin entrypoint; class $kClass is not an instance of ${PolyPlugin::class}" }
@@ -97,18 +118,7 @@ public class PolyPluginManagerImpl(
                 }
             }
             val plugin = PolyPluginContainerImpl(entrypoints, candidate.info, candidate.paths, candidate.filesystem)
-            plugins.add(plugin)
-            pluginMap[candidate.info.id] = plugin
-        }
-    }
-    
-    @Suppress("UNREACHABLE_CODE")
-    override suspend fun start() {
-        for (entrypoint in plugins.flatMap { it.entrypoints }) {
-            val polyPluginDsl: PolyPluginDsl = TODO("Initialize PolyPluginDsl")
-            with(entrypoint) {
-                polyPluginDsl.init()
-            }
+            pluginMap[candidate.info.group, candidate.info.id] = plugin
         }
     }
     
@@ -123,60 +133,44 @@ public class PolyPluginManagerImpl(
                     if (path.extension == "jar")
                         resolveJarCandidate(path)
                     else
-                        resolveFileCandidate(path) // TODO: 2022-08-16 Resolve Jar Candidate
+                        resolveFolderCandidate(path) // TODO: 2022-08-16 Resolve Jar Candidate
                 }
             }.awaitAll().filterNotNull()
-            
+    
             logger.debug { "Found the following plugin candidates: $pluginCandidates" }
-            
+    
             return@coroutineScope pluginCandidates
         }
     }
     
-    @OptIn(ExperimentalSerializationApi::class)
-    private fun resolveFileCandidate(candidatePath: Path): PolyPluginCandidate? {
-        val pluginJsonPath = candidatePath.resolve("polybot.plugin.json")
+    private suspend fun resolveFolderCandidate(candidatePath: Path): PolyPluginCandidate? {
+        val folderFs = withContext(Dispatchers.IO) { FileSystems.newFileSystem(candidatePath, null) }
+        val pluginInfo = loadPluginJson(folderFs) ?: return null
         
-        if (pluginJsonPath.notExists())
-            return null
-        
-        val pluginInfo = Json.decodeFromStream<PluginInfo>(pluginJsonPath.inputStream())
-        
-        return PolyPluginCandidate(pluginInfo, listOf(candidatePath), FileSystems.newFileSystem(candidatePath, null))
+        return PolyPluginCandidate(pluginInfo, listOf(candidatePath), folderFs)
     }
     
-    @OptIn(ExperimentalSerializationApi::class)
-    private fun resolveJarCandidate(candidatePath: Path): PolyPluginCandidate? {
-        val jarFs = FileSystems.newFileSystem(candidatePath, null)
-        
-        val pluginJsonPath = jarFs.getPath("polybot.plugin.json")
-        if (pluginJsonPath.notExists())
-            return null
-        
-        val pluginInfo = Json.decodeFromStream<PluginInfo>(pluginJsonPath.inputStream())
+    private suspend fun resolveJarCandidate(candidatePath: Path): PolyPluginCandidate? {
+        val jarFs = withContext(Dispatchers.IO) { FileSystems.newFileSystem(candidatePath, null) }
+        val pluginInfo = loadPluginJson(jarFs) ?: return null
         
         return PolyPluginCandidate(pluginInfo, listOf(candidatePath), jarFs)
     }
     
-    override val services: List<PolyPlugin>
-        get() = plugins.flatMap { it.entrypoints }
-    override val startupTimes: List<Pair<PolyPlugin, Duration>>
-        get() = TODO("Not yet implemented")
-    override val serviceHealth: Map<KClass<PolyPlugin>, ServiceManager.ServiceHealth> = mutableMapOf()
-    override var state: Service.State = Service.State.INITIALIZING
-        private set
-    override val shutdown: Boolean
-        get() = state == Service.State.SHUTDOWN || state == Service.State.FAILED
-    override val running: Boolean
-        get() = state == Service.State.RUNNING
-    override val active: Boolean
-        get() = state.active
+    @OptIn(ExperimentalSerializationApi::class)
+    private suspend fun loadPluginJson(fs: FileSystem): PluginInfo? {
+        return withContext(Dispatchers.IO) {
+            val pluginJsonPath = fs.getPath("polybot.plugin.json")
+            if (pluginJsonPath.notExists())
+                return@withContext null
+            
+            Json.decodeFromStream(pluginJsonPath.inputStream())
+        }
+    }
     
-    override val healthy: Boolean
-        get() = serviceHealth.values.all { it.healthy }
-    
+    @Suppress("UNCHECKED_CAST")
     override fun <T : PolyPlugin> get(group: String, id: String): PolyPluginContainer<T> {
-        TODO("Not yet implemented")
+        return pluginMap[group, id] as PolyPluginContainer<T>
     }
     
     @Deprecated("Plugins cannot be added to the manager", level = DeprecationLevel.HIDDEN)
@@ -184,15 +178,11 @@ public class PolyPluginManagerImpl(
         throw UnsupportedOperationException("Plugins cannot be added at runtime.")
     }
     
-    override suspend fun shutdown() {
-        TODO("Not yet implemented")
+    private operator fun <T, U, V> Map<Pair<T, U>, V>.get(key1: T, key2: U): V? {
+        return this[key1 to key2]
     }
     
-    override fun <T : PolyPlugin> getService(clazz: KClass<T>): T {
-        TODO("Not yet implemented")
-    }
-    
-    override fun addException(serviceClass: KClass<PolyPlugin>, exception: Exception) {
-        TODO("Not yet implemented")
+    private operator fun <T, U, V> MutableMap<Pair<T, U>, V>.set(key1: T, key2: U, value: V) {
+        this[key1 to key2] = value
     }
 }

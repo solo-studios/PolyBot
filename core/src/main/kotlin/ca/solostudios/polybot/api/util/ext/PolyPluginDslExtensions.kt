@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginDslExtensions.kt is part of PolyBot
- * Last modified on 10-06-2022 12:41 p.m.
+ * Last modified on 11-09-2022 07:11 p.m.
  *
  * MIT License
  *
@@ -32,7 +32,6 @@ import ca.solostudios.polybot.api.cloud.event.MessageEvent
 import ca.solostudios.polybot.api.event.PolyEvent
 import ca.solostudios.polybot.api.event.PolyEventListener
 import ca.solostudios.polybot.api.plugin.dsl.command.PolyCommandDsl
-import ca.solostudios.polybot.api.plugin.dsl.command.PolyParameterInjectorDsl
 import ca.solostudios.polybot.api.plugin.dsl.event.PolyEventDsl
 import ca.solostudios.polybot.api.plugin.dsl.service.PolyServiceDsl
 import ca.solostudios.polybot.api.service.PolyService
@@ -45,20 +44,20 @@ public inline fun <reified E : Exception> PolyCommandDsl.exceptionHandler(noinli
     exceptionHandler(E::class, handler)
 }
 
-public inline fun <reified T : Any> PolyParameterInjectorDsl.injector(injector: ParameterInjector<MessageEvent, T>) {
+public inline fun <reified T : Any> PolyCommandDsl.injector(injector: ParameterInjector<MessageEvent, T>) {
     injector(T::class, injector)
 }
 
-public inline fun <reified T : Any> PolyParameterInjectorDsl.injector(
+public inline fun <reified T : Any> PolyCommandDsl.injector(
         noinline injector: (context: CommandContext<MessageEvent>, annotationAccessor: AnnotationAccessor) -> T,
-                                                                     ) {
+                                                           ) {
     injector(T::class, ParameterInjector(injector))
 }
 
-public fun <T : Any> PolyParameterInjectorDsl.injector(
+public fun <T : Any> PolyCommandDsl.injector(
         clazz: KClass<T>,
         injector: (context: CommandContext<MessageEvent>, annotationAccessor: AnnotationAccessor) -> T,
-                                                      ) {
+                                            ) {
     injector(clazz, ParameterInjector(injector))
 }
 

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCommandDsl.kt is part of PolyBot
- * Last modified on 10-06-2022 12:11 p.m.
+ * Last modified on 11-09-2022 06:49 p.m.
  *
  * MIT License
  *
@@ -34,25 +34,28 @@ import ca.solostudios.polybot.api.cloud.CaptionRegistry
 import ca.solostudios.polybot.api.cloud.CommandPostprocessor
 import ca.solostudios.polybot.api.cloud.CommandPreprocessor
 import ca.solostudios.polybot.api.cloud.CommandSyntaxFormatter
+import ca.solostudios.polybot.api.cloud.InjectionService
+import ca.solostudios.polybot.api.cloud.ParameterInjector
 import cloud.commandframework.CommandManager
 import cloud.commandframework.annotations.AnnotationParser
+import cloud.commandframework.annotations.injection.ParameterInjectorRegistry
 import cloud.commandframework.arguments.parser.ParserRegistry
 import kotlin.reflect.KClass
 
 
 @PolyPluginDslMarker
-public interface PolyCommandDsl : PolyParameterInjectorDsl {
+public interface PolyCommandDsl {
     /**
      * The command syntax formatter.
      */
     @PolyPluginDelicateApi
-    public val commandSyntaxFormatter: CommandSyntaxFormatter
+    public var commandSyntaxFormatter: CommandSyntaxFormatter
     
     /**
      * Caption registry
      */
     @PolyPluginDelicateApi
-    public val captionRegistry: CaptionRegistry
+    public var captionRegistry: CaptionRegistry
     
     /**
      * Configures the [AnnotationParser] using the DSL.
@@ -97,4 +100,24 @@ public interface PolyCommandDsl : PolyParameterInjectorDsl {
      * @see CommandManager.registerExceptionHandler
      */
     public fun <E : Exception> exceptionHandler(clazz: KClass<E>, handler: ExceptionHandler<E>)
+    
+    /**
+     * Registers an injector for a particular type.
+     *
+     * @param T The type that the injector should inject for.
+     * @param clazz The type clazz that the injector will inject for. This type will be matched using [Class.isAssignableFrom].
+     * @param injector The injector that should inject the value into the command method.
+     *
+     * @see ParameterInjectorRegistry.registerInjector
+     */
+    public fun <T : Any> injector(clazz: KClass<T>, injector: ParameterInjector<T>)
+    
+    /**
+     * Registers an injection service that will be able to provide injections using [ParameterInjectorRegistry.getInjectable].
+     *
+     * @param service The service implementation.
+     *
+     * @see ParameterInjectorRegistry.registerInjectionService
+     */
+    public fun injectionService(service: InjectionService)
 }

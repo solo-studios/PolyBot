@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyAnnotationDsl.kt is part of PolyBot
- * Last modified on 10-06-2022 12:11 p.m.
+ * Last modified on 11-09-2022 07:01 p.m.
  *
  * MIT License
  *
@@ -36,7 +36,7 @@ import java.lang.reflect.Method
 import kotlin.reflect.KClass
 
 @PolyPluginDslMarker
-public interface PolyAnnotationDsl : PolyParameterInjectorDsl {
+public interface PolyAnnotationDsl {
     /**
      * Registers a new command execution method factory. This allows for the registration of custom command method execution strategies
      * (eg. suspending functions, etc.)
@@ -77,11 +77,11 @@ public interface PolyAnnotationDsl : PolyParameterInjectorDsl {
      *
      * @param A The annotation type to target.
      * @param clazz The annotation class.
-     * @param preprocessorMapper The preprocessor mapping function.
+     * @param mapper The preprocessor mapping function.
      *
      * @see AnnotationParser.registerPreprocessorMapper
      */
-    public fun <A : Annotation> preprocessorMapper(clazz: KClass<A>, preprocessorMapper: PreprocessorMapper<A>)
+    public fun <A : Annotation> preprocessorMapper(clazz: KClass<A>, mapper: PreprocessorMapper<A>)
     
     /**
      * Marks certain packages to be scanned for commands, which are then parsed by the annotation processor.

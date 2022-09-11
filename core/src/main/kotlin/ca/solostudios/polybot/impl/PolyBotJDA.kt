@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 11-09-2022 12:00 a.m.
+ * Last modified on 11-09-2022 07:11 p.m.
  *
  * MIT License
  *
@@ -47,7 +47,6 @@ import ca.solostudios.polybot.api.entities.PolyUser
 import ca.solostudios.polybot.api.entities.PolyVoiceChannel
 import ca.solostudios.polybot.api.event.PolyEventManager
 import ca.solostudios.polybot.api.jda.builder.InlineJDABuilder
-import ca.solostudios.polybot.api.plugin.PolyPluginManager
 import ca.solostudios.polybot.api.plugin.finder.ClasspathCandidateFinder
 import ca.solostudios.polybot.api.plugin.finder.FlatDirectoryCandidateFinder
 import ca.solostudios.polybot.api.plugin.loader.PolyClassLoader
@@ -149,13 +148,13 @@ public class PolyBotJDA(
     override val serviceManager: PolyServiceManager<*>
         get() = TODO("Not yet implemented")
     
-    override val polyPluginManager: PolyPluginManager = PolyPluginManagerImpl(
+    override val polyPluginManager: PolyPluginManagerImpl = PolyPluginManagerImpl(
             this,
             listOf(
                     ClasspathCandidateFinder(),
                     FlatDirectoryCandidateFinder(directory("plugins")),
                   )
-                                                                             )
+                                                                                 )
     
     override val id: ULong
         get() = jda.selfUser.idLong.toULong()
@@ -164,7 +163,7 @@ public class PolyBotJDA(
     
     }
     
-    public override val classLoader: ClassLoader = PolyClassLoader(javaClass.classLoader)
+    public override val classLoader: PolyClassLoader = PolyClassLoader(javaClass.classLoader)
     
     @Throws(Exception::class)
     override suspend fun start() {
@@ -172,11 +171,13 @@ public class PolyBotJDA(
             logger.debug { "PolyBot is already active, but startup was requested. Ignoring." }
             return
         }
-        
+    
         state = PolyBot.State.STARTING
-        
+    
+        polyPluginManager.loadPlugins()
+    
         TODO("Start Polybot") // TODO: 2022-08-17
-        
+    
         state = PolyBot.State.RUNNING
     }
     

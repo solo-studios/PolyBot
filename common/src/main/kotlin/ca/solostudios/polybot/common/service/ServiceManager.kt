@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceManager.kt is part of PolyBot
- * Last modified on 20-08-2022 05:43 p.m.
+ * Last modified on 11-09-2022 06:12 p.m.
  *
  * MIT License
  *
@@ -43,7 +43,7 @@ public interface ServiceManager<S : Service> : Service {
     /**
      * The amount of time it took for each service to start up
      */
-    public val startupTimes: List<Pair<S, Duration>>
+    public val startupTimes: Map<S, Duration>
     
     /**
      * The health of each service.
@@ -145,6 +145,15 @@ public interface ServiceManager<S : Service> : Service {
      */
     @Throws(NullPointerException::class)
     public fun <T : S> getService(clazz: KClass<T>): T
+    
+    /**
+     * Returns a list of services from the manager.
+     *
+     * @param T The type of the services to return
+     * @param clazz The class of the services
+     * @return The list of services. Empty if none are found
+     */
+    public fun <T : S> getServices(clazz: KClass<T>): List<T>
     
     /**
      * Adds an exception to the specified service.

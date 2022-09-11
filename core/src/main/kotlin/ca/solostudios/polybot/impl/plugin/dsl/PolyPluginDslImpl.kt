@@ -2,7 +2,7 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyPluginManager.kt is part of PolyBot
+ * The file PolyPluginDslImpl.kt is part of PolyBot
  * Last modified on 11-09-2022 07:09 p.m.
  *
  * MIT License
@@ -26,31 +26,36 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin
+package ca.solostudios.polybot.impl.plugin.dsl
 
-import ca.solostudios.polybot.api.PolyObject
+import ca.solostudios.polybot.api.cloud.CommandManager
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
-import ca.solostudios.polybot.api.plugin.finder.PluginCandidateFinder
-import ca.solostudios.polybot.api.service.PolyServiceManager
-import kotlin.reflect.KClass
+import ca.solostudios.polybot.api.plugin.dsl.command.AnnotationParser
+import ca.solostudios.polybot.api.plugin.dsl.command.PolyCommandDsl
+import ca.solostudios.polybot.api.plugin.dsl.event.PolyEventDsl
+import ca.solostudios.polybot.api.plugin.dsl.service.PolyServiceDsl
+import ca.solostudios.polybot.impl.plugin.dsl.command.PolyCommandDslImpl
+import com.uchuhimo.konf.ConfigSpec
 
-public interface PolyPluginManager : PolyServiceManager<PolyPlugin>, PolyObject {
-    public val plugins: List<PolyPluginContainer<*>>
+internal class PolyPluginDslImpl(
+        val cloud: CommandManager,
+        annotationParser: AnnotationParser
+                                ) : PolyPluginDsl {
+    val commandDsl: PolyCommandDslImpl = PolyCommandDslImpl(cloud, annotationParser)
     
-    public val candidateFinders: List<PluginCandidateFinder>
+    override fun commands(block: PolyCommandDsl.() -> Unit) {
+        commandDsl.block()
+    }
     
-    public suspend fun loadPlugins()
+    override fun services(block: PolyServiceDsl.() -> Unit) {
+        TODO("Not yet implemented")
+    }
     
-    public suspend fun startPlugins(polyPluginDsl: PolyPluginDsl)
+    override fun events(block: PolyEventDsl.() -> Unit) {
+        TODO("Not yet implemented")
+    }
     
-    /**
-     * Returns the container for a specified group and id.
-     *
-     * @param group The group of the container to return
-     * @param id The id of the container to return
-     */
-    public operator fun <T : PolyPlugin> get(group: String, id: String): PolyPluginContainer<T>
-    
-    @Deprecated("Plugins cannot be added to the manager", level = DeprecationLevel.HIDDEN)
-    public override fun <T : PolyPlugin> addService(service: T, clazz: KClass<T>)
+    override fun configSpec(configSpec: ConfigSpec) {
+        TODO("Not yet implemented")
+    }
 }

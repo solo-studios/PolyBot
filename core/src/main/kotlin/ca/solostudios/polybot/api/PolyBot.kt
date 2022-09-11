@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyBot
- * Last modified on 17-08-2022 11:53 a.m.
+ * Last modified on 11-09-2022 04:08 p.m.
  *
  * MIT License
  *
@@ -46,6 +46,7 @@ import ca.solostudios.polybot.api.entities.PolyUser
 import ca.solostudios.polybot.api.entities.PolyVoiceChannel
 import ca.solostudios.polybot.api.event.PolyEventManager
 import ca.solostudios.polybot.api.plugin.PolyPluginManager
+import ca.solostudios.polybot.api.plugin.loader.PolyClassLoader
 import ca.solostudios.polybot.api.service.PolyServiceManager
 import ca.solostudios.polybot.common.ExitCodes
 import com.uchuhimo.konf.Config
@@ -250,7 +251,7 @@ public interface PolyBot : CoroutineScope {
     /**
      * The internal class loader used to load plugins
      */
-    public val classLoader: ClassLoader
+    public val classLoader: PolyClassLoader
     
     /**
      * Shutdown the running service and blocks until it is fully shutdown.

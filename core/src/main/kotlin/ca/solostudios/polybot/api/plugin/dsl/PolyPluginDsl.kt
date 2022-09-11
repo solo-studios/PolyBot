@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginDsl.kt is part of PolyBot
- * Last modified on 10-06-2022 01:02 p.m.
+ * Last modified on 11-09-2022 07:09 p.m.
  *
  * MIT License
  *
@@ -34,10 +34,9 @@ import ca.solostudios.polybot.api.plugin.dsl.command.PolyCommandDsl
 import ca.solostudios.polybot.api.plugin.dsl.event.PolyEventDsl
 import ca.solostudios.polybot.api.plugin.dsl.service.PolyServiceDsl
 import com.uchuhimo.konf.ConfigSpec
-import org.kodein.di.DIAware
 
 @PolyPluginDslMarker
-public interface PolyPluginDsl : DIAware {
+public interface PolyPluginDsl {
     /**
      * Configures the [CommandManager] using the DSL.
      *
@@ -48,8 +47,6 @@ public interface PolyPluginDsl : DIAware {
     public fun services(block: PolyServiceDsl.() -> Unit)
     
     public fun events(block: PolyEventDsl.() -> Unit)
-    
-    public fun diModule()
     
     public fun configSpec(configSpec: ConfigSpec)
 }
