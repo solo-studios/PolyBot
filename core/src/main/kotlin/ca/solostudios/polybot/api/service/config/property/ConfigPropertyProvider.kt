@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyPlugin.kt is part of PolyBot
- * Last modified on 21-10-2022 02:42 p.m.
+ * The file ConfigPropertyProvider.kt is part of PolyBot
+ * Last modified on 21-10-2022 03:44 p.m.
  *
  * MIT License
  *
@@ -26,15 +26,25 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin
+package ca.solostudios.polybot.api.service.config.property
 
-import ca.solostudios.polybot.api.PolyBot
-import ca.solostudios.polybot.api.annotations.PolyPluginDslMarker
-import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
-import ca.solostudios.polybot.api.service.AbstractPolyService
-import ca.solostudios.polybot.api.service.config.EmptyServiceConfig
+import ca.solostudios.polybot.api.service.config.ServiceConfig
+import kotlin.properties.PropertyDelegateProvider
+import kotlin.reflect.KProperty
 
-public abstract class PolyPlugin(polybot: PolyBot) : AbstractPolyService<EmptyServiceConfig>(EmptyServiceConfig, polybot) {
-    @PolyPluginDslMarker
-    public abstract fun PolyPluginDsl.init()
+public class ConfigPropertyProvider<T>(
+        private val config: ServiceConfig,
+        private val defaultValueProvider: (() -> T)? = null
+                                      ) : PropertyDelegateProvider<ServiceConfig, ConfigProperty<T>> {
+    override fun provideDelegate(thisRef: ServiceConfig, property: KProperty<*>): ConfigProperty<T> {
+        if (thisRef != config)
+            error("thisRef must be equal to config")
+        
+        
+        
+        return if (defaultValueProvider == null)
+            RequiredConfigProperty(config)
+        else
+            OptionalConfigProperty(defaultValueProvider, config)
+    }
 }

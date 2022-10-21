@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManager.kt is part of PolyBot
- * Last modified on 11-09-2022 07:09 p.m.
+ * Last modified on 21-10-2022 02:42 p.m.
  *
  * MIT License
  *
@@ -32,9 +32,10 @@ import ca.solostudios.polybot.api.PolyObject
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
 import ca.solostudios.polybot.api.plugin.finder.PluginCandidateFinder
 import ca.solostudios.polybot.api.service.PolyServiceManager
+import ca.solostudios.polybot.api.service.config.EmptyServiceConfig
 import kotlin.reflect.KClass
 
-public interface PolyPluginManager : PolyServiceManager<PolyPlugin>, PolyObject {
+public interface PolyPluginManager : PolyServiceManager<EmptyServiceConfig, PolyPlugin>, PolyObject {
     public val plugins: List<PolyPluginContainer<*>>
     
     public val candidateFinders: List<PluginCandidateFinder>

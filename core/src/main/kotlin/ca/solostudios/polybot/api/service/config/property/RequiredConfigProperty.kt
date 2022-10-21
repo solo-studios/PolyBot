@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ConfigListKey.kt is part of PolyBot
- * Last modified on 20-10-2022 09:54 p.m.
+ * The file RequiredConfigProperty.kt is part of PolyBot
+ * Last modified on 21-10-2022 02:21 p.m.
  *
  * MIT License
  *
@@ -26,6 +26,31 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service.config
+package ca.solostudios.polybot.api.service.config.property
 
-public class ConfigListKey<T>(config: ServiceConfig) : ConfigKey<MutableList<T>>(config)
+import ca.solostudios.polybot.api.service.config.ServiceConfig
+import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
+import kotlin.reflect.KProperty
+
+public class RequiredConfigProperty<T>(
+        public override val config: ServiceConfig
+                                      ) : ConfigProperty<T> {
+    private val holder: ServiceConfigHolder
+        get() = config.configHolder
+    
+    override fun getValue(thisRef: ServiceConfig, property: KProperty<*>): T {
+        if (thisRef != config)
+            error("thisRef must be equal to config")
+        
+        return if (this in holder)
+            holder[this]
+        else error("Could not find property for $property in config, but is required.")
+    }
+    
+    override fun setValue(thisRef: ServiceConfig, property: KProperty<*>, value: T) {
+        if (thisRef != config)
+            error("thisRef must be equal to config")
+        
+        holder[this] = value
+    }
+}

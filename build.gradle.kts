@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 10-09-2022 02:57 p.m.
+ * Last modified on 21-10-2022 01:13 p.m.
  *
  * MIT License
  *
@@ -65,9 +65,8 @@ plugins {
 
 var mainClassName: String by application.mainClass
 mainClassName = "ca.solostudios.polybot.cli.Launcher"
-// group = "ca.solostudios.polybot"
+
 val versionObj = Version("0", "3", "5")
-// version = versionObj
 
 allprojects {
     version = versionObj

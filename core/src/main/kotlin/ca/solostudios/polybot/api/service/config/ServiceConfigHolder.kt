@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceConfigHolder.kt is part of PolyBot
- * Last modified on 26-09-2022 10:55 p.m.
+ * Last modified on 21-10-2022 02:11 p.m.
  *
  * MIT License
  *
@@ -28,21 +28,30 @@
 
 package ca.solostudios.polybot.api.service.config
 
-public class ServiceConfigHolder<C : ServiceConfig>(public val config: ServiceConfig) {
-    private val configMap = mutableMapOf<ConfigKey<*>, Any?>()
+import ca.solostudios.polybot.api.service.config.property.ConfigProperty
+
+public class ServiceConfigHolder(public val config: ServiceConfig) {
+    private val configMap = mutableMapOf<ConfigProperty<*>, Any?>()
     
-    public operator fun <T : Any> get(configKey: ConfigKey<T>): T {
-        if (config != configKey.config)
-            error("config must be equal to configKey.config")
+    public operator fun <T> get(configProperty: ConfigProperty<T>): T {
+        if (config != configProperty.config)
+            error("config must be equal to configProperty.config")
         
         @Suppress("UNCHECKED_CAST")
-        return configMap[configKey] as T
+        return configMap[configProperty] as T
     }
     
-    public operator fun <T : Any> set(configKey: ConfigKey<T>, value: T) {
-        if (config != configKey.config)
-            error("config must be equal to configKey.config")
+    public operator fun <T> set(configProperty: ConfigProperty<T>, value: T) {
+        if (config != configProperty.config)
+            error("config must be equal to configProperty.config")
         
-        configMap[configKey] = value
+        configMap[configProperty] = value
+    }
+    
+    public operator fun <T> contains(configProperty: ConfigProperty<T>): Boolean {
+        if (config != configProperty.config)
+            error("config must be equal to configProperty.config")
+        
+        return configProperty in configMap
     }
 }

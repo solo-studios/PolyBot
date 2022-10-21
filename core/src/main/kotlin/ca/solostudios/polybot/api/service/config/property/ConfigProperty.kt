@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file Keys.kt is part of PolyBot
- * Last modified on 26-09-2022 11:00 p.m.
+ * The file ConfigProperty.kt is part of PolyBot
+ * Last modified on 21-10-2022 02:21 p.m.
  *
  * MIT License
  *
@@ -26,14 +26,11 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service.config
+package ca.solostudios.polybot.api.service.config.property
 
-public inline fun <reified T : Any> ServiceConfig.configKey(): ServiceConfigKeyDelegate<ConfigKey<T>> =
-        ServiceConfigKeyDelegate(ConfigKey(this))
+import ca.solostudios.polybot.api.service.config.ServiceConfig
+import kotlin.properties.ReadWriteProperty
 
-public fun ServiceConfig.stringKey(): ServiceConfigKeyDelegate<ConfigKey<String>> =
-        ServiceConfigKeyDelegate(ConfigKey(this))
-
-public inline fun <reified T : Any> ServiceConfig.listKey(): ServiceConfigKeyDelegate<ConfigListKey<T>> {
-    return ServiceConfigKeyDelegate(ConfigListKey(this))
+public interface ConfigProperty<T> : ReadWriteProperty<ServiceConfig, T> {
+    public val config: ServiceConfig
 }

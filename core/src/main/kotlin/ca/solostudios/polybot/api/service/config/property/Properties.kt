@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ConfigKey.kt is part of PolyBot
- * Last modified on 20-10-2022 09:54 p.m.
+ * The file Properties.kt is part of PolyBot
+ * Last modified on 21-10-2022 02:42 p.m.
  *
  * MIT License
  *
@@ -26,6 +26,18 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service.config
+package ca.solostudios.polybot.api.service.config.property
 
-public open class ConfigKey<T : Any>(public val config: ServiceConfig)
+import ca.solostudios.polybot.api.service.config.ServiceConfig
+
+public fun <V> ServiceConfig.optional(default: () -> V): ConfigPropertyProvider<V> {
+    return ConfigPropertyProvider(this, default)
+}
+
+public fun <V> ServiceConfig.required(): ConfigPropertyProvider<V> {
+    return ConfigPropertyProvider(this)
+}
+
+public fun <V> ServiceConfig.list(): ConfigPropertyProvider<MutableList<V>> {
+    return ConfigPropertyProvider(this) { mutableListOf() }
+}

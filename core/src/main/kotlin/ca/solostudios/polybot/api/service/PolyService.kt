@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyService.kt is part of PolyBot
- * Last modified on 26-09-2022 09:42 p.m.
+ * Last modified on 21-10-2022 02:24 p.m.
  *
  * MIT License
  *
@@ -30,7 +30,6 @@ package ca.solostudios.polybot.api.service
 
 import ca.solostudios.polybot.api.PolyObject
 import ca.solostudios.polybot.api.service.config.ServiceConfig
-import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
 import ca.solostudios.polybot.common.service.Service
 
 /**
@@ -43,5 +42,5 @@ import ca.solostudios.polybot.common.service.Service
  * @see Service
  */
 public interface PolyService<C : ServiceConfig> : Service, PolyObject {
-    public val configHolder: ServiceConfigHolder<C>
+    public val config: C
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceDsl.kt is part of PolyBot
- * Last modified on 26-09-2022 10:41 p.m.
+ * Last modified on 21-10-2022 02:42 p.m.
  *
  * MIT License
  *
@@ -38,8 +38,7 @@ import kotlin.reflect.KClass
 public interface PolyServiceDsl {
     public fun <T : PolyService<C>, C : ServiceConfig> register(clazz: KClass<T>, configClazz: KClass<C>, serviceProvider: (config: C) -> T)
     
-    public fun <T : PolyService<C>, C : ServiceConfig> configure(
-            clazz: KClass<T>,
-            configBlock: C.(configHolder: ServiceConfigHolder<C>) -> Unit,
-                                                                )
+    public fun <T : PolyService<C>, C : ServiceConfig> configure(clazz: KClass<T>, configBlock: C.() -> Unit)
+    
+    public fun <C : ServiceConfig> configInitializer(clazz: KClass<C>, initializer: (configHolder: ServiceConfigHolder) -> C)
 }

@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ServiceConfigKeyDelegate.kt is part of PolyBot
- * Last modified on 26-09-2022 10:55 p.m.
+ * The file OptionalConfigProperty.kt is part of PolyBot
+ * Last modified on 21-10-2022 02:21 p.m.
  *
  * MIT License
  *
@@ -26,15 +26,32 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service.config
+package ca.solostudios.polybot.api.service.config.property
 
+import ca.solostudios.polybot.api.service.config.ServiceConfig
+import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
 import kotlin.reflect.KProperty
 
-public class ServiceConfigKeyDelegate<K : ConfigKey<*>>(private val serviceConfig: K) {
-    public operator fun getValue(thisRef: ServiceConfig, property: KProperty<*>): K {
-        if (thisRef != serviceConfig.config)
-            error("thisRef must be equal to serviceConfig.config")
+public class OptionalConfigProperty<T>(
+        private val defaultValueProvider: (() -> T),
+        public override val config: ServiceConfig
+                                      ) : ConfigProperty<T> {
+    private val holder: ServiceConfigHolder
+        get() = config.configHolder
+    
+    override fun getValue(thisRef: ServiceConfig, property: KProperty<*>): T {
+        if (thisRef != config)
+            error("thisRef must be equal to config")
         
-        return serviceConfig
+        return if (this in holder)
+            holder[this]
+        else defaultValueProvider.invoke()
+    }
+    
+    override fun setValue(thisRef: ServiceConfig, property: KProperty<*>, value: T) {
+        if (thisRef != config)
+            error("thisRef must be equal to config")
+        
+        holder[this] = value
     }
 }

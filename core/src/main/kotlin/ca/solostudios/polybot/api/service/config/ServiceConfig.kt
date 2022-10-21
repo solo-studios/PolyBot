@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceConfig.kt is part of PolyBot
- * Last modified on 20-10-2022 09:54 p.m.
+ * Last modified on 21-10-2022 01:19 p.m.
  *
  * MIT License
  *
@@ -28,4 +28,6 @@
 
 package ca.solostudios.polybot.api.service.config
 
-public interface ServiceConfig
+public interface ServiceConfig {
+    public val configHolder: ServiceConfigHolder
+}

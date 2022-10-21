@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManager.kt is part of PolyBot
- * Last modified on 02-08-2022 03:18 p.m.
+ * Last modified on 21-10-2022 02:42 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package ca.solostudios.polybot.api.service
 
 import ca.solostudios.polybot.api.PolyObject
+import ca.solostudios.polybot.api.service.config.ServiceConfig
 import ca.solostudios.polybot.common.service.ServiceManager
 
 /**
@@ -36,4 +37,4 @@ import ca.solostudios.polybot.common.service.ServiceManager
  *
  * @see ServiceManager
  */
-public interface PolyServiceManager<S : PolyService> : ServiceManager<S>, PolyService, PolyObject
+public interface PolyServiceManager<C : ServiceConfig, S : PolyService<*>> : ServiceManager<S>, PolyService<C>, PolyObject

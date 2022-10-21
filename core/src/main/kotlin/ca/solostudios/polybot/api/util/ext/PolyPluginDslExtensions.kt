@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginDslExtensions.kt is part of PolyBot
- * Last modified on 26-09-2022 10:22 p.m.
+ * Last modified on 21-10-2022 02:42 p.m.
  *
  * MIT License
  *
@@ -66,14 +66,22 @@ public fun <T : Any> PolyCommandDsl.injector(
     injector(clazz, ParameterInjector(injector))
 }
 
-public inline fun <reified T : PolyService<C>, reified C : ServiceConfig> PolyServiceDsl.register(noinline serviceProvider: (config: C) -> T) {
+public inline fun <reified T : PolyService<C>, reified C : ServiceConfig> PolyServiceDsl.register(
+        noinline serviceProvider: (config: C) -> T
+                                                                                                 ) {
     return register(T::class, C::class, serviceProvider)
 }
 
 public inline fun <reified T : PolyService<C>, C : ServiceConfig> PolyServiceDsl.configure(
-        noinline configBlock: C.(configHolder: ServiceConfigHolder<C>) -> Unit,
+        noinline configBlock: C.() -> Unit,
                                                                                           ) {
     return configure(T::class, configBlock)
+}
+
+public inline fun <reified C : ServiceConfig> PolyServiceDsl.configInitializer(
+        noinline initializer: (configHolder: ServiceConfigHolder) -> C
+                                                                              ) {
+    return configInitializer(C::class, initializer)
 }
 
 public inline fun <reified E : PolyEvent> PolyEventDsl.listener(eventListener: PolyEventListener<E>) {
