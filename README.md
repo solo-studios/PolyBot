@@ -5,7 +5,9 @@
 [![Discord Server](https://img.shields.io/discord/871114669761372221?color=7389D8&label=Discord&logo=discord&logoColor=8fa3ff&style=for-the-badge)](https://discord.solo-studios.ca)
 
 PolyBot is a multipurpose discord bot framework written in Kotlin.
-It is designed to be highly extensible and easy to re-use features through the addon system.
+It is designed to be highly extensible and easy to re-use features through the plugin system.
+
+PolyBot is currently being rewritten to add support for a powerful plugin system. Once finished, it will be extremely extensible and powerful. Current ETA is unknown.
 
 ## Building
 
