@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginDslExtensions.kt is part of PolyBot
- * Last modified on 11-09-2022 07:11 p.m.
+ * Last modified on 26-09-2022 10:22 p.m.
  *
  * MIT License
  *
@@ -35,12 +35,16 @@ import ca.solostudios.polybot.api.plugin.dsl.command.PolyCommandDsl
 import ca.solostudios.polybot.api.plugin.dsl.event.PolyEventDsl
 import ca.solostudios.polybot.api.plugin.dsl.service.PolyServiceDsl
 import ca.solostudios.polybot.api.service.PolyService
+import ca.solostudios.polybot.api.service.config.ServiceConfig
+import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
 import cloud.commandframework.annotations.AnnotationAccessor
 import cloud.commandframework.annotations.injection.ParameterInjector
 import cloud.commandframework.context.CommandContext
 import kotlin.reflect.KClass
 
-public inline fun <reified E : Exception> PolyCommandDsl.exceptionHandler(noinline handler: (event: MessageEvent, exception: E) -> Unit) {
+public inline fun <reified E : Exception> PolyCommandDsl.exceptionHandler(
+        noinline handler: (event: MessageEvent, exception: E) -> Unit,
+                                                                         ) {
     exceptionHandler(E::class, handler)
 }
 
@@ -49,7 +53,8 @@ public inline fun <reified T : Any> PolyCommandDsl.injector(injector: ParameterI
 }
 
 public inline fun <reified T : Any> PolyCommandDsl.injector(
-        noinline injector: (context: CommandContext<MessageEvent>, annotationAccessor: AnnotationAccessor) -> T,
+        noinline injector: (context: CommandContext<MessageEvent>,
+                            annotationAccessor: AnnotationAccessor) -> T,
                                                            ) {
     injector(T::class, ParameterInjector(injector))
 }
@@ -61,12 +66,14 @@ public fun <T : Any> PolyCommandDsl.injector(
     injector(clazz, ParameterInjector(injector))
 }
 
-public inline fun <reified T : PolyService> PolyServiceDsl.register(service: T) {
-    return register(T::class, service)
+public inline fun <reified T : PolyService<C>, reified C : ServiceConfig> PolyServiceDsl.register(noinline serviceProvider: (config: C) -> T) {
+    return register(T::class, C::class, serviceProvider)
 }
 
-public inline fun <reified T : PolyService> PolyServiceDsl.configure(noinline block: T.() -> Unit) {
-    return configure(T::class, block)
+public inline fun <reified T : PolyService<C>, C : ServiceConfig> PolyServiceDsl.configure(
+        noinline configBlock: C.(configHolder: ServiceConfigHolder<C>) -> Unit,
+                                                                                          ) {
+    return configure(T::class, configBlock)
 }
 
 public inline fun <reified E : PolyEvent> PolyEventDsl.listener(eventListener: PolyEventListener<E>) {

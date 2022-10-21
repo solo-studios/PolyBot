@@ -1,0 +1,18 @@
+{
+    "group" :        "ca.solo-studios.polybot",
+    "id" :           "polybot-core",
+    "version" :      "0.0.0",
+    "entrypoints" :  [ ],
+    "depends" :      [ ],
+    "breaks" :       [ ],
+    "name" :         "PolyBot core",
+    "description" :  "The core of PolyBot",
+    "license" :      "MIT",
+    "nestedJars" :   [ ],
+    "contributors" : [
+        {
+            "role" : "author",
+            "name" : "solonovamax"
+        }
+    ]
+}

@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AbstractPolyService.kt is part of PolyBot
- * Last modified on 20-10-2022 09:54 p.m.
+ * The file Keys.kt is part of PolyBot
+ * Last modified on 26-09-2022 11:00 p.m.
  *
  * MIT License
  *
@@ -26,15 +26,14 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.api.service.config
 
-import ca.solostudios.polybot.api.service.config.ServiceConfig
-import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
-import ca.solostudios.polybot.common.service.AbstractService
+public inline fun <reified T : Any> ServiceConfig.configKey(): ServiceConfigKeyDelegate<ConfigKey<T>> =
+        ServiceConfigKeyDelegate(ConfigKey(this))
 
-/**
- * Abstract service to make creating services easier.
- */
-public abstract class AbstractPolyService<C : ServiceConfig>(
-        override val configHolder: ServiceConfigHolder<C>,
-                                                            ) : AbstractService(), PolyService<C>
+public fun ServiceConfig.stringKey(): ServiceConfigKeyDelegate<ConfigKey<String>> =
+        ServiceConfigKeyDelegate(ConfigKey(this))
+
+public inline fun <reified T : Any> ServiceConfig.listKey(): ServiceConfigKeyDelegate<ConfigListKey<T>> {
+    return ServiceConfigKeyDelegate(ConfigListKey(this))
+}

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManagerImplTest.kt is part of PolyBot
- * Last modified on 10-09-2022 08:50 p.m.
+ * Last modified on 11-09-2022 04:09 p.m.
  *
  * MIT License
  *
@@ -94,7 +94,7 @@ class PolyPluginManagerImplTest {
         
         assertDoesNotThrow {
             runBlocking {
-                pluginManager.initPlugins()
+                pluginManager.loadPlugins()
             }
         }
     }
