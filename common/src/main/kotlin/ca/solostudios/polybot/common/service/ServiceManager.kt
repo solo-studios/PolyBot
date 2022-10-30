@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceManager.kt is part of PolyBot
- * Last modified on 11-09-2022 06:12 p.m.
+ * Last modified on 30-10-2022 02:06 p.m.
  *
  * MIT License
  *
@@ -65,8 +65,8 @@ public interface ServiceManager<S : Service> : Service {
      * Corresponds to when `state` is `SHUTDOWN` or `FAILED`.
      *
      * @see state
-     * @see State.SHUTDOWN
-     * @see State.FAILED
+     * @see Service.State.SHUTDOWN
+     * @see Service.State.FAILED
      */
     override val shutdown: Boolean
     
@@ -76,7 +76,7 @@ public interface ServiceManager<S : Service> : Service {
      * Corresponds to when `state` is `RUNNING`
      *
      * @see state
-     * @see State.RUNNING
+     * @see Service.State.RUNNING
      */
     override val running: Boolean
     
@@ -93,7 +93,7 @@ public interface ServiceManager<S : Service> : Service {
      * - manipulating objects outside its own namespace
      *
      * @see state
-     * @see State
+     * @see Service.State
      */
     override val active: Boolean
     
@@ -161,7 +161,6 @@ public interface ServiceManager<S : Service> : Service {
      *
      * This method should only be called from *within* the service, or by the service manager itself.
      *
-     * @param T The type of the service to add an exception to
      * @param serviceClass The service class
      * @param exception The exception to be added
      */

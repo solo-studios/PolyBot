@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManager.kt is part of PolyBot
- * Last modified on 21-10-2022 02:42 p.m.
+ * Last modified on 30-10-2022 02:06 p.m.
  *
  * MIT License
  *
@@ -31,14 +31,40 @@ package ca.solostudios.polybot.api.plugin
 import ca.solostudios.polybot.api.PolyObject
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
 import ca.solostudios.polybot.api.plugin.finder.PluginCandidateFinder
-import ca.solostudios.polybot.api.service.PolyServiceManager
-import ca.solostudios.polybot.api.service.config.EmptyServiceConfig
+import ca.solostudios.polybot.common.service.Service
 import kotlin.reflect.KClass
 
-public interface PolyPluginManager : PolyServiceManager<EmptyServiceConfig, PolyPlugin>, PolyObject {
+public interface PolyPluginManager : PolyObject {
     public val plugins: List<PolyPluginContainer<*>>
     
     public val candidateFinders: List<PluginCandidateFinder>
+    
+    /**
+     * The state the plugin manager is currently in.
+     *
+     * @see State
+     */
+    public val state: Service.State
+    
+    /**
+     * True if the plugin manager has been shutdown successfully. False otherwise.
+     *
+     * Corresponds to when `state` is `SHUTDOWN`.
+     *
+     * @see state
+     * @see State.SHUTDOWN
+     */
+    public val shutdown: Boolean
+    
+    /**
+     * True if the plugin manager is running. False otherwise.
+     *
+     * Corresponds to when `state` is `RUNNING`
+     *
+     * @see state
+     * @see State.RUNNING
+     */
+    public val running: Boolean
     
     public suspend fun loadPlugins()
     
@@ -50,8 +76,46 @@ public interface PolyPluginManager : PolyServiceManager<EmptyServiceConfig, Poly
      * @param group The group of the container to return
      * @param id The id of the container to return
      */
-    public operator fun <T : PolyPlugin> get(group: String, id: String): PolyPluginContainer<T>
+    public fun <T : PolyPlugin> getPluginContainer(group: String, id: String): PolyPluginContainer<T>
     
-    @Deprecated("Plugins cannot be added to the manager", level = DeprecationLevel.HIDDEN)
-    public override fun <T : PolyPlugin> addService(service: T, clazz: KClass<T>)
+    public fun <T : PolyPlugin> getPlugin(kClass: KClass<T>, group: String, id: String): T
+    
+    public enum class State {
+        /**
+         * The service is setting up supporting *internal* systems like thread pools, etc.
+         *
+         * It is **not** starting up the service.
+         */
+        INITIALIZING,
+        
+        /**
+         * The plugin manager is loading plugins.
+         */
+        LOADING_PLUGINS,
+        
+        /**
+         * The plugin manager is starting all the plugins.
+         */
+        STARTING,
+        
+        /**
+         * The plugin manager has started all plugins successfully and is currently running.
+         */
+        RUNNING,
+        
+        /**
+         * The plugin manager is shutting down.
+         */
+        SHUTTING_DOWN,
+        
+        /**
+         * The plugin manager has shutdown successfully.
+         */
+        SHUTDOWN,
+        
+        /**
+         * The plugin manager failed to start successfully due to errors in a provided plugin.
+         */
+        FAILED
+    }
 }

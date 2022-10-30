@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Service.kt is part of PolyBot
- * Last modified on 20-08-2022 05:43 p.m.
+ * Last modified on 30-10-2022 02:06 p.m.
  *
  * MIT License
  *
@@ -46,7 +46,7 @@ public interface Service {
     /**
      * True if this service has been shutdown successfully. False otherwise.
      *
-     * Corresponds to when `state` is `SHUTDOWN` or `FAILED`.
+     * Corresponds to when `state` is `SHUTDOWN``.
      *
      * @see state
      * @see State.SHUTDOWN

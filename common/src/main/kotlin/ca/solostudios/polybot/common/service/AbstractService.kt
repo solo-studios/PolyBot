@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AbstractService.kt is part of PolyBot
- * Last modified on 20-08-2022 05:43 p.m.
+ * Last modified on 30-10-2022 02:06 p.m.
  *
  * MIT License
  *
@@ -36,7 +36,7 @@ public abstract class AbstractService : Service {
         protected set
     
     final override val shutdown: Boolean
-        get() = state == Service.State.SHUTDOWN || state == Service.State.FAILED
+        get() = state == Service.State.SHUTDOWN
     
     final override val running: Boolean
         get() = state == Service.State.RUNNING
