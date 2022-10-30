@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManagerImpl.kt is part of PolyBot
- * Last modified on 20-10-2022 09:54 p.m.
+ * Last modified on 30-10-2022 01:49 p.m.
  *
  * MIT License
  *
@@ -35,6 +35,7 @@ import ca.solostudios.polybot.api.plugin.PolyPluginManager
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
 import ca.solostudios.polybot.api.plugin.finder.PluginCandidateFinder
 import ca.solostudios.polybot.api.plugin.info.PluginInfo
+import ca.solostudios.polybot.api.service.config.EmptyServiceConfig
 import ca.solostudios.polybot.common.service.AbstractServiceManager
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
@@ -54,12 +55,15 @@ import kotlin.io.path.extension
 import kotlin.io.path.inputStream
 import kotlin.io.path.notExists
 import kotlin.reflect.KClass
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.primaryConstructor
 
 public class PolyPluginManagerImpl(
         override val polybot: PolyBot,
-        override val candidateFinders: List<PluginCandidateFinder>
+        override val candidateFinders: List<PluginCandidateFinder>,
+        override val config: EmptyServiceConfig
                                   ) : PolyPluginManager, AbstractServiceManager<PolyPlugin>(), DIAware {
     private val logger by getLogger()
     
@@ -103,22 +107,51 @@ public class PolyPluginManagerImpl(
         for (candidate in candidates) {
             val entrypoints = mutableListOf<PolyPlugin>()
             for (entrypoint in candidate.info.entrypoints) {
-                logger.debug { "Loading entrypoint class $entrypoint for plugin ${candidate.info.id}" }
+                logger.debug { "Loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version}" }
                 try {
                     val kClass = polybot.classLoader.loadClass(entrypoint).kotlin
-                    
+    
                     if (!kClass.isSubclassOf(PolyPlugin::class)) {
                         logger.error { "Error loading plugin entrypoint; class $kClass is not an instance of ${PolyPlugin::class}" }
                         error("Class $kClass is not an instance of ${PolyPlugin::class}")
                     }
-                    entrypoints.add(kClass.createInstance() as PolyPlugin)
+    
+                    @Suppress("UNCHECKED_CAST") /* We already checked if kClass is a subtype of PolyPlugin. */
+                    val pluginInstance = instantiatePlugin(kClass as KClass<PolyPlugin>)
+    
+                    entrypoints.add(pluginInstance)
                 } catch (e: Exception) {
-                    logger.error(e) { "Error loading entrypoint class $entrypoint for plugin ${candidate.info.id}" }
+                    logger.error(e) { "Error loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version}" }
                     error("Could not properly load plugin entrypoint classes due to class loading errors...")
                 }
             }
             val plugin = PolyPluginContainerImpl(entrypoints, candidate.info, candidate.paths, candidate.filesystem)
             pluginMap[candidate.info.group, candidate.info.id] = plugin
+        }
+    }
+    
+    private fun instantiatePlugin(kClass: KClass<PolyPlugin>): PolyPlugin {
+        if (kClass.visibility != null && kClass.visibility != KVisibility.PUBLIC)
+            error("Error while loading plugin $kClass, the visibility is not public.")
+        
+        if (kClass.objectInstance != null) { // Is object
+            return kClass.objectInstance!!
+        }
+        
+        val constructor = kClass.primaryConstructor ?: error("Could not locate primary constructor in plugin class $kClass.")
+        
+        return when {
+            constructor.parameters.isNotEmpty()          -> {
+                error("Could not instantiate $kClass, as the primary constructor takes parameters ${constructor.parameters}, when it should take none.")
+            }
+            
+            constructor.visibility != KVisibility.PUBLIC -> {
+                error("Could not instantiate $kClass, as the primary constructor is not public.")
+            }
+            
+            else                                         -> {
+                kClass.createInstance()
+            }
         }
     }
     
@@ -136,9 +169,9 @@ public class PolyPluginManagerImpl(
                         resolveFolderCandidate(path) // TODO: 2022-08-16 Resolve Jar Candidate
                 }
             }.awaitAll().filterNotNull()
-    
+            
             logger.debug { "Found the following plugin candidates: $pluginCandidates" }
-    
+            
             return@coroutineScope pluginCandidates
         }
     }
