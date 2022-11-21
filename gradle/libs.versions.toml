@@ -1,17 +1,17 @@
 [versions]
-kotlin = "1.7.10"
-kotlinx-serialization = "1.4.0"
+kotlin = "1.7.20"
+kotlinx-serialization = "1.4.1"
 kotlinx-coroutines = "1.6.4"
-kotlinx-uuid = "0.0.15"
+kotlinx-uuid = "0.0.17"
 konf = "1.1.2"
 jda-utilities = "3.1.0"
-cloud = "1.7.0"
+cloud = "1.7.1"
 fuel = "2.3.1"
-jackson = "2.13.3"
-jetbrains-exposed = "0.38.2"
-lucene = "9.2.0"
-dsiutils = "2.7.2"
-junit-jupiter = "5.8.2"
+jackson = "2.14.0"
+jetbrains-exposed = "0.41.1"
+lucene = "9.4.1"
+#dsiutils = "2.7.2"
+junit-jupiter = "5.9.1"
 strata = "1.3.1"
 
 [plugins]
@@ -23,9 +23,9 @@ grgit = { id = "org.ajoberstar.grgit.service", version = "5.0.0" }
 
 shadow = { id = "com.github.johnrengelman.shadow", version = "7.1.2" }
 
-idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version = "1.1.5" } # 1.1.6
+idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version = "1.1.6" }
 
-ksp = { id = "com.google.devtools.ksp", version = "1.7.10-1.0.6" }
+ksp = { id = "com.google.devtools.ksp", version = "1.7.20-1.0.8" }
 
 dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin" }
 
@@ -57,7 +57,7 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-debug = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-debug", version.ref = "kotlinx-coroutines" }
 
 # Kotlinx Misc. Libraries
-kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version = "0.3.3" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version = "0.4.0" }
 kotlinx-uuid = { group = "app.softwork", name = "kotlinx-uuid-core", version.ref = "kotlinx-uuid" }
 kotlinx-uuid-exposed = { group = "app.softwork", name = "kotlinx-uuid-exposed", version.ref = "kotlinx-uuid" }
 
@@ -67,7 +67,7 @@ clikt = { group = "com.github.ajalt.clikt", name = "clikt", version = "3.5.0" }
 
 # Kodein
 ## Kotlin Dependency Injection
-kodein-di = { group = "org.kodein.di", name = "kodein-di", version = "7.14.0" }
+kodein-di = { group = "org.kodein.di", name = "kodein-di", version = "7.16.0" }
 
 # Konf
 ## Type-safe cascading configuration library for Kotlin
@@ -118,13 +118,13 @@ reflections = { group = "org.reflections", name = "reflections", version = "0.10
 
 # SLF4J
 ## Simple Logging Facade for Java
-slf4j = { group = "org.slf4j", name = "slf4j-api", version = "1.7.36" }
+slf4j = { group = "org.slf4j", name = "slf4j-api", version = "2.0.4" }
 # SLF4K
 ## SLF4K is a set of kotlin extensions for SLF4J
-slf4k = { group = "ca.solo-studios", name = "slf4k", version = "0.4.6" }
+slf4k = { group = "ca.solo-studios", name = "slf4k", version = "0.5.1" }
 # Logback
 ## The reliable, generic, fast and flexible logging framework for Java
-logback = { group = "ch.qos.logback", name = "logback-classic", version = "1.2.11" }
+logback = { group = "ch.qos.logback", name = "logback-classic", version = "1.4.5" } # 1.2.11
 
 # Fuel
 ## The easiest HTTP networking library for Kotlin/Android
@@ -143,12 +143,15 @@ jackson-dataformat-hocon = { group = "org.honton.chas.hocon", name = "jackson-da
 
 # Ehcache
 ## An open source Java distributed cache for general-purpose caching
-ehcache = { group = "org.ehcache", name = "ehcache", version = "3.10.0" }
+ehcache = { group = "org.ehcache", name = "ehcache", version = "3.10.7" }
 
 # Guava
 ## A set of core Java libraries from Google that includes new collection types, immutable collections, a graph library,
 ##      and utilities for concurrency, I/O, hashing, caching, primitives, strings, and more
 guava = { group = "com.google.guava", name = "guava", version = "31.1-jre" }
+# Guava Kotlin
+## A wrapper around Guava to make it more idiomatic in kotlin
+guava-kotlin = { group = "ca.solo-studios", name = "guava-kotlin", version = "0.1.0" }
 
 # HikariCP
 ## A lightweight and "zero-overhead" production ready JDBC connection pool
@@ -156,15 +159,15 @@ hikaricp = { group = "com.zaxxer", name = "HikariCP", version = "5.0.1" }
 
 # SQLite
 ## SQLite JDBC Driver
-sqlite = { group = "org.xerial", name = "sqlite-jdbc", version = "3.36.0.2" }
+sqlite = { group = "org.xerial", name = "sqlite-jdbc", version = "3.39.4.1" }
 
 # MariaDB
 ## MariaDB JDBC Driver
-mariadb = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version = "3.0.6" }
+mariadb = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version = "3.1.0" }
 
 # PostgreSQL
 ## PostgreSQL JDBC Driver
-postgresql = { group = "org.postgresql", name = "postgresql", version = "42.4.0" }
+postgresql = { group = "org.postgresql", name = "postgresql", version = "42.5.0" }
 
 # Exposed
 ## An ORM framework for Kotlin
@@ -192,22 +195,28 @@ jetbrains-markdown = { group = "org.jetbrains", name = "markdown", version = "0.
 
 # JGit
 ## Pure Java library implementing the Git version control system
-jgit = { group = "org.eclipse.jgit", name = "org.eclipse.jgit", version = "6.1.0.202203080745-r" }
+jgit = { group = "org.eclipse.jgit", name = "org.eclipse.jgit", version = "6.3.0.202209071007-r" }
 
 # DSI Utilities
 ## A mishmash of utility classes accumulated during the last twenty years in projects developed at the DSI
 dsi-dsiutils = { group = "it.unimi.dsi", name = "dsiutils", version = "2.7.2" }
 # fastutil
 ## fastutil extends the Java Collections Framework by providing type-specific maps, sets, lists and queues
-dsi-fastutil = { group = "it.unimi.dsi", name = "fastutil", version = "8.5.8" }
+dsi-fastutil = { group = "it.unimi.dsi", name = "fastutil", version = "8.5.9" }
 
 # Apache Commons
-commons-compress = { group = "org.apache.commons", name = "commons-compress", version = "1.21" }
+commons-compress = { group = "org.apache.commons", name = "commons-compress", version = "1.22" }
 commons-io = { group = "org.apache.commons", name = "commons-io", version = "1.3.2" }
-commons-codec = { group = "org.apache.commons", name = "commons-codec", version = "1.15" }
+#commons-codec = { group = "org.apache.commons", name = "commons-codec", version = "1.15" }
+commons-codec = { group = "commons-codec", name = "commons-codec", version = "1.15" }
 commons-math = { group = "org.apache.commons", name = "commons-math", version = "3.6.1" }
-commons-lang = { group = "org.apache.commons", name = "commons-lang", version = "3.12.0" }
-commons-text = { group = "org.apache.commons", name = "commons-text", version = "1.9" }
+# commons-math is being split into:
+# - commons-numbers
+# - commons-geometry
+# - commons-statistics
+# - commons-rng
+commons-lang = { group = "org.apache.commons", name = "commons-lang3", version = "3.12.0" }
+commons-text = { group = "org.apache.commons", name = "commons-text", version = "1.10.0" }
 
 # Strata
 ## A simple, dependency-less, library for parsing and comparing version according to the SemVer spec
@@ -226,7 +235,7 @@ junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-para
 
 # MockK
 ## Mocking library for Kotlin
-mockk = { group = "io.mockk", name = "mockk", version = "1.12.7" }
+mockk = { group = "io.mockk", name = "mockk", version = "1.13.2" }
 
 [bundles]
 kotlin-base = ["kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"]

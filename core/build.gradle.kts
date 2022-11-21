@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 10-09-2022 03:45 p.m.
+ * Last modified on 21-11-2022 01:43 p.m.
  *
  * MIT License
  *
@@ -76,6 +76,7 @@ dependencies {
     
     // Kotlin
     api(libs.bundles.kotlin.base)
+    api(libs.kotlin.reflect)
     // Kotlin Serialization
     api(libs.bundles.kotlinx.serialization.base)
     
@@ -92,6 +93,10 @@ dependencies {
     
     // Jetbrains Annotations
     api(libs.jetbrains.annotations)
+    
+    // Guava
+    api(libs.guava)
+    api(libs.guava.kotlin)
     
     // JDA
     api(libs.jda) {
@@ -112,6 +117,7 @@ dependencies {
     // SLF4J extension library
     api(libs.slf4k)
     
+    // Strata
     api(libs.bundles.strata)
     
     implementation(libs.logback)
