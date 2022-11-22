@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyPluginCompanionObject.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * The file ServiceConfigurer.kt is part of PolyBot
+ * Last modified on 22-11-2022 02:58 p.m.
  *
  * MIT License
  *
@@ -26,8 +26,14 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin
+package ca.solostudios.polybot.impl.plugin.dsl.service
 
-import ca.solostudios.polybot.common.service.ServiceCompanionObject
+import ca.solostudios.polybot.api.service.PolyService
+import ca.solostudios.polybot.api.service.config.ServiceConfig
+import kotlin.reflect.KClass
 
-public interface PolyPluginCompanionObject<P : PolyPlugin> : ServiceCompanionObject<P>
+internal data class ServiceConfigurer<T : PolyService<C>, C : ServiceConfig>(
+        val serviceClass: KClass<T>,
+        val configClass: KClass<C>,
+        val configBlock: C.() -> Unit
+                                                                            )

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBot.kt is part of PolyBot
- * Last modified on 11-09-2022 04:08 p.m.
+ * Last modified on 22-11-2022 03:06 p.m.
  *
  * MIT License
  *
@@ -234,7 +234,7 @@ public interface PolyBot : CoroutineScope {
      *
      * Use this class to retrieve and interface with services directly.
      */
-    public val serviceManager: PolyServiceManager<*>
+    public val serviceManager: PolyServiceManager<*, *>
     
     /**
      * The plugin manager

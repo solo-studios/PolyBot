@@ -2,7 +2,7 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyServiceDsl.kt is part of PolyBot
+ * The file PolyServiceDslImpl.kt is part of PolyBot
  * Last modified on 22-11-2022 03:06 p.m.
  *
  * MIT License
@@ -26,27 +26,49 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin.dsl.service
+package ca.solostudios.polybot.impl.plugin.dsl.service
 
-import ca.solostudios.polybot.api.annotations.PolyPluginDslMarker
+import ca.solostudios.guava.kotlin.collect.mutableListMultimapOf
+import ca.solostudios.polybot.api.plugin.dsl.service.PolyServiceDsl
 import ca.solostudios.polybot.api.service.PolyService
 import ca.solostudios.polybot.api.service.config.ServiceConfig
 import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
 import kotlin.reflect.KClass
 
-@PolyPluginDslMarker
-public interface PolyServiceDsl {
-    public fun <T : PolyService<C>, C : ServiceConfig> register(
+internal class PolyServiceDslImpl : PolyServiceDsl {
+    /**
+     * List of service providers
+     */
+    val serviceProviders = mutableListOf<ServiceInitializer<*, *>>()
+    
+    /**
+     * Service configurers map, by service class -> list of service configurers
+     */
+    val serviceConfigurers = mutableListMultimapOf<KClass<*>, ServiceConfigurer<*, *>>()
+    
+    /**
+     * Service config initializers map, by config class -> config initializer
+     */
+    val serviceConfigInitializers = mutableMapOf<KClass<*>, ServiceConfigInitializer<*>>()
+    
+    
+    override fun <T : PolyService<C>, C : ServiceConfig> register(
             serviceClass: KClass<T>,
             configClass: KClass<C>,
             serviceProvider: (config: C) -> T,
-                                                               )
+                                                                 ) {
+        serviceProviders += ServiceInitializer(serviceClass, configClass, serviceProvider)
+    }
     
-    public fun <T : PolyService<C>, C : ServiceConfig> configure(
+    override fun <T : PolyService<C>, C : ServiceConfig> configure(
             serviceClass: KClass<T>,
             configClass: KClass<C>,
             configBlock: C.() -> Unit,
-                                                                )
+                                                                  ) {
+        serviceConfigurers[serviceClass] += ServiceConfigurer(serviceClass, configClass, configBlock)
+    }
     
-    public fun <C : ServiceConfig> configInitializer(configClass: KClass<C>, initializer: (configHolder: ServiceConfigHolder) -> C)
+    override fun <C : ServiceConfig> configInitializer(configClass: KClass<C>, initializer: (configHolder: ServiceConfigHolder) -> C) {
+        serviceConfigInitializers[configClass] = ServiceConfigInitializer(configClass, initializer)
+    }
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceExtensions.kt is part of PolyBot
- * Last modified on 02-08-2022 03:30 p.m.
+ * Last modified on 22-11-2022 03:06 p.m.
  *
  * MIT License
  *
@@ -44,7 +44,7 @@ import kotlin.reflect.KProperty
  * @return The service
  * @throws NullPointerException if no service of the specified type can be found
  */
-public operator fun <T : PolyService> PolyServiceManager<T>.get(clazz: KClass<T>): T = getService(clazz)
+public operator fun <T : PolyService<*>> PolyServiceManager<*, T>.get(clazz: KClass<T>): T = getService(clazz)
 
 /**
  * Returns a service from the manager.
@@ -54,7 +54,8 @@ public operator fun <T : PolyService> PolyServiceManager<T>.get(clazz: KClass<T>
  * @return The service
  * @throws NullPointerException if no service of the specified type can be found
  */
-public operator fun <T : PolyService> PolyServiceManager<T>.get(clazz: PolyServiceCompanionObject<T>): T = getService(clazz.serviceClass)
+public operator fun <T : PolyService<*>> PolyServiceManager<*, T>.get(clazz: PolyServiceCompanionObject<T>): T =
+        getService(clazz.serviceClass)
 
 /**
  * Returns a service from the manager.
@@ -63,7 +64,7 @@ public operator fun <T : PolyService> PolyServiceManager<T>.get(clazz: PolyServi
  * @return The service
  * @throws NullPointerException if no service of the specified type can be found
  */
-public inline fun <reified T : PolyService> PolyServiceManager<T>.service(): T = getService(T::class)
+public inline fun <reified T : PolyService<*>> PolyServiceManager<*, T>.service(): T = getService(T::class)
 
 /**
  * Add service to the manager
@@ -75,7 +76,7 @@ public inline fun <reified T : PolyService> PolyServiceManager<T>.service(): T =
  * @throws IllegalArgumentException if the service being added is a [PolyServiceManager]
  */
 @Throws(DuplicateServiceException::class, ServiceAlreadyStartedException::class, IllegalArgumentException::class)
-public operator fun <T : PolyService> PolyServiceManager<T>.set(clazz: KClass<T>, service: T): Unit = addService(service, clazz)
+public operator fun <T : PolyService<*>> PolyServiceManager<*, T>.set(clazz: KClass<T>, service: T): Unit = addService(service, clazz)
 
 /**
  * Add service to the manager
@@ -87,7 +88,7 @@ public operator fun <T : PolyService> PolyServiceManager<T>.set(clazz: KClass<T>
  * @throws IllegalArgumentException if the service being added is a [PolyServiceManager]
  */
 @Throws(DuplicateServiceException::class, ServiceAlreadyStartedException::class, IllegalArgumentException::class)
-public operator fun <T : PolyService> PolyServiceManager<T>.set(clazz: PolyServiceCompanionObject<T>, service: T) {
+public operator fun <T : PolyService<*>> PolyServiceManager<*, T>.set(clazz: PolyServiceCompanionObject<T>, service: T) {
     addService(service, clazz.serviceClass)
 }
 
@@ -101,7 +102,7 @@ public operator fun <T : PolyService> PolyServiceManager<T>.set(clazz: PolyServi
  * @throws IllegalArgumentException if the service being added is a [PolyServiceManager]
  */
 @Throws(DuplicateServiceException::class, ServiceAlreadyStartedException::class, IllegalArgumentException::class)
-public inline fun <reified T : PolyService> PolyServiceManager<T>.addService(service: T): Unit = addService(service, T::class)
+public inline fun <reified T : PolyService<*>> PolyServiceManager<*, T>.addService(service: T): Unit = addService(service, T::class)
 
 /**
  * Property delegate for a service, from the service manager.
@@ -110,6 +111,6 @@ public inline fun <reified T : PolyService> PolyServiceManager<T>.addService(ser
  * @return The service
  * @throws NullPointerException if no service of the specified type can be found
  */
-public inline operator fun <reified T : PolyService> PolyServiceManager<T>.getValue(thisRef: Any?, property: KProperty<*>): T {
+public inline operator fun <reified T : PolyService<*>> PolyServiceManager<*, T>.getValue(thisRef: Any?, property: KProperty<*>): T {
     return getService(T::class)
 }

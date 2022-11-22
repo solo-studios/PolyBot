@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManagerImpl.kt is part of PolyBot
- * Last modified on 30-10-2022 02:11 p.m.
+ * Last modified on 22-11-2022 03:06 p.m.
  *
  * MIT License
  *
@@ -32,9 +32,12 @@ import ca.solostudios.polybot.api.PolyBot
 import ca.solostudios.polybot.api.plugin.PolyPlugin
 import ca.solostudios.polybot.api.plugin.PolyPluginContainer
 import ca.solostudios.polybot.api.plugin.PolyPluginManager
+import ca.solostudios.polybot.api.plugin.PolyPluginManager.State
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
 import ca.solostudios.polybot.api.plugin.finder.PluginCandidateFinder
 import ca.solostudios.polybot.api.plugin.info.PluginInfo
+import ca.solostudios.polybot.api.util.StringPair
+import ca.solostudios.polybot.api.util.error
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Path
@@ -69,52 +72,82 @@ public class PolyPluginManagerImpl(
     override val plugins: List<PolyPluginContainer<*>>
         get() = pluginMap.entries.map { it.value }
     
-    public val pluginMap: MutableMap<Pair<String, String>, PolyPluginContainer<*>> = mutableMapOf()
+    override var state: State = State.NEW
+        private set
+    
+    public val pluginMap: MutableMap<StringPair, PolyPluginContainer<*>> = mutableMapOf()
     
     override suspend fun startPlugins(polyPluginDsl: PolyPluginDsl) {
-        for (plugin in plugins) {
-            for (entrypoint in plugin.entrypoints) {
-                logger.debug { "Starting entrypoint ${entrypoint::class} for plugin ${plugin.info.id}" }
-                with(entrypoint) {
-                    polyPluginDsl.init()
+        try {
+            ensureState(State.LOADED_PLUGINS, "State must be set to ${State.LOADED_PLUGINS} to start plugins. Currently: $state.")
+            updateState(State.STARTING)
+            for (plugin in plugins) {
+                for (entrypoint in plugin.entrypoints) {
+                    logger.debug { "Starting entrypoint ${entrypoint::class} for plugin ${plugin.info.id}" }
+                    with(entrypoint) {
+                        polyPluginDsl.init()
+                    }
                 }
             }
+            updateState(State.RUNNING)
+        } catch (e: Exception) {
+            updateState(State.FAILED)
+            error(cause = e, "Could not start plugins due to exception while starting.")
         }
     }
     
     override suspend fun loadPlugins() {
-        val candidates = resolveCandidates()
-        
-        for (candidate in candidates) {
-            for (path in candidate.paths) {
-                polybot.classLoader.addURL(path.toUri().toURL())
-            }
-        }
-        
-        for (candidate in candidates) {
-            val entrypoints = mutableListOf<PolyPlugin>()
-            for (entrypoint in candidate.info.entrypoints) {
-                logger.debug { "Loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version}" }
-                try {
-                    val kClass = polybot.classLoader.loadClass(entrypoint).kotlin
-    
-                    if (!kClass.isSubclassOf(PolyPlugin::class)) {
-                        logger.error { "Error loading plugin entrypoint; class $kClass is not an instance of ${PolyPlugin::class}" }
-                        error("Class $kClass is not an instance of ${PolyPlugin::class}")
+        try {
+            ensureState(State.NEW, "State must be set to ${State.NEW} to load plugins. Currently: $state")
+            updateState(State.LOADING_PLUGINS)
+            
+            coroutineScope {
+                val candidates = resolveCandidates()
+                
+                for (candidate in candidates) {
+                    for (path in candidate.paths) {
+                        logger.debug { "Adding path $path to classloader." }
+                        polybot.classLoader.addURL(path.toUri().toURL())
                     }
-    
-                    @Suppress("UNCHECKED_CAST") /* We already checked if kClass is a subtype of PolyPlugin. */
-                    val pluginInstance = instantiatePlugin(kClass as KClass<PolyPlugin>)
-    
-                    entrypoints.add(pluginInstance)
-                } catch (e: Exception) {
-                    logger.error(e) { "Error loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version}" }
-                    error("Could not properly load plugin entrypoint classes due to class loading errors...")
                 }
+                
+                candidates.map { candidate ->
+                    async {
+                        val entrypoints = mutableListOf<PolyPlugin>()
+                        for (entrypoint in candidate.info.entrypoints) {
+                            logger.debug { "Loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version}" }
+                            try {
+                                val kClass = polybot.classLoader.loadClass(entrypoint).kotlin
+                                
+                                if (!kClass.isSubclassOf(PolyPlugin::class)) {
+                                    logger.error { "Error loading plugin entrypoint; class $kClass is not an instance of ${PolyPlugin::class}" }
+                                    error("Class $kClass is not an instance of ${PolyPlugin::class}")
+                                }
+                                
+                                @Suppress("UNCHECKED_CAST") /* We already checked if kClass is a subtype of PolyPlugin. */
+                                val pluginInstance = instantiatePlugin(kClass as KClass<PolyPlugin>)
+                                
+                                entrypoints.add(pluginInstance)
+                            } catch (e: Exception) {
+                                logger.error(e) { "Error loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version}" }
+                                error(cause = e, "Could not properly load plugin entrypoint classes due to class loading errors...")
+                            }
+                        }
+                        val plugin = PolyPluginContainerImpl(entrypoints, candidate.info, candidate.paths, candidate.filesystem)
+                        pluginMap[candidate.info.group, candidate.info.id] = plugin
+                    }
+                }.awaitAll()
             }
-            val plugin = PolyPluginContainerImpl(entrypoints, candidate.info, candidate.paths, candidate.filesystem)
-            pluginMap[candidate.info.group, candidate.info.id] = plugin
+            
+            updateState(State.LOADING_PLUGINS)
+        } catch (e: Exception) {
+            updateState(State.FAILED)
+            error(cause = e, "Could not load plugins due to exception while loading.")
         }
+    }
+    
+    override suspend fun shutdownPlugins() {
+        TODO("Not yet implemented")
     }
     
     private fun instantiatePlugin(kClass: KClass<PolyPlugin>): PolyPlugin {
@@ -200,7 +233,7 @@ public class PolyPluginManagerImpl(
             kClass.isInstance(it)
         }
             ?: error("Could not find entrypoint to plugin ${group}:${id} that is an instance of $kClass")
-        
+    
         return pluginEntrypoint as T
     }
     
@@ -210,5 +243,14 @@ public class PolyPluginManagerImpl(
     
     private operator fun <T, U, V> MutableMap<Pair<T, U>, V>.set(key1: T, key2: U, value: V) {
         this[key1 to key2] = value
+    }
+    
+    private fun ensureState(state: State, message: String) {
+        if (this.state != state)
+            error(message)
+    }
+    
+    private fun updateState(newState: State) {
+        this.state = newState
     }
 }

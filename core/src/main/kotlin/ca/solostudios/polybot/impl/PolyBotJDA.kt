@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 11-09-2022 07:11 p.m.
+ * Last modified on 22-11-2022 03:06 p.m.
  *
  * MIT License
  *
@@ -55,6 +55,7 @@ import ca.solostudios.polybot.api.util.ext.ScheduledThreadPool
 import ca.solostudios.polybot.api.util.ext.poly
 import ca.solostudios.polybot.api.util.ext.processors
 import ca.solostudios.polybot.api.util.ext.runtime
+import ca.solostudios.polybot.api.util.path
 import ca.solostudios.polybot.impl.entities.PolyCategoryImpl
 import ca.solostudios.polybot.impl.entities.PolyChannelImpl
 import ca.solostudios.polybot.impl.entities.PolyEmoteImpl
@@ -70,6 +71,7 @@ import ca.solostudios.polybot.impl.entities.PolyTextChannelImpl
 import ca.solostudios.polybot.impl.entities.PolyUserImpl
 import ca.solostudios.polybot.impl.entities.PolyVoiceChannelImpl
 import ca.solostudios.polybot.impl.plugin.PolyPluginManagerImpl
+import ca.solostudios.polybot.impl.plugin.dsl.PolyPluginDslImpl
 import com.uchuhimo.konf.Config
 import dev.minn.jda.ktx.await
 import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
@@ -101,7 +103,6 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import org.kodein.di.DI
 import org.slf4j.kotlin.*
 import kotlin.coroutines.CoroutineContext
-import kotlin.io.path.Path
 import kotlin.random.Random
 import kotlin.random.asKotlinRandom
 
@@ -145,7 +146,7 @@ public class PolyBotJDA(
     override val eventManager: PolyEventManager
         get() = TODO("Not yet implemented")
     
-    override val serviceManager: PolyServiceManager<*>
+    override val serviceManager: PolyServiceManager<*, *>
         get() = TODO("Not yet implemented")
     
     override val polyPluginManager: PolyPluginManagerImpl = PolyPluginManagerImpl(
@@ -173,8 +174,17 @@ public class PolyBotJDA(
         }
     
         state = PolyBot.State.STARTING
+        logger.info { "Starting polybot..." }
     
+        logger.debug { "Loading plugins..." }
         polyPluginManager.loadPlugins()
+    
+        val cloud = TODO()
+        val annotationParser = TODO()
+        val polyDsl = PolyPluginDslImpl(cloud, annotationParser)
+    
+        logger.debug { "Starting plugins..." }
+        polyPluginManager.startPlugins(polyDsl)
     
         TODO("Start Polybot") // TODO: 2022-08-17
     
@@ -188,6 +198,8 @@ public class PolyBotJDA(
     
         state = PolyBot.State.SHUTTING_DOWN
     
+        polyPluginManager.shutdownPlugins()
+    
         TODO("Polybot shutdown") // TODO: 2022-03-06
     
         state = PolyBot.State.SHUTDOWN
@@ -196,7 +208,7 @@ public class PolyBotJDA(
     public override fun configDirectory(base: String, vararg subpaths: String): Path = directory(".config", base, *subpaths)
     
     public override fun directory(base: String, vararg subpaths: String): Path {
-        return Path("./", base, *subpaths)
+        return path("./", base, *subpaths)
     }
     
     override fun guildAsync(guildId: ULong): Deferred<PolyGuild?> {

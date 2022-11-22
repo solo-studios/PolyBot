@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginExtensions.kt is part of PolyBot
- * Last modified on 02-08-2022 04:46 p.m.
+ * Last modified on 22-11-2022 03:06 p.m.
  *
  * MIT License
  *
@@ -30,48 +30,44 @@ package ca.solostudios.polybot.api.util.ext
 
 
 import ca.solostudios.polybot.api.plugin.PolyPlugin
-import ca.solostudios.polybot.api.plugin.PolyPluginCompanionObject
+import ca.solostudios.polybot.api.plugin.PolyPluginContainer
 import ca.solostudios.polybot.api.plugin.PolyPluginManager
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 
 
 /**
- * Returns a Plugin from the manager.
+ * Returns a plugin from the manager.
  *
- * @param T The type of the Plugin to return
- * @param clazz The class of the Plugin
- * @return The Plugin
- * @throws NullPointerException if no Plugin of the specified type can be found
+ * @param T The type of the plugin to return
+ * @param group The group of the plugin
+ * @param id The id of the plugin
+ *
+ * @return The plugin
+ * @throws NullPointerException if no plugin of the specified type can be found
  */
-public operator fun <T : PolyPlugin> PolyPluginManager.get(clazz: KClass<T>): T = getService(clazz)
+public inline operator fun <reified T : PolyPlugin> PolyPluginManager.get(group: String, id: String): T = getPlugin(T::class, group, id)
 
 /**
- * Returns a Plugin from the manager.
+ * Returns a plugin from the manager.
  *
- * @param T The type of the Plugin to return
- * @param clazz The class of the Plugin
- * @return The Plugin
- * @throws NullPointerException if no Plugin of the specified type can be found
+ * @param T The type of the plugin to return
+ * @param group The group of the plugin
+ * @param id The id of the plugin
+ *
+ * @return The plugin
+ * @throws NullPointerException if no plugin of the specified type can be found
  */
-public operator fun <T : PolyPlugin> PolyPluginManager.get(clazz: PolyPluginCompanionObject<T>): T = getService(clazz.serviceClass)
+public inline fun <reified T : PolyPlugin> PolyPluginManager.plugin(group: String, id: String): T = getPlugin(T::class, group, id)
 
 /**
- * Returns a Plugin from the manager.
+ * Returns a plugin container from the manager.
  *
- * @param T The type of the Plugin to return
- * @return The Plugin
- * @throws NullPointerException if no Plugin of the specified type can be found
- */
-public inline fun <reified T : PolyPlugin> PolyPluginManager.plugin(): T = getService(T::class)
-
-/**
- * Property delegate for a Plugin, from the Plugin manager.
+ * @param T The type of the plugin to return
+ * @param group The group of the plugin
+ * @param id The id of the plugin
  *
- * @param T The type of the Plugin to return
- * @return The Plugin
- * @throws NullPointerException if no Plugin of the specified type can be found
+ * @return The plugin
+ * @throws NullPointerException if no plugin of the specified type can be found
  */
-public inline operator fun <reified T : PolyPlugin> PolyPluginManager.getValue(thisRef: Any?, property: KProperty<*>): T {
-    return getService(T::class)
+public inline fun <reified T : PolyPlugin> PolyPluginManager.pluginContainer(group: String, id: String): PolyPluginContainer<T> {
+    return getPluginContainer(group, id)
 }

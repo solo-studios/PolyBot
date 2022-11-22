@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManager.kt is part of PolyBot
- * Last modified on 30-10-2022 02:06 p.m.
+ * Last modified on 22-11-2022 03:06 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,6 @@ package ca.solostudios.polybot.api.plugin
 import ca.solostudios.polybot.api.PolyObject
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
 import ca.solostudios.polybot.api.plugin.finder.PluginCandidateFinder
-import ca.solostudios.polybot.common.service.Service
 import kotlin.reflect.KClass
 
 public interface PolyPluginManager : PolyObject {
@@ -44,31 +43,13 @@ public interface PolyPluginManager : PolyObject {
      *
      * @see State
      */
-    public val state: Service.State
-    
-    /**
-     * True if the plugin manager has been shutdown successfully. False otherwise.
-     *
-     * Corresponds to when `state` is `SHUTDOWN`.
-     *
-     * @see state
-     * @see State.SHUTDOWN
-     */
-    public val shutdown: Boolean
-    
-    /**
-     * True if the plugin manager is running. False otherwise.
-     *
-     * Corresponds to when `state` is `RUNNING`
-     *
-     * @see state
-     * @see State.RUNNING
-     */
-    public val running: Boolean
+    public val state: State
     
     public suspend fun loadPlugins()
     
     public suspend fun startPlugins(polyPluginDsl: PolyPluginDsl)
+    
+    public suspend fun shutdownPlugins()
     
     /**
      * Returns the container for a specified group and id.
@@ -86,18 +67,23 @@ public interface PolyPluginManager : PolyObject {
          *
          * It is **not** starting up the service.
          */
-        INITIALIZING,
-        
+        NEW,
+    
         /**
          * The plugin manager is loading plugins.
          */
         LOADING_PLUGINS,
-        
+    
+        /**
+         * The plugin manager has finished loading plugins.
+         */
+        LOADED_PLUGINS,
+    
         /**
          * The plugin manager is starting all the plugins.
          */
         STARTING,
-        
+    
         /**
          * The plugin manager has started all plugins successfully and is currently running.
          */

@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file Util.kt is part of PolyBot
- * Last modified on 22-11-2022 03:06 p.m.
+ * The file ServiceInitializer.kt is part of PolyBot
+ * Last modified on 22-11-2022 02:58 p.m.
  *
  * MIT License
  *
@@ -26,20 +26,14 @@
  * SOFTWARE.
  */
 
-@file:Suppress("NOTHING_TO_INLINE")
+package ca.solostudios.polybot.impl.plugin.dsl.service
 
-package ca.solostudios.polybot.api.util
+import ca.solostudios.polybot.api.service.PolyService
+import ca.solostudios.polybot.api.service.config.ServiceConfig
+import kotlin.reflect.KClass
 
-import java.io.File
-import java.nio.file.Path
-
-public inline fun path(first: String, vararg more: String): Path = Path.of(first, *more)
-
-public inline fun file(pathname: String): File = File(pathname)
-
-/**
- * Throws an [IllegalStateException] with the given [message] and [cause].
- */
-public inline fun error(cause: Throwable? = null, message: Any? = null): Nothing {
-    throw IllegalStateException(message.toString(), cause)
-}
+internal data class ServiceInitializer<T : PolyService<C>, C : ServiceConfig>(
+        val serviceClass: KClass<T>,
+        val configClass: KClass<C>,
+        val initializer: (C) -> T
+                                                                             )

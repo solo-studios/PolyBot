@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TypeAliases.kt is part of PolyBot
- * Last modified on 17-08-2022 11:39 a.m.
+ * Last modified on 22-11-2022 03:06 p.m.
  *
  * MIT License
  *
@@ -31,3 +31,5 @@ package ca.solostudios.polybot.api.util
 public typealias LongPair = Pair<Long, Long>
 
 public typealias ULongPair = Pair<ULong, ULong>
+
+public typealias StringPair = Pair<String, String>
