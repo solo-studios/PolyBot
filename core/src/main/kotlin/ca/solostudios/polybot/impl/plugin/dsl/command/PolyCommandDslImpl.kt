@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCommandDslImpl.kt is part of PolyBot
- * Last modified on 11-09-2022 07:03 p.m.
+ * Last modified on 23-11-2022 12:32 p.m.
  *
  * MIT License
  *
@@ -30,37 +30,31 @@ package ca.solostudios.polybot.impl.plugin.dsl.command
 
 import ca.solostudios.polybot.api.annotations.PolyPluginDelicateApi
 import ca.solostudios.polybot.api.cloud.CaptionRegistry
-import ca.solostudios.polybot.api.cloud.CommandManager
 import ca.solostudios.polybot.api.cloud.CommandPostprocessor
 import ca.solostudios.polybot.api.cloud.CommandPreprocessor
 import ca.solostudios.polybot.api.cloud.CommandSyntaxFormatter
 import ca.solostudios.polybot.api.cloud.InjectionService
 import ca.solostudios.polybot.api.cloud.ParameterInjector
-import ca.solostudios.polybot.api.cloud.event.MessageEvent
 import ca.solostudios.polybot.api.plugin.dsl.command.ExceptionHandler
 import ca.solostudios.polybot.api.plugin.dsl.command.PolyAnnotationDsl
 import ca.solostudios.polybot.api.plugin.dsl.command.PolyCommandDsl
 import ca.solostudios.polybot.api.plugin.dsl.command.PolyParserRegistryDsl
-import cloud.commandframework.annotations.AnnotationParser
 import kotlin.reflect.KClass
 
-internal class PolyCommandDslImpl(
-        val cloud: CommandManager,
-        annotationParser: AnnotationParser<MessageEvent>,
-                                 ) : PolyCommandDsl {
-    @PolyPluginDelicateApi
-    override var commandSyntaxFormatter: CommandSyntaxFormatter
-        get() = cloud.commandSyntaxFormatter()
-        set(value) = cloud.commandSyntaxFormatter(value)
+internal class PolyCommandDslImpl : PolyCommandDsl {
+    val annotationDsl = PolyAnnotationDslImpl()
+    val parserRegistryDslImpl = PolyParserRegistryDslImpl()
+    val commandPreprocessors = mutableListOf<CommandPreprocessor>()
+    val commandPostProcessors = mutableListOf<CommandPostprocessor>()
+    val exceptionHandlers = mutableListOf<ExceptionHandlerHolder<*>>()
+    val parameterInjectors = mutableListOf<ParameterInjectorHolder<*>>()
+    val parameterInjectionServices = mutableListOf<InjectionService>()
     
     @PolyPluginDelicateApi
-    override var captionRegistry: CaptionRegistry
-        get() = cloud.captionRegistry()
-        set(value) = cloud.captionRegistry(value)
+    override var commandSyntaxFormatter: CommandSyntaxFormatter? = null
     
-    val annotationDsl: PolyAnnotationDslImpl = PolyAnnotationDslImpl(cloud, annotationParser)
-    
-    val parserRegistryDslImpl: PolyParserRegistryDslImpl = PolyParserRegistryDslImpl(cloud)
+    @PolyPluginDelicateApi
+    override var captionRegistry: CaptionRegistry? = null
     
     override fun annotations(block: PolyAnnotationDsl.() -> Unit) {
         annotationDsl.block()
@@ -70,27 +64,43 @@ internal class PolyCommandDslImpl(
         parserRegistryDslImpl.block()
     }
     
-    override fun commandPreProcessor(vararg preProcessors: CommandPreprocessor) {
-        for (preProcessor in preProcessors) {
-            cloud.registerCommandPreProcessor(preProcessor)
-        }
+    override fun commandPreProcessor(preProcessor: CommandPreprocessor) {
+        commandPreprocessors += preProcessor
     }
     
-    override fun commandPostProcessor(vararg postProcessors: CommandPostprocessor) {
-        for (postProcessor in postProcessors) {
-            cloud.registerCommandPostProcessor(postProcessor)
-        }
+    override fun commandPostProcessor(postProcessor: CommandPostprocessor) {
+        commandPostProcessors += commandPostProcessors
+    }
+    
+    override fun commandPreProcessors(preProcessors: List<CommandPreprocessor>) {
+        commandPreprocessors += preProcessors
+    }
+    
+    override fun commandPostProcessors(postProcessors: List<CommandPostprocessor>) {
+        commandPostProcessors += commandPostProcessors
     }
     
     override fun <E : Exception> exceptionHandler(clazz: KClass<E>, handler: ExceptionHandler<E>) {
-        cloud.registerExceptionHandler(clazz.java, handler)
+        exceptionHandlers += ExceptionHandlerHolder(clazz, handler)
     }
     
     override fun <T : Any> injector(clazz: KClass<T>, injector: ParameterInjector<T>) {
-        cloud.parameterInjectorRegistry().registerInjector(clazz.java, injector)
+        parameterInjectors += ParameterInjectorHolder(clazz, injector)
+        // cloud.parameterInjectorRegistry().registerInjector(clazz.java, injector)
     }
     
     override fun injectionService(service: InjectionService) {
-        cloud.parameterInjectorRegistry().registerInjectionService(service)
+        parameterInjectionServices += service
+        // cloud.parameterInjectorRegistry().registerInjectionService(service)
     }
+    
+    data class ExceptionHandlerHolder<E : Exception>(
+            val exceptionType: KClass<E>,
+            val handler: ExceptionHandler<E>,
+                                                    )
+    
+    data class ParameterInjectorHolder<T : Any>(
+            val parameterType: KClass<T>,
+            val injector: ParameterInjector<T>,
+                                               )
 }

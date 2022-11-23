@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyAnnotationDslImpl.kt is part of PolyBot
- * Last modified on 11-09-2022 07:01 p.m.
+ * Last modified on 23-11-2022 12:17 p.m.
  *
  * MIT License
  *
@@ -28,69 +28,97 @@
 
 package ca.solostudios.polybot.impl.plugin.dsl.command
 
-import ca.solostudios.polybot.api.cloud.CommandContext
-import ca.solostudios.polybot.api.cloud.CommandManager
 import ca.solostudios.polybot.api.commands.PolyCommand
 import ca.solostudios.polybot.api.plugin.dsl.command.AnnotationMapper
-import ca.solostudios.polybot.api.plugin.dsl.command.AnnotationParser
 import ca.solostudios.polybot.api.plugin.dsl.command.BuilderModifier
 import ca.solostudios.polybot.api.plugin.dsl.command.ExecutionMethodFactory
 import ca.solostudios.polybot.api.plugin.dsl.command.PolyAnnotationDsl
 import ca.solostudios.polybot.api.plugin.dsl.command.PreprocessorMapper
-import cloud.commandframework.kotlin.extension.toMutable
 import java.lang.reflect.Method
-import java.util.Queue
-import java.util.function.BiFunction
 import kotlin.reflect.KClass
 
-internal class PolyAnnotationDslImpl(
-        val cloud: CommandManager,
-        val annotationParser: AnnotationParser
-                                    ) : PolyAnnotationDsl {
-    val scanPackages: MutableList<String> = mutableListOf()
-    val commands: MutableList<PolyCommand> = mutableListOf()
-    val commandInstantiationMethods: MutableList<CommandInstantiationMethod<*>> = mutableListOf()
+internal class PolyAnnotationDslImpl : PolyAnnotationDsl {
+    val cmdExecMethodFactories = mutableListOf<CommandExecutionMethod>()
+    val builderModifierHolders = mutableListOf<BuilderModifierHolder<*>>()
+    val annotationMapperHolders = mutableListOf<AnnotationMapperHolder<*>>()
+    val preprocessorMapperHolders = mutableListOf<PreprocessorMapperHolder<*>>()
+    val scanPackages = mutableListOf<String>()
+    val commands = mutableListOf<PolyCommand>()
+    val commandInstantiationMethods = mutableListOf<CommandInstantiationMethod<*>>()
     
     override fun commandExecutionMethod(shouldUse: (Method) -> Boolean, executionMethod: ExecutionMethodFactory) {
-        annotationParser.registerCommandExecutionMethodFactory(shouldUse, executionMethod)
+        cmdExecMethodFactories += CommandExecutionMethod(shouldUse, executionMethod)
+        // annotationParser.registerCommandExecutionMethodFactory(shouldUse, executionMethod)
     }
     
-    override fun <A : Annotation> builderModifier(clazz: KClass<A>, modifier: BuilderModifier<A>) {
-        annotationParser.registerBuilderModifier(clazz.java) { annotation, commandBuilder ->
-            val mutableCommandBuilder = commandBuilder.toMutable(cloud)
-            modifier(mutableCommandBuilder, annotation)
-            mutableCommandBuilder.commandBuilder
-        }
+    override fun <A : Annotation> builderModifier(annotationType: KClass<A>, modifier: BuilderModifier<A>) {
+        builderModifierHolders += BuilderModifierHolder(annotationType, modifier)
+        // annotationParser.registerBuilderModifier(clazz.java) { annotation, commandBuilder ->
+        //     commandBuilder.toMutable(cloud)
+        //             .also { mutableCommandBuilder ->
+        //                 modifier(mutableCommandBuilder, annotation)
+        //             }
+        //             .commandBuilder
+        // }
     }
     
-    override fun <A : Annotation> annotationMapper(clazz: KClass<A>, mapper: AnnotationMapper<A>) {
-        annotationParser.registerAnnotationMapper(clazz.java, mapper)
+    override fun <A : Annotation> annotationMapper(annotationType: KClass<A>, mapper: AnnotationMapper<A>) {
+        annotationMapperHolders += AnnotationMapperHolder(annotationType, mapper)
+        // annotationParser.registerAnnotationMapper(clazz.java, mapper)
     }
     
-    override fun <A : Annotation> preprocessorMapper(clazz: KClass<A>, mapper: PreprocessorMapper<A>) {
-        annotationParser.registerPreprocessorMapper(clazz.java) { annotation ->
-            val preprocessor = mapper(annotation)
-            
-            BiFunction { context: CommandContext, queue: Queue<String> ->
-                preprocessor(context, queue)
-            }
-        }
+    override fun <A : Annotation> preprocessorMapper(annotationType: KClass<A>, mapper: PreprocessorMapper<A>) {
+        preprocessorMapperHolders += PreprocessorMapperHolder(annotationType, mapper)
+        // annotationParser.registerPreprocessorMapper(annotationType.java) { annotation -> BiFunction(mapper(annotation)) }
     }
     
-    override fun <T : PolyCommand> commandInstantiationMethod(shouldUse: (KClass<T>) -> Boolean, instantiationMethod: (KClass<T>) -> T) {
-        commandInstantiationMethods.add(CommandInstantiationMethod(shouldUse, instantiationMethod))
+    override fun <T : PolyCommand> commandInstantiationMethod(
+            commandType: KClass<T>,
+            shouldUse: (KClass<T>) -> Boolean,
+            instantiationMethod: (KClass<T>) -> T,
+                                                             ) {
+        commandInstantiationMethods += CommandInstantiationMethod(commandType, shouldUse, instantiationMethod)
     }
     
-    override fun scanPackage(vararg packages: String) {
-        scanPackages.addAll(packages)
+    override fun scanPackage(pkg: String) {
+        scanPackages += pkg
     }
     
-    override fun command(vararg commands: PolyCommand) {
-        this.commands.addAll(commands)
+    override fun scanPackages(pkgs: List<String>) {
+        scanPackages += pkgs
     }
     
-    internal data class CommandInstantiationMethod<T : Any>(
+    override fun command(command: PolyCommand) {
+        this.commands += command
+    }
+    
+    override fun commands(commands: List<PolyCommand>) {
+        this.commands += commands
+    }
+    
+    data class CommandExecutionMethod(
+            val shouldUse: (Method) -> Boolean,
+            val executionMethod: ExecutionMethodFactory
+                                     )
+    
+    data class BuilderModifierHolder<A : Annotation>(
+            val annotationType: KClass<A>,
+            val modifier: BuilderModifier<A>,
+                                                    )
+    
+    data class AnnotationMapperHolder<A : Annotation>(
+            val annotationType: KClass<A>,
+            val mapper: AnnotationMapper<A>,
+                                                     )
+    
+    data class PreprocessorMapperHolder<A : Annotation>(
+            val annotationType: KClass<A>,
+            val mapper: PreprocessorMapper<A>,
+                                                       )
+    
+    data class CommandInstantiationMethod<T : Any>(
+            val commandType: KClass<T>,
             val shouldUse: (KClass<T>) -> Boolean,
             val instantiationMethod: (KClass<T>) -> T
-                                                           )
+                                                  )
 }

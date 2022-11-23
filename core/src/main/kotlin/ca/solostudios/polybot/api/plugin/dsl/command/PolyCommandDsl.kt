@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCommandDsl.kt is part of PolyBot
- * Last modified on 11-09-2022 06:49 p.m.
+ * Last modified on 23-11-2022 12:29 p.m.
  *
  * MIT License
  *
@@ -49,13 +49,13 @@ public interface PolyCommandDsl {
      * The command syntax formatter.
      */
     @PolyPluginDelicateApi
-    public var commandSyntaxFormatter: CommandSyntaxFormatter
+    public var commandSyntaxFormatter: CommandSyntaxFormatter?
     
     /**
      * Caption registry
      */
     @PolyPluginDelicateApi
-    public var captionRegistry: CaptionRegistry
+    public var captionRegistry: CaptionRegistry?
     
     /**
      * Configures the [AnnotationParser] using the DSL.
@@ -74,20 +74,38 @@ public interface PolyCommandDsl {
     /**
      * Registers a new command preprocessor. The order they are registered in is respected, and they are called in LIFO order.
      *
-     * @param preProcessors The preprocessor(s) to register.
+     * @param preProcessor The preprocessor to register.
      *
      * @see CommandManager.registerCommandPreProcessor
      */
-    public fun commandPreProcessor(vararg preProcessors: CommandPreprocessor)
+    public fun commandPreProcessor(preProcessor: CommandPreprocessor)
+    
+    /**
+     * Registers a several new command preprocessors. The order they are registered in is respected, and they are called in LIFO order.
+     *
+     * @param preProcessors The preprocessors to register.
+     *
+     * @see CommandManager.registerCommandPreProcessor
+     */
+    public fun commandPreProcessors(preProcessors: List<CommandPreprocessor>)
     
     /**
      * Registers a new command postprocessor. The order they are registered in is respected, and they are called in LIFO order.
+     *
+     * @param postProcessor The postprocessor to register.
+     *
+     * @see CommandManager.registerCommandPostProcessor
+     */
+    public fun commandPostProcessor(postProcessor: CommandPostprocessor)
+    
+    /**
+     * Registers a several new command postprocessors. The order they are registered in is respected, and they are called in LIFO order.
      *
      * @param postProcessors The postprocessor(s) to register.
      *
      * @see CommandManager.registerCommandPostProcessor
      */
-    public fun commandPostProcessor(vararg postProcessors: CommandPostprocessor)
+    public fun commandPostProcessors(postProcessors: List<CommandPostprocessor>)
     
     /**
      *Registers an exception handler for an exception type.

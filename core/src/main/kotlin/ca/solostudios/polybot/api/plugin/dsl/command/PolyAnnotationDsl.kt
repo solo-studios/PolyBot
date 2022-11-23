@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyAnnotationDsl.kt is part of PolyBot
- * Last modified on 11-09-2022 07:01 p.m.
+ * Last modified on 23-11-2022 12:16 p.m.
  *
  * MIT License
  *
@@ -54,48 +54,62 @@ public interface PolyAnnotationDsl {
      * This allows for modifications of the builder instance before the command is registered to the command handler.
      *
      * @param A The annotation type to target.
-     * @param clazz The annotation class.
+     * @param annotationType The annotation class.
      * @param modifier The modifier method that acts on the given annotation and the incoming builder.
      *
      * @see AnnotationParser.registerBuilderModifier
      */
-    public fun <A : Annotation> builderModifier(clazz: KClass<A>, modifier: BuilderModifier<A>)
+    public fun <A : Annotation> builderModifier(annotationType: KClass<A>, modifier: BuilderModifier<A>)
     
     /**
      * Registers an annotation mapper.
      *
      * @param A The annotation type to target.
-     * @param clazz The annotation class.
+     * @param annotationType The annotation class.
      * @param mapper The annotation mapping function.
      *
      * @see AnnotationParser.registerAnnotationMapper
      */
-    public fun <A : Annotation> annotationMapper(clazz: KClass<A>, mapper: AnnotationMapper<A>)
+    public fun <A : Annotation> annotationMapper(annotationType: KClass<A>, mapper: AnnotationMapper<A>)
     
     /**
      * Registers a preprocessor mapper.
      *
      * @param A The annotation type to target.
-     * @param clazz The annotation class.
+     * @param annotationType The annotation class.
      * @param mapper The preprocessor mapping function.
      *
      * @see AnnotationParser.registerPreprocessorMapper
      */
-    public fun <A : Annotation> preprocessorMapper(clazz: KClass<A>, mapper: PreprocessorMapper<A>)
+    public fun <A : Annotation> preprocessorMapper(annotationType: KClass<A>, mapper: PreprocessorMapper<A>)
     
     /**
-     * Marks certain packages to be scanned for commands, which are then parsed by the annotation processor.
+     * Marks a package to be scanned for commands, which are then parsed by the annotation processor.
      *
-     * @param packages The package(s) to be scanned for commands.
+     * @param pkg The package(s) to be scanned for commands.
      */
-    public fun scanPackage(vararg packages: String)
+    public fun scanPackage(pkg: String)
     
     /**
-     * Adds a certain command to the list of commands to be parsed by the annotation processor.
+     * Marks several packages to be scanned for commands, which are then parsed by the annotation processor.
+     *
+     * @param pkgs The package(s) to be scanned for commands.
+     */
+    public fun scanPackages(pkgs: List<String>)
+    
+    /**
+     * Adds a command to the commands that will be parsed by the annotation processor.
+     *
+     * @param command The command(s) to be parsed by the annotation processor.
+     */
+    public fun command(command: PolyCommand)
+    
+    /**
+     * Adds a several commands to the commands that will be parsed by the annotation processor.
      *
      * @param commands The command(s) to be parsed by the annotation processor.
      */
-    public fun command(vararg commands: PolyCommand)
+    public fun commands(commands: List<PolyCommand>)
     
     /**
      * Registers a new command instantiation method. This allows for the registration of custom command instantiation strategies
@@ -106,5 +120,9 @@ public interface PolyAnnotationDsl {
      *
      * @see scanPackage
      */
-    public fun <T : PolyCommand> commandInstantiationMethod(shouldUse: (KClass<T>) -> Boolean, instantiationMethod: (KClass<T>) -> T)
+    public fun <T : PolyCommand> commandInstantiationMethod(
+            commandType: KClass<T>,
+            shouldUse: (KClass<T>) -> Boolean,
+            instantiationMethod: (KClass<T>) -> T,
+                                                           )
 }

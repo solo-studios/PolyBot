@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 22-11-2022 03:06 p.m.
+ * Last modified on 23-11-2022 12:42 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,7 @@
 package ca.solostudios.polybot.impl
 
 import ca.solostudios.polybot.api.PolyBot
+import ca.solostudios.polybot.api.PolyBot.State
 import ca.solostudios.polybot.api.entities.PolyCategory
 import ca.solostudios.polybot.api.entities.PolyChannel
 import ca.solostudios.polybot.api.entities.PolyEmote
@@ -112,14 +113,14 @@ public class PolyBotJDA(
                        ) : PolyBot, CoroutineScope {
     private val logger by getLogger()
     
-    override var state: PolyBot.State = PolyBot.State.INITIALIZING
+    override var state: State = State.INITIALIZING
         private set
     
     override val shutdown: Boolean
-        get() = state == PolyBot.State.SHUTDOWN || state == PolyBot.State.FAILED
+        get() = state == State.SHUTDOWN || state == State.FAILED
     
     override val running: Boolean
-        get() = state == PolyBot.State.RUNNING
+        get() = state == State.RUNNING
     
     override val active: Boolean
         get() = state.active
@@ -173,22 +174,22 @@ public class PolyBotJDA(
             return
         }
     
-        state = PolyBot.State.STARTING
+        state = State.STARTING
         logger.info { "Starting polybot..." }
     
         logger.debug { "Loading plugins..." }
         polyPluginManager.loadPlugins()
     
-        val cloud = TODO()
-        val annotationParser = TODO()
-        val polyDsl = PolyPluginDslImpl(cloud, annotationParser)
+        val polyDsl = PolyPluginDslImpl()
     
         logger.debug { "Starting plugins..." }
         polyPluginManager.startPlugins(polyDsl)
     
+        logger.debug { "Plugins started successfully" }
+    
         TODO("Start Polybot") // TODO: 2022-08-17
     
-        state = PolyBot.State.RUNNING
+        state = State.RUNNING
     }
     
     @Throws(Exception::class)
@@ -196,13 +197,13 @@ public class PolyBotJDA(
         if (!running)
             return
     
-        state = PolyBot.State.SHUTTING_DOWN
+        state = State.SHUTTING_DOWN
     
         polyPluginManager.shutdownPlugins()
     
         TODO("Polybot shutdown") // TODO: 2022-03-06
     
-        state = PolyBot.State.SHUTDOWN
+        state = State.SHUTDOWN
     }
     
     public override fun configDirectory(base: String, vararg subpaths: String): Path = directory(".config", base, *subpaths)

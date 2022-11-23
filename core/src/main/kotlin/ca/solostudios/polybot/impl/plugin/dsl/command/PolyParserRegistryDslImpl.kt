@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyParserRegistryDslImpl.kt is part of PolyBot
- * Last modified on 11-09-2022 06:49 p.m.
+ * Last modified on 23-11-2022 12:26 p.m.
  *
  * MIT License
  *
@@ -28,35 +28,56 @@
 
 package ca.solostudios.polybot.impl.plugin.dsl.command
 
-import ca.solostudios.polybot.api.cloud.CommandManager
-import ca.solostudios.polybot.api.cloud.event.MessageEvent
 import ca.solostudios.polybot.api.plugin.dsl.command.ParserSupplier
 import ca.solostudios.polybot.api.plugin.dsl.command.PolyParserRegistryDsl
 import ca.solostudios.polybot.api.plugin.dsl.command.SuggestionProvider
 import ca.solostudios.polybot.api.plugin.dsl.command.TypedAnnotationMapper
-import cloud.commandframework.arguments.parser.ParserRegistry
 import io.leangen.geantyref.TypeToken
 import kotlin.reflect.KClass
 
-internal class PolyParserRegistryDslImpl(
-        val cloud: CommandManager
-                                        ) : PolyParserRegistryDsl {
-    val parserRegistry: ParserRegistry<MessageEvent>
-        get() = cloud.parserRegistry()
+internal class PolyParserRegistryDslImpl : PolyParserRegistryDsl {
+    val parserSuppliers = mutableListOf<ParserSupplierHolder<*>>()
+    val namedParserSuppliers = mutableListOf<NamedParserSupplierHolder>()
+    val annotationMappers = mutableListOf<AnnotationMapperHolder<*>>()
+    val suggestionProviders = mutableListOf<SuggestionProviderHolder>()
     
     override fun <T> parserSupplier(type: TypeToken<T>, supplier: ParserSupplier<T>) {
-        parserRegistry.registerParserSupplier(type, supplier)
+        parserSuppliers += ParserSupplierHolder(type, supplier)
+        // parserRegistry.registerParserSupplier(type, supplier)
     }
     
     override fun namedParserSupplier(name: String, supplier: ParserSupplier<*>) {
-        parserRegistry.registerNamedParserSupplier(name, supplier)
+        namedParserSuppliers += NamedParserSupplierHolder(name, supplier)
+        // parserRegistry.registerNamedParserSupplier(name, supplier)
     }
     
-    override fun <A : Annotation, T> annotationMapper(clazz: KClass<A>, mapper: TypedAnnotationMapper<A>) {
-        parserRegistry.registerAnnotationMapper<A, T>(clazz.java, mapper)
+    override fun <A : Annotation> annotationMapper(annotationType: KClass<A>, mapper: TypedAnnotationMapper<A>) {
+        annotationMappers += AnnotationMapperHolder(annotationType, mapper)
+        // parserRegistry.registerAnnotationMapper<A, Any>(annotationType.java, mapper)
     }
     
     override fun suggestionProvider(name: String, suggestionsProvider: SuggestionProvider) {
-        parserRegistry.registerSuggestionProvider(name, suggestionsProvider)
+        suggestionProviders += SuggestionProviderHolder(name, suggestionsProvider)
+        // parserRegistry.registerSuggestionProvider(name, suggestionsProvider)
     }
+    
+    data class ParserSupplierHolder<T>(
+            val type: TypeToken<T>,
+            val supplier: ParserSupplier<T>,
+                                      )
+    
+    data class NamedParserSupplierHolder(
+            val name: String,
+            val supplier: ParserSupplier<*>,
+                                        )
+    
+    data class AnnotationMapperHolder<A : Annotation>(
+            val annotationType: KClass<A>,
+            val mapper: TypedAnnotationMapper<A>,
+                                                     )
+    
+    data class SuggestionProviderHolder(
+            val name: String,
+            val suggestionProvider: SuggestionProvider,
+                                       )
 }

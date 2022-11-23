@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyParserRegistryDsl.kt is part of PolyBot
- * Last modified on 11-09-2022 06:49 p.m.
+ * Last modified on 23-11-2022 12:26 p.m.
  *
  * MIT License
  *
@@ -63,13 +63,12 @@ public interface PolyParserRegistryDsl {
      * Registers a mapper that maps annotation instances to a map of parameter-object pairs.
      *
      * @param A The annotation type.
-     * @param T The type of the object that the parser is retrieved for.
-     * @param clazz The annotation class.
-     * @param mapper The ampper that maps the annotations and the type to be parsed to a map of parameter-object pairs.
+     * @param annotationType The annotation class.
+     * @param mapper The mapper that maps the annotations and the type to be parsed to a map of parameter-object pairs.
      *
      * @see ParserRegistry.registerAnnotationMapper
      */
-    public fun <A : Annotation, T> annotationMapper(clazz: KClass<A>, mapper: TypedAnnotationMapper<A>)
+    public fun <A : Annotation> annotationMapper(annotationType: KClass<A>, mapper: TypedAnnotationMapper<A>)
     
     /**
      * Registers a new named suggestion provider.

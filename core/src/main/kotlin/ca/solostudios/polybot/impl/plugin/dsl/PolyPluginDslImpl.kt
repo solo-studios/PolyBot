@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginDslImpl.kt is part of PolyBot
- * Last modified on 22-11-2022 03:06 p.m.
+ * Last modified on 23-11-2022 12:39 p.m.
  *
  * MIT License
  *
@@ -28,9 +28,7 @@
 
 package ca.solostudios.polybot.impl.plugin.dsl
 
-import ca.solostudios.polybot.api.cloud.CommandManager
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
-import ca.solostudios.polybot.api.plugin.dsl.command.AnnotationParser
 import ca.solostudios.polybot.api.plugin.dsl.command.PolyCommandDsl
 import ca.solostudios.polybot.api.plugin.dsl.event.PolyEventDsl
 import ca.solostudios.polybot.api.plugin.dsl.service.PolyServiceDsl
@@ -38,11 +36,8 @@ import ca.solostudios.polybot.impl.plugin.dsl.command.PolyCommandDslImpl
 import ca.solostudios.polybot.impl.plugin.dsl.service.PolyServiceDslImpl
 import com.uchuhimo.konf.ConfigSpec
 
-internal class PolyPluginDslImpl(
-        val cloud: CommandManager,
-        annotationParser: AnnotationParser
-                                ) : PolyPluginDsl {
-    val commandDsl = PolyCommandDslImpl(cloud, annotationParser)
+internal class PolyPluginDslImpl : PolyPluginDsl {
+    val commandDsl = PolyCommandDslImpl()
     val serviceDsl = PolyServiceDslImpl()
     val configSpecs = mutableListOf<ConfigSpec>()
     
