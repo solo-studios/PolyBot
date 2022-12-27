@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 23-11-2022 12:42 p.m.
+ * Last modified on 27-12-2022 01:32 p.m.
  *
  * MIT License
  *
@@ -51,7 +51,7 @@ import ca.solostudios.polybot.api.jda.builder.InlineJDABuilder
 import ca.solostudios.polybot.api.plugin.finder.ClasspathCandidateFinder
 import ca.solostudios.polybot.api.plugin.finder.FlatDirectoryCandidateFinder
 import ca.solostudios.polybot.api.plugin.loader.PolyClassLoader
-import ca.solostudios.polybot.api.service.PolyServiceManager
+import ca.solostudios.polybot.api.service.config.EmptyServiceConfig
 import ca.solostudios.polybot.api.util.ext.ScheduledThreadPool
 import ca.solostudios.polybot.api.util.ext.poly
 import ca.solostudios.polybot.api.util.ext.processors
@@ -73,6 +73,7 @@ import ca.solostudios.polybot.impl.entities.PolyUserImpl
 import ca.solostudios.polybot.impl.entities.PolyVoiceChannelImpl
 import ca.solostudios.polybot.impl.plugin.PolyPluginManagerImpl
 import ca.solostudios.polybot.impl.plugin.dsl.PolyPluginDslImpl
+import ca.solostudios.polybot.impl.service.PolyServiceManagerImpl
 import com.uchuhimo.konf.Config
 import dev.minn.jda.ktx.await
 import it.unimi.dsi.util.XoShiRo256PlusPlusRandom
@@ -102,15 +103,16 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.VoiceChannel
 import org.kodein.di.DI
+import org.kodein.di.LateInitDI
 import org.slf4j.kotlin.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 import kotlin.random.asKotlinRandom
 
-public class PolyBotJDA(
+internal class PolyBotJDA(
         override val config: Config,
         builder: InlineJDABuilder,
-                       ) : PolyBot, CoroutineScope {
+                         ) : PolyBot, CoroutineScope {
     private val logger by getLogger()
     
     override var state: State = State.INITIALIZING
@@ -147,8 +149,7 @@ public class PolyBotJDA(
     override val eventManager: PolyEventManager
         get() = TODO("Not yet implemented")
     
-    override val serviceManager: PolyServiceManager<*, *>
-        get() = TODO("Not yet implemented")
+    override val serviceManager = PolyServiceManagerImpl(EmptyServiceConfig, this)
     
     override val polyPluginManager: PolyPluginManagerImpl = PolyPluginManagerImpl(
             this,
@@ -165,7 +166,7 @@ public class PolyBotJDA(
     
     }
     
-    public override val classLoader: PolyClassLoader = PolyClassLoader(javaClass.classLoader)
+    override val classLoader: PolyClassLoader = PolyClassLoader(javaClass.classLoader)
     
     @Throws(Exception::class)
     override suspend fun start() {
@@ -174,22 +175,64 @@ public class PolyBotJDA(
             return
         }
     
-        state = State.STARTING
+        updateState(State.STARTING)
         logger.info { "Starting polybot..." }
     
         logger.debug { "Loading plugins..." }
+    
         polyPluginManager.loadPlugins()
     
         val polyDsl = PolyPluginDslImpl()
     
         logger.debug { "Starting plugins..." }
+    
         polyPluginManager.startPlugins(polyDsl)
     
         logger.debug { "Plugins started successfully" }
     
+        val lateInitDI = LateInitDI()
+    
+        val di = DI {
+            // bindSet<>()
+            // bind<PolyService<*>>().subTypes() with { type ->
+            //     when (val jvmType = type.getRaw().jvmType) {
+            //         is Class<*> -> {
+            //             provider { serviceManager.getService(jvmType.kotlin as KClass<PolyService<*>>) }
+            //         }
+            //
+            //         else        -> error("")
+            //     }
+            // }
+            //
+            // this.externalSources += ExternalSource { key ->
+            //     when (key.type.jvmType) {
+            //         Whatever::class.java -> when (key.argType.jvmType) {
+            //             Unit::class.java   -> when (key.tag) {
+            //                 "user" -> externalFactory { existingInstance }
+            //                 null   -> externalFactory { Whatever("default-value") }
+            //                 else   -> null
+            //             }
+            //
+            //             String::class.java -> when (key.tag) {
+            //                 null -> externalFactory { Whatever(it as String) }
+            //                 else -> null
+            //             }
+            //
+            //             else               -> null
+            //         }
+            //
+            //         else                 -> null
+            //     }
+            // }
+        
+            TODO()
+        }
+    
+        polyDsl.applyServiceDsl(serviceManager, di)
+    
         TODO("Start Polybot") // TODO: 2022-08-17
     
-        state = State.RUNNING
+        updateState(State.RUNNING)
     }
     
     @Throws(Exception::class)
@@ -197,103 +240,46 @@ public class PolyBotJDA(
         if (!running)
             return
     
-        state = State.SHUTTING_DOWN
+        updateState(State.SHUTTING_DOWN)
     
         polyPluginManager.shutdownPlugins()
     
         TODO("Polybot shutdown") // TODO: 2022-03-06
     
-        state = State.SHUTDOWN
+        updateState(State.SHUTDOWN)
     }
     
-    public override fun configDirectory(base: String, vararg subpaths: String): Path = directory(".config", base, *subpaths)
-    
-    public override fun directory(base: String, vararg subpaths: String): Path {
-        return path("./", base, *subpaths)
-    }
-    
-    override fun guildAsync(guildId: ULong): Deferred<PolyGuild?> {
-        return async { guild(guildId) }
-    }
-    
-    override suspend fun guild(guildId: ULong): PolyGuild? {
-        return jda.getGuildById(guildId.toLong())?.poly(this)
-    }
-    
-    override fun roleAsync(guildId: ULong, roleId: ULong): Deferred<PolyRole?> {
-        return async { role(guildId, roleId) }
-    }
-    
-    override suspend fun role(guildId: ULong, roleId: ULong): PolyRole? {
-        return jda.getGuildById(guildId.toLong())?.getRoleById(roleId.toLong())?.poly(this)
-    }
-    
-    override fun userAsync(userId: ULong): Deferred<PolyUser?> {
-        return async { user(userId) }
-    }
-    
-    override suspend fun user(userId: ULong): PolyUser {
-        return jda.retrieveUserById(userId.toLong()).await().poly(this)
-    }
-    
-    override fun memberAsync(guildId: ULong, userId: ULong): Deferred<PolyMember?> {
-        return async { member(guildId, userId) }
-    }
-    
+    override fun configDirectory(base: String, vararg subpaths: String): Path = directory(".config", base, *subpaths)
+    override fun directory(base: String, vararg subpaths: String): Path = path("./", base, *subpaths)
+    override fun guildAsync(guildId: ULong): Deferred<PolyGuild?> = async { guild(guildId) }
+    override suspend fun guild(guildId: ULong): PolyGuild? = jda.getGuildById(guildId.toLong())?.poly(this)
+    override fun roleAsync(guildId: ULong, roleId: ULong): Deferred<PolyRole?> = async { role(guildId, roleId) }
+    override suspend fun role(guildId: ULong, roleId: ULong): PolyRole? = jda.getGuildById(guildId.toLong())?.getRoleById(roleId.toLong())?.poly(this)
+    override fun userAsync(userId: ULong): Deferred<PolyUser?> = async { user(userId) }
+    override suspend fun user(userId: ULong): PolyUser = jda.retrieveUserById(userId.toLong()).await().poly(this)
+    override fun memberAsync(guildId: ULong, userId: ULong): Deferred<PolyMember?> = async { member(guildId, userId) }
     override suspend fun member(guildId: ULong, userId: ULong): PolyMember? {
         return jda.getGuildById(guildId.toLong())?.retrieveMemberById(userId.toLong())?.await()?.poly(this)
     }
     
-    override fun emoteAsync(guildId: ULong, emoteId: ULong): Deferred<PolyEmote?> {
-        return async { emote(guildId, emoteId) }
-    }
-    
+    override fun emoteAsync(guildId: ULong, emoteId: ULong): Deferred<PolyEmote?> = async { emote(guildId, emoteId) }
     override suspend fun emote(guildId: ULong, emoteId: ULong): PolyEmote? {
         return jda.getGuildById(guildId.toLong())?.retrieveEmoteById(emoteId.toLong())?.await()?.poly(this)
     }
     
-    override fun categoryAsync(categoryId: ULong): Deferred<PolyCategory?> {
-        return async { category(categoryId) }
-    }
-    
-    override suspend fun category(categoryId: ULong): PolyCategory? {
-        return jda.getCategoryById(categoryId.toLong())?.poly(this)
-    }
-    
-    override fun guildChannelAsync(guildChannelId: ULong): Deferred<PolyGuildChannel?> {
-        return async { guildChannel(guildChannelId) }
-    }
-    
-    override suspend fun guildChannel(guildChannelId: ULong): PolyGuildChannel? {
-        return jda.getGuildChannelById(guildChannelId.toLong())?.poly(this)
-    }
-    
-    override fun textChannelAsync(textChannelId: ULong): Deferred<PolyTextChannel?> {
-        return async { textChannel(textChannelId) }
-    }
-    
-    override suspend fun textChannel(textChannelId: ULong): PolyTextChannel? {
-        return jda.getTextChannelById(textChannelId.toLong())?.poly(this)
-    }
-    
-    override fun voiceChannelAsync(voiceChannelId: ULong): Deferred<PolyVoiceChannel?> {
-        return async { voiceChannel(voiceChannelId) }
-    }
-    
-    override suspend fun voiceChannel(voiceChannelId: ULong): PolyVoiceChannel? {
-        return jda.getVoiceChannelById(voiceChannelId.toLong())?.poly(this)
-    }
-    
+    override fun categoryAsync(categoryId: ULong): Deferred<PolyCategory?> = async { category(categoryId) }
+    override suspend fun category(categoryId: ULong): PolyCategory? = jda.getCategoryById(categoryId.toLong())?.poly(this)
+    override fun guildChannelAsync(guildChannelId: ULong): Deferred<PolyGuildChannel?> = async { guildChannel(guildChannelId) }
+    override suspend fun guildChannel(guildChannelId: ULong): PolyGuildChannel? = jda.getGuildChannelById(guildChannelId.toLong())?.poly(this)
+    override fun textChannelAsync(textChannelId: ULong): Deferred<PolyTextChannel?> = async { textChannel(textChannelId) }
+    override suspend fun textChannel(textChannelId: ULong): PolyTextChannel? = jda.getTextChannelById(textChannelId.toLong())?.poly(this)
+    override fun voiceChannelAsync(voiceChannelId: ULong): Deferred<PolyVoiceChannel?> = async { voiceChannel(voiceChannelId) }
+    override suspend fun voiceChannel(voiceChannelId: ULong): PolyVoiceChannel? = jda.getVoiceChannelById(voiceChannelId.toLong())?.poly(this)
     override fun poly(jdaEntity: Member): PolyMember = PolyMemberImpl(this, jdaEntity)
-    
     override fun poly(jdaEntity: User): PolyUser = PolyUserImpl(this, jdaEntity)
-    
     override fun poly(jdaEntity: Guild): PolyGuild = PolyGuildImpl(this, jdaEntity)
-    
     override fun poly(jdaEntity: Message): PolyMessage = PolyMessageImpl(this, jdaEntity)
-    
     override fun poly(jdaEntity: Role): PolyRole = PolyRoleImpl(this, jdaEntity)
-    
     override fun poly(jdaEntity: AbstractChannel): PolyChannel {
         return when (jdaEntity) {
             is PrivateChannel -> poly(jdaEntity)
@@ -324,7 +310,6 @@ public class PolyBotJDA(
     }
     
     override fun poly(jdaEntity: PrivateChannel): PolyPrivateChannel = PolyPrivateChannelImpl(this, jdaEntity)
-    
     override fun poly(jdaEntity: Category): PolyCategory {
         return PolyCategoryImpl(this, jdaEntity)
     }
@@ -365,5 +350,14 @@ public class PolyBotJDA(
             is Member -> poly(jdaEntity)
             else      -> error("Unknown type ${jdaEntity::class}, Could not find assignable ${PolyPermissionHolder::class}.")
         }
+    }
+    
+    private fun ensureState(state: State, message: String) {
+        if (this.state != state)
+            error(message)
+    }
+    
+    private fun updateState(newState: State) {
+        this.state = newState
     }
 }

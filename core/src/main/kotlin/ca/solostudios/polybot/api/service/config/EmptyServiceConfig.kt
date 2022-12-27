@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EmptyServiceConfig.kt is part of PolyBot
- * Last modified on 21-10-2022 02:42 p.m.
+ * Last modified on 27-12-2022 01:31 p.m.
  *
  * MIT License
  *
@@ -29,5 +29,5 @@
 package ca.solostudios.polybot.api.service.config
 
 public object EmptyServiceConfig : ServiceConfig {
-    override val configHolder: ServiceConfigHolder = ServiceConfigHolder(this)
+    override val configHolder: ServiceConfigHolder = ServiceConfigHolder()
 }

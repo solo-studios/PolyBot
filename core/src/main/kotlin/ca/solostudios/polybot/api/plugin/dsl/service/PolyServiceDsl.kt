@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceDsl.kt is part of PolyBot
- * Last modified on 22-11-2022 03:06 p.m.
+ * Last modified on 27-12-2022 01:31 p.m.
  *
  * MIT License
  *
@@ -32,6 +32,7 @@ import ca.solostudios.polybot.api.annotations.PolyPluginDslMarker
 import ca.solostudios.polybot.api.service.PolyService
 import ca.solostudios.polybot.api.service.config.ServiceConfig
 import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
+import org.kodein.di.DI
 import kotlin.reflect.KClass
 
 @PolyPluginDslMarker
@@ -39,7 +40,7 @@ public interface PolyServiceDsl {
     public fun <T : PolyService<C>, C : ServiceConfig> register(
             serviceClass: KClass<T>,
             configClass: KClass<C>,
-            serviceProvider: (config: C) -> T,
+            serviceProvider: (config: C, di: DI) -> T,
                                                                )
     
     public fun <T : PolyService<C>, C : ServiceConfig> configure(

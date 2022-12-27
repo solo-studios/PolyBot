@@ -2,7 +2,7 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ServiceConfigHolder.kt is part of PolyBot
+ * The file ServiceManagerLifecycleException.kt is part of PolyBot
  * Last modified on 27-12-2022 01:31 p.m.
  *
  * MIT License
@@ -26,23 +26,34 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service.config
+package ca.solostudios.polybot.common.service
 
-import ca.solostudios.polybot.api.service.config.property.ConfigProperty
-
-public class ServiceConfigHolder {
-    private val configMap = mutableMapOf<ConfigProperty<*>, Any?>()
+/**
+ * Service manager lifecycle exception
+ *
+ * @constructor Constructs a new runtime exception with the specified detail message.
+ * The cause is not initialized, and may subsequently be initialized by a
+ * call to [initCause].
+ *
+ * @param message The detail message. The detail message is saved for
+ * later retrieval by the [Throwable.message] method.
+ *
+ * @param suppressed The list of suppressed exceptions to be added.
+ */
+public open class ServiceManagerLifecycleException protected constructor(
+        message: String? = null,
+        /**
+         * Returns a list of all exceptions that were suppressed in order to deliver this exception.
+         */
+        public val suppressed: List<Exception> = listOf(),
+                                                                        ) : RuntimeException(message) {
     
-    public operator fun <T> get(configProperty: ConfigProperty<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        return configMap[configProperty] as T
+    init {
+        for (ex in suppressed)
+            addSuppressed(ex)
     }
     
-    public operator fun <T> set(configProperty: ConfigProperty<T>, value: T) {
-        configMap[configProperty] = value
-    }
-    
-    public operator fun <T> contains(configProperty: ConfigProperty<T>): Boolean {
-        return configProperty in configMap
+    public companion object {
+        private const val serialVersionUID: Long = -5756784818816401120L
     }
 }

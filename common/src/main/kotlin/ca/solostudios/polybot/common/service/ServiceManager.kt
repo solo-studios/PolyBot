@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceManager.kt is part of PolyBot
- * Last modified on 30-10-2022 02:06 p.m.
+ * Last modified on 27-12-2022 01:31 p.m.
  *
  * MIT License
  *
@@ -28,6 +28,7 @@
 
 package ca.solostudios.polybot.common.service
 
+import ca.solostudios.guava.kotlin.collect.ListMultimap
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 
@@ -38,7 +39,7 @@ public interface ServiceManager<S : Service> : Service {
     /**
      * All the services that have been registered to this service manager.
      */
-    public val services: List<S>
+    public val services: ListMultimap<KClass<out S>, S>
     
     /**
      * The amount of time it took for each service to start up

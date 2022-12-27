@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceDslImpl.kt is part of PolyBot
- * Last modified on 22-11-2022 03:06 p.m.
+ * Last modified on 27-12-2022 01:32 p.m.
  *
  * MIT License
  *
@@ -33,13 +33,19 @@ import ca.solostudios.polybot.api.plugin.dsl.service.PolyServiceDsl
 import ca.solostudios.polybot.api.service.PolyService
 import ca.solostudios.polybot.api.service.config.ServiceConfig
 import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
+import ca.solostudios.polybot.impl.service.PolyServiceManagerImpl
+import org.kodein.di.DI
+import org.slf4j.kotlin.*
 import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 internal class PolyServiceDslImpl : PolyServiceDsl {
+    private val logger by getLogger()
+    
     /**
      * List of service providers
      */
-    val serviceProviders = mutableListOf<ServiceInitializer<*, *>>()
+    val serviceInitializers = mutableListOf<ServiceInitializer<*, *>>()
     
     /**
      * Service configurers map, by service class -> list of service configurers
@@ -55,9 +61,9 @@ internal class PolyServiceDslImpl : PolyServiceDsl {
     override fun <T : PolyService<C>, C : ServiceConfig> register(
             serviceClass: KClass<T>,
             configClass: KClass<C>,
-            serviceProvider: (config: C) -> T,
+            serviceProvider: (C, DI) -> T,
                                                                  ) {
-        serviceProviders += ServiceInitializer(serviceClass, configClass, serviceProvider)
+        serviceInitializers += ServiceInitializer(serviceClass, configClass, serviceProvider)
     }
     
     override fun <T : PolyService<C>, C : ServiceConfig> configure(
@@ -70,5 +76,27 @@ internal class PolyServiceDslImpl : PolyServiceDsl {
     
     override fun <C : ServiceConfig> configInitializer(configClass: KClass<C>, initializer: (configHolder: ServiceConfigHolder) -> C) {
         serviceConfigInitializers[configClass] = ServiceConfigInitializer(configClass, initializer)
+    }
+    
+    fun applyServiceDsl(serviceManager: PolyServiceManagerImpl, di: DI) {
+        for (serviceInitializer in serviceInitializers) {
+            val serviceClass = serviceInitializer.serviceClass
+            val configClass = serviceInitializer.configClass
+            val configInitializer = serviceConfigInitializers[configClass]
+            val config = configInitializer?.run { this.configInitializer(ServiceConfigHolder()) }
+                ?: configClass.objectInstance
+                ?: error("Could not instantiate config instance for type $configClass due to not being an object and not or not being found in the config initializers.")
+            val initializer = serviceInitializer.initializer
+            
+            val service = initializer(config, di)
+            
+            serviceConfigurers[serviceClass].forEach {
+                if (configClass == it.configClass || configClass.isSubclassOf(it.configClass)) {
+                
+                } else {
+                    logger.warn { "Could not invoke an initializer for $serviceClass, as the initializer specifies" }
+                }
+            }
+        }
     }
 }

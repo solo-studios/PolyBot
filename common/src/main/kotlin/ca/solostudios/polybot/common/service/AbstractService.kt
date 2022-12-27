@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file AbstractService.kt is part of PolyBot
- * Last modified on 30-10-2022 02:06 p.m.
+ * Last modified on 27-12-2022 01:32 p.m.
  *
  * MIT License
  *
@@ -28,18 +28,20 @@
 
 package ca.solostudios.polybot.common.service
 
+import ca.solostudios.polybot.common.service.Service.State
+
 /**
  * Abstract service to make creating services easier.
  */
 public abstract class AbstractService : Service {
-    final override var state: Service.State = Service.State.INITIALIZING
+    final override var state: State = State.INITIALIZING
         protected set
     
     final override val shutdown: Boolean
-        get() = state == Service.State.SHUTDOWN
+        get() = state == State.SHUTDOWN
     
     final override val running: Boolean
-        get() = state == Service.State.RUNNING
+        get() = state == State.RUNNING
     
     final override val active: Boolean
         get() = state.active
@@ -48,29 +50,38 @@ public abstract class AbstractService : Service {
     final override suspend fun shutdown() {
         if (!running)
             return
-        
-        state = Service.State.SHUTTING_DOWN
-        
+    
+        updateState(State.SHUTTING_DOWN)
+    
         serviceShutdown() // Throws an exception on failure
-        
-        state = Service.State.SHUTDOWN
+    
+        updateState(State.SHUTDOWN)
     }
     
     @Throws(Exception::class)
     final override suspend fun start() {
         if (state.active) // If this service is active, just return
             return
-        
-        state = Service.State.STARTING
-        
+    
+        updateState(State.STARTING)
+    
         serviceStart() // Throws an exception on failure
-        
-        state = Service.State.RUNNING
+    
+        updateState(State.RUNNING)
     }
     
     @Throws(Exception::class)
-    protected abstract fun serviceStart()
+    protected abstract suspend fun serviceStart()
     
     @Throws(Exception::class)
-    protected abstract fun serviceShutdown()
+    protected abstract suspend fun serviceShutdown()
+    
+    protected fun ensureState(state: State, message: String) {
+        if (this.state != state)
+            error(message)
+    }
+    
+    protected fun updateState(newState: State) {
+        this.state = newState
+    }
 }
