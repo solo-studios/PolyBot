@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManagerImpl.kt is part of PolyBot
- * Last modified on 27-12-2022 01:31 p.m.
+ * Last modified on 27-12-2022 07:59 p.m.
  *
  * MIT License
  *
@@ -48,8 +48,8 @@ import kotlin.time.measureTimedValue
 
 internal class PolyServiceManagerImpl(
         override val config: EmptyServiceConfig,
-        override val polybot: PolyBot,
-                                     ) : AbstractPolyService<EmptyServiceConfig>(config, polybot),
+        override val bot: PolyBot,
+                                     ) : AbstractPolyService<EmptyServiceConfig>(config, bot),
                                          PolyServiceManager<EmptyServiceConfig, PolyService<*>> {
     private val logger by getLogger()
     

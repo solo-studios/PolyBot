@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginManagerImpl.kt is part of PolyBot
- * Last modified on 22-11-2022 03:06 p.m.
+ * Last modified on 10-03-2023 03:29 p.m.
  *
  * MIT License
  *
@@ -38,7 +38,6 @@ import ca.solostudios.polybot.api.plugin.finder.PluginCandidateFinder
 import ca.solostudios.polybot.api.plugin.info.PluginInfo
 import ca.solostudios.polybot.api.util.StringPair
 import ca.solostudios.polybot.api.util.error
-import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import kotlinx.coroutines.Dispatchers
@@ -62,12 +61,12 @@ import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 
 public class PolyPluginManagerImpl(
-        override val polybot: PolyBot,
+        override val bot: PolyBot,
         override val candidateFinders: List<PluginCandidateFinder>
                                   ) : PolyPluginManager, DIAware {
     private val logger by getLogger()
     
-    override val di: DI = polybot.di
+    override val di: DI = bot.di
     
     override val plugins: List<PolyPluginContainer<*>>
         get() = pluginMap.entries.map { it.value }
@@ -107,7 +106,7 @@ public class PolyPluginManagerImpl(
                 for (candidate in candidates) {
                     for (path in candidate.paths) {
                         logger.debug { "Adding path $path to classloader." }
-                        polybot.classLoader.addURL(path.toUri().toURL())
+                        bot.classLoader.addURL(path.toUri().toURL())
                     }
                 }
                 
@@ -115,9 +114,9 @@ public class PolyPluginManagerImpl(
                     async {
                         val entrypoints = mutableListOf<PolyPlugin>()
                         for (entrypoint in candidate.info.entrypoints) {
-                            logger.debug { "Loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version}" }
+                            logger.debug { "Loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version?.formatted}" }
                             try {
-                                val kClass = polybot.classLoader.loadClass(entrypoint).kotlin
+                                val kClass = bot.classLoader.loadClass(entrypoint).kotlin
                                 
                                 if (!kClass.isSubclassOf(PolyPlugin::class)) {
                                     logger.error { "Error loading plugin entrypoint; class $kClass is not an instance of ${PolyPlugin::class}" }
@@ -129,11 +128,11 @@ public class PolyPluginManagerImpl(
                                 
                                 entrypoints.add(pluginInstance)
                             } catch (e: Exception) {
-                                logger.error(e) { "Error loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version}" }
+                                logger.error(e) { "Error loading entrypoint class $entrypoint for plugin ${candidate.info.group}:${candidate.info.id}:${candidate.info.version?.formatted}" }
                                 error(cause = e, "Could not properly load plugin entrypoint classes due to class loading errors...")
                             }
                         }
-                        val plugin = PolyPluginContainerImpl(entrypoints, candidate.info, candidate.paths, candidate.filesystem)
+                        val plugin = PolyPluginContainerImpl(entrypoints, candidate.info, candidate.paths)
                         pluginMap[candidate.info.group, candidate.info.id] = plugin
                     }
                 }.awaitAll()
@@ -186,7 +185,7 @@ public class PolyPluginManagerImpl(
                     if (path.extension == "jar")
                         resolveJarCandidate(path)
                     else
-                        resolveFolderCandidate(path) // TODO: 2022-08-16 Resolve Jar Candidate
+                        resolveFolderCandidate(path)
                 }
             }.awaitAll().filterNotNull()
             
@@ -197,26 +196,24 @@ public class PolyPluginManagerImpl(
     }
     
     private suspend fun resolveFolderCandidate(candidatePath: Path): PolyPluginCandidate? {
-        val folderFs = withContext(Dispatchers.IO) { FileSystems.newFileSystem(candidatePath, null) }
-        val pluginInfo = loadPluginJson(folderFs) ?: return null
-        
-        return PolyPluginCandidate(pluginInfo, listOf(candidatePath), folderFs)
+        val pluginInfo = loadPluginJson(candidatePath.resolve(PluginInfo.PLUGIN_INFO_FILE)) ?: return null
+    
+        return PolyPluginCandidate(pluginInfo, listOf(candidatePath))
     }
     
     private suspend fun resolveJarCandidate(candidatePath: Path): PolyPluginCandidate? {
-        val jarFs = withContext(Dispatchers.IO) { FileSystems.newFileSystem(candidatePath, null) }
-        val pluginInfo = loadPluginJson(jarFs) ?: return null
-        
-        return PolyPluginCandidate(pluginInfo, listOf(candidatePath), jarFs)
+        val jarFs = withContext(Dispatchers.IO) { FileSystems.newFileSystem(candidatePath, null as ClassLoader?) }
+        val pluginInfo = loadPluginJson(jarFs.getPath(PluginInfo.PLUGIN_INFO_FILE)) ?: return null
+    
+        return PolyPluginCandidate(pluginInfo, listOf(candidatePath))
     }
     
     @OptIn(ExperimentalSerializationApi::class)
-    private suspend fun loadPluginJson(fs: FileSystem): PluginInfo? {
+    private suspend fun loadPluginJson(pluginJsonPath: Path): PluginInfo? {
         return withContext(Dispatchers.IO) {
-            val pluginJsonPath = fs.getPath("polybot.plugin.json")
             if (pluginJsonPath.notExists())
                 return@withContext null
-    
+            
             Json.decodeFromStream(pluginJsonPath.inputStream())
         }
     }

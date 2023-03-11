@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 27-12-2022 01:32 p.m.
+ * Last modified on 10-03-2023 03:29 p.m.
  *
  * MIT License
  *
@@ -51,6 +51,7 @@ import ca.solostudios.polybot.api.jda.builder.InlineJDABuilder
 import ca.solostudios.polybot.api.plugin.finder.ClasspathCandidateFinder
 import ca.solostudios.polybot.api.plugin.finder.FlatDirectoryCandidateFinder
 import ca.solostudios.polybot.api.plugin.loader.PolyClassLoader
+import ca.solostudios.polybot.api.service.PolyService
 import ca.solostudios.polybot.api.service.config.EmptyServiceConfig
 import ca.solostudios.polybot.api.util.ext.ScheduledThreadPool
 import ca.solostudios.polybot.api.util.ext.poly
@@ -71,6 +72,7 @@ import ca.solostudios.polybot.impl.entities.PolyRoleImpl
 import ca.solostudios.polybot.impl.entities.PolyTextChannelImpl
 import ca.solostudios.polybot.impl.entities.PolyUserImpl
 import ca.solostudios.polybot.impl.entities.PolyVoiceChannelImpl
+import ca.solostudios.polybot.impl.event.PolyEventManagerImpl
 import ca.solostudios.polybot.impl.plugin.PolyPluginManagerImpl
 import ca.solostudios.polybot.impl.plugin.dsl.PolyPluginDslImpl
 import ca.solostudios.polybot.impl.service.PolyServiceManagerImpl
@@ -104,10 +106,16 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.VoiceChannel
 import org.kodein.di.DI
 import org.kodein.di.LateInitDI
+import org.kodein.di.bind
+import org.kodein.di.bindings.subTypes
+import org.kodein.di.provider
+import org.kodein.di.with
+import org.kodein.type.jvmType
 import org.slf4j.kotlin.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 import kotlin.random.asKotlinRandom
+import kotlin.reflect.KClass
 
 internal class PolyBotJDA(
         override val config: Config,
@@ -146,8 +154,7 @@ internal class PolyBotJDA(
     
     }
     
-    override val eventManager: PolyEventManager
-        get() = TODO("Not yet implemented")
+    override val eventManager: PolyEventManager = PolyEventManagerImpl(this)
     
     override val serviceManager = PolyServiceManagerImpl(EmptyServiceConfig, this)
     
@@ -184,6 +191,8 @@ internal class PolyBotJDA(
     
         val polyDsl = PolyPluginDslImpl()
     
+        polyDsl.applyConfigSpecs(config)
+    
         logger.debug { "Starting plugins..." }
     
         polyPluginManager.startPlugins(polyDsl)
@@ -194,15 +203,16 @@ internal class PolyBotJDA(
     
         val di = DI {
             // bindSet<>()
-            // bind<PolyService<*>>().subTypes() with { type ->
-            //     when (val jvmType = type.getRaw().jvmType) {
-            //         is Class<*> -> {
-            //             provider { serviceManager.getService(jvmType.kotlin as KClass<PolyService<*>>) }
-            //         }
-            //
-            //         else        -> error("")
-            //     }
-            // }
+            bind<PolyService<*>>().subTypes() with { type ->
+                when (val jvmType = type.getRaw().jvmType) {
+                    is Class<*> -> {
+                        provider { serviceManager.getService(jvmType.kotlin as KClass<PolyService<*>>) }
+                        // require()
+                    }
+                
+                    else        -> error("")
+                }
+            }
             //
             // this.externalSources += ExternalSource { key ->
             //     when (key.type.jvmType) {

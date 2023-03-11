@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEntity.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 03-02-2023 01:23 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,8 @@
 package ca.solostudios.polybot.api.entities
 
 import ca.solostudios.polybot.api.PolyBot
+import ca.solostudios.polybot.api.PolyObject
 
-public interface PolyEntity {
-    public val bot: PolyBot
+public interface PolyEntity : PolyObject {
+    public override val bot: PolyBot
 }

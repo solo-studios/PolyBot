@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyEventManager.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 10-03-2023 03:23 p.m.
  *
  * MIT License
  *
@@ -70,5 +70,5 @@ public interface PolyEventManager : PolyObject {
      * @param clazz The event type to dispatch
      * @see listeners
      */
-    public fun <T : PolyEvent> dispatch(event: T, clazz: KClass<out T>)
+    public suspend fun <T : PolyEvent> dispatch(event: T, clazz: KClass<out T>)
 }

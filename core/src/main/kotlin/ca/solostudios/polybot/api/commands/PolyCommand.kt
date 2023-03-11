@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCommand.kt is part of PolyBot
- * Last modified on 03-03-2022 12:30 p.m.
+ * Last modified on 21-02-2023 05:49 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,10 @@
 
 package ca.solostudios.polybot.api.commands
 
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-
-public abstract class PolyCommand(override val di: DI) : DIAware
+/**
+ * Marks a class as a command. Processed by the annotation processor or reflectively at runtime.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+public annotation class PolyCommand

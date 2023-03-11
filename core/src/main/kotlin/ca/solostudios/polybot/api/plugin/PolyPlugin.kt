@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPlugin.kt is part of PolyBot
- * Last modified on 30-10-2022 02:09 p.m.
+ * Last modified on 03-03-2023 01:41 p.m.
  *
  * MIT License
  *
@@ -28,11 +28,10 @@
 
 package ca.solostudios.polybot.api.plugin
 
-import ca.solostudios.polybot.api.PolyBot
 import ca.solostudios.polybot.api.annotations.PolyPluginDslMarker
 import ca.solostudios.polybot.api.plugin.dsl.PolyPluginDsl
 
-public abstract class PolyPlugin(polybot: PolyBot) {
+public abstract class PolyPlugin {
     @PolyPluginDslMarker
     public abstract fun PolyPluginDsl.init()
 }

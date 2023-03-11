@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyCommandManager.kt is part of PolyBot
- * Last modified on 10-09-2022 03:17 p.m.
+ * Last modified on 27-12-2022 07:59 p.m.
  *
  * MIT License
  *
@@ -32,20 +32,18 @@ import ca.solostudios.polybot.api.PolyBot
 import ca.solostudios.polybot.api.PolyObject
 import ca.solostudios.polybot.api.cloud.CommandExecutionCoordinatorSupplier
 import ca.solostudios.polybot.api.cloud.CommandManager
-import ca.solostudios.polybot.api.cloud.event.MessageEvent
 import cloud.commandframework.internal.CommandRegistrationHandler
-import cloud.commandframework.meta.CommandMeta
 
 public abstract class PolyCommandManager(
-        override val polybot: PolyBot,
+        override val bot: PolyBot,
         commandExecutionCoordinator: CommandExecutionCoordinatorSupplier,
         commandRegistrationHandler: CommandRegistrationHandler,
                                         ) : CommandManager(commandExecutionCoordinator, commandRegistrationHandler), PolyObject {
-    override fun hasPermission(sender: MessageEvent, permission: String): Boolean {
-        TODO("Not yet implemented")
-    }
-    
-    override fun createDefaultCommandMeta(): CommandMeta {
-        TODO("Not yet implemented")
-    }
+    // override fun hasPermission(sender: MessageEvent, permission: String): Boolean {
+    //     TODO("Not yet implemented")
+    // }
+    //
+    // override fun createDefaultCommandMeta(): CommandMeta {
+    //     TODO("Not yet implemented")
+    // }
 }

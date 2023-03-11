@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file TestDeserializePluginInfo.kt is part of PolyBot
- * Last modified on 20-08-2022 05:43 p.m.
+ * Last modified on 10-03-2023 03:29 p.m.
  *
  * MIT License
  *
@@ -38,8 +38,8 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 class TestDeserializePluginInfo {
@@ -48,8 +48,8 @@ class TestDeserializePluginInfo {
         val pluginInfoString = this::class.java.getResource("/plugin-info/invalid/invalid-version.json")!!.openStream()
                 .bufferedReader()
                 .readText()
-        
-        assertFailsWith<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/invalid-json.json was parsed but should have failed the blank name check.") {
+    
+        assertThrows<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/invalid-json.json was parsed but should have failed the blank name check.") {
             Json.decodeFromString<PluginInfo>(pluginInfoString)
         }
     }
@@ -59,8 +59,8 @@ class TestDeserializePluginInfo {
         val pluginInfoString = this::class.java.getResource("/plugin-info/invalid/blank-name.json")!!.openStream()
                 .bufferedReader()
                 .readText()
-        
-        assertFailsWith<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/blank-name.json was parsed but should have failed the blank name check.") {
+    
+        assertThrows<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/blank-name.json was parsed but should have failed the blank name check.") {
             Json.decodeFromString<PluginInfo>(pluginInfoString)
         }
     }
@@ -70,8 +70,8 @@ class TestDeserializePluginInfo {
         val pluginInfoString = this::class.java.getResource("/plugin-info/invalid/blank-description.json")!!.openStream()
                 .bufferedReader()
                 .readText()
-        
-        assertFailsWith<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/blank-description.json was parsed but should have failed the blank description check.") {
+    
+        assertThrows<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/blank-description.json was parsed but should have failed the blank description check.") {
             Json.decodeFromString<PluginInfo>(pluginInfoString)
         }
     }
@@ -81,8 +81,8 @@ class TestDeserializePluginInfo {
         val pluginInfoString = this::class.java.getResource("/plugin-info/invalid/blank-license.json")!!.openStream()
                 .bufferedReader()
                 .readText()
-        
-        assertFailsWith<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/blank-license.json was parsed but should have failed the blank description check.") {
+    
+        assertThrows<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/blank-license.json was parsed but should have failed the blank description check.") {
             Json.decodeFromString<PluginInfo>(pluginInfoString)
         }
     }
@@ -92,8 +92,8 @@ class TestDeserializePluginInfo {
         val pluginInfoString = this::class.java.getResource("/plugin-info/invalid/invalid-group.json")!!.openStream()
                 .bufferedReader()
                 .readText()
-        
-        assertFailsWith<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/invalid-group.json was parsed but should have failed the blank description check.") {
+    
+        assertThrows<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/invalid-group.json was parsed but should have failed the blank description check.") {
             Json.decodeFromString<PluginInfo>(pluginInfoString)
         }
     }
@@ -103,8 +103,8 @@ class TestDeserializePluginInfo {
         val pluginInfoString = this::class.java.getResource("/plugin-info/invalid/invalid-id.json")!!.openStream()
                 .bufferedReader()
                 .readText()
-        
-        assertFailsWith<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/invalid-id.json was parsed but should have failed the blank description check.") {
+    
+        assertThrows<IllegalArgumentException>("Plugin info at location /plugin-info/invalid/invalid-id.json was parsed but should have failed the blank description check.") {
             Json.decodeFromString<PluginInfo>(pluginInfoString)
         }
     }

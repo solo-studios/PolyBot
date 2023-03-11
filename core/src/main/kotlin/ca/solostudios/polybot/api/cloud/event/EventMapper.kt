@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file SnowflakeEntity.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * The file EventMapper.kt is part of PolyBot
+ * Last modified on 21-02-2023 05:47 p.m.
  *
  * MIT License
  *
@@ -26,21 +26,19 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.entities
+package ca.solostudios.polybot.api.cloud.event
 
-public interface SnowflakeEntity : Comparable<SnowflakeEntity> {
-    public val id: ULong
-        get() = snowflake.id
-    
-    public val idLong: Long
-        get() = snowflake.idLong
-    
-    public val idString: String
-        get() = snowflake.idString
-    
-    public val snowflake: Snowflake
-    
-    override fun compareTo(other: SnowflakeEntity): Int {
-        return snowflake.compareTo(other.snowflake)
+import ca.solostudios.polybot.api.PolyBot
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+
+public object EventMapper {
+    public fun jdaEventToPlatformEvent(bot: PolyBot, event: MessageReceivedEvent): MessageEvent {
+        return when {
+            event.isFromGuild && !event.isWebhookMessage -> GuildMessageEvent(bot, event)
+            !event.isFromGuild                           -> PrivateMessageEvent(bot, event)
+            else                                         -> GenericMessageEvent(bot, event)
+        }
     }
+    
+    public fun platformEventToJDAEvent(event: MessageEvent): MessageReceivedEvent = event.event
 }

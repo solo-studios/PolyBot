@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 27-12-2022 01:31 p.m.
+ * Last modified on 21-02-2023 06:15 p.m.
  *
  * MIT License
  *
@@ -42,17 +42,23 @@ repositories {
 }
 
 kotlin {
+    jvmToolchain(11)
+    
     explicitApi()
     target {
         compilations.configureEach {
             kotlinOptions {
-                jvmTarget = "11"
                 apiVersion = "1.7"
                 languageVersion = "1.7"
             }
         }
     }
 }
+
+java {
+    withSourcesJar()
+}
+
 dependencies {
     // Kotlin
     api(libs.bundles.kotlin.base)
@@ -94,11 +100,4 @@ tasks {
     withType<Jar>().configureEach {
         from(rootProject.file("LICENSE"))
     }
-}
-
-java {
-    withSourcesJar()
-    
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
 }

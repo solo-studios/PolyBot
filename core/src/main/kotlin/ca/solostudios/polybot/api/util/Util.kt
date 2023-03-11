@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file Util.kt is part of PolyBot
- * Last modified on 22-11-2022 03:06 p.m.
+ * Last modified on 27-12-2022 02:06 p.m.
  *
  * MIT License
  *
@@ -36,10 +36,3 @@ import java.nio.file.Path
 public inline fun path(first: String, vararg more: String): Path = Path.of(first, *more)
 
 public inline fun file(pathname: String): File = File(pathname)
-
-/**
- * Throws an [IllegalStateException] with the given [message] and [cause].
- */
-public inline fun error(cause: Throwable? = null, message: Any? = null): Nothing {
-    throw IllegalStateException(message.toString(), cause)
-}

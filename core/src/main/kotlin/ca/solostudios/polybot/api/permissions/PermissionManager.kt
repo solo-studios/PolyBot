@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AbstractPolyService.kt is part of PolyBot
- * Last modified on 27-12-2022 07:59 p.m.
+ * The file PermissionManager.kt is part of PolyBot
+ * Last modified on 03-02-2023 12:29 p.m.
  *
  * MIT License
  *
@@ -26,16 +26,15 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.api.permissions
 
-import ca.solostudios.polybot.api.PolyBot
-import ca.solostudios.polybot.api.service.config.ServiceConfig
-import ca.solostudios.polybot.common.service.AbstractService
+import ca.solostudios.polybot.api.PolyObject
+import ca.solostudios.polybot.api.entities.PolyUser
 
-/**
- * Abstract service to make creating services easier.
- */
-public abstract class AbstractPolyService<C : ServiceConfig>(
-        override val config: C,
-        override val bot: PolyBot
-                                                            ) : AbstractService(), PolyService<C>
+public interface PermissionManager : PolyObject {
+    public fun hasPermission(event: PolyUser, permission: String): Boolean
+    
+    public fun permission(key: String): Permission?
+    
+    public fun registerPermission(permission: Permission)
+}

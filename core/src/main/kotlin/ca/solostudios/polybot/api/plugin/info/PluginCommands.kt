@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AbstractPolyService.kt is part of PolyBot
- * Last modified on 27-12-2022 07:59 p.m.
+ * The file PluginCommands.kt is part of PolyBot
+ * Last modified on 03-02-2023 01:48 p.m.
  *
  * MIT License
  *
@@ -26,16 +26,18 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.api.plugin.info
 
-import ca.solostudios.polybot.api.PolyBot
-import ca.solostudios.polybot.api.service.config.ServiceConfig
-import ca.solostudios.polybot.common.service.AbstractService
+import kotlinx.serialization.Serializable
 
-/**
- * Abstract service to make creating services easier.
- */
-public abstract class AbstractPolyService<C : ServiceConfig>(
-        override val config: C,
-        override val bot: PolyBot
-                                                            ) : AbstractService(), PolyService<C>
+@Serializable
+public data class PluginCommands(
+        /**
+         * The list of classes to be loaded as commands
+         */
+        val commandClasses: List<String>,
+                                ) {
+    public companion object {
+        public const val PLUGIN_COMMAND_INFO_FILE: String = "polybot.commands.json"
+    }
+}

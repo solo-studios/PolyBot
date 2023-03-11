@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PrivateMessageEvent.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 27-12-2022 07:47 p.m.
  *
  * MIT License
  *
@@ -31,7 +31,7 @@ package ca.solostudios.polybot.api.cloud.event
 import ca.solostudios.polybot.api.PolyBot
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-public data class PrivateMessageEvent(
-        override val bot: PolyBot,
-        override val event: MessageReceivedEvent,
-                                     ) : MessageEvent(bot, event)
+public class PrivateMessageEvent(
+        bot: PolyBot,
+        event: MessageReceivedEvent,
+                                ) : MessageEvent(bot, event)

@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2021-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2021-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyBot
- * Last modified on 09-09-2022 10:45 a.m.
+ * Last modified on 03-02-2023 01:10 p.m.
  *
  * MIT License
  *
@@ -32,9 +32,11 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
+        maven("https://maven.solo-studios.ca/releases")
     }
 }
 
 include(":core")
 include(":common")
 include(":gradle-plugin")
+include(":annotation-processor")

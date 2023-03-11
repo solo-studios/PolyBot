@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginContainer.kt is part of PolyBot
- * Last modified on 10-09-2022 11:59 p.m.
+ * Last modified on 03-03-2023 01:37 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,6 @@
 package ca.solostudios.polybot.api.plugin
 
 import ca.solostudios.polybot.api.plugin.info.PluginInfo
-import java.nio.file.FileSystem
 import java.nio.file.Path
 
 public interface PolyPluginContainer<T : PolyPlugin> {
@@ -38,6 +37,4 @@ public interface PolyPluginContainer<T : PolyPlugin> {
     public val info: PluginInfo
     
     public val paths: List<Path>
-    
-    public val filesystem: FileSystem
 }

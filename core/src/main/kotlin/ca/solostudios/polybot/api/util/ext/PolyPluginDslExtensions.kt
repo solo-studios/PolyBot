@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginDslExtensions.kt is part of PolyBot
- * Last modified on 22-11-2022 03:06 p.m.
+ * Last modified on 03-02-2023 01:24 p.m.
  *
  * MIT License
  *
@@ -40,6 +40,7 @@ import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
 import cloud.commandframework.annotations.AnnotationAccessor
 import cloud.commandframework.annotations.injection.ParameterInjector
 import cloud.commandframework.context.CommandContext
+import org.kodein.di.DI
 import kotlin.reflect.KClass
 
 public inline fun <reified E : Exception> PolyCommandDsl.exceptionHandler(
@@ -67,7 +68,7 @@ public fun <T : Any> PolyCommandDsl.injector(
 }
 
 public inline fun <reified T : PolyService<C>, reified C : ServiceConfig> PolyServiceDsl.register(
-        noinline serviceProvider: (config: C) -> T
+        noinline serviceProvider: (config: C, di: DI) -> T
                                                                                                  ) {
     return register(T::class, C::class, serviceProvider)
 }

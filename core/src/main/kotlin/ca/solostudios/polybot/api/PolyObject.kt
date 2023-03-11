@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyObject.kt is part of PolyBot
- * Last modified on 09-09-2022 12:11 p.m.
+ * Last modified on 27-12-2022 07:59 p.m.
  *
  * MIT License
  *
@@ -35,5 +35,5 @@ public interface PolyObject {
     /**
      * The polybot reference for this object
      */
-    public val polybot: PolyBot
+    public val bot: PolyBot
 }

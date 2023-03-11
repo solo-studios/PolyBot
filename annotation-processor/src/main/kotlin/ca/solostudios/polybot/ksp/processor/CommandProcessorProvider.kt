@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file AbstractPolyService.kt is part of PolyBot
- * Last modified on 27-12-2022 07:59 p.m.
+ * The file CommandProcessorProvider.kt is part of PolyBot
+ * Last modified on 27-12-2022 01:56 p.m.
  *
  * MIT License
  *
@@ -26,16 +26,17 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.service
+package ca.solostudios.polybot.ksp.processor
 
-import ca.solostudios.polybot.api.PolyBot
-import ca.solostudios.polybot.api.service.config.ServiceConfig
-import ca.solostudios.polybot.common.service.AbstractService
+import ca.solostudios.kspservice.annotation.Service
+import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
 
-/**
- * Abstract service to make creating services easier.
- */
-public abstract class AbstractPolyService<C : ServiceConfig>(
-        override val config: C,
-        override val bot: PolyBot
-                                                            ) : AbstractService(), PolyService<C>
+@Service(SymbolProcessorProvider::class)
+internal class CommandProcessorProvider : SymbolProcessorProvider {
+    override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
+        return CommandProcessor(environment)
+    }
+    
+}

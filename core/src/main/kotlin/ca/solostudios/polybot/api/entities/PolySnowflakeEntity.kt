@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolySnowflakeEntity.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 03-02-2023 01:23 p.m.
  *
  * MIT License
  *
@@ -28,4 +28,19 @@
 
 package ca.solostudios.polybot.api.entities
 
-public interface PolySnowflakeEntity : PolyEntity, SnowflakeEntity
+public interface PolySnowflakeEntity : PolyEntity, Comparable<PolySnowflakeEntity> {
+    public val id: ULong
+        get() = snowflake.id
+    
+    public val idLong: Long
+        get() = snowflake.idLong
+    
+    public val idString: String
+        get() = snowflake.idString
+    
+    public val snowflake: Snowflake
+    
+    override fun compareTo(other: PolySnowflakeEntity): Int {
+        return snowflake.compareTo(other.snowflake)
+    }
+}

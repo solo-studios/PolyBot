@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginCandidate.kt is part of PolyBot
- * Last modified on 10-09-2022 03:31 p.m.
+ * Last modified on 03-03-2023 01:38 p.m.
  *
  * MIT License
  *
@@ -29,11 +29,9 @@
 package ca.solostudios.polybot.impl.plugin
 
 import ca.solostudios.polybot.api.plugin.info.PluginInfo
-import java.nio.file.FileSystem
 import java.nio.file.Path
 
 public data class PolyPluginCandidate(
         val info: PluginInfo,
         val paths: List<Path>,
-        val filesystem: FileSystem,
                                      )

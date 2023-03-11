@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyExtensions.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 27-12-2022 07:59 p.m.
  *
  * MIT License
  *
@@ -77,7 +77,7 @@ public fun Member.poly(bot: PolyBot): PolyMember = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: Member): PolyMember = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Member): PolyMember = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -93,7 +93,7 @@ public fun User.poly(bot: PolyBot): PolyUser = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: User): PolyUser = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: User): PolyUser = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -109,7 +109,7 @@ public fun Guild.poly(bot: PolyBot): PolyGuild = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: Guild): PolyGuild = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Guild): PolyGuild = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -125,7 +125,7 @@ public fun Message.poly(bot: PolyBot): PolyMessage = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: Message): PolyMessage = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Message): PolyMessage = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -141,7 +141,7 @@ public fun Role.poly(bot: PolyBot): PolyRole = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: Role): PolyRole = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Role): PolyRole = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -157,7 +157,7 @@ public fun AbstractChannel.poly(bot: PolyBot): PolyChannel = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: AbstractChannel): PolyChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: AbstractChannel): PolyChannel = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -173,7 +173,7 @@ public fun GuildChannel.poly(bot: PolyBot): PolyGuildChannel = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: GuildChannel): PolyGuildChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: GuildChannel): PolyGuildChannel = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -189,7 +189,7 @@ public fun MessageChannel.poly(bot: PolyBot): PolyMessageChannel = bot.poly(this
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: MessageChannel): PolyMessageChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: MessageChannel): PolyMessageChannel = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -205,7 +205,7 @@ public fun TextChannel.poly(bot: PolyBot): PolyTextChannel = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: TextChannel): PolyTextChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: TextChannel): PolyTextChannel = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -221,7 +221,7 @@ public fun Category.poly(bot: PolyBot): PolyCategory = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: Category): PolyCategory = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Category): PolyCategory = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -237,7 +237,7 @@ public fun PrivateChannel.poly(bot: PolyBot): PolyPrivateChannel = bot.poly(this
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: PrivateChannel): PolyPrivateChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: PrivateChannel): PolyPrivateChannel = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -253,7 +253,7 @@ public fun VoiceChannel.poly(bot: PolyBot): PolyVoiceChannel = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: VoiceChannel): PolyVoiceChannel = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: VoiceChannel): PolyVoiceChannel = bot.poly(jdaEntity)
 
 public fun MessageEmbed.poly(bot: PolyBot): PolyMessageEmbed = bot.poly(this)
 
@@ -263,7 +263,7 @@ public fun MessageEmbed.poly(bot: PolyBot): PolyMessageEmbed = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: MessageEmbed): PolyMessageEmbed = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: MessageEmbed): PolyMessageEmbed = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -279,7 +279,7 @@ public fun Emote.poly(bot: PolyBot): PolyEmote = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: Emote): PolyEmote = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: Emote): PolyEmote = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -295,7 +295,7 @@ public fun IMentionable.poly(bot: PolyBot): PolyMentionable = bot.poly(this)
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: IMentionable): PolyMentionable = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: IMentionable): PolyMentionable = bot.poly(jdaEntity)
 
 /**
  * Wrap this JDA entity in the respective polybot entity.
@@ -311,4 +311,4 @@ public fun IPermissionHolder.poly(bot: PolyBot): PolyPermissionHolder = bot.poly
  * @param jdaEntity The JDA entity to wrap.
  * @return The wrapped JDA entity.
  */
-public fun PolyObject.poly(jdaEntity: IPermissionHolder): PolyPermissionHolder = polybot.poly(jdaEntity)
+public fun PolyObject.poly(jdaEntity: IPermissionHolder): PolyPermissionHolder = bot.poly(jdaEntity)

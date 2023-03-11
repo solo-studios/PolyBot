@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file GuildMessageEvent.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * Last modified on 10-03-2023 03:29 p.m.
  *
  * MIT License
  *
@@ -34,10 +34,10 @@ import ca.solostudios.polybot.api.entities.PolyTextChannel
 import ca.solostudios.polybot.api.util.ext.poly
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-public data class GuildMessageEvent(
-        override val bot: PolyBot,
-        override val event: MessageReceivedEvent
-                                   ) : MessageEvent(bot, event) {
+public class GuildMessageEvent(
+        bot: PolyBot,
+        event: MessageReceivedEvent
+                              ) : MessageEvent(bot, event) {
     public override val channel: PolyTextChannel
         get() = event.textChannel.poly(bot)
     

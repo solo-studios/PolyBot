@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginDslImpl.kt is part of PolyBot
- * Last modified on 27-12-2022 01:31 p.m.
+ * Last modified on 27-12-2022 05:55 p.m.
  *
  * MIT License
  *
@@ -35,13 +35,14 @@ import ca.solostudios.polybot.api.plugin.dsl.service.PolyServiceDsl
 import ca.solostudios.polybot.impl.plugin.dsl.command.PolyCommandDslImpl
 import ca.solostudios.polybot.impl.plugin.dsl.service.PolyServiceDslImpl
 import ca.solostudios.polybot.impl.service.PolyServiceManagerImpl
+import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
 import org.kodein.di.DI
 
 internal class PolyPluginDslImpl : PolyPluginDsl {
-    val commandDsl = PolyCommandDslImpl()
+    private val commandDsl = PolyCommandDslImpl()
     private val serviceDsl = PolyServiceDslImpl()
-    val configSpecs = mutableListOf<ConfigSpec>()
+    private val configSpecs = mutableListOf<ConfigSpec>()
     
     override fun commands(block: PolyCommandDsl.() -> Unit) {
         commandDsl.block()
@@ -57,6 +58,11 @@ internal class PolyPluginDslImpl : PolyPluginDsl {
     
     override fun configSpec(configSpec: ConfigSpec) {
         configSpecs += configSpec
+    }
+    
+    fun applyConfigSpecs(config: Config) {
+        for (spec in configSpecs)
+            config.addSpec(spec)
     }
     
     fun applyServiceDsl(serviceManager: PolyServiceManagerImpl, di: DI) {

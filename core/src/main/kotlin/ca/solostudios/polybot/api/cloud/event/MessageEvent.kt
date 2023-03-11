@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file MessageEvent.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * Last modified on 10-03-2023 03:29 p.m.
  *
  * MIT License
  *
@@ -29,7 +29,7 @@
 package ca.solostudios.polybot.api.cloud.event
 
 import ca.solostudios.polybot.api.PolyBot
-import ca.solostudios.polybot.api.entities.PolyEntity
+import ca.solostudios.polybot.api.PolyObject
 import ca.solostudios.polybot.api.entities.PolyMessage
 import ca.solostudios.polybot.api.entities.PolyMessageChannel
 import ca.solostudios.polybot.api.entities.PolyUser
@@ -38,8 +38,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 public sealed class MessageEvent(
         override val bot: PolyBot,
-        public open val event: MessageReceivedEvent,
-                                ) : PolyEntity {
+        public val event: MessageReceivedEvent,
+                                ) : PolyObject {
     public val author: PolyUser
         get() = event.author.poly(bot)
     
