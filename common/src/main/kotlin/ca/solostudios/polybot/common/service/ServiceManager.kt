@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceManager.kt is part of PolyBot
- * Last modified on 27-12-2022 01:31 p.m.
+ * Last modified on 15-04-2023 01:08 p.m.
  *
  * MIT License
  *
@@ -29,6 +29,8 @@
 package ca.solostudios.polybot.common.service
 
 import ca.solostudios.guava.kotlin.collect.ListMultimap
+import ca.solostudios.polybot.common.service.exceptions.DuplicateServiceException
+import ca.solostudios.polybot.common.service.exceptions.ServiceAlreadyStartedException
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 

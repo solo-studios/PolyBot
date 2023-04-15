@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ServiceManagerShutdownException.kt is part of PolyBot
- * Last modified on 27-12-2022 01:31 p.m.
+ * The file ServiceManagerLifecycleException.kt is part of PolyBot
+ * Last modified on 15-04-2023 01:22 p.m.
  *
  * MIT License
  *
@@ -26,10 +26,10 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.common.service
+package ca.solostudios.polybot.common.service.exceptions
 
 /**
- * Service manager startup exception
+ * Service manager lifecycle exception
  *
  * @constructor Constructs a new runtime exception with the specified detail message.
  * The cause is not initialized, and may subsequently be initialized by a
@@ -40,12 +40,20 @@ package ca.solostudios.polybot.common.service
  *
  * @param suppressed The list of suppressed exceptions to be added.
  */
-public class ServiceManagerShutdownException(
+public abstract class ServiceManagerLifecycleException protected constructor(
         message: String? = null,
-        suppressed: List<Exception> = listOf(),
-                                            ) : ServiceManagerLifecycleException(message, suppressed) {
+        /**
+         * Returns a list of all exceptions that were suppressed in order to deliver this exception.
+         */
+        public val suppressed: List<Exception> = listOf(),
+                                                                            ) : RuntimeException(message) {
+    
+    init {
+        for (ex in suppressed)
+            addSuppressed(ex)
+    }
     
     public companion object {
-        private const val serialVersionUID: Long = 8835357980251276628L
+        private const val serialVersionUID: Long = -5756784818816401120L
     }
 }

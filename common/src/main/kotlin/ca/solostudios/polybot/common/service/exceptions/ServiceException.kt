@@ -1,9 +1,9 @@
 /*
- * PolyhedralBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * PolyBot - A Discord bot for the Polyhedral Development discord server
+ * Copyright (c) 2023-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file ServiceAlreadyStartedException.kt is part of PolyhedralBot
- * Last modified on 09-02-2022 12:18 p.m.
+ * The file ServiceException.kt is part of PolyBot
+ * Last modified on 15-04-2023 01:12 p.m.
  *
  * MIT License
  *
@@ -17,7 +17,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * POLYHEDRALBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * POLYBOT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -26,22 +26,17 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.common.service
+package ca.solostudios.polybot.common.service.exceptions
 
+import ca.solostudios.polybot.common.service.Service
 import kotlin.reflect.KClass
 
-/**
- * An exception that is thrown if a service has already been started.
- *
- * @see ServiceManager
- */
-public class ServiceAlreadyStartedException(
+public abstract class ServiceException(
         public val serviceClass: KClass<Service>,
         message: String? = null,
         cause: Throwable? = null,
-                                           ) : RuntimeException(message, cause) {
-    
-    public companion object {
-        private const val serialVersionUID: Long = -1985603020742423944L
+                                      ) : RuntimeException(message, cause) {
+    private companion object {
+        private const val serialVersionUID: Long = 1327050074911418924L
     }
 }

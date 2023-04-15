@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManagerImpl.kt is part of PolyBot
- * Last modified on 27-12-2022 07:59 p.m.
+ * Last modified on 15-04-2023 01:08 p.m.
  *
  * MIT License
  *
@@ -36,8 +36,8 @@ import ca.solostudios.polybot.api.service.PolyServiceManager
 import ca.solostudios.polybot.api.service.config.EmptyServiceConfig
 import ca.solostudios.polybot.common.service.Service
 import ca.solostudios.polybot.common.service.ServiceManager
-import ca.solostudios.polybot.common.service.ServiceManagerShutdownException
-import ca.solostudios.polybot.common.service.ServiceManagerStartupException
+import ca.solostudios.polybot.common.service.exceptions.ServiceManagerShutdownException
+import ca.solostudios.polybot.common.service.exceptions.ServiceManagerStartupException
 import org.slf4j.kotlin.*
 import kotlin.reflect.KClass
 import kotlin.time.Duration

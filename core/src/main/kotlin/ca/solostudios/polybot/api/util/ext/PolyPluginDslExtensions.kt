@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyPluginDslExtensions.kt is part of PolyBot
- * Last modified on 03-02-2023 01:24 p.m.
+ * Last modified on 15-04-2023 01:22 p.m.
  *
  * MIT License
  *
@@ -73,10 +73,10 @@ public inline fun <reified T : PolyService<C>, reified C : ServiceConfig> PolySe
     return register(T::class, C::class, serviceProvider)
 }
 
-public inline fun <reified T : PolyService<C>, reified C : ServiceConfig> PolyServiceDsl.configure(
+public inline fun <reified C : ServiceConfig> PolyServiceDsl.configure(
         noinline configBlock: C.() -> Unit,
-                                                                                                  ) {
-    return configure(T::class, C::class, configBlock)
+                                                                      ) {
+    return configure(C::class, configBlock)
 }
 
 public inline fun <reified C : ServiceConfig> PolyServiceDsl.configInitializer(

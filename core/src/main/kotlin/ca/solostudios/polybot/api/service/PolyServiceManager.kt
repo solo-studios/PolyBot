@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManager.kt is part of PolyBot
- * Last modified on 21-10-2022 02:42 p.m.
+ * Last modified on 15-04-2023 01:20 p.m.
  *
  * MIT License
  *
@@ -28,13 +28,45 @@
 
 package ca.solostudios.polybot.api.service
 
+import ca.solostudios.guava.kotlin.collect.ListMultimap
 import ca.solostudios.polybot.api.PolyObject
 import ca.solostudios.polybot.api.service.config.ServiceConfig
+import ca.solostudios.polybot.api.service.exception.DuplicateServiceConfigException
 import ca.solostudios.polybot.common.service.ServiceManager
+import kotlin.reflect.KClass
 
 /**
  * Poly service manager
  *
  * @see ServiceManager
  */
-public interface PolyServiceManager<C : ServiceConfig, S : PolyService<*>> : ServiceManager<S>, PolyService<C>, PolyObject
+public interface PolyServiceManager<C : ServiceConfig, S : PolyService<*>> : ServiceManager<S>,
+                                                                             PolyService<C>,
+                                                                             PolyObject {
+    /**
+     * All the service configs that have been registered to this service manager.
+     */
+    public val serviceConfigs: ListMultimap<KClass<out C>, C>
+    
+    /**
+     * Add a service config to the manager
+     *
+     * @param T The type of service config to be added
+     * @param config The service to be added
+     * @param clazz The class of the service config to be added
+     * @throws DuplicateServiceConfigException if a service config is added more than once
+     */
+    @Throws(DuplicateServiceConfigException::class)
+    public fun <T : C> addServiceConfig(config: T, clazz: KClass<T>)
+    
+    /**
+     * Returns a service config from the manager.
+     *
+     * @param T The type of the service config to return
+     * @param clazz The class of the service config
+     * @return The service config
+     * @throws NullPointerException If no service config of the specified type can be found
+     */
+    @Throws(NullPointerException::class)
+    public fun <T : C> getServiceConfig(clazz: KClass<T>): T
+}

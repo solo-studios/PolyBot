@@ -2,8 +2,8 @@
  * PolyBot - A Discord bot for the Polyhedral Development discord server
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyServiceDsl.kt is part of PolyBot
- * Last modified on 15-04-2023 01:17 p.m.
+ * The file DuplicateServiceException.kt is part of PolyBot
+ * Last modified on 15-04-2023 01:13 p.m.
  *
  * MIT License
  *
@@ -26,27 +26,22 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.polybot.api.plugin.dsl.service
+package ca.solostudios.polybot.common.service.exceptions
 
-import ca.solostudios.polybot.api.annotations.PolyPluginDslMarker
-import ca.solostudios.polybot.api.service.PolyService
-import ca.solostudios.polybot.api.service.config.ServiceConfig
-import ca.solostudios.polybot.api.service.config.ServiceConfigHolder
-import org.kodein.di.DI
+import ca.solostudios.polybot.common.service.Service
+import ca.solostudios.polybot.common.service.ServiceManager
 import kotlin.reflect.KClass
 
-@PolyPluginDslMarker
-public interface PolyServiceDsl {
-    public fun <T : PolyService<C>, C : ServiceConfig> register(
-            serviceClass: KClass<T>,
-            configClass: KClass<C>,
-            serviceProvider: (config: C, di: DI) -> T,
-                                                               )
-    
-    public fun <C : ServiceConfig> configure(
-            configClass: KClass<C>,
-            configBlock: C.() -> Unit,
-                                            )
-    
-    public fun <C : ServiceConfig> configInitializer(configClass: KClass<C>, initializer: (configHolder: ServiceConfigHolder) -> C)
+/**
+ * An exception that is thrown when a service is added to a [ServiceManager] more than once.
+ *
+ * @see ServiceManager
+ */
+public class DuplicateServiceException(
+        serviceClass: KClass<Service>,
+        message: String? = null,
+                                      ) : ServiceException(serviceClass, message) {
+    public companion object {
+        private const val serialVersionUID: Long = 4604817406309293731L
+    }
 }

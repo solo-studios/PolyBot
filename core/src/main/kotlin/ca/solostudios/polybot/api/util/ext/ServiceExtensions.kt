@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceExtensions.kt is part of PolyBot
- * Last modified on 22-11-2022 03:06 p.m.
+ * Last modified on 15-04-2023 01:08 p.m.
  *
  * MIT License
  *
@@ -31,8 +31,8 @@ package ca.solostudios.polybot.api.util.ext
 import ca.solostudios.polybot.api.service.PolyService
 import ca.solostudios.polybot.api.service.PolyServiceCompanionObject
 import ca.solostudios.polybot.api.service.PolyServiceManager
-import ca.solostudios.polybot.common.service.DuplicateServiceException
-import ca.solostudios.polybot.common.service.ServiceAlreadyStartedException
+import ca.solostudios.polybot.common.service.exceptions.DuplicateServiceException
+import ca.solostudios.polybot.common.service.exceptions.ServiceAlreadyStartedException
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
