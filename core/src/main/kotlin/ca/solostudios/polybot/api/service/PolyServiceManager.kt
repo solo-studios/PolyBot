@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManager.kt is part of PolyBot
- * Last modified on 15-04-2023 01:20 p.m.
+ * Last modified on 15-04-2023 01:30 p.m.
  *
  * MIT License
  *
@@ -28,7 +28,6 @@
 
 package ca.solostudios.polybot.api.service
 
-import ca.solostudios.guava.kotlin.collect.ListMultimap
 import ca.solostudios.polybot.api.PolyObject
 import ca.solostudios.polybot.api.service.config.ServiceConfig
 import ca.solostudios.polybot.api.service.exception.DuplicateServiceConfigException
@@ -46,7 +45,7 @@ public interface PolyServiceManager<C : ServiceConfig, S : PolyService<*>> : Ser
     /**
      * All the service configs that have been registered to this service manager.
      */
-    public val serviceConfigs: ListMultimap<KClass<out C>, C>
+    public val serviceConfigs: Map<KClass<out ServiceConfig>, ServiceConfig>
     
     /**
      * Add a service config to the manager
@@ -55,9 +54,10 @@ public interface PolyServiceManager<C : ServiceConfig, S : PolyService<*>> : Ser
      * @param config The service to be added
      * @param clazz The class of the service config to be added
      * @throws DuplicateServiceConfigException if a service config is added more than once
+     * @throws IllegalStateException if the service manager has already been started
      */
-    @Throws(DuplicateServiceConfigException::class)
-    public fun <T : C> addServiceConfig(config: T, clazz: KClass<T>)
+    @Throws(DuplicateServiceConfigException::class, IllegalStateException::class)
+    public fun <T : ServiceConfig> addServiceConfig(config: T, clazz: KClass<T>)
     
     /**
      * Returns a service config from the manager.
@@ -68,5 +68,5 @@ public interface PolyServiceManager<C : ServiceConfig, S : PolyService<*>> : Ser
      * @throws NullPointerException If no service config of the specified type can be found
      */
     @Throws(NullPointerException::class)
-    public fun <T : C> getServiceConfig(clazz: KClass<T>): T
+    public fun <T : ServiceConfig> getServiceConfig(clazz: KClass<T>): T
 }

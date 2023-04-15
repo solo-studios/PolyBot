@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManagerImpl.kt is part of PolyBot
- * Last modified on 15-04-2023 01:08 p.m.
+ * Last modified on 15-04-2023 01:30 p.m.
  *
  * MIT License
  *
@@ -34,6 +34,7 @@ import ca.solostudios.polybot.api.service.AbstractPolyService
 import ca.solostudios.polybot.api.service.PolyService
 import ca.solostudios.polybot.api.service.PolyServiceManager
 import ca.solostudios.polybot.api.service.config.EmptyServiceConfig
+import ca.solostudios.polybot.api.service.config.ServiceConfig
 import ca.solostudios.polybot.common.service.Service
 import ca.solostudios.polybot.common.service.ServiceManager
 import ca.solostudios.polybot.common.service.exceptions.ServiceManagerShutdownException
@@ -53,8 +54,9 @@ internal class PolyServiceManagerImpl(
                                          PolyServiceManager<EmptyServiceConfig, PolyService<*>> {
     private val logger by getLogger()
     
-    override var services = mutableListMultimapOf<KClass<out PolyService<*>>, PolyService<*>>()
-        private set
+    override val services = mutableListMultimapOf<KClass<out PolyService<*>>, PolyService<*>>()
+    
+    override val serviceConfigs = mutableMapOf<KClass<out ServiceConfig>, ServiceConfig>()
     
     override var startupTimes: Map<PolyService<*>, Duration> = emptyMap()
         private set
@@ -63,10 +65,6 @@ internal class PolyServiceManagerImpl(
     
     override val healthy: Boolean
         get() = serviceHealth.all { it.value.healthy }
-    
-    override fun addException(serviceClass: KClass<PolyService<*>>, exception: Exception) {
-        serviceHealth.getOrPut(serviceClass) { ServiceHealthImpl() }.exceptions.add(exception)
-    }
     
     override fun <T : PolyService<*>> getServices(clazz: KClass<T>): List<T> {
         @Suppress("UNCHECKED_CAST")
@@ -84,6 +82,23 @@ internal class PolyServiceManagerImpl(
                 "You can only add new services to the service manager before the start() method has been called."
                    )
         services[clazz] += service
+    }
+    
+    override fun addException(serviceClass: KClass<PolyService<*>>, exception: Exception) {
+        serviceHealth.getOrPut(serviceClass) { ServiceHealthImpl() }.exceptions.add(exception)
+    }
+    
+    override fun <T : ServiceConfig> getServiceConfig(clazz: KClass<T>): T {
+        @Suppress("UNCHECKED_CAST")
+        return serviceConfigs[clazz] as T
+    }
+    
+    override fun <T : ServiceConfig> addServiceConfig(config: T, clazz: KClass<T>) {
+        ensureState(
+                Service.State.INITIALIZING,
+                "You can only add new services to the service manager before the start() method has been called."
+                   )
+        serviceConfigs[clazz] = config
     }
     
     @OptIn(ExperimentalTime::class)
