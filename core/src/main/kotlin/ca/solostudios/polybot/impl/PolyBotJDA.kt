@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 10-03-2023 03:29 p.m.
+ * Last modified on 15-04-2023 01:04 p.m.
  *
  * MIT License
  *
@@ -120,7 +120,8 @@ import kotlin.reflect.KClass
 internal class PolyBotJDA(
         override val config: Config,
         builder: InlineJDABuilder,
-                         ) : PolyBot, CoroutineScope {
+                         ) : PolyBot,
+                             CoroutineScope {
     private val logger by getLogger()
     
     override var state: State = State.INITIALIZING
@@ -181,67 +182,43 @@ internal class PolyBotJDA(
             logger.debug { "PolyBot is already active, but startup was requested. Ignoring." }
             return
         }
-    
+        
         updateState(State.STARTING)
         logger.info { "Starting polybot..." }
-    
+        
         logger.debug { "Loading plugins..." }
-    
+        
         polyPluginManager.loadPlugins()
-    
+        
         val polyDsl = PolyPluginDslImpl()
-    
+        
         polyDsl.applyConfigSpecs(config)
-    
+        
         logger.debug { "Starting plugins..." }
-    
+        
         polyPluginManager.startPlugins(polyDsl)
-    
+        
         logger.debug { "Plugins started successfully" }
-    
+        
         val lateInitDI = LateInitDI()
-    
+        
         val di = DI {
-            // bindSet<>()
             bind<PolyService<*>>().subTypes() with { type ->
-                when (val jvmType = type.getRaw().jvmType) {
+                when (val jvmType = type.jvmType) {
                     is Class<*> -> {
+                        @Suppress("UNCHECKED_CAST")
                         provider { serviceManager.getService(jvmType.kotlin as KClass<PolyService<*>>) }
-                        // require()
                     }
-                
+                    
                     else        -> error("")
                 }
             }
-            //
-            // this.externalSources += ExternalSource { key ->
-            //     when (key.type.jvmType) {
-            //         Whatever::class.java -> when (key.argType.jvmType) {
-            //             Unit::class.java   -> when (key.tag) {
-            //                 "user" -> externalFactory { existingInstance }
-            //                 null   -> externalFactory { Whatever("default-value") }
-            //                 else   -> null
-            //             }
-            //
-            //             String::class.java -> when (key.tag) {
-            //                 null -> externalFactory { Whatever(it as String) }
-            //                 else -> null
-            //             }
-            //
-            //             else               -> null
-            //         }
-            //
-            //         else                 -> null
-            //     }
-            // }
-        
-            TODO()
         }
-    
+        
         polyDsl.applyServiceDsl(serviceManager, di)
-    
+        
         TODO("Start Polybot") // TODO: 2022-08-17
-    
+        
         updateState(State.RUNNING)
     }
     
@@ -249,13 +226,13 @@ internal class PolyBotJDA(
     override suspend fun shutdown(exitCode: Int, isShutdownHook: Boolean) {
         if (!running)
             return
-    
+        
         updateState(State.SHUTTING_DOWN)
-    
+        
         polyPluginManager.shutdownPlugins()
-    
+        
         TODO("Polybot shutdown") // TODO: 2022-03-06
-    
+        
         updateState(State.SHUTDOWN)
     }
     
