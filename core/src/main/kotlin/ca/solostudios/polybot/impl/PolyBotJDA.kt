@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyBotJDA.kt is part of PolyBot
- * Last modified on 15-04-2023 01:04 p.m.
+ * Last modified on 17-04-2023 12:14 p.m.
  *
  * MIT License
  *
@@ -105,7 +105,6 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.VoiceChannel
 import org.kodein.di.DI
-import org.kodein.di.LateInitDI
 import org.kodein.di.bind
 import org.kodein.di.bindings.subTypes
 import org.kodein.di.provider
@@ -200,8 +199,6 @@ internal class PolyBotJDA(
         
         logger.debug { "Plugins started successfully" }
         
-        val lateInitDI = LateInitDI()
-        
         val di = DI {
             bind<PolyService<*>>().subTypes() with { type ->
                 when (val jvmType = type.jvmType) {
@@ -209,16 +206,18 @@ internal class PolyBotJDA(
                         @Suppress("UNCHECKED_CAST")
                         provider { serviceManager.getService(jvmType.kotlin as KClass<PolyService<*>>) }
                     }
-                    
-                    else        -> error("")
+        
+                    else        -> error("???")
                 }
             }
         }
-        
+    
+        logger.debug { "Configuring service manager" }
+    
         polyDsl.applyServiceDsl(serviceManager, di)
-        
+    
         TODO("Start Polybot") // TODO: 2022-08-17
-        
+    
         updateState(State.RUNNING)
     }
     

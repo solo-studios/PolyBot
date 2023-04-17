@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManager.kt is part of PolyBot
- * Last modified on 15-04-2023 01:30 p.m.
+ * Last modified on 15-04-2023 01:41 p.m.
  *
  * MIT License
  *
@@ -57,7 +57,7 @@ public interface PolyServiceManager<C : ServiceConfig, S : PolyService<*>> : Ser
      * @throws IllegalStateException if the service manager has already been started
      */
     @Throws(DuplicateServiceConfigException::class, IllegalStateException::class)
-    public fun <T : ServiceConfig> addServiceConfig(config: T, clazz: KClass<T>)
+    public fun <T : ServiceConfig> addServiceConfig(config: T, clazz: KClass<out T>)
     
     /**
      * Returns a service config from the manager.

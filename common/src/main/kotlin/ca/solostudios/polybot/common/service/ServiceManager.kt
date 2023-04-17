@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceManager.kt is part of PolyBot
- * Last modified on 15-04-2023 01:29 p.m.
+ * Last modified on 15-04-2023 01:59 p.m.
  *
  * MIT License
  *
@@ -137,7 +137,7 @@ public interface ServiceManager<S : Service> : Service {
      * @throws IllegalStateException if the service manager has already been started
      */
     @Throws(DuplicateServiceException::class, ServiceAlreadyStartedException::class, IllegalArgumentException::class, IllegalStateException::class)
-    public fun <T : S> addService(service: T, clazz: KClass<T>)
+    public fun <T : S> addService(service: T, clazz: KClass<out T>)
     
     /**
      * Returns a service from the manager.

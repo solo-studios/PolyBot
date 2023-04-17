@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file CommandProcessor.kt is part of PolyBot
- * Last modified on 21-02-2023 06:46 p.m.
+ * Last modified on 17-04-2023 12:14 p.m.
  *
  * MIT License
  *
@@ -38,6 +38,8 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import java.io.IOException
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 internal class CommandProcessor(environment: SymbolProcessorEnvironment) : SymbolProcessor {
     private val codeGenerator = environment.codeGenerator
@@ -48,7 +50,6 @@ internal class CommandProcessor(environment: SymbolProcessorEnvironment) : Symbo
     val commands: MutableList<KSClassDeclaration> = mutableListOf()
     
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        logger.warn("test")
         commands += resolver.getSymbolsWithAnnotation(COMMAND_ANNOTATION_NAME)
                 .filterIsInstance<KSClassDeclaration>()
                 .filter { it.qualifiedName != null && it.containingFile != null }
@@ -59,14 +60,24 @@ internal class CommandProcessor(environment: SymbolProcessorEnvironment) : Symbo
     
     override fun finish() {
         val dependencies = Dependencies(true, *commands.mapNotNull { it.containingFile }.toTypedArray())
-        
-        val commandNames = commands.mapNotNull { it.qualifiedName }
-        
+    
+        val commandClasses = commands.mapNotNull {
+            if (it.qualifiedName == null) {
+                logger.warn("A class was annotated with @Command, but the qualified name cannot be resolved. Package: ${it.packageName.asString()}, Name:${it.simpleName.asString()}")
+                null
+            } else {
+                it.qualifiedName!!.asString()
+            }
+        }
+    
+        val pluginCommands = PluginCommands(commandClasses)
+    
         try {
             codeGenerator.createNewFile(dependencies = dependencies, packageName = "", fileName = PluginCommands.PLUGIN_COMMAND_INFO_FILE, extensionName = "")
                     .bufferedWriter().use { writer ->
-                        for (cmd in commands)
-                            writer.appendLine("packageName: ${cmd.packageName.asString()}, simpleName: ${cmd.simpleName.asString()}, qualifiedName: ${cmd.qualifiedName?.asString()}")
+                        writer.append(Json.encodeToString(pluginCommands))
+                        // for (cmd in commands)
+                        //     writer.appendLine("packageName: ${cmd.packageName.asString()}, simpleName: ${cmd.simpleName.asString()}, qualifiedName: ${cmd.qualifiedName?.asString()}")
                     }
         } catch (e: IOException) {
             logger.warn("Unable to write to ${PluginCommands.PLUGIN_COMMAND_INFO_FILE}: $e")

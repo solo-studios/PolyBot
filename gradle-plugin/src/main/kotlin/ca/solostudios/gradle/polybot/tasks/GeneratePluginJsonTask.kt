@@ -1,8 +1,8 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2023-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
- * The file PolyBotGradlePlugin.kt is part of PolyBot
+ * The file GeneratePluginJsonTask.kt is part of PolyBot
  * Last modified on 17-04-2023 12:14 p.m.
  *
  * MIT License
@@ -26,21 +26,28 @@
  * SOFTWARE.
  */
 
-package ca.solostudios.gradle.polybot
+package ca.solostudios.gradle.polybot.tasks
 
-import ca.solostudios.gradle.polybot.tasks.GeneratePluginJsonTask
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.kotlin.dsl.create
+import ca.solostudios.gradle.polybot.PolyBotGradleExtension
+import javax.inject.Inject
+import org.gradle.api.DefaultTask
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.property
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.setValue
 
-public class PolyBotGradlePlugin : Plugin<Project> {
-    override fun apply(project: Project) {
-        val polybotExtension = project.extensions.create<PolyBotGradleExtension>("polybot")
-    }
+public class GeneratePluginJsonTask @Inject constructor(objectFactory: ObjectFactory) : DefaultTask() {
+    @get:Input
+    public val extensionProperty: Property<PolyBotGradleExtension> = objectFactory.property()
     
-    public fun registerTasks(project: Project, extension: PolyBotGradleExtension) {
-        val generatePluginJsonTask = project.tasks.create<GeneratePluginJsonTask>("generatePluginJson") {
-        
-        }
+    public var extension: PolyBotGradleExtension by extensionProperty
+    
+    @TaskAction
+    public fun run() {
+    
     }
 }

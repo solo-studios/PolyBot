@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyThreadFactory.kt is part of PolyBot
- * Last modified on 10-06-2022 11:32 a.m.
+ * Last modified on 16-04-2023 02:33 p.m.
  *
  * MIT License
  *
@@ -30,10 +30,11 @@ package ca.solostudios.polybot.impl
 
 import ca.solostudios.polybot.api.util.ext.currentThread
 import java.util.concurrent.ThreadFactory
+import java.util.concurrent.atomic.AtomicInteger
 
 internal object PolyThreadFactory : ThreadFactory {
     private val threadGroup: ThreadGroup = currentThread.threadGroup
-    private var threadCount: Int = 0
+    private var threadCount = AtomicInteger(0)
     
-    override fun newThread(runnable: Runnable): Thread = Thread(threadGroup, runnable, "PolyBot-Worker-${threadCount++}", 0)
+    override fun newThread(runnable: Runnable): Thread = Thread(threadGroup, runnable, "PolyBot-Worker-${threadCount.getAndIncrement()}", 0)
 }

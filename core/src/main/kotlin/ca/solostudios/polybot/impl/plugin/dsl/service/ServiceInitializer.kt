@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file ServiceInitializer.kt is part of PolyBot
- * Last modified on 27-12-2022 01:31 p.m.
+ * Last modified on 17-04-2023 12:14 p.m.
  *
  * MIT License
  *
@@ -33,8 +33,8 @@ import ca.solostudios.polybot.api.service.config.ServiceConfig
 import org.kodein.di.DI
 import kotlin.reflect.KClass
 
-internal data class ServiceInitializer<T : PolyService<@UnsafeVariance C>, out C : ServiceConfig>(
+internal data class ServiceInitializer<T : PolyService<C>, C : ServiceConfig>(
         val serviceClass: KClass<T>,
-        val configClass: KClass<@UnsafeVariance C>,
+        val configClass: KClass<C>,
         val initializer: (@UnsafeVariance C, DI) -> T
-                                                                                                 )
+                                                                             )

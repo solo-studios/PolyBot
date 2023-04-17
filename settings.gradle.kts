@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file settings.gradle.kts is part of PolyBot
- * Last modified on 03-02-2023 01:10 p.m.
+ * Last modified on 16-04-2023 03:06 p.m.
  *
  * MIT License
  *
@@ -30,6 +30,7 @@ rootProject.name = "PolyBot"
 
 pluginManagement {
     repositories {
+        mavenLocal()
         mavenCentral()
         gradlePluginPortal()
         maven("https://maven.solo-studios.ca/releases")
@@ -40,3 +41,4 @@ include(":core")
 include(":common")
 include(":gradle-plugin")
 include(":annotation-processor")
+include(":example")

@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 10-09-2022 02:57 p.m.
+ * Last modified on 17-04-2023 12:14 p.m.
  *
  * MIT License
  *
@@ -34,21 +34,31 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
     
+    alias(libs.plugins.kotlin.ksp)
+    
     `java-gradle-plugin`
     
     alias(libs.plugins.dokka)
+    
+    // alias(libs.plugins.)
+    id("com.gradle.plugin-publish") version "1.1.0"
 }
 
 repositories {
+    maven("https://maven.solo-studios.ca/releases")
+    
     mavenCentral()
 }
 
+version = "0"
+
 kotlin {
+    jvmToolchain(11)
+    
     explicitApi()
     target {
         compilations.configureEach {
             kotlinOptions {
-                jvmTarget = "11"
                 apiVersion = "1.7"
                 languageVersion = "1.7"
                 freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
@@ -57,7 +67,17 @@ kotlin {
     }
 }
 
+java {
+    withSourcesJar()
+}
+
 val functionalTest: SourceSet by sourceSets.creating
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+}
 
 gradlePlugin {
     plugins {
@@ -118,13 +138,6 @@ tasks {
     withType<Jar>().configureEach {
         from(rootProject.file("LICENSE"))
     }
-}
-
-java {
-    withSourcesJar()
-    
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
 }
 
 /*-----------------------*

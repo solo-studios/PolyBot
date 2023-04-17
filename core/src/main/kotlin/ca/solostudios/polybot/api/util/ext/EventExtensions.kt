@@ -1,9 +1,9 @@
 /*
  * PolyBot - A Discord bot for the Polyhedral Development discord server
- * Copyright (c) 2022-2022 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file EventExtensions.kt is part of PolyBot
- * Last modified on 10-06-2022 11:33 a.m.
+ * Last modified on 16-04-2023 02:48 p.m.
  *
  * MIT License
  *
@@ -61,6 +61,6 @@ public inline fun <reified T : PolyEvent> PolyEventManager.unregister(listener: 
  * @param event The event to be dispatched
  * @see PolyEventManager.listeners
  */
-public inline fun <reified T : PolyEvent> PolyEventManager.dispatch(event: T) {
+public suspend inline fun <reified T : PolyEvent> PolyEventManager.dispatch(event: T) {
     dispatch(event, event::class)
 }

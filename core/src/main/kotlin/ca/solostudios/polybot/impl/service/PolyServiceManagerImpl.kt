@@ -3,7 +3,7 @@
  * Copyright (c) 2022-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file PolyServiceManagerImpl.kt is part of PolyBot
- * Last modified on 15-04-2023 01:30 p.m.
+ * Last modified on 15-04-2023 02:00 p.m.
  *
  * MIT License
  *
@@ -76,7 +76,7 @@ internal class PolyServiceManagerImpl(
         return services[clazz].first() as T
     }
     
-    override fun <T : PolyService<*>> addService(service: T, clazz: KClass<T>) {
+    override fun <T : PolyService<*>> addService(service: T, clazz: KClass<out T>) {
         ensureState(
                 Service.State.INITIALIZING,
                 "You can only add new services to the service manager before the start() method has been called."
@@ -93,7 +93,7 @@ internal class PolyServiceManagerImpl(
         return serviceConfigs[clazz] as T
     }
     
-    override fun <T : ServiceConfig> addServiceConfig(config: T, clazz: KClass<T>) {
+    override fun <T : ServiceConfig> addServiceConfig(config: T, clazz: KClass<out T>) {
         ensureState(
                 Service.State.INITIALIZING,
                 "You can only add new services to the service manager before the start() method has been called."
