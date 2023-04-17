@@ -3,7 +3,7 @@
  * Copyright (c) 2021-2023 solonovamax <solonovamax@12oclockpoint.com>
  *
  * The file build.gradle.kts is part of PolyBot
- * Last modified on 21-02-2023 06:16 p.m.
+ * Last modified on 17-04-2023 12:47 p.m.
  *
  * MIT License
  *
@@ -26,7 +26,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("SuspiciousCollectionReassignment", "PropertyName", "DSL_SCOPE_VIOLATION")
+@file:Suppress("SuspiciousCollectionReassignment", "PropertyName", "DSL_SCOPE_VIOLATION", "UnstableApiUsage")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.ajoberstar.grgit.Grgit
@@ -265,7 +265,7 @@ tasks {
     
     named<Tar>("distTar") {
         compression = Compression.GZIP
-        archiveFileName.set("PolyhedralBot-dist.tar.gz")
+        archiveFileName = "PolyhedralBot-dist.tar.gz"
     }
 }
 
